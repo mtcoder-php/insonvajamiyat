@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Enums\RoleName;
+use App\Models\AuthorProfile;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -33,7 +35,41 @@ class UserFactory extends Factory
             'two_factor_secret' => null,
             'two_factor_recovery_codes' => null,
             'two_factor_confirmed_at' => null,
+            'locale' => 'uz',
+            'is_blocked' => false,
         ];
+    }
+
+    /**
+     * Muallif: author roli + ilmiy profil (ro'yxatdan o'tish natijasidagi holat).
+     */
+    public function author(): static
+    {
+        return $this->afterCreating(function (User $user): void {
+            $user->assignRole(RoleName::Author);
+
+            AuthorProfile::factory()->for($user)->create();
+        });
+    }
+
+    /**
+     * Xodim: berilgan admin panel roli bilan.
+     */
+    public function withRole(RoleName $role): static
+    {
+        return $this->afterCreating(fn (User $user) => $user->assignRole($role));
+    }
+
+    /**
+     * Bloklangan foydalanuvchi.
+     */
+    public function blocked(string $reason = 'Test'): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_blocked' => true,
+            'blocked_at' => now(),
+            'blocked_reason' => $reason,
+        ]);
     }
 
     /**
