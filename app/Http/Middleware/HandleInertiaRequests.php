@@ -36,11 +36,35 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = $request->user();
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
-            'auth' => fn () => $this->authPayload($request->user()),
+            'auth' => fn () => $this->authPayload($user),
+            'journal' => fn () => $this->journalPayload(),
+            'notifications' => fn () => $user instanceof User
+                ? ['unread' => $user->unreadNotifications()->count()]
+                : null,
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+        ];
+    }
+
+    /**
+     * Header/footer uchun jurnal rekvizitlari (config/journal.php).
+     * Bo'sh ijtimoiy tarmoq havolalari yuborilmaydi.
+     *
+     * @return array<string, mixed>
+     */
+    private function journalPayload(): array
+    {
+        return [
+            'name' => config('journal.name'),
+            'subtitle' => config('journal.subtitle'),
+            'description' => config('journal.description'),
+            'issn' => config('journal.issn'),
+            'contact' => config('journal.contact'),
+            'socials' => array_filter((array) config('journal.socials')),
         ];
     }
 

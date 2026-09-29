@@ -7,6 +7,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { usePermissions } from '@/composables/usePermissions';
+import { roleLabels } from '@/lib/roles';
 import { dashboard } from '@/routes/admin';
 
 defineProps<{
@@ -24,16 +25,6 @@ defineOptions({
 });
 
 const { auth } = usePermissions();
-
-const roleLabels: Record<string, string> = {
-    super_admin: 'Bosh administrator',
-    chief_editor: 'Bosh muharrir',
-    editor: 'Muharrir',
-    reviewer: 'Taqrizchi',
-    layout_editor: 'Texnik xodim',
-    content_manager: 'Kontent-menejer',
-    author: 'Muallif',
-};
 </script>
 
 <template>
@@ -45,7 +36,7 @@ const roleLabels: Record<string, string> = {
                 Assalomu alaykum, {{ auth.user?.name }}
             </h1>
             <p class="text-muted-foreground">
-                {{ auth.roles.map((r) => roleLabels[r] ?? r).join(', ') }}
+                {{ auth.roles.map((r) => roleLabels[r]).join(', ') }}
             </p>
         </div>
 

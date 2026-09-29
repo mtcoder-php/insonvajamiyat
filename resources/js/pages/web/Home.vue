@@ -6,6 +6,10 @@ import { about, register } from '@/routes';
 import { index as articlesIndex } from '@/routes/articles';
 
 const { auth } = usePermissions();
+
+defineOptions({
+    layout: { header: 'light' },
+});
 </script>
 
 <template>
