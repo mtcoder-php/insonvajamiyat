@@ -3,6 +3,7 @@
 namespace App\Concerns;
 
 use App\Models\User;
+use App\Support\PhoneNumber;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Validation\Rule;
 
@@ -39,6 +40,16 @@ trait ProfileValidationRules
     protected function personNameRules(): array
     {
         return ['required', 'string', 'min:2', 'max:100', "regex:/^[\\p{L}\\p{M}' ʻʼ‘’`\\-]+$/u"];
+    }
+
+    /**
+     * Telefon: PhoneNumber::normalize() dan keyin E.164 ko'rinishida bo'lishi kerak.
+     *
+     * @return array<int, ValidationRule|array<mixed>|string>
+     */
+    protected function phoneRules(): array
+    {
+        return ['required', 'string', 'max:20', 'regex:'.PhoneNumber::PATTERN];
     }
 
     /**

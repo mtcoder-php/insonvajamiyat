@@ -8,9 +8,9 @@ import { send } from '@/routes/verification';
 
 defineOptions({
     layout: {
-        title: 'Email verification',
+        title: 'Elektron pochtani tasdiqlang',
         description:
-            'Please verify your email address by clicking on the link we just emailed to you.',
+            "Pochtangizga yuborilgan havolani bosib, manzilingizni tasdiqlang. Xat kelmagan bo'lsa, 'Spam' papkasini ham tekshiring.",
     },
 });
 
@@ -20,14 +20,14 @@ defineProps<{
 </script>
 
 <template>
-    <Head title="Email verification" />
+    <Head title="Pochtani tasdiqlash" />
 
     <div
         v-if="status === 'verification-link-sent'"
-        class="mb-4 text-center text-sm font-medium text-green-600"
+        class="mb-6 rounded-lg border border-success/30 bg-success-soft px-4 py-3 text-sm font-medium text-success-ink"
     >
-        A new verification link has been sent to the email address you provided
-        during registration.
+        Ro'yxatdan o'tishda ko'rsatilgan manzilga yangi tasdiqlash havolasi
+        yuborildi.
     </div>
 
     <Form
@@ -37,11 +37,11 @@ defineProps<{
     >
         <Button :disabled="processing" variant="secondary">
             <Spinner v-if="processing" />
-            Resend verification email
+            Havolani qayta yuborish
         </Button>
 
         <TextLink :href="logout()" as="button" class="mx-auto block text-sm">
-            Log out
+            Tizimdan chiqish
         </TextLink>
     </Form>
 </template>

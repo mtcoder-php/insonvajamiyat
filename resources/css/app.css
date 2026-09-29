@@ -1,15 +1,119 @@
-@import 'tailwindcss';
+/*
+ * "Inson va Jamiyat" — dizayn tizimi (Tailwind CSS 4)
+ * Ranglar dizayn maketlaridan piksel bo'yicha o'lchab olingan.
+ *
+ * Tuzilma Laravel Vue starter kit (shadcn-vue) bilan mos: --primary, --sidebar va h.k.
+ * o'zgaruvchilar saqlangan, shuning uchun components/ui/* komponentlari
+ * o'zgartirishsiz jurnal uslubida chiqadi.
+ *
+ * Shriftlar loyihaning o'zidan yuklanadi (tashqi CDN so'rovisiz):
+ *   @fontsource-variable/inter, @fontsource-variable/noto-serif
+ * Ikkalasida ham lotin (oʻ, gʻ) va kirill harflari bor.
+ */
 
+@import 'tailwindcss';
 @import 'tw-animate-css';
+
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/noto-serif';
+@import '@fontsource-variable/noto-serif/wght-italic.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 
 @custom-variant dark (&:is(.dark *));
 
+/* ------------------------------------------------------------------ */
+/*  1. Brend palitrasi — to'g'ridan-to'g'ri utility sifatida ishlatiladi */
+/*     bg-navy-950, text-gold-500, bg-success-soft ...                  */
+/* ------------------------------------------------------------------ */
+@theme {
+    /* To'q ko'k — header, sidebar, footer, "Nega aynan biz?" bloki */
+    --color-navy-50: #eef4fa;
+    --color-navy-100: #d5e2ef;
+    --color-navy-200: #a9c1da;
+    --color-navy-300: #7b9bbd;
+    --color-navy-400: #4a6f96;
+    --color-navy-500: #1f4a74;
+    --color-navy-600: #00427e;
+    --color-navy-700: #003c72;
+    --color-navy-800: #003054;
+    --color-navy-900: #002442;
+    --color-navy-950: #001e3c;
+
+    /* Asosiy ko'k — tugmalar, faol menyu, havolalar */
+    --color-brand-50: #eef6ff;
+    --color-brand-100: #deeffc;
+    --color-brand-200: #bfdcfb;
+    --color-brand-300: #8fc1f9;
+    --color-brand-400: #4d9bf8;
+    --color-brand-500: #1a82f7;
+    --color-brand-600: #006cf6;
+    --color-brand-700: #0060c8;
+    --color-brand-800: #004ea3;
+    --color-brand-900: #003f82;
+
+    /* Oltin — logotip kitobi, ajratuvchi chiziqlar, "№3 (2025)" badge */
+    --color-gold-100: #fbf3df;
+    --color-gold-200: #f4e2b3;
+    --color-gold-300: #f0ce7c;
+    --color-gold-400: #d2ae5a;
+    --color-gold-500: #c49a45;
+    --color-gold-600: #ae8436;
+    --color-gold-700: #9c722a;
+
+    /* Sahifa yuzalari */
+    --color-page: #f0f6fc;
+    --color-surface: #ffffff;
+    --color-surface-muted: #f6f9fd;
+    --color-line: #dbe7f5;
+
+    /* Holat ranglari (badge, stat-karta ikonkalari) — {solid, soft fon, matn} */
+    --color-success: #0fb68d;
+    --color-success-soft: #d8f6ea;
+    --color-success-ink: #047857;
+
+    --color-warning: #f59e0b;
+    --color-warning-soft: #fceacc;
+    --color-warning-ink: #b45309;
+
+    --color-danger: #ef4444;
+    --color-danger-soft: #fce4e4;
+    --color-danger-ink: #b91c1c;
+
+    --color-violet: #8b5cf6;
+    --color-violet-soft: #eae4fc;
+    --color-violet-ink: #6d28d9;
+
+    --color-info: #006cf6;
+    --color-info-soft: #def0fc;
+    --color-info-ink: #0058d0;
+
+    /* To'lov tizimlari */
+    --color-click: #0490f4;
+    --color-payme: #33c1b0;
+
+    /* Tipografiya */
+    --font-serif:
+        'Noto Serif Variable', 'Noto Serif', Georgia, 'Times New Roman', serif;
+
+    /* Soyalar — maketlardagi yumshoq "suzuvchi" kartalar */
+    --shadow-card:
+        0 1px 2px rgb(0 30 60 / 0.04), 0 4px 16px rgb(0 30 60 / 0.06);
+    --shadow-card-hover:
+        0 2px 4px rgb(0 30 60 / 0.06), 0 12px 32px rgb(0 30 60 / 0.1);
+    --shadow-float: 0 20px 48px rgb(0 30 60 / 0.18);
+
+    --radius-xl: 0.875rem;
+    --radius-2xl: 1.125rem;
+}
+
+/* ------------------------------------------------------------------ */
+/*  2. shadcn-vue semantik tokenlari → Tailwind utility'lari            */
+/* ------------------------------------------------------------------ */
 @theme inline {
     --font-sans:
-        Instrument Sans, ui-sans-serif, system-ui, sans-serif,
+        'Inter Variable', Inter, ui-sans-serif, system-ui, sans-serif,
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji';
 
@@ -61,112 +165,241 @@
     --color-sidebar-ring: var(--sidebar-ring);
 }
 
-/*
-  The default border color has changed to `currentColor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
+/* ------------------------------------------------------------------ */
+/*  3. Yorug' mavzu (asosiy)                                           */
+/* ------------------------------------------------------------------ */
+:root {
+    --background: #f0f6fc;
+    --foreground: #0b2440;
+    --card: #ffffff;
+    --card-foreground: #0b2440;
+    --popover: #ffffff;
+    --popover-foreground: #0b2440;
 
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
+    --primary: #006cf6;
+    --primary-foreground: #ffffff;
+    --secondary: #002442;
+    --secondary-foreground: #ffffff;
+
+    --muted: #eef4fa;
+    --muted-foreground: #5b7089;
+    --accent: #deeffc;
+    --accent-foreground: #0058d0;
+
+    --destructive: #ef4444;
+    --destructive-foreground: #ffffff;
+
+    --border: #dbe7f5;
+    --input: #d3e1f1;
+    --ring: #006cf6;
+
+    /* Diagrammalar: 1 — Click/Jami, 2 — Payme/Qabul, 3 — Nashr, 4 — Kutilmoqda, 5 — Rad */
+    --chart-1: #0490f4;
+    --chart-2: #46c0a7;
+    --chart-3: #8f72e8;
+    --chart-4: #feb55f;
+    --chart-5: #ef4444;
+
+    --radius: 0.625rem;
+
+    /* Admin sidebar — to'q ko'k, faol element — asosiy ko'k */
+    --sidebar-background: #001e3c;
+    --sidebar: #001e3c;
+    --sidebar-foreground: #d5e2ef;
+    --sidebar-primary: #006cf6;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #0a2d52;
+    --sidebar-accent-foreground: #ffffff;
+    --sidebar-border: #0e3358;
+    --sidebar-ring: #4d9bf8;
+}
+
+/* ------------------------------------------------------------------ */
+/*  4. Tungi mavzu (AI Studio'dagi oy tugmasi)                         */
+/* ------------------------------------------------------------------ */
+.dark {
+    --background: #07162a;
+    --foreground: #e6eef8;
+    --card: #0c2038;
+    --card-foreground: #e6eef8;
+    --popover: #0c2038;
+    --popover-foreground: #e6eef8;
+
+    --primary: #3b8ef8;
+    --primary-foreground: #ffffff;
+    --secondary: #16324f;
+    --secondary-foreground: #e6eef8;
+
+    --muted: #122a45;
+    --muted-foreground: #93a8c2;
+    --accent: #16324f;
+    --accent-foreground: #bfdcfb;
+
+    --destructive: #f26464;
+    --destructive-foreground: #ffffff;
+
+    --border: #1a3553;
+    --input: #1f3d5e;
+    --ring: #3b8ef8;
+
+    --chart-1: #3aa7f7;
+    --chart-2: #5fd0b8;
+    --chart-3: #a58cf0;
+    --chart-4: #fec27c;
+    --chart-5: #f26464;
+
+    --sidebar-background: #041224;
+    --sidebar: #041224;
+    --sidebar-foreground: #c3d3e6;
+    --sidebar-primary: #3b8ef8;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: #0c2038;
+    --sidebar-accent-foreground: #ffffff;
+    --sidebar-border: #10294a;
+    --sidebar-ring: #3b8ef8;
+
+    --color-page: #07162a;
+    --color-surface: #0c2038;
+    --color-surface-muted: #0f2640;
+    --color-line: #1a3553;
+}
+
+/* ------------------------------------------------------------------ */
+/*  5. Bazaviy uslublar                                                */
+/* ------------------------------------------------------------------ */
 @layer base {
     *,
     ::after,
     ::before,
     ::backdrop,
     ::file-selector-button {
-        border-color: var(--color-gray-200, currentColor);
+        border-color: var(--border, currentColor);
     }
-}
 
-@layer utilities {
-    body,
-    html {
-        --font-sans:
-            'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
-            'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-            'Noto Color Emoji';
-    }
-}
-
-:root {
-    --background: hsl(0 0% 100%);
-    --foreground: hsl(0 0% 3.9%);
-    --card: hsl(0 0% 100%);
-    --card-foreground: hsl(0 0% 3.9%);
-    --popover: hsl(0 0% 100%);
-    --popover-foreground: hsl(0 0% 3.9%);
-    --primary: hsl(0 0% 9%);
-    --primary-foreground: hsl(0 0% 98%);
-    --secondary: hsl(0 0% 92.1%);
-    --secondary-foreground: hsl(0 0% 9%);
-    --muted: hsl(0 0% 96.1%);
-    --muted-foreground: hsl(0 0% 45.1%);
-    --accent: hsl(0 0% 96.1%);
-    --accent-foreground: hsl(0 0% 9%);
-    --destructive: hsl(0 84.2% 60.2%);
-    --destructive-foreground: hsl(0 0% 98%);
-    --border: hsl(0 0% 92.8%);
-    --input: hsl(0 0% 89.8%);
-    --ring: hsl(0 0% 3.9%);
-    --chart-1: hsl(12 76% 61%);
-    --chart-2: hsl(173 58% 39%);
-    --chart-3: hsl(197 37% 24%);
-    --chart-4: hsl(43 74% 66%);
-    --chart-5: hsl(27 87% 67%);
-    --radius: 0.5rem;
-    --sidebar-background: hsl(0 0% 98%);
-    --sidebar-foreground: hsl(240 5.3% 26.1%);
-    --sidebar-primary: hsl(0 0% 10%);
-    --sidebar-primary-foreground: hsl(0 0% 98%);
-    --sidebar-accent: hsl(0 0% 94%);
-    --sidebar-accent-foreground: hsl(0 0% 30%);
-    --sidebar-border: hsl(0 0% 91%);
-    --sidebar-ring: hsl(217.2 91.2% 59.8%);
-    --sidebar: hsl(0 0% 98%);
-}
-
-.dark {
-    --background: hsl(0 0% 3.9%);
-    --foreground: hsl(0 0% 98%);
-    --card: hsl(0 0% 3.9%);
-    --card-foreground: hsl(0 0% 98%);
-    --popover: hsl(0 0% 3.9%);
-    --popover-foreground: hsl(0 0% 98%);
-    --primary: hsl(0 0% 98%);
-    --primary-foreground: hsl(0 0% 9%);
-    --secondary: hsl(0 0% 14.9%);
-    --secondary-foreground: hsl(0 0% 98%);
-    --muted: hsl(0 0% 16.08%);
-    --muted-foreground: hsl(0 0% 63.9%);
-    --accent: hsl(0 0% 14.9%);
-    --accent-foreground: hsl(0 0% 98%);
-    --destructive: hsl(0 84% 60%);
-    --destructive-foreground: hsl(0 0% 98%);
-    --border: hsl(0 0% 14.9%);
-    --input: hsl(0 0% 14.9%);
-    --ring: hsl(0 0% 83.1%);
-    --chart-1: hsl(220 70% 50%);
-    --chart-2: hsl(160 60% 45%);
-    --chart-3: hsl(30 80% 55%);
-    --chart-4: hsl(280 65% 60%);
-    --chart-5: hsl(340 75% 55%);
-    --sidebar-background: hsl(0 0% 7%);
-    --sidebar-foreground: hsl(0 0% 95.9%);
-    --sidebar-primary: hsl(360, 100%, 100%);
-    --sidebar-primary-foreground: hsl(0 0% 100%);
-    --sidebar-accent: hsl(0 0% 15.9%);
-    --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
-    --sidebar-border: hsl(0 0% 15.9%);
-    --sidebar-ring: hsl(217.2 91.2% 59.8%);
-    --sidebar: hsl(240 5.9% 10%);
-}
-
-@layer base {
     * {
-        @apply border-border outline-ring/50;
+        @apply outline-ring/50;
     }
+
+    html {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+    }
+
     body {
-        @apply bg-background text-foreground;
+        @apply bg-background font-sans text-foreground;
     }
+
+    /* Sarlavhalar — maketlardagi kabi serif (Noto Serif: lotin + kirill + oʻ/gʻ) */
+    h1,
+    h2,
+    h3,
+    .font-heading {
+        @apply font-serif tracking-tight text-navy-950 dark:text-foreground;
+        font-optical-sizing: auto;
+    }
+
+    h1 {
+        @apply text-3xl font-bold md:text-4xl;
+    }
+
+    h2 {
+        @apply text-xl font-bold md:text-2xl;
+    }
+
+    h3 {
+        @apply text-lg font-semibold;
+    }
+
+    ::selection {
+        @apply bg-brand-200 text-navy-950;
+    }
+}
+
+/* ------------------------------------------------------------------ */
+/*  6. Qayta ishlatiladigan utility'lar                                */
+/* ------------------------------------------------------------------ */
+
+/* Oq karta: barcha panel/bloklar uchun asos */
+@utility surface-card {
+    @apply rounded-xl border border-line bg-surface shadow-card;
+}
+
+/* Hover bo'lganda ko'tariladigan karta (maqola, jurnal soni kartalari) */
+@utility surface-card-interactive {
+    @apply rounded-xl border border-line bg-surface shadow-card transition duration-200 hover:-translate-y-0.5 hover:shadow-card-hover;
+}
+
+/* Header/footer va "Nega aynan biz?" fonidagi to'q ko'k gradient */
+@utility bg-navy-gradient {
+    background-image: linear-gradient(
+        135deg,
+        #001e3c 0%,
+        #002442 55%,
+        #00365a 100%
+    );
+}
+
+/* Rasm ustidagi hero qoplamasi (chapda to'q, o'ngda shaffof) */
+@utility hero-overlay {
+    background-image: linear-gradient(
+        90deg,
+        rgb(0 30 60 / 0.92) 0%,
+        rgb(0 30 60 / 0.65) 45%,
+        rgb(0 30 60 / 0.1) 100%
+    );
+}
+
+/* Girih uslubidagi geometrik naqsh (to'q ko'k panellar foni uchun, oq chiziqlar) */
+@utility bg-girih {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='88' height='88' viewBox='0 0 88 88'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='1'%3E%3Cpath d='M44 6 L53 35 L82 44 L53 53 L44 82 L35 53 L6 44 L35 35 Z'/%3E%3Crect x='26' y='26' width='36' height='36' transform='rotate(45 44 44)'/%3E%3Ccircle cx='44' cy='44' r='7'/%3E%3Cpath d='M0 0 L12 12 M88 0 L76 12 M0 88 L12 76 M88 88 L76 76'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 88px 88px;
+}
+
+/* Oltin ajratuvchi chiziq (logotipdagi shior atrofida) */
+@utility gold-rule {
+    @apply h-0.5 rounded-full bg-gradient-to-r from-gold-400 via-gold-500 to-transparent;
+}
+
+/* Maqola matni ("Onlayn o'qish") — plugin'siz typography */
+@utility article-prose {
+    @apply text-[15px] leading-7 text-navy-900 dark:text-foreground;
+
+    & h2 {
+        @apply mt-8 mb-3 text-xl;
+    }
+    & h3 {
+        @apply mt-6 mb-2 text-base;
+    }
+    & p {
+        @apply my-3;
+    }
+    & ul {
+        @apply my-3 list-disc pl-6;
+    }
+    & ol {
+        @apply my-3 list-decimal pl-6;
+    }
+    & li {
+        @apply my-1;
+    }
+    & blockquote {
+        @apply my-4 border-l-4 border-gold-500 pl-4 font-serif text-navy-700 italic;
+    }
+    & a {
+        @apply text-brand-700 underline underline-offset-2;
+    }
+    & table {
+        @apply my-4 w-full border-collapse text-sm;
+    }
+    & th,
+    & td {
+        @apply border border-line px-3 py-2;
+    }
+}
+
+/* Chiroyli ingichka scrollbar (sidebar, uzun ro'yxatlar) */
+@utility scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(123 155 189 / 0.5) transparent;
 }

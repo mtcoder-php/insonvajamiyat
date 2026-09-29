@@ -6,6 +6,7 @@ use App\Concerns\PasswordValidationRules;
 use App\Concerns\ProfileValidationRules;
 use App\Enums\RoleName;
 use App\Models\User;
+use App\Support\PhoneNumber;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
@@ -26,15 +27,22 @@ class CreateNewUser implements CreatesNewUsers
      */
     public function create(array $input): User
     {
-        $validated = Validator::make($input, [
+        // "+998 90 123-45-67" → "+998901234567" (validatsiyadan oldin)
+        $data = [...$input, 'phone' => PhoneNumber::normalize($input['phone'] ?? null)];
+
+        $validated = Validator::make($data, [
             'last_name' => $this->personNameRules(),
             'first_name' => $this->personNameRules(),
             'email' => $this->emailRules(),
+            'phone' => $this->phoneRules(),
             'password' => $this->passwordRules(),
-        ], [], [
+        ], [
+            'phone.regex' => __("Telefon raqamini to'g'ri kiriting, masalan: +998 90 123 45 67"),
+        ], [
             'last_name' => __('Familiya'),
             'first_name' => __('Ism'),
             'email' => __('Elektron pochta'),
+            'phone' => __('Telefon raqam'),
             'password' => __('Parol'),
         ])->validate();
 
@@ -42,6 +50,7 @@ class CreateNewUser implements CreatesNewUsers
             $user = User::create([
                 'name' => trim($validated['last_name'].' '.$validated['first_name']),
                 'email' => $validated['email'],
+                'phone' => $validated['phone'],
                 'password' => $validated['password'],
                 'locale' => app()->getLocale(),
             ]);

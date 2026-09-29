@@ -2,7 +2,7 @@
 import { Link } from '@inertiajs/vue3';
 import { LayoutDashboard, LogIn, Menu } from '@lucide/vue';
 import { computed } from 'vue';
-import AppLogoIcon from '@/components/AppLogoIcon.vue';
+import BrandLogo from '@/components/brand/BrandLogo.vue';
 import { Button } from '@/components/ui/button';
 import {
     Sheet,
@@ -63,16 +63,8 @@ const year = new Date().getFullYear();
             <div
                 class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8"
             >
-                <Link :href="home()" class="flex items-center gap-2">
-                    <AppLogoIcon class="size-8 fill-current text-primary" />
-                    <span class="leading-tight">
-                        <span class="block text-sm font-bold tracking-wide">
-                            INSON VA JAMIYAT
-                        </span>
-                        <span class="block text-xs text-muted-foreground">
-                            Scientific Journal
-                        </span>
-                    </span>
+                <Link :href="home()" class="flex items-center">
+                    <BrandLogo size="sm" />
                 </Link>
 
                 <nav class="hidden items-center gap-1 lg:flex">

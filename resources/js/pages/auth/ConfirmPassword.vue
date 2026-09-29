@@ -9,15 +9,15 @@ import { store } from '@/routes/password/confirm';
 
 defineOptions({
     layout: {
-        title: 'Confirm password',
+        title: 'Parolni tasdiqlang',
         description:
-            'This is a secure area of the application. Please confirm your password before continuing.',
+            "Bu himoyalangan bo'lim. Davom etish uchun parolingizni qayta kiriting.",
     },
 });
 </script>
 
 <template>
-    <Head title="Confirm password" />
+    <Head title="Parolni tasdiqlash" />
 
     <Form
         v-bind="store.form()"
@@ -26,11 +26,11 @@ defineOptions({
     >
         <div class="space-y-6">
             <div class="grid gap-2">
-                <Label htmlFor="password">Password</Label>
+                <Label for="password">Parol</Label>
                 <PasswordInput
                     id="password"
                     name="password"
-                    class="mt-1 block w-full"
+                    class="mt-1 block h-11 w-full"
                     required
                     autocomplete="current-password"
                     autofocus
@@ -41,12 +41,12 @@ defineOptions({
 
             <div class="flex items-center">
                 <Button
-                    class="w-full"
+                    class="h-11 w-full text-base"
                     :disabled="processing"
                     data-test="confirm-password-button"
                 >
                     <Spinner v-if="processing" />
-                    Confirm password
+                    Tasdiqlash
                 </Button>
             </div>
         </div>

@@ -11,8 +11,8 @@ import { update } from '@/routes/password';
 
 defineOptions({
     layout: {
-        title: 'Reset password',
-        description: 'Please enter your new password below',
+        title: 'Yangi parol',
+        description: 'Hisobingiz uchun yangi parol kiriting',
     },
 });
 
@@ -26,7 +26,7 @@ const inputEmail = ref(props.email);
 </script>
 
 <template>
-    <Head title="Reset password" />
+    <Head title="Yangi parol" />
 
     <Form
         v-bind="update.form()"
@@ -36,41 +36,41 @@ const inputEmail = ref(props.email);
     >
         <div class="grid gap-6">
             <div class="grid gap-2">
-                <Label for="email">Email</Label>
+                <Label for="email">Elektron pochta</Label>
                 <Input
                     id="email"
                     type="email"
                     name="email"
                     autocomplete="email"
                     v-model="inputEmail"
-                    class="mt-1 block w-full"
+                    class="mt-1 block h-11 w-full"
                     readonly
                 />
                 <InputError :message="errors.email" class="mt-2" />
             </div>
 
             <div class="grid gap-2">
-                <Label for="password">Password</Label>
+                <Label for="password">Yangi parol</Label>
                 <PasswordInput
                     id="password"
                     name="password"
                     autocomplete="new-password"
-                    class="mt-1 block w-full"
+                    class="mt-1 block h-11 w-full"
                     autofocus
-                    placeholder="Password"
+                    placeholder="Kamida 8 ta belgi"
                     :passwordrules="passwordRules"
                 />
                 <InputError :message="errors.password" />
             </div>
 
             <div class="grid gap-2">
-                <Label for="password_confirmation"> Confirm password </Label>
+                <Label for="password_confirmation">Parolni tasdiqlang</Label>
                 <PasswordInput
                     id="password_confirmation"
                     name="password_confirmation"
                     autocomplete="new-password"
-                    class="mt-1 block w-full"
-                    placeholder="Confirm password"
+                    class="mt-1 block h-11 w-full"
+                    placeholder="Parolni qayta kiriting"
                     :passwordrules="passwordRules"
                 />
                 <InputError :message="errors.password_confirmation" />
@@ -78,12 +78,12 @@ const inputEmail = ref(props.email);
 
             <Button
                 type="submit"
-                class="mt-4 w-full"
+                class="mt-4 h-11 w-full text-base"
                 :disabled="processing"
                 data-test="reset-password-button"
             >
                 <Spinner v-if="processing" />
-                Reset password
+                Parolni saqlash
             </Button>
         </div>
     </Form>

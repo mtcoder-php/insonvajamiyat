@@ -1,14 +1,23 @@
 <script setup lang="ts">
-import AuthLayout from '@/layouts/auth/AuthSimpleLayout.vue';
+import AuthBrandLayout from '@/layouts/auth/AuthBrandLayout.vue';
 
-const { title = '', description = '' } = defineProps<{
+/**
+ * resources/js/pages/auth/* sahifalari uchun (app.ts'dagi resolver biriktiradi).
+ * Sahifa defineOptions({ layout: { title, description, wide } }) orqali sozlaydi.
+ */
+const {
+    title = '',
+    description = '',
+    wide = false,
+} = defineProps<{
     title?: string;
     description?: string;
+    wide?: boolean;
 }>();
 </script>
 
 <template>
-    <AuthLayout :title="title" :description="description">
+    <AuthBrandLayout :title="title" :description="description" :wide="wide">
         <slot />
-    </AuthLayout>
+    </AuthBrandLayout>
 </template>
