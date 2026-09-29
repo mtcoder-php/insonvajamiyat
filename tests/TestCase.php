@@ -2,11 +2,19 @@
 
 namespace Tests;
 
+use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Laravel\Fortify\Features;
 
 abstract class TestCase extends BaseTestCase
 {
+    /**
+     * RefreshDatabase ishlatilgan har bir testda rollar va ruxsatlar seed qilinadi.
+     */
+    protected bool $seed = true;
+
+    protected string $seeder = RolesAndPermissionsSeeder::class;
+
     protected function skipUnlessFortifyHas(string $feature, ?string $message = null): void
     {
         if (! Features::enabled($feature)) {

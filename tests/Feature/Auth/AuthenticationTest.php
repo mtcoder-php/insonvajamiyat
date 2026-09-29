@@ -53,6 +53,44 @@ class AuthenticationTest extends TestCase
         $this->assertGuest();
     }
 
+    public function test_blocked_users_can_not_authenticate()
+    {
+        $user = User::factory()->blocked()->create();
+
+        $this->post(route('login.store'), [
+            'email' => $user->email,
+            'password' => 'password',
+        ])->assertSessionHasErrors('email');
+
+        $this->assertGuest();
+    }
+
+    public function test_blocked_user_with_wrong_password_gets_generic_error()
+    {
+        $user = User::factory()->blocked()->create();
+
+        $response = $this->post(route('login.store'), [
+            'email' => $user->email,
+            'password' => 'wrong-password',
+        ]);
+
+        // Parol noto'g'ri bo'lsa bloklanganlik oshkor qilinmaydi
+        $response->assertSessionHasErrors(['email' => __('auth.failed')]);
+        $this->assertGuest();
+    }
+
+    public function test_login_records_last_login_time()
+    {
+        $user = User::factory()->create(['last_login_at' => null]);
+
+        $this->post(route('login.store'), [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $this->assertNotNull($user->fresh()->last_login_at);
+    }
+
     public function test_users_can_not_authenticate_with_invalid_password()
     {
         $user = User::factory()->create();

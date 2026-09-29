@@ -2,10 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Enums\RoleName;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
+/**
+ * /dashboard — rolga qarab yo'naltirish.
+ */
 class DashboardTest extends TestCase
 {
     use RefreshDatabase;
@@ -16,12 +20,23 @@ class DashboardTest extends TestCase
         $response->assertRedirect(route('login'));
     }
 
-    public function test_authenticated_users_can_visit_the_dashboard()
+    public function test_author_is_redirected_to_cabinet()
     {
-        $user = User::factory()->create();
-        $this->actingAs($user);
+        $user = User::factory()->author()->create();
 
-        $response = $this->get(route('dashboard'));
-        $response->assertOk();
+        $this->actingAs($user)
+            ->get(route('dashboard'))
+            ->assertRedirect(route('cabinet.dashboard'));
+    }
+
+    public function test_staff_is_redirected_to_admin_panel()
+    {
+        foreach (RoleName::staff() as $role) {
+            $user = User::factory()->withRole($role)->create();
+
+            $this->actingAs($user)
+                ->get(route('dashboard'))
+                ->assertRedirect(route('admin.dashboard'));
+        }
     }
 }
