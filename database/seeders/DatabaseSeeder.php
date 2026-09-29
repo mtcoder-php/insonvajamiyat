@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(RolesAndPermissionsSeeder::class);
+        $this->call([RolesAndPermissionsSeeder::class, SubjectSeeder::class]);
 
         if (! app()->isLocal()) {
             return;
@@ -45,5 +45,8 @@ class DatabaseSeeder extends Seeder
             'name' => 'Muallif',
             'email' => 'author@insonvajamiyat.test',
         ]);
+
+        // Bosh sahifa va katalog uchun namunaviy kontent
+        $this->call(DemoContentSeeder::class);
     }
 }

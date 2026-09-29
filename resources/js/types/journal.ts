@@ -11,6 +11,9 @@ export type Journal = {
     subtitle: string;
     description: string;
     issn: string | null;
+    eissn: string | null;
+    doiPrefix: string | null;
+    frequency: string | null;
     contact: {
         email: string | null;
         phone: string | null;

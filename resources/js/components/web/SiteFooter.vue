@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { Form, Link, usePage } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 import { Mail, MapPin, Phone } from '@lucide/vue';
 import { computed } from 'vue';
 import BrandLogo from '@/components/brand/BrandLogo.vue';
-import { Spinner } from '@/components/ui/spinner';
+import NewsletterForm from '@/components/web/NewsletterForm.vue';
 import SocialIcon from '@/components/web/SocialIcon.vue';
 import { footerQuickLinks, footerUsefulLinks } from '@/navigation/web';
-import { subscribe } from '@/routes/newsletter';
 import type { JournalSocialNetwork } from '@/types';
 
 /**
@@ -146,41 +145,7 @@ const year = new Date().getFullYear();
                     Jurnal yangiliklari va yangi sonlar haqida birinchilardan
                     bo'lib xabar oling.
                 </p>
-                <Form
-                    v-bind="subscribe.form()"
-                    :options="{ preserveScroll: true }"
-                    reset-on-success
-                    v-slot="{ errors, processing }"
-                    class="space-y-2"
-                >
-                    <div
-                        class="flex overflow-hidden rounded-lg border border-white/20 bg-white/5 focus-within:border-brand-400"
-                    >
-                        <label for="newsletter-email" class="sr-only">
-                            Elektron pochta manzilingiz
-                        </label>
-                        <input
-                            id="newsletter-email"
-                            name="email"
-                            type="email"
-                            required
-                            autocomplete="email"
-                            placeholder="Email manzilingiz"
-                            class="h-11 min-w-0 flex-1 bg-transparent px-4 text-sm text-white placeholder:text-white/45 focus:outline-none"
-                        />
-                        <button
-                            type="submit"
-                            :disabled="processing"
-                            class="inline-flex h-11 shrink-0 items-center gap-2 bg-brand-600 px-4 text-sm font-semibold text-white transition-colors hover:bg-brand-500 disabled:opacity-60"
-                        >
-                            <Spinner v-if="processing" />
-                            Obuna bo'lish
-                        </button>
-                    </div>
-                    <p v-if="errors.email" class="text-sm text-red-300">
-                        {{ errors.email }}
-                    </p>
-                </Form>
+                <NewsletterForm id="footer-newsletter-email" />
             </div>
         </div>
 

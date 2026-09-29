@@ -20,7 +20,17 @@ return [
         'Tarix, etnologiya, antropologiya va falsafaga doir ilmiy-tadqiqotlar jurnali',
     ),
 
-    'issn' => env('JOURNAL_ISSN'),
+    'issn' => env('JOURNAL_ISSN'),              // bosma nashr (print)
+
+    'eissn' => env('JOURNAL_EISSN'),            // elektron nashr (online)
+
+    'doi_prefix' => env('JOURNAL_DOI_PREFIX'),  // masalan 10.5281/zenodo
+
+    'frequency' => env('JOURNAL_FREQUENCY', 'Yiliga 4 marta (kvartal)'),
+
+    // Bosh sahifa dizayni: 'modern' (home_2.png) yoki 'classic' (home.png).
+    // Vaqtincha ?variant=classic|modern orqali ham tanlash mumkin.
+    'home_variant' => env('JOURNAL_HOME_VARIANT', 'modern'),
 
     'contact' => [
         'email' => env('JOURNAL_EMAIL', 'info@insonvajamiyat.uz'),

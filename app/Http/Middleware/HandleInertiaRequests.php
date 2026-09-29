@@ -63,6 +63,9 @@ class HandleInertiaRequests extends Middleware
             'subtitle' => config('journal.subtitle'),
             'description' => config('journal.description'),
             'issn' => config('journal.issn'),
+            'eissn' => config('journal.eissn'),
+            'doiPrefix' => config('journal.doi_prefix'),
+            'frequency' => config('journal.frequency'),
             'contact' => config('journal.contact'),
             'socials' => array_filter((array) config('journal.socials')),
         ];

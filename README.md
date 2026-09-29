@@ -55,7 +55,8 @@ cp .env.example .env            # DB_* sozlamalarini to'ldiring
 composer install
 php artisan key:generate
 php artisan migrate
-php artisan db:seed             # rollar + lokal demo hisoblar (parol: password)
+php artisan db:seed             # rollar, yo'nalishlar + lokal demo hisoblar va kontent
+php artisan storage:link        # yuklangan muqova/banner rasmlari uchun
 
 npm install
 composer run dev                # server + vite + queue
@@ -70,12 +71,19 @@ Demo hisoblar (`APP_ENV=local` bo'lganda seed qilinadi):
 | reviewer@insonvajamiyat.test | Taqrizchi   |
 | author@insonvajamiyat.test   | Muallif     |
 
+Lokal seed bosh sahifa uchun namunaviy kontent ham yaratadi (3 ta son,
+16 ta maqola, e'lonlar, tadbirlar, hamkorlar — `DemoContentSeeder`).
+Bosh sahifaning ikki dizayn varianti: `/?variant=modern` (home_2.png) va
+`/?variant=classic` (home.png); standarti `.env` dagi `JOURNAL_HOME_VARIANT`.
+
 ## Serverga joylashtirish (production)
 
 ```bash
 composer install --no-dev --optimize-autoloader
 php artisan migrate --force
 php artisan db:seed --class=RolesAndPermissionsSeeder --force
+php artisan db:seed --class=SubjectSeeder --force   # asosiy ilmiy yo'nalishlar
+php artisan storage:link
 php artisan app:create-super-admin       # birinchi administrator (parol interaktiv)
 npm ci && npm run build
 php artisan optimize

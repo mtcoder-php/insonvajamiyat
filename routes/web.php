@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\DashboardRedirectController;
+use App\Http\Controllers\Web\ArticleController;
+use App\Http\Controllers\Web\HomeController;
+use App\Http\Controllers\Web\IssueController;
 use App\Http\Controllers\Web\NewsletterSubscriptionController;
 use Illuminate\Support\Facades\Route;
 
@@ -13,10 +16,12 @@ use Illuminate\Support\Facades\Route;
 | Muallif kabineti: routes/cabinet.php, admin panel: routes/admin.php
 */
 
-Route::inertia('/', 'web/Home')->name('home');
+Route::get('/', HomeController::class)->name('home');
 Route::inertia('about', 'web/About')->name('about');
 Route::inertia('articles', 'web/articles/Index')->name('articles.index');
+Route::get('articles/{article}', [ArticleController::class, 'show'])->name('articles.show');
 Route::inertia('issues', 'web/issues/Index')->name('issues.index');
+Route::get('issues/{issue}', [IssueController::class, 'show'])->name('issues.show');
 Route::inertia('guidelines', 'web/Guidelines')->name('guidelines');
 Route::inertia('contact', 'web/Contact')->name('contact');
 
