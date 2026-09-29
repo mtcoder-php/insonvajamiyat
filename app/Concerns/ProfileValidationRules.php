@@ -32,6 +32,16 @@ trait ProfileValidationRules
     }
 
     /**
+     * Familiya / ism: harflar, bo'shliq, defis, apostrof (oʻ, gʻ, O'zbek ismlari uchun).
+     *
+     * @return array<int, ValidationRule|array<mixed>|string>
+     */
+    protected function personNameRules(): array
+    {
+        return ['required', 'string', 'min:2', 'max:100', "regex:/^[\\p{L}\\p{M}' ʻʼ‘’`\\-]+$/u"];
+    }
+
+    /**
      * Get the validation rules used to validate user emails.
      *
      * @return array<int, ValidationRule|array<mixed>|string>

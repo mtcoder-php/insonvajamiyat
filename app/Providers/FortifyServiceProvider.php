@@ -2,15 +2,17 @@
 
 namespace App\Providers;
 
-
 use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
+use App\Models\User;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 use Laravel\Fortify\Fortify;
@@ -31,6 +33,7 @@ class FortifyServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureActions();
+        $this->configureAuthentication();
         $this->configureViews();
         $this->configureRateLimiting();
     }
@@ -42,6 +45,29 @@ class FortifyServiceProvider extends ServiceProvider
     {
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
         Fortify::createUsersUsing(CreateNewUser::class);
+    }
+
+    /**
+     * Login: bloklangan hisob kira olmaydi (TZ 4.2.4).
+     * Parol noto'g'ri bo'lsa — standart xabar (hisob mavjudligini oshkor qilmaslik uchun).
+     */
+    private function configureAuthentication(): void
+    {
+        Fortify::authenticateUsing(function (Request $request): ?User {
+            $user = User::where('email', Str::lower((string) $request->input(Fortify::username())))->first();
+
+            if ($user === null || $user->password === null || ! Hash::check((string) $request->input('password'), $user->password)) {
+                return null;
+            }
+
+            if ($user->is_blocked) {
+                throw ValidationException::withMessages([
+                    Fortify::username() => __('Hisobingiz bloklangan. Tahririyat bilan bog\'laning.'),
+                ]);
+            }
+
+            return $user;
+        });
     }
 
     /**
@@ -91,6 +117,5 @@ class FortifyServiceProvider extends ServiceProvider
 
             return Limit::perMinute(5)->by($throttleKey);
         });
-
     }
 }
