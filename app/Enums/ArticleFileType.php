@@ -26,7 +26,11 @@ enum ArticleFileType: string
         };
     }
 
-    /** Ruxsat etilgan kengaytmalar (validatsiya uchun) */
+    /**
+     * Ruxsat etilgan kengaytmalar (validatsiya uchun)
+     *
+     * @return array<int, string>
+     */
     public function allowedMimes(): array
     {
         return match ($this) {

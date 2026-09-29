@@ -76,7 +76,16 @@ class ProfileUpdateTest extends TestCase
             ->assertRedirect(route('home'));
 
         $this->assertGuest();
-        $this->assertNull($user->fresh());
+
+        // Hisob yumshoq o'chiriladi: maqola/to'lov tarixi saqlanadi, lekin qayta kira olmaydi
+        $this->assertSoftDeleted($user);
+
+        $this->post(route('login.store'), [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $this->assertGuest();
     }
 
     public function test_correct_password_must_be_provided_to_delete_account()

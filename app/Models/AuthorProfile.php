@@ -45,6 +45,9 @@ class AuthorProfile extends Model
     /** @use HasFactory<AuthorProfileFactory> */
     use HasFactory;
 
+    /**
+     * @return array<string, string>
+     */
     protected function casts(): array
     {
         return [

@@ -32,7 +32,11 @@ enum Language: string
         };
     }
 
-    /** AI tarjimasi uchun maqsad tillar (manba — o'zbek) */
+    /**
+     * AI tarjimasi uchun maqsad tillar (manba — o'zbek)
+     *
+     * @return array<int, self>
+     */
     public static function translationTargets(): array
     {
         return [self::Ru, self::En];

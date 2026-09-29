@@ -36,7 +36,11 @@ enum RoleName: string
         };
     }
 
-    /** Admin panelga kira oladigan rollar */
+    /**
+     * Admin panelga kira oladigan rollar
+     *
+     * @return array<int, self>
+     */
     public static function staff(): array
     {
         return [
@@ -49,6 +53,7 @@ enum RoleName: string
         ];
     }
 
+    /** @return array<int, string> */
     public static function staffValues(): array
     {
         return array_map(fn (self $r) => $r->value, self::staff());

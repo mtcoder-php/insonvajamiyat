@@ -21,7 +21,11 @@ enum PaymentProvider: string
         };
     }
 
-    /** Muallif tanlay oladigan onlayn tizimlar */
+    /**
+     * Muallif tanlay oladigan onlayn tizimlar
+     *
+     * @return array<int, self>
+     */
     public static function online(): array
     {
         return [self::Click, self::Payme];

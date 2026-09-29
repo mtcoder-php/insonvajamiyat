@@ -100,7 +100,11 @@ enum ArticleStatus: string
         return $this->is(self::Draft, self::Submitted, self::AwaitingPayment, self::RevisionRequired);
     }
 
-    /** Muharrirlar navbatida ko'rinadigan statuslar */
+    /**
+     * Muharrirlar navbatida ko'rinadigan statuslar
+     *
+     * @return array<int, self>
+     */
     public static function editorialQueue(): array
     {
         return [self::UnderReview, self::InReview, self::Resubmitted];
