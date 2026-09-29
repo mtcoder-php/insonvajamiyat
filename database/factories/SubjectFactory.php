@@ -16,7 +16,7 @@ class SubjectFactory extends Factory
      */
     public function definition(): array
     {
-        $name = Str::ucfirst(fake()->unique()->words(2, true));
+        $name = Str::ucfirst((string) fake()->unique()->words(2, true));
 
         return [
             'name' => ['uz' => $name, 'en' => $name],

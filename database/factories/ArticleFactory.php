@@ -53,7 +53,7 @@ class ArticleFactory extends Factory
                 'submitted_at' => $publishedAt->copy()->subDays(60),
                 'accepted_at' => $publishedAt->copy()->subDays(14),
                 'published_at' => $publishedAt,
-                'slug' => Str::slug(fake()->words(5, true)).'-'.Str::lower(Str::random(6)),
+                'slug' => Str::slug((string) fake()->words(5, true)).'-'.Str::lower(Str::random(6)),
                 'doi' => '10.5281/zenodo.'.fake()->unique()->numberBetween(1000000, 9999999),
                 'views_count' => fake()->numberBetween(20, 900),
                 'downloads_count' => fake()->numberBetween(5, 300),

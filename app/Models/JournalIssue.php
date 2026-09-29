@@ -95,6 +95,11 @@ class JournalIssue extends Model
      */
     protected function label(): Attribute
     {
-        return Attribute::get(fn (): string => "№{$this->number} ({$this->year})");
+        return Attribute::get(fn (): string => $this->formatLabel());
+    }
+
+    private function formatLabel(): string
+    {
+        return "№{$this->number} ({$this->year})";
     }
 }
