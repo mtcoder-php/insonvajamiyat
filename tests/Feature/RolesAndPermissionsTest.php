@@ -5,10 +5,12 @@ namespace Tests\Feature;
 use App\Enums\PermissionName;
 use App\Enums\RoleName;
 use App\Models\User;
+use Database\Seeders\DatabaseSeeder;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 use Tests\TestCase;
 
 class RolesAndPermissionsTest extends TestCase
@@ -28,6 +30,22 @@ class RolesAndPermissionsTest extends TestCase
 
         $this->assertSame(count(RoleName::cases()), Role::count());
         $this->assertSame(count(PermissionName::cases()), Permission::count());
+    }
+
+    public function test_database_seeder_works_on_empty_database()
+    {
+        // `php artisan migrate --seed` holati: bo'sh baza + WithoutModelEvents
+        Role::query()->delete();
+        Permission::query()->delete();
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+        $this->seed(DatabaseSeeder::class);
+
+        $this->assertSame(count(RoleName::cases()), Role::count());
+        $this->assertSame(count(PermissionName::cases()), Permission::count());
+        $this->assertTrue(
+            Role::findByName(RoleName::Editor->value, 'web')->hasPermissionTo(PermissionName::ArticlesDecide->value)
+        );
     }
 
     public function test_super_admin_passes_every_gate()

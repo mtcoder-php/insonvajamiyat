@@ -19,11 +19,18 @@ class RolesAndPermissionsSeeder extends Seeder
 {
     public function run(): void
     {
-        app(PermissionRegistrar::class)->forgetCachedPermissions();
+        $registrar = app(PermissionRegistrar::class);
+
+        $registrar->forgetCachedPermissions();
 
         foreach (PermissionName::cases() as $permission) {
             Permission::findOrCreate($permission->value, 'web');
         }
+
+        // Spatie keshni `saved` model hodisasida tozalaydi. DatabaseSeeder'dagi
+        // WithoutModelEvents hodisalarni o'chiradi — shuning uchun keshni qo'lda
+        // tozalaymiz, aks holda syncPermissions yangi ruxsatlarni "ko'rmaydi".
+        $registrar->forgetCachedPermissions();
 
         foreach (RoleName::cases() as $roleName) {
             $role = Role::findOrCreate($roleName->value, 'web');
@@ -33,6 +40,6 @@ class RolesAndPermissionsSeeder extends Seeder
             );
         }
 
-        app(PermissionRegistrar::class)->forgetCachedPermissions();
+        $registrar->forgetCachedPermissions();
     }
 }
