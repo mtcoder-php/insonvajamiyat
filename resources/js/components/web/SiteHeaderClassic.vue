@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import { Search } from '@lucide/vue';
-import BrandLogo from '@/components/brand/BrandLogo.vue';
 import SiteAccountMenu from '@/components/web/SiteAccountMenu.vue';
 import SiteMobileMenu from '@/components/web/SiteMobileMenu.vue';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
@@ -23,18 +22,39 @@ const isActive = (item: NavItem, index: number): boolean =>
 </script>
 
 <template>
-    <header class="relative z-40 border-b border-line bg-white">
+    <header
+        class="relative z-40 border-b border-line bg-white shadow-[0_1px_0_rgba(0,30,60,0.04)]"
+    >
         <div
             class="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 py-4 sm:px-6 lg:px-8 lg:py-5"
         >
-            <Link :href="home()" class="flex min-w-0 items-center gap-4">
-                <BrandLogo size="lg" class="hidden sm:inline-flex" />
-                <BrandLogo size="md" class="sm:hidden" />
-                <span
-                    class="hidden max-w-60 border-l border-line pl-4 font-serif text-xs leading-snug text-navy-600 italic 2xl:block"
-                >
-                    Tarix, etnologiya, antropologiya va falsafa<br />
-                    <span class="text-navy-400">
+            <Link
+                :href="home()"
+                class="flex min-w-0 items-center gap-3 sm:gap-4"
+                aria-label="Inson va Jamiyat — bosh sahifa"
+            >
+                <img
+                    src="/images/logo-mark.webp"
+                    alt=""
+                    width="256"
+                    height="256"
+                    class="size-14 shrink-0 object-contain sm:size-20"
+                />
+                <span class="min-w-0 leading-tight">
+                    <span
+                        class="block font-serif text-xl font-bold tracking-wide text-navy-900 uppercase sm:text-[1.9rem]"
+                    >
+                        Inson va Jamiyat
+                    </span>
+                    <span
+                        class="block font-serif text-base text-navy-800 italic sm:text-xl"
+                    >
+                        Scientific Journal
+                    </span>
+                    <span
+                        class="mt-1 hidden font-serif text-xs leading-snug text-navy-600 italic md:block"
+                    >
+                        Tarix, etnologiya, antropologiya va falsafa<br />
                         Journal of History, Ethnology, Anthropology and
                         Philosophy
                     </span>

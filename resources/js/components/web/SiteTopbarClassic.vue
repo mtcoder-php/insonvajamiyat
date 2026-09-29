@@ -2,7 +2,7 @@
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import SocialIcon from '@/components/web/SocialIcon.vue';
-import { guidelines } from '@/routes';
+import { about, guidelines } from '@/routes';
 import type { JournalSocialNetwork } from '@/types';
 
 /**
@@ -27,7 +27,7 @@ const languages = [
 </script>
 
 <template>
-    <div class="hidden bg-navy-950 text-xs text-white/80 md:block">
+    <div class="hidden bg-navy-800 text-xs text-white/85 md:block">
         <div
             class="mx-auto flex h-9 max-w-7xl items-stretch justify-between gap-6 px-4 sm:px-6 lg:px-8"
         >
@@ -51,6 +51,12 @@ const languages = [
             </ul>
 
             <div class="flex items-center gap-5">
+                <Link
+                    :href="about()"
+                    class="hidden transition-colors hover:text-white xl:inline"
+                >
+                    Tashrif buyuruvchilar uchun
+                </Link>
                 <Link
                     :href="guidelines()"
                     class="transition-colors hover:text-white"

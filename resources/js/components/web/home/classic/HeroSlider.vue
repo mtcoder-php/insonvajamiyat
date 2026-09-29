@@ -2,7 +2,7 @@
 import { Link } from '@inertiajs/vue3';
 import { ArrowRight, ChevronLeft, ChevronRight } from '@lucide/vue';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
-import SkylineIllustration from '@/components/web/SkylineIllustration.vue';
+import HeroScene from '@/components/web/home/classic/HeroScene.vue';
 import { index as articlesIndex } from '@/routes/articles';
 import type { BannerItem } from '@/types';
 
@@ -78,7 +78,7 @@ onBeforeUnmount(() => clearInterval(timer));
 
 <template>
     <section
-        class="relative isolate h-[22rem] overflow-hidden bg-navy-950 text-white sm:h-[26rem]"
+        class="relative isolate h-[24rem] overflow-hidden bg-[#dcecf7] sm:h-[28rem] lg:h-[30rem]"
         aria-roledescription="carousel"
         aria-label="Asosiy slayder"
         @mouseenter="paused = true"
@@ -100,38 +100,31 @@ onBeforeUnmount(() => clearInterval(timer));
             :aria-label="`${index + 1} / ${slides.length}`"
             :aria-hidden="index !== active"
         >
-            <img
-                v-if="slide.imageUrl"
-                :src="slide.imageUrl"
-                alt=""
-                class="absolute inset-0 -z-10 size-full object-cover"
-                :loading="index === 0 ? 'eager' : 'lazy'"
-            />
-            <template v-else>
-                <div class="absolute inset-0 -z-10 bg-navy-gradient" />
-                <div class="absolute inset-0 -z-10 bg-girih opacity-[0.05]" />
-                <div
-                    class="absolute top-0 left-1/2 -z-10 size-[40rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-600/25 blur-3xl"
+            <template v-if="slide.imageUrl">
+                <img
+                    :src="slide.imageUrl"
+                    alt=""
+                    class="absolute inset-0 -z-10 size-full object-cover"
+                    :loading="index === 0 ? 'eager' : 'lazy'"
                 />
-                <SkylineIllustration
-                    class="absolute inset-x-0 bottom-0 -z-10 h-44 w-full sm:h-56"
+                <!-- Matn o'qilishi uchun markazda yumshoq oq nur -->
+                <div
+                    class="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.82)_0%,rgba(255,255,255,0.45)_38%,rgba(255,255,255,0)_70%)]"
                 />
             </template>
-            <div
-                class="absolute inset-0 -z-10 bg-gradient-to-b from-navy-950/30 via-navy-950/20 to-navy-950/60"
-            />
+            <HeroScene v-else class="absolute inset-0 -z-10 size-full" />
 
             <div
-                class="mx-auto flex h-full max-w-4xl flex-col items-center justify-center px-6 pb-16 text-center"
+                class="mx-auto flex h-full max-w-3xl flex-col items-center justify-center px-6 pb-10 text-center"
             >
                 <h1
-                    class="font-serif text-3xl leading-tight font-semibold text-white drop-shadow sm:text-5xl"
+                    class="font-serif text-3xl leading-tight font-bold text-navy-900 sm:text-5xl lg:text-[3.4rem]"
                 >
                     {{ slide.title }}
                 </h1>
                 <p
                     v-if="slide.subtitle"
-                    class="mt-4 font-serif text-lg text-white/85 italic sm:text-2xl"
+                    class="mt-4 font-serif text-lg text-navy-800 italic sm:text-2xl"
                 >
                     {{ slide.subtitle }}
                 </p>
@@ -141,7 +134,7 @@ onBeforeUnmount(() => clearInterval(timer));
                     :target="slide.external ? '_blank' : undefined"
                     :rel="slide.external ? 'noopener noreferrer' : undefined"
                     :tabindex="index === active ? undefined : -1"
-                    class="mt-7 inline-flex h-11 items-center gap-2 rounded-full bg-navy-900/90 px-6 text-sm font-semibold ring-1 ring-white/25 backdrop-blur transition-colors hover:bg-brand-600"
+                    class="mt-7 inline-flex h-12 items-center gap-2 rounded-full bg-navy-800 px-7 text-sm font-semibold text-white shadow-lg shadow-navy-900/20 transition-colors hover:bg-brand-600"
                 >
                     {{ slide.buttonText }}
                     <ArrowRight class="size-4" />
@@ -152,7 +145,7 @@ onBeforeUnmount(() => clearInterval(timer));
         <template v-if="slides.length > 1">
             <button
                 type="button"
-                class="absolute top-1/2 left-4 flex size-10 -translate-y-1/2 items-center justify-center rounded-md border border-white/40 bg-navy-950/30 backdrop-blur transition-colors hover:bg-white/15"
+                class="absolute top-1/2 left-4 flex size-11 -translate-y-1/2 items-center justify-center rounded-lg border border-white bg-white/70 text-navy-800 shadow-sm backdrop-blur transition-colors hover:bg-white"
                 aria-label="Oldingi slayd"
                 @click="go(active - 1)"
             >
@@ -160,22 +153,22 @@ onBeforeUnmount(() => clearInterval(timer));
             </button>
             <button
                 type="button"
-                class="absolute top-1/2 right-4 flex size-10 -translate-y-1/2 items-center justify-center rounded-md border border-white/40 bg-navy-950/30 backdrop-blur transition-colors hover:bg-white/15"
+                class="absolute top-1/2 right-4 flex size-11 -translate-y-1/2 items-center justify-center rounded-lg border border-white bg-white/70 text-navy-800 shadow-sm backdrop-blur transition-colors hover:bg-white"
                 aria-label="Keyingi slayd"
                 @click="go(active + 1)"
             >
                 <ChevronRight class="size-5" />
             </button>
-            <div class="absolute bottom-6 left-1/2 flex -translate-x-1/2 gap-2">
+            <div class="absolute bottom-5 left-1/2 flex -translate-x-1/2 gap-2">
                 <button
                     v-for="(slide, index) in slides"
                     :key="slide.key"
                     type="button"
                     :class="[
-                        'h-2 rounded-full transition-all',
+                        'h-2.5 rounded-full transition-all',
                         index === active
-                            ? 'w-6 bg-white'
-                            : 'w-2 bg-white/45 hover:bg-white/70',
+                            ? 'w-7 bg-navy-800'
+                            : 'w-2.5 bg-white ring-1 ring-navy-800/30 hover:bg-navy-200',
                     ]"
                     :aria-label="`${index + 1}-slayd`"
                     :aria-current="index === active ? 'true' : undefined"
