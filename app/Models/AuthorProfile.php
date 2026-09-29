@@ -63,7 +63,11 @@ class AuthorProfile extends Model
         return $this->belongsTo(User::class);
     }
 
-    /** "Karimov Muxtor Alisher o'g'li" */
+    /**
+     * "Karimov Muxtor Alisher o'g'li"
+     *
+     * @return Attribute<string, never>
+     */
     protected function fullName(): Attribute
     {
         return Attribute::get(fn (): string => trim(
@@ -71,7 +75,11 @@ class AuthorProfile extends Model
         ));
     }
 
-    /** Ilmiy uslubdagi qisqa ism: "Karimov M. A." */
+    /**
+     * Ilmiy uslubdagi qisqa ism: "Karimov M. A."
+     *
+     * @return Attribute<string, never>
+     */
     protected function shortName(): Attribute
     {
         return Attribute::get(function (): string {
