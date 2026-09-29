@@ -10,10 +10,26 @@ export type User = {
     [key: string]: unknown;
 };
 
-export type Auth = {
-    user: User;
-};
+/** Rol nomlari — app/Enums/RoleName.php bilan bir xil */
+export type RoleName =
+    | 'super_admin'
+    | 'chief_editor'
+    | 'editor'
+    | 'reviewer'
+    | 'layout_editor'
+    | 'content_manager'
+    | 'author';
 
+/**
+ * HandleInertiaRequests::authPayload() bilan mos.
+ * permissions: Super Admin uchun ['*'].
+ */
+export type Auth = {
+    user: User | null;
+    roles: RoleName[];
+    permissions: string[];
+    isStaff: boolean;
+};
 
 export type TwoFactorConfigContent = {
     title: string;

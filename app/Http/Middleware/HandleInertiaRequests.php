@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -38,10 +39,30 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'name' => config('app.name'),
-            'auth' => [
-                'user' => $request->user(),
-            ],
+            'auth' => fn () => $this->authPayload($request->user()),
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+        ];
+    }
+
+    /**
+     * Frontend faqat menyu va tugmalarni ko'rsatish/yashirish uchun rollarni biladi.
+     * Haqiqiy himoya har doim serverda (middleware, Policy).
+     *
+     * @return array<string, mixed>
+     */
+    private function authPayload(?User $user): array
+    {
+        if ($user === null) {
+            return ['user' => null, 'roles' => [], 'permissions' => [], 'isStaff' => false];
+        }
+
+        return [
+            'user' => $user,
+            'roles' => $user->getRoleNames()->values(),
+            'permissions' => $user->isSuperAdmin()
+                ? ['*']
+                : $user->getAllPermissions()->pluck('name')->values(),
+            'isStaff' => $user->isStaff(),
         ];
     }
 }

@@ -1,18 +1,29 @@
 import { createInertiaApp } from '@inertiajs/vue3';
 import { initializeTheme } from '@/composables/useAppearance';
+import AdminLayout from '@/layouts/AdminLayout.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import AuthLayout from '@/layouts/AuthLayout.vue';
+import CabinetLayout from '@/layouts/CabinetLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
+import WebLayout from '@/layouts/WebLayout.vue';
 import { initializeFlashToast } from '@/lib/flashToast';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 void createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
+    // Sahifa papkasi → layout. Tizim uch qismga ajratilgan:
+    //   web/*      — ommaviy sayt (TZ 4.1.1)
+    //   cabinet/*  — muallif kabineti (TZ 4.1.3)
+    //   admin/*    — admin panel (TZ 4.2)
     layout: (name) => {
         switch (true) {
-            case name === 'Welcome':
-                return null;
+            case name.startsWith('web/'):
+                return WebLayout;
+            case name.startsWith('cabinet/'):
+                return CabinetLayout;
+            case name.startsWith('admin/'):
+                return AdminLayout;
             case name.startsWith('auth/'):
                 return AuthLayout;
             case name.startsWith('settings/'):
@@ -31,7 +42,7 @@ void createInertiaApp({
         });
     },
     progress: {
-        color: '#4B5563',
+        color: '#006CF6',
     },
 });
 

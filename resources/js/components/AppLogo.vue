@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { usePage } from '@inertiajs/vue3';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
+import type { AppArea } from '@/types';
+
+defineProps<{
+    area?: AppArea;
+}>();
 
 const name = usePage().props.name;
 </script>
@@ -15,5 +20,11 @@ const name = usePage().props.name;
         <span class="mb-0.5 truncate leading-tight font-semibold">{{
             name
         }}</span>
+        <span
+            v-if="area"
+            class="truncate text-xs leading-tight text-muted-foreground"
+        >
+            {{ area === 'admin' ? 'Admin panel' : 'Muallif kabineti' }}
+        </span>
     </div>
 </template>
