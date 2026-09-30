@@ -67,7 +67,7 @@ const isActive = (item: NavItem, index: number): boolean =>
                             'after:absolute after:inset-x-3 after:-bottom-[1.1rem] after:h-0.5 after:origin-center after:scale-x-0 after:rounded-full after:transition-transform after:duration-300 after:ease-out hover:after:scale-x-100',
                             isDark
                                 ? 'text-white/75 after:bg-gold-400 hover:bg-white/10 hover:text-white hover:shadow-[0_8px_20px_-10px_rgba(0,0,0,0.6)] focus-visible:ring-white/40'
-                                : 'text-navy-800 after:bg-brand-600 hover:bg-brand-50 hover:text-brand-700 hover:shadow-[0_8px_20px_-12px_rgba(0,108,246,0.45)] focus-visible:ring-brand-200',
+                                : 'text-navy-800 after:bg-gold-500 hover:bg-brand-50 hover:text-brand-700 hover:shadow-[0_8px_20px_-12px_rgba(0,108,246,0.45)] focus-visible:ring-brand-200',
                             isActive(item, index) &&
                                 (isDark
                                     ? 'text-white after:scale-x-100'
