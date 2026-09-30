@@ -102,3 +102,66 @@ export function formatFileSize(bytes: number | null | undefined): string {
 
     return `${size.toFixed(exponent === 0 ? 0 : 1)} ${units[exponent]}`;
 }
+
+/** "10 daqiqa oldin", "3 soat oldin", "2 kun oldin" */
+export function timeAgo(value: string | null | undefined): string {
+    if (!value) {
+        return '';
+    }
+
+    const seconds = Math.max(
+        0,
+        Math.round((Date.now() - new Date(value).getTime()) / 1000),
+    );
+
+    if (seconds < 60) {
+        return 'hozirgina';
+    }
+
+    const minutes = Math.round(seconds / 60);
+
+    if (minutes < 60) {
+        return `${minutes} daqiqa oldin`;
+    }
+
+    const hours = Math.round(minutes / 60);
+
+    if (hours < 24) {
+        return `${hours} soat oldin`;
+    }
+
+    const days = Math.round(hours / 24);
+
+    return days < 30 ? `${days} kun oldin` : formatDate(value);
+}
+
+/** 28.06.2026 10:15 */
+export function formatDateTime(value: string | null | undefined): string {
+    const date = value ? new Date(value) : null;
+
+    if (!date || Number.isNaN(date.getTime())) {
+        return '';
+    }
+
+    const time = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+
+    return `${formatDate(date)} ${time}`;
+}
+
+/** 20000000 → "20M", 150000 → "150K" (grafik o'qlari uchun) */
+export function formatCompact(value: number): string {
+    if (value >= 1_000_000) {
+        return `${Number((value / 1_000_000).toFixed(1))}M`;
+    }
+
+    if (value >= 1_000) {
+        return `${Number((value / 1_000).toFixed(1))}K`;
+    }
+
+    return String(value);
+}
+
+/** 150000 → "150 000 so'm" */
+export function formatSum(value: number): string {
+    return `${formatNumber(value)} so'm`;
+}

@@ -1,64 +1,81 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
-import {
-    Card,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
-import { usePermissions } from '@/composables/usePermissions';
-import { roleLabels } from '@/lib/roles';
+import ActiveUsersCard from '@/components/admin/dashboard/ActiveUsersCard.vue';
+import AiUsageCard from '@/components/admin/dashboard/AiUsageCard.vue';
+import DynamicsChart from '@/components/admin/dashboard/DynamicsChart.vue';
+import LatestSubmissionsTable from '@/components/admin/dashboard/LatestSubmissionsTable.vue';
+import NotificationsCard from '@/components/admin/dashboard/NotificationsCard.vue';
+import PaymentsChart from '@/components/admin/dashboard/PaymentsChart.vue';
+import QuickActionsCard from '@/components/admin/dashboard/QuickActionsCard.vue';
+import RecentPaymentsCard from '@/components/admin/dashboard/RecentPaymentsCard.vue';
+import StatCard from '@/components/admin/dashboard/StatCard.vue';
+import StatusDonut from '@/components/admin/dashboard/StatusDonut.vue';
+import SystemHealthCard from '@/components/admin/dashboard/SystemHealthCard.vue';
+import WelcomeBanner from '@/components/admin/dashboard/WelcomeBanner.vue';
 import { dashboard } from '@/routes/admin';
+import type { AdminDashboardProps } from '@/types';
 
-defineProps<{
-    stats: {
-        authors: number;
-        staff: number;
-        blocked: number;
-    };
-}>();
+/**
+ * Super admin dashboard (super admin dashboard.png):
+ * chapda asosiy kontent, o'ngda bildirishnomalar / faol foydalanuvchilar /
+ * tizim holati / tezkor amallar.
+ */
+defineProps<AdminDashboardProps>();
 
 defineOptions({
     layout: {
         breadcrumbs: [{ title: 'Admin panel', href: dashboard() }],
     },
 });
-
-const { auth } = usePermissions();
 </script>
 
 <template>
-    <Head title="Admin panel" />
+    <Head title="Dashboard" />
 
-    <div class="flex flex-1 flex-col gap-6 p-4 md:p-6">
-        <div>
-            <h1 class="text-2xl font-bold tracking-tight">
-                Assalomu alaykum, {{ auth.user?.name }}
-            </h1>
-            <p class="text-muted-foreground">
-                {{ auth.roles.map((r) => roleLabels[r]).join(', ') }}
-            </p>
+    <div
+        class="grid flex-1 gap-5 bg-[#f5f7fb] p-4 md:p-6 2xl:grid-cols-[minmax(0,1fr)_22rem]"
+    >
+        <!-- Asosiy kontent -->
+        <div class="flex min-w-0 flex-col gap-5">
+            <WelcomeBanner />
+
+            <section
+                class="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 xl:grid-cols-5"
+                aria-label="Maqolalar statistikasi"
+            >
+                <StatCard v-for="card in cards" :key="card.key" :card="card" />
+            </section>
+
+            <div
+                class="grid gap-5 xl:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)]"
+            >
+                <DynamicsChart :data="dynamics" />
+                <StatusDonut :data="statusBreakdown" />
+            </div>
+
+            <LatestSubmissionsTable :items="latestSubmissions" />
+
+            <div
+                class="grid gap-5 lg:grid-cols-2 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)]"
+            >
+                <PaymentsChart
+                    :data="payments"
+                    class="lg:col-span-2 xl:col-span-1"
+                />
+                <RecentPaymentsCard :items="recentPayments" />
+                <AiUsageCard :data="aiUsage" />
+            </div>
         </div>
 
-        <div class="grid gap-4 md:grid-cols-3">
-            <Card>
-                <CardHeader>
-                    <CardDescription>Mualliflar</CardDescription>
-                    <CardTitle class="text-3xl">{{ stats.authors }}</CardTitle>
-                </CardHeader>
-            </Card>
-            <Card>
-                <CardHeader>
-                    <CardDescription>Xodimlar</CardDescription>
-                    <CardTitle class="text-3xl">{{ stats.staff }}</CardTitle>
-                </CardHeader>
-            </Card>
-            <Card>
-                <CardHeader>
-                    <CardDescription>Bloklanganlar</CardDescription>
-                    <CardTitle class="text-3xl">{{ stats.blocked }}</CardTitle>
-                </CardHeader>
-            </Card>
-        </div>
+        <!-- O'ng panel -->
+        <aside
+            class="grid content-start gap-5 md:grid-cols-2 2xl:grid-cols-1"
+            aria-label="Qo'shimcha ma'lumotlar"
+        >
+            <NotificationsCard :items="notificationsList" />
+            <ActiveUsersCard :items="activeUsers" />
+            <SystemHealthCard :items="systemHealth" />
+            <QuickActionsCard />
+        </aside>
     </div>
 </template>

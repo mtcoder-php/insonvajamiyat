@@ -2,27 +2,34 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Enums\RoleName;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\Admin\DashboardService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
 /**
- * Admin panel — bosh sahifa (/admin).
- * Maqola, to'lov va AI statistikasi tegishli modullar bilan birga qo'shiladi.
+ * Admin panel — bosh sahifa (/admin), dizayn: super admin dashboard.png.
  */
 class DashboardController extends Controller
 {
-    public function __invoke(Request $request): Response
+    public function __invoke(Request $request, DashboardService $dashboard): Response
     {
+        /** @var User $user */
+        $user = $request->user();
+
         return Inertia::render('admin/Dashboard', [
-            'stats' => [
-                'authors' => User::role(RoleName::Author)->count(),
-                'staff' => User::staff()->count(),
-                'blocked' => User::where('is_blocked', true)->count(),
-            ],
+            'cards' => fn () => $dashboard->statusCards(),
+            'dynamics' => fn () => $dashboard->monthlyDynamics(),
+            'statusBreakdown' => fn () => $dashboard->statusBreakdown(),
+            'latestSubmissions' => fn () => $dashboard->latestSubmissions(),
+            'payments' => fn () => $dashboard->paymentsMonthly(),
+            'recentPayments' => fn () => $dashboard->recentPayments(),
+            'aiUsage' => fn () => $dashboard->aiUsage(),
+            'notificationsList' => fn () => $dashboard->notifications($user),
+            'activeUsers' => fn () => $dashboard->activeUsers(),
+            'systemHealth' => fn () => $dashboard->systemHealth(),
         ]);
     }
 }
