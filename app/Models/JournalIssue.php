@@ -23,6 +23,7 @@ use Spatie\Translatable\HasTranslations;
  * @property int|null $volume
  * @property int $number
  * @property string $slug
+ * @property string|null $doi
  * @property string|null $title
  * @property string|null $description
  * @property string|null $cover_image_path
@@ -40,7 +41,7 @@ use Spatie\Translatable\HasTranslations;
  * @property-read Collection<int, Article> $articles
  */
 #[Fillable([
-    'year', 'volume', 'number', 'slug', 'title', 'description',
+    'year', 'volume', 'number', 'slug', 'doi', 'title', 'description',
     'cover_image_path', 'toc_file_path', 'full_pdf_path',
 ])]
 class JournalIssue extends Model

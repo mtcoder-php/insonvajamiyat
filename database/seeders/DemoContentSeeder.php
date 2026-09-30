@@ -11,6 +11,7 @@ use App\Models\Event;
 use App\Models\JournalIssue;
 use App\Models\Partner;
 use App\Models\Post;
+use App\Models\RecommendedBook;
 use App\Models\Subject;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -71,6 +72,7 @@ class DemoContentSeeder extends Seeder
                 'year' => $year,
                 'number' => $number,
                 'slug' => "{$year}-{$number}",
+                'doi' => "10.5281/zenodo.{$year}{$number}0",
                 'title' => ['uz' => '"Inson va Jamiyat" ilmiy jurnali'],
                 'description' => ['uz' => "Ushbu sonda jamiyat taraqqiyoti, tarixiy jarayonlar, etnologik tadqiqotlar va falsafiy qarashlarga oid ilmiy maqolalar o'rin olgan."],
             ]);
@@ -107,6 +109,7 @@ class DemoContentSeeder extends Seeder
         $this->seedPosts();
         $this->seedEvents();
         $this->seedPartners();
+        $this->seedBooks();
     }
 
     private function seedPosts(): void
@@ -192,6 +195,24 @@ class DemoContentSeeder extends Seeder
                 'type' => PartnerType::Partner,
                 'name' => ['uz' => $name],
                 'url' => null,
+                'sort_order' => $i,
+            ]);
+        }
+    }
+
+    private function seedBooks(): void
+    {
+        $books = [
+            ["O'rta Osiyo xalqlari etnologiyasi", 'A. Karimov', 2023],
+            ['Markaziy Osiyo tarixiy manbalari', 'B. Qosimov', 2022],
+            ["O'zbek adabiyoti tarixi", 'D. Rahmonov', 2021],
+        ];
+
+        foreach ($books as $i => [$title, $author, $year]) {
+            RecommendedBook::factory()->create([
+                'title' => ['uz' => $title],
+                'author' => $author,
+                'year' => $year,
                 'sort_order' => $i,
             ]);
         }

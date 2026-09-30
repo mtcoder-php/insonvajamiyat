@@ -30,7 +30,6 @@ defineProps<{
                     v-for="article in articles"
                     :key="article.id"
                     :article="article"
-                    variant="classic"
                 />
             </div>
         </div>

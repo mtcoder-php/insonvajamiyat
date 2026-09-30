@@ -1,21 +1,26 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
-import { FileText } from '@lucide/vue';
-import ArticleListItem from '@/components/web/ArticleListItem.vue';
-import AnnouncementsCard from '@/components/web/home/AnnouncementsCard.vue';
+import AboutCard from '@/components/web/home/AboutCard.vue';
+import BooksCard from '@/components/web/home/BooksCard.vue';
+import ContactCard from '@/components/web/home/ContactCard.vue';
+import EventsCard from '@/components/web/home/EventsCard.vue';
+import FeaturesStrip from '@/components/web/home/FeaturesStrip.vue';
 import HeroSlider from '@/components/web/home/HeroSlider.vue';
-import IndexingPartners from '@/components/web/home/IndexingPartners.vue';
 import JournalFactsCard from '@/components/web/home/JournalFactsCard.vue';
-import NewsAndEvents from '@/components/web/home/NewsAndEvents.vue';
-import PublicationProcess from '@/components/web/home/PublicationProcess.vue';
+import LatestArticles from '@/components/web/home/LatestArticles.vue';
+import LatestIssueCard from '@/components/web/home/LatestIssueCard.vue';
+import NewsCard from '@/components/web/home/NewsCard.vue';
+import NewsletterCard from '@/components/web/home/NewsletterCard.vue';
+import QuickLinksCard from '@/components/web/home/QuickLinksCard.vue';
 import SubjectsStrip from '@/components/web/home/SubjectsStrip.vue';
-import SubmitCard from '@/components/web/home/SubmitCard.vue';
-import SectionHeading from '@/components/web/SectionHeading.vue';
-import { index as articlesIndex } from '@/routes/articles';
 import type { HomePageProps } from '@/types';
 
 /**
- * Bosh sahifa. Ma'lumotlar: App\Http\Controllers\Web\HomeController.
+ * Bosh sahifa (home.png). Ma'lumotlar: App\Http\Controllers\Web\HomeController.
+ *
+ *   Slayder → yo'nalishlar qatori →
+ *   asosiy qism (so'nggi son, maqolalar, imkoniyatlar, yangiliklar, tadbirlar)
+ *   + o'ng ustun (jurnal haqida, ma'lumotlar, obuna, havolalar, aloqa, kitoblar)
  */
 defineOptions({
     layout: { header: 'light' },
@@ -30,47 +35,31 @@ defineProps<HomePageProps>();
     <HeroSlider :slides="heroSlides" />
     <SubjectsStrip :subjects="subjects" />
 
-    <section class="bg-white py-16 lg:py-20">
+    <div class="bg-white">
         <div
-            class="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-[1fr_22rem] lg:px-8"
+            class="mx-auto grid max-w-7xl gap-6 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:px-8 lg:py-12 xl:grid-cols-[minmax(0,1fr)_21.5rem]"
         >
-            <div class="min-w-0">
-                <SectionHeading
-                    eyebrow="Yangi nashrlar"
-                    title="So'nggi maqolalar"
-                    :href="articlesIndex()"
-                    link-text="Barcha maqolalar"
-                />
-                <div
-                    v-if="latestArticles.length"
-                    class="divide-y divide-line border-t border-line pt-6"
-                >
-                    <ArticleListItem
-                        v-for="article in latestArticles"
-                        :key="article.id"
-                        :article="article"
-                    />
-                </div>
-                <div
-                    v-else
-                    class="flex flex-col items-center gap-3 rounded-xl border border-dashed border-line py-16 text-center"
-                >
-                    <FileText class="size-8 text-navy-300" />
-                    <p class="text-sm text-navy-500">
-                        Hozircha nashr etilgan maqolalar yo'q.
-                    </p>
+            <div class="min-w-0 space-y-6">
+                <LatestIssueCard :issue="latestIssue" />
+                <LatestArticles :articles="latestArticles" />
+                <FeaturesStrip />
+                <div class="grid gap-6 md:grid-cols-2">
+                    <NewsCard :items="news" />
+                    <EventsCard :events="events" />
                 </div>
             </div>
 
-            <aside class="space-y-6 lg:pt-2">
-                <SubmitCard />
+            <aside
+                class="min-w-0 space-y-5"
+                aria-label="Qo'shimcha ma'lumotlar"
+            >
+                <AboutCard />
                 <JournalFactsCard />
-                <AnnouncementsCard :items="announcements" />
+                <NewsletterCard />
+                <QuickLinksCard />
+                <ContactCard />
+                <BooksCard :books="books" />
             </aside>
         </div>
-    </section>
-
-    <PublicationProcess />
-    <NewsAndEvents :news="news" :events="events" />
-    <IndexingPartners :indexing="indexing" :partners="partners" />
+    </div>
 </template>

@@ -2,15 +2,15 @@
 
 namespace App\Http\Resources\Web;
 
-use App\Models\Partner;
+use App\Models\RecommendedBook;
 use App\Support\MediaUrl;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @mixin Partner
+ * @mixin RecommendedBook
  */
-class PartnerResource extends JsonResource
+class RecommendedBookResource extends JsonResource
 {
     /**
      * @return array<string, mixed>
@@ -19,9 +19,10 @@ class PartnerResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'subtitle' => $this->subtitle,
-            'logoUrl' => MediaUrl::from($this->logo_path),
+            'title' => $this->title,
+            'author' => $this->author,
+            'year' => $this->year,
+            'coverUrl' => MediaUrl::from($this->cover_image_path),
             'url' => $this->url,
         ];
     }

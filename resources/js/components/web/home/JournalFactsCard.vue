@@ -1,42 +1,73 @@
 <script setup lang="ts">
 import { usePage } from '@inertiajs/vue3';
+import { BookMarked, CalendarClock, Fingerprint, Unlock } from '@lucide/vue';
 import { computed } from 'vue';
+import HomeCard from '@/components/web/home/HomeCard.vue';
 
 /**
- * "Jurnal ma'lumotlari" — rekvizitlar jadvali (config/journal.php).
+ * "Jurnal ma'lumotlari" (home.png): ISSN, e-ISSN, DOI, davriylik, Open Access.
+ * Qiymatlar .env (JOURNAL_*) dan; bo'sh qatorlar ko'rsatilmaydi.
  */
 const journal = computed(() => usePage().props.journal);
-
-const rows = computed(() =>
-    [
-        { label: 'ISSN (bosma)', value: journal.value.issn },
-        { label: 'e-ISSN', value: journal.value.eissn },
-        { label: 'DOI prefiksi', value: journal.value.doiPrefix },
-        { label: 'Davriyligi', value: journal.value.frequency },
-        { label: 'Nashr tillari', value: "O'zbek, rus, ingliz" },
-        { label: 'Kirish', value: 'Ochiq (Open Access)' },
-    ].filter((row): row is { label: string; value: string } =>
-        Boolean(row.value),
-    ),
-);
 </script>
 
 <template>
-    <section class="rounded-xl border border-line bg-white p-6">
-        <h3 class="font-serif text-lg font-semibold text-navy-950">
-            Jurnal ma'lumotlari
-        </h3>
-        <dl class="mt-4 divide-y divide-line text-sm">
-            <div
-                v-for="row in rows"
-                :key="row.label"
-                class="flex items-baseline justify-between gap-4 py-2.5"
-            >
-                <dt class="text-navy-500">{{ row.label }}</dt>
-                <dd class="text-right font-medium text-navy-900">
-                    {{ row.value }}
-                </dd>
+    <HomeCard title="Jurnal ma'lumotlari">
+        <dl class="space-y-4 text-sm">
+            <div v-if="journal.issn || journal.eissn" class="flex gap-3">
+                <BookMarked
+                    class="mt-0.5 size-6 shrink-0 text-navy-800"
+                    :stroke-width="1.5"
+                />
+                <div class="grid flex-1 grid-cols-2 gap-3">
+                    <div v-if="journal.issn" class="flex flex-col-reverse">
+                        <dd class="font-serif font-bold text-navy-950">
+                            {{ journal.issn }}
+                        </dd>
+                        <dt class="text-xs text-navy-500">ISSN (print)</dt>
+                    </div>
+                    <div v-if="journal.eissn" class="flex flex-col-reverse">
+                        <dd class="font-serif font-bold text-navy-950">
+                            {{ journal.eissn }}
+                        </dd>
+                        <dt class="text-xs text-navy-500">e-ISSN</dt>
+                    </div>
+                </div>
+            </div>
+            <div v-if="journal.doiPrefix" class="flex gap-3">
+                <Fingerprint
+                    class="mt-0.5 size-6 shrink-0 text-navy-800"
+                    :stroke-width="1.5"
+                />
+                <div class="flex flex-col-reverse">
+                    <dd class="font-serif font-bold break-all text-navy-950">
+                        {{ journal.doiPrefix }}
+                    </dd>
+                    <dt class="text-xs text-navy-500">DOI</dt>
+                </div>
+            </div>
+            <div v-if="journal.frequency" class="flex gap-3">
+                <CalendarClock
+                    class="mt-0.5 size-6 shrink-0 text-navy-800"
+                    :stroke-width="1.5"
+                />
+                <div class="flex flex-col-reverse">
+                    <dd class="font-serif font-bold text-navy-950">
+                        {{ journal.frequency }}
+                    </dd>
+                    <dt class="text-xs text-navy-500">Chop etish davriyligi</dt>
+                </div>
+            </div>
+            <div class="flex gap-3">
+                <Unlock
+                    class="mt-0.5 size-6 shrink-0 text-navy-800"
+                    :stroke-width="1.5"
+                />
+                <div class="flex flex-col-reverse">
+                    <dd class="text-navy-700">Barcha maqolalar ochiq</dd>
+                    <dt class="text-xs text-navy-500">Open Access</dt>
+                </div>
             </div>
         </dl>
-    </section>
+    </HomeCard>
 </template>

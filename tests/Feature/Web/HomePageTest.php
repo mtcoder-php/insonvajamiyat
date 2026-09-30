@@ -8,8 +8,8 @@ use App\Models\ArticleAuthor;
 use App\Models\Banner;
 use App\Models\Event;
 use App\Models\JournalIssue;
-use App\Models\Partner;
 use App\Models\Post;
+use App\Models\RecommendedBook;
 use App\Models\Subject;
 use Database\Seeders\DemoContentSeeder;
 use Database\Seeders\SubjectSeeder;
@@ -32,7 +32,8 @@ class HomePageTest extends TestCase
                 ->component('web/Home')
                 ->where('latestIssue', null)
                 ->has('latestArticles', 0)
-                ->has('announcements', 0)
+                ->has('news', 0)
+                ->has('books', 0)
             );
     }
 
@@ -76,19 +77,20 @@ class HomePageTest extends TestCase
         ArticleAuthor::factory()->for($published)->create(['first_name' => 'Anvar', 'last_name' => 'Karimov']);
         Article::factory()->for($subject)->status(ArticleStatus::InReview)->create();
 
-        $issue = JournalIssue::factory()->published()->create(['number' => 3, 'year' => 2026]);
+        $issue = JournalIssue::factory()->published()->create(['number' => 3, 'year' => 2026, 'doi' => '10.5281/zenodo.20263']);
         $issue->articles()->attach($published->id, ['position' => 1, 'page_from' => 5, 'page_to' => 18]);
         JournalIssue::factory()->create(); // qoralama son
 
-        Post::factory()->announcement()->create(['title' => ['uz' => "Ko'rinadigan e'lon"]]);
-        Post::factory()->announcement()->draft()->create();
-        Post::factory()->announcement()->create(['published_at' => now()->addDay()]);
+        Post::factory()->create(['title' => ['uz' => "Ko'rinadigan yangilik"]]);
+        Post::factory()->draft()->create();
+        Post::factory()->create(['published_at' => now()->addDay()]);
+        Post::factory()->announcement()->create(); // e'lonlar yangiliklar ro'yxatiga tushmaydi
 
         Event::factory()->create();
         Event::factory()->past()->create();
 
-        Partner::factory()->indexing()->create();
-        Partner::factory()->create(['is_active' => false]);
+        RecommendedBook::factory()->create(['title' => ['uz' => 'Faol kitob'], 'year' => 2023]);
+        RecommendedBook::factory()->inactive()->create();
 
         $this->get(route('home'))
             ->assertInertia(fn (Assert $page) => $page
@@ -98,14 +100,16 @@ class HomePageTest extends TestCase
                 ->where('latestArticles.0.subject.name', 'Tarix')
                 ->where('latestArticles.0.url', route('articles.show', $published->slug))
                 ->where('latestIssue.label', '№3 (2026)')
+                ->where('latestIssue.doi', '10.5281/zenodo.20263')
                 ->where('latestIssue.articlesCount', 1)
                 ->where('latestIssue.pagesTotal', 18)
                 ->where('latestIssue.subjects', ['Tarix'])
-                ->has('announcements', 1)
-                ->where('announcements.0.title', "Ko'rinadigan e'lon")
+                ->has('news', 1)
+                ->where('news.0.title', "Ko'rinadigan yangilik")
                 ->has('events', 1)
-                ->has('indexing', 1)
-                ->has('partners', 0)
+                ->has('books', 1)
+                ->where('books.0.title', 'Faol kitob')
+                ->where('books.0.year', 2023)
                 ->where('subjects.0.articlesCount', 1)
             );
     }
@@ -164,9 +168,10 @@ class HomePageTest extends TestCase
         $this->get(route('home'))
             ->assertInertia(fn (Assert $page) => $page
                 ->has('latestArticles', 6)
-                ->has('announcements', 3)
+                ->has('news', 4)
                 ->has('events', 3)
-                ->has('indexing', 4)
+                ->has('books', 3)
+                ->whereNot('latestIssue.doi', null)
                 ->whereNot('latestIssue', null)
             );
     }

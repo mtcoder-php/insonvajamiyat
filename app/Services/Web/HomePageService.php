@@ -2,21 +2,20 @@
 
 namespace App\Services\Web;
 
-use App\Enums\PartnerType;
 use App\Enums\PostType;
 use App\Http\Resources\Web\ArticleCardResource;
 use App\Http\Resources\Web\BannerResource;
 use App\Http\Resources\Web\EventResource;
 use App\Http\Resources\Web\IssueCardResource;
-use App\Http\Resources\Web\PartnerResource;
 use App\Http\Resources\Web\PostResource;
+use App\Http\Resources\Web\RecommendedBookResource;
 use App\Http\Resources\Web\SubjectResource;
 use App\Models\Article;
 use App\Models\Banner;
 use App\Models\Event;
 use App\Models\JournalIssue;
-use App\Models\Partner;
 use App\Models\Post;
+use App\Models\RecommendedBook;
 use App\Models\Subject;
 use Illuminate\Support\Facades\Route;
 
@@ -105,6 +104,18 @@ class HomePageService
     }
 
     /**
+     * "Tavsiya etilgan kitoblar" (o'ng ustun).
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function recommendedBooks(int $limit = 3): array
+    {
+        $books = RecommendedBook::query()->active()->limit($limit)->get();
+
+        return RecommendedBookResource::collection($books)->resolve();
+    }
+
+    /**
      * @return array<int, array<string, mixed>>
      */
     public function upcomingEvents(int $limit = 3): array
@@ -112,16 +123,6 @@ class HomePageService
         $events = Event::query()->published()->upcoming()->limit($limit)->get();
 
         return EventResource::collection($events)->resolve();
-    }
-
-    /**
-     * @return array<int, array<string, mixed>>
-     */
-    public function partners(PartnerType $type): array
-    {
-        $partners = Partner::query()->active()->ofType($type)->get();
-
-        return PartnerResource::collection($partners)->resolve();
     }
 
     /**

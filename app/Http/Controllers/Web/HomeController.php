@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Web;
 
-use App\Enums\PartnerType;
 use App\Enums\PostType;
 use App\Http\Controllers\Controller;
 use App\Services\Web\HomePageService;
@@ -22,11 +21,9 @@ class HomeController extends Controller
             'latestIssue' => fn () => $home->latestIssue(),
             'latestArticles' => fn () => $home->latestArticles(),
             'subjects' => fn () => $home->subjects(),
-            'announcements' => fn () => $home->posts(PostType::Announcement, 3),
             'news' => fn () => $home->posts(PostType::News, 4),
             'events' => fn () => $home->upcomingEvents(),
-            'indexing' => fn () => $home->partners(PartnerType::Indexing),
-            'partners' => fn () => $home->partners(PartnerType::Partner),
+            'books' => fn () => $home->recommendedBooks(),
         ]);
     }
 }

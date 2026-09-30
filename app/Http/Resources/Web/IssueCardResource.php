@@ -32,6 +32,7 @@ class IssueCardResource extends JsonResource
             'volume' => $this->volume,
             'title' => $this->title,
             'description' => $this->description,
+            'doi' => $this->doi,
             'coverUrl' => MediaUrl::from($this->cover_image_path),
             'pdfUrl' => MediaUrl::from($this->full_pdf_path),
             'pdfSize' => MediaUrl::size($this->full_pdf_path),

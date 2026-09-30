@@ -26,6 +26,7 @@ export type IssueCard = {
     volume: number | null;
     title: string | null;
     description: string | null;
+    doi: string | null;
     coverUrl: string | null;
     pdfUrl: string | null;
     pdfSize: number | null;
@@ -65,15 +66,17 @@ export type EventItem = {
     registrationUrl: string | null;
 };
 
-export type PartnerItem = {
+/** Bosh sahifa slayderi (banner yoki config'dagi standart slayd) */
+/** Tavsiya etilgan kitob (RecommendedBookResource) */
+export type RecommendedBook = {
     id: number;
-    name: string;
-    subtitle: string | null;
-    logoUrl: string | null;
+    title: string;
+    author: string;
+    year: number | null;
+    coverUrl: string | null;
     url: string | null;
 };
 
-/** Bosh sahifa slayderi (banner yoki config'dagi standart slayd) */
 export type HeroSlide = {
     key: string;
     title: string;
@@ -88,9 +91,7 @@ export type HomePageProps = {
     latestIssue: LatestIssue | null;
     latestArticles: ArticleCard[];
     subjects: SubjectSummary[];
-    announcements: PostItem[];
     news: PostItem[];
     events: EventItem[];
-    partners: PartnerItem[];
-    indexing: PartnerItem[];
+    books: RecommendedBook[];
 };
