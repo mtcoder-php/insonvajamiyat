@@ -2,7 +2,6 @@
 import { Link } from '@inertiajs/vue3';
 import { ChevronDown, LayoutDashboard, UserRound } from '@lucide/vue';
 import { computed } from 'vue';
-import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -42,13 +41,15 @@ const accountLabel = computed(() =>
                 type="button"
                 :class="
                     cn(
-                        'flex items-center gap-2 rounded-full py-1 pr-2 pl-1 text-sm transition-colors',
-                        isDark ? 'hover:bg-white/10' : 'hover:bg-navy-50',
+                        'group flex items-center gap-2 rounded-full py-1 pr-2 pl-1 text-sm transition-all duration-300 hover:-translate-y-px',
+                        isDark
+                            ? 'hover:bg-white/10 hover:shadow-[0_8px_20px_-10px_rgba(0,0,0,0.6)]'
+                            : 'hover:bg-navy-50 hover:shadow-[0_8px_20px_-12px_rgba(0,36,66,0.4)]',
                     )
                 "
             >
                 <span
-                    class="flex size-8 items-center justify-center rounded-full bg-brand-600 text-xs font-semibold text-white"
+                    class="flex size-8 items-center justify-center rounded-full bg-brand-600 text-xs font-semibold text-white ring-2 ring-transparent transition-all duration-300 group-hover:ring-gold-400"
                 >
                     {{ getInitials(user.name) }}
                 </span>
@@ -73,22 +74,31 @@ const accountLabel = computed(() =>
         </DropdownMenuContent>
     </DropdownMenu>
 
-    <Button
+    <Link
         v-else
-        as-child
-        :variant="isDark ? 'outline' : 'default'"
+        :href="login()"
         :class="
             cn(
-                'hidden h-10 sm:inline-flex',
+                'group relative hidden h-10 items-center gap-2.5 overflow-hidden rounded-lg pr-4 pl-1.5 text-sm font-semibold transition-all duration-300 ease-out outline-none sm:inline-flex',
+                'hover:-translate-y-0.5 focus-visible:ring-2 active:translate-y-0',
                 isDark
-                    ? 'border-white/30 bg-transparent text-white hover:bg-white/10 hover:text-white'
-                    : 'bg-navy-900 hover:bg-navy-800',
+                    ? 'border border-white/30 text-white hover:border-white/60 hover:bg-white/10 hover:shadow-[0_10px_24px_-10px_rgba(0,0,0,0.6)] focus-visible:ring-white/40'
+                    : 'bg-navy-900 text-white shadow-md shadow-navy-900/20 hover:bg-navy-800 hover:shadow-[0_12px_28px_-10px_rgba(0,36,66,0.55)] focus-visible:ring-brand-300',
             )
         "
     >
-        <Link :href="login()">
-            <UserRound class="size-4" />
-            Kirish / Ro'yxatdan o'tish
-        </Link>
-    </Button>
+        <!-- Hover'da tugma bo'ylab o'tadigan yaltiroq -->
+        <span
+            class="pointer-events-none absolute inset-y-0 -left-2/3 w-1/2 -skew-x-12 bg-gradient-to-r from-transparent via-white/25 to-transparent transition-all duration-700 ease-out group-hover:left-[130%]"
+            aria-hidden="true"
+        />
+        <span
+            class="relative flex size-7 items-center justify-center rounded-md bg-white/10 transition-all duration-300 group-hover:bg-gold-400 group-hover:text-navy-950"
+        >
+            <UserRound
+                class="size-4 transition-transform duration-300 group-hover:scale-110"
+            />
+        </span>
+        <span class="relative">Kirish / Ro'yxatdan o'tish</span>
+    </Link>
 </template>
