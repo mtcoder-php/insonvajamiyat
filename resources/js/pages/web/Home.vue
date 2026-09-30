@@ -28,7 +28,7 @@ defineProps<HomePageProps>();
 <template>
     <Head title="Bosh sahifa" />
 
-    <HeroSlider :slides="heroSlides" :issue="latestIssue" />
+    <HeroSlider :slides="heroSlides" />
     <HomeStats :stats="stats" />
 
     <section class="bg-white py-16 lg:py-20">

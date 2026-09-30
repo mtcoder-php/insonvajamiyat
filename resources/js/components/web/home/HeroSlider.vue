@@ -2,41 +2,24 @@
 import { Link, usePage } from '@inertiajs/vue3';
 import { ArrowRight, ChevronLeft, ChevronRight } from '@lucide/vue';
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-import IssueCover from '@/components/web/IssueCover.vue';
-import { formatDateLong } from '@/lib/format';
-import type { HeroSlide, LatestIssue } from '@/types';
+import type { HeroSlide } from '@/types';
 
 /**
  * Bosh sahifa slayderi (home.png): slaydlar avtomatik almashadi,
  * strelkalar, nuqtalar (progress bilan), klaviatura va surish (swipe).
  *
- * Slaydlar: admin bannerlari yoki config('journal.hero_slides');
- * oxirida joriy son slaydi. Rasm yo'q slayd brend fonida chiqadi.
+ * Slaydlar: admin bannerlari yoki config('journal.hero_slides').
+ * Rasm yo'q slayd brend fonida chiqadi.
  */
 const props = defineProps<{
     slides: HeroSlide[];
-    issue: LatestIssue | null;
 }>();
 
 const INTERVAL = 7000;
 
-type Item =
-    | { type: 'banner'; key: string; slide: HeroSlide }
-    | { type: 'issue'; key: string; issue: LatestIssue };
-
-const items = computed<Item[]>(() => {
-    const list: Item[] = props.slides.map((slide) => ({
-        type: 'banner',
-        key: slide.key,
-        slide,
-    }));
-
-    if (props.issue) {
-        list.push({ type: 'issue', key: 'issue', issue: props.issue });
-    }
-
-    return list;
-});
+const items = computed(() =>
+    props.slides.map((slide) => ({ key: slide.key, slide })),
+);
 
 const journal = computed(() => usePage().props.journal);
 const issn = computed(() =>
@@ -151,7 +134,7 @@ onBeforeUnmount(() => clearTimeout(timer));
             :aria-hidden="index !== active"
         >
             <!-- Fon -->
-            <template v-if="item.type === 'banner' && item.slide.imageUrl">
+            <template v-if="item.slide.imageUrl">
                 <img
                     :src="item.slide.imageUrl"
                     alt=""
@@ -179,9 +162,8 @@ onBeforeUnmount(() => clearTimeout(timer));
                 />
             </template>
 
-            <!-- Oddiy slayd: markazdagi matn -->
+            <!-- Slayd matni (markazda) -->
             <div
-                v-if="item.type === 'banner'"
                 class="mx-auto flex h-full max-w-4xl flex-col items-center justify-center px-6 pb-16 text-center"
             >
                 <p
@@ -244,78 +226,6 @@ onBeforeUnmount(() => clearTimeout(timer));
                     {{ item.slide.buttonText }}
                     <ArrowRight class="size-4" />
                 </component>
-            </div>
-
-            <!-- Joriy son slaydi -->
-            <div
-                v-else
-                class="mx-auto grid h-full max-w-6xl items-center gap-10 px-6 pb-14 sm:px-10 md:grid-cols-[1fr_auto] lg:px-8"
-            >
-                <div
-                    :class="[
-                        'transition-all delay-200 duration-700',
-                        index === active
-                            ? 'translate-y-0 opacity-100'
-                            : 'translate-y-6 opacity-0',
-                    ]"
-                >
-                    <p
-                        class="flex items-center gap-3 text-xs font-semibold tracking-[0.2em] text-gold-300 uppercase"
-                    >
-                        <span class="h-px w-8 bg-gold-400" aria-hidden="true" />
-                        Joriy son
-                    </p>
-                    <h2
-                        class="mt-5 font-serif text-4xl leading-tight font-semibold text-white sm:text-5xl"
-                    >
-                        {{ item.issue.label }}
-                    </h2>
-                    <p
-                        class="mt-3 max-w-xl font-serif text-xl text-white/85 italic"
-                    >
-                        {{
-                            item.issue.title ||
-                            `"${journal.name}" ilmiy jurnali`
-                        }}
-                    </p>
-                    <p class="mt-4 text-sm text-white/65">
-                        <template v-if="item.issue.publishedAt">
-                            {{ formatDateLong(item.issue.publishedAt) }}
-                        </template>
-                        <template v-if="item.issue.articlesCount">
-                            · {{ item.issue.articlesCount }} ta maqola
-                        </template>
-                        <template v-if="item.issue.pagesTotal">
-                            · {{ item.issue.pagesTotal }} bet
-                        </template>
-                    </p>
-                    <Link
-                        :href="item.issue.url"
-                        :tabindex="index === active ? undefined : -1"
-                        class="mt-8 inline-flex h-12 items-center gap-2 rounded-lg bg-brand-600 px-7 text-sm font-semibold text-white shadow-lg shadow-black/25 transition-colors hover:bg-brand-500"
-                    >
-                        Sonni ko'rish
-                        <ArrowRight class="size-4" />
-                    </Link>
-                </div>
-                <Link
-                    :href="item.issue.url"
-                    :tabindex="-1"
-                    aria-hidden="true"
-                    :class="[
-                        'hidden w-56 transition-all delay-300 duration-700 md:block lg:w-64',
-                        index === active
-                            ? 'translate-x-0 rotate-0 opacity-100'
-                            : 'translate-x-8 rotate-3 opacity-0',
-                    ]"
-                >
-                    <IssueCover
-                        :src="item.issue.coverUrl"
-                        :number="item.issue.number"
-                        :year="item.issue.year"
-                        class="shadow-2xl shadow-black/50"
-                    />
-                </Link>
             </div>
         </div>
 
