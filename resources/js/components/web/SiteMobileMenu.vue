@@ -60,7 +60,7 @@ const isActive = (item: NavItem, index: number): boolean =>
         <SheetContent side="right" class="w-80">
             <SheetHeader>
                 <SheetTitle class="sr-only">Menyu</SheetTitle>
-                <div class="flex items-center justify-between gap-3 pr-8">
+                <div class="flex items-center justify-between gap-3 pr-10">
                     <BrandLogo size="sm" />
                     <LocaleSwitcher tone="light" />
                 </div>
