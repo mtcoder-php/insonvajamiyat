@@ -78,8 +78,8 @@ Lokal seed bosh sahifa uchun namunaviy kontent ham yaratadi (3 ta son,
 
 Slaydlar admin paneldagi bannerlardan olinadi; faol banner bo'lmasa
 `config/journal.php` → `hero_slides` dagi standart slaydlar chiqadi.
-Standart slaydlar rasmlari: `public/images/hero/slide-1.webp`, `slide-2.webp`,
-`slide-3.webp` (tavsiya 1920×720). Fayl yo'q bo'lsa slayd brend fonida ko'rinadi.
+Standart slaydlar rasmlari: `public/sliders/slide1.png`, `slide2.png`,
+`slide3.png` (tavsiya 1920×720). Fayl yo'q bo'lsa slayd brend fonida ko'rinadi.
 
 ## Serverga joylashtirish (production)
 
