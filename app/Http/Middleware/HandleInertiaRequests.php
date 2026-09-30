@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\Language;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -42,6 +43,11 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'name' => config('app.name'),
             'auth' => fn () => $this->authPayload($user),
+            'locale' => fn () => app()->getLocale(),
+            'locales' => fn () => array_map(fn (Language $language): array => [
+                'code' => $language->value,
+                'label' => $language->label(),
+            ], Language::cases()),
             'journal' => fn () => $this->journalPayload(),
             'notifications' => fn () => $user instanceof User
                 ? ['unread' => $user->unreadNotifications()->count()]

@@ -25,3 +25,11 @@ export type Journal = {
 export type NotificationSummary = {
     unread: number;
 };
+
+/** Sayt tillari (HandleInertiaRequests → locales, App\Enums\Language) */
+export type LocaleCode = 'uz' | 'ru' | 'en';
+
+export type LocaleOption = {
+    code: LocaleCode;
+    label: string;
+};

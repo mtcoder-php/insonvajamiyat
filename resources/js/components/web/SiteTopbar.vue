@@ -2,6 +2,7 @@
 import { usePage } from '@inertiajs/vue3';
 import { Mail, MapPin, Phone } from '@lucide/vue';
 import { computed } from 'vue';
+import LocaleSwitcher from '@/components/web/LocaleSwitcher.vue';
 import SocialIcon from '@/components/web/SocialIcon.vue';
 import type { JournalSocialNetwork } from '@/types';
 
@@ -70,6 +71,8 @@ const phoneHref = computed(
                 >
                     <SocialIcon :network="network" />
                 </a>
+                <span class="h-4 w-px bg-white/20" aria-hidden="true" />
+                <LocaleSwitcher tone="dark" />
             </div>
         </div>
     </div>

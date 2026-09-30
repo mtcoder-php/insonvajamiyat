@@ -3,6 +3,7 @@ import { Link } from '@inertiajs/vue3';
 import { LayoutDashboard, Menu } from '@lucide/vue';
 import { computed } from 'vue';
 import BrandLogo from '@/components/brand/BrandLogo.vue';
+import LocaleSwitcher from '@/components/web/LocaleSwitcher.vue';
 import { Button } from '@/components/ui/button';
 import {
     Sheet,
@@ -59,7 +60,10 @@ const isActive = (item: NavItem, index: number): boolean =>
         <SheetContent side="right" class="w-80">
             <SheetHeader>
                 <SheetTitle class="sr-only">Menyu</SheetTitle>
-                <BrandLogo size="sm" />
+                <div class="flex items-center justify-between gap-3 pr-8">
+                    <BrandLogo size="sm" />
+                    <LocaleSwitcher tone="light" />
+                </div>
             </SheetHeader>
             <nav class="flex flex-col gap-1 px-4">
                 <Link
