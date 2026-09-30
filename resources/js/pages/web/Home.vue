@@ -9,7 +9,7 @@ import IndexingPartners from '@/components/web/home/IndexingPartners.vue';
 import JournalFactsCard from '@/components/web/home/JournalFactsCard.vue';
 import NewsAndEvents from '@/components/web/home/NewsAndEvents.vue';
 import PublicationProcess from '@/components/web/home/PublicationProcess.vue';
-import SubjectsGrid from '@/components/web/home/SubjectsGrid.vue';
+import SubjectsStrip from '@/components/web/home/SubjectsStrip.vue';
 import SubmitCard from '@/components/web/home/SubmitCard.vue';
 import SectionHeading from '@/components/web/SectionHeading.vue';
 import { index as articlesIndex } from '@/routes/articles';
@@ -29,6 +29,7 @@ defineProps<HomePageProps>();
     <Head title="Bosh sahifa" />
 
     <HeroSlider :slides="heroSlides" />
+    <SubjectsStrip :subjects="subjects" />
     <HomeStats :stats="stats" />
 
     <section class="bg-white py-16 lg:py-20">
@@ -71,7 +72,6 @@ defineProps<HomePageProps>();
         </div>
     </section>
 
-    <SubjectsGrid :subjects="subjects" />
     <PublicationProcess />
     <NewsAndEvents :news="news" :events="events" />
     <IndexingPartners :indexing="indexing" :partners="partners" />
