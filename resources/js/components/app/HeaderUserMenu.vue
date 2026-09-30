@@ -27,11 +27,11 @@ const roleLabel = computed(() => primaryRoleLabel(auth.value.roles));
         <DropdownMenuTrigger as-child>
             <button
                 type="button"
-                class="flex items-center gap-3 rounded-full py-1 pr-2 pl-1 text-left text-white transition-colors hover:bg-white/10"
+                class="group flex items-center gap-3 rounded-full py-1 pr-2 pl-1 text-left text-white transition-all duration-300 hover:-translate-y-px hover:bg-white/10 hover:shadow-[0_8px_20px_-10px_rgba(0,0,0,0.6)]"
                 data-test="header-user-menu"
             >
                 <span
-                    class="flex size-9 shrink-0 items-center justify-center rounded-full bg-brand-600 text-sm font-semibold ring-2 ring-white/20"
+                    class="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-600 text-sm font-semibold ring-2 ring-white/25 transition-all duration-300 group-hover:ring-gold-400"
                 >
                     {{ getInitials(user.name) }}
                 </span>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { router, usePage } from '@inertiajs/vue3';
 import { Check, ChevronDown, Globe } from '@lucide/vue';
+import LocaleFlag from '@/components/app/LocaleFlag.vue';
 import { computed } from 'vue';
 import {
     DropdownMenu,
@@ -16,10 +17,14 @@ import type { LocaleCode } from '@/types';
  * Til tanlagich: 🌐 UZ ▾ → O'zbekcha / Русский / English.
  *   tone="dark"  — to'q ko'k topbar ichida
  *   tone="light" — oq fonda (mobil menyu)
+ *   tone="glass" — admin header (bayroq, shaffof ramka)
  */
-const props = withDefaults(defineProps<{ tone?: 'dark' | 'light' }>(), {
-    tone: 'dark',
-});
+const props = withDefaults(
+    defineProps<{ tone?: 'dark' | 'light' | 'glass' }>(),
+    {
+        tone: 'dark',
+    },
+);
 
 const page = usePage();
 const current = computed(() => page.props.locale);
@@ -41,15 +46,19 @@ function select(code: LocaleCode): void {
                 type="button"
                 :class="
                     cn(
-                        'group inline-flex h-7 items-center gap-1.5 rounded-md px-2 text-xs font-semibold tracking-wide uppercase transition-colors outline-none focus-visible:ring-2',
-                        props.tone === 'dark'
-                            ? 'text-white/90 hover:bg-white/10 hover:text-white focus-visible:ring-white/40 data-[state=open]:bg-white/10'
-                            : 'border border-line text-navy-800 hover:bg-navy-50 focus-visible:ring-brand-200',
+                        'group inline-flex items-center gap-1.5 text-xs font-semibold tracking-wide uppercase transition-all duration-300 outline-none focus-visible:ring-2',
+                        props.tone === 'dark' &&
+                            'h-7 rounded-md px-2 text-white/90 hover:bg-white/10 hover:text-white focus-visible:ring-white/40 data-[state=open]:bg-white/10',
+                        props.tone === 'light' &&
+                            'h-7 rounded-md border border-line px-2 text-navy-800 hover:bg-navy-50 focus-visible:ring-brand-200',
+                        props.tone === 'glass' &&
+                            'h-10 gap-2 rounded-lg border border-white/25 bg-white/5 px-3 text-sm text-white backdrop-blur-sm hover:-translate-y-px hover:border-white/50 hover:bg-white/10 hover:shadow-[0_8px_20px_-10px_rgba(0,0,0,0.6)] focus-visible:ring-white/40 data-[state=open]:bg-white/15',
                     )
                 "
                 :aria-label="`Sayt tili: ${current.toUpperCase()}`"
             >
-                <Globe class="size-3.5" />
+                <LocaleFlag v-if="tone === 'glass'" :code="current" />
+                <Globe v-else class="size-3.5" />
                 {{ current }}
                 <ChevronDown
                     class="size-3.5 opacity-70 transition-transform group-data-[state=open]:rotate-180"
@@ -71,7 +80,14 @@ function select(code: LocaleCode): void {
                 :lang="locale.code"
                 @select="select(locale.code)"
             >
-                {{ locale.label }}
+                <span class="flex items-center gap-2.5">
+                    <LocaleFlag
+                        v-if="tone === 'glass'"
+                        :code="locale.code"
+                        class="size-4"
+                    />
+                    {{ locale.label }}
+                </span>
                 <Check
                     v-if="locale.code === current"
                     class="size-4 text-brand-600"
