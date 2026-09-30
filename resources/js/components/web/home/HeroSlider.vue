@@ -193,10 +193,13 @@ onBeforeUnmount(() => clearTimeout(timer));
                     ]"
                 >
                     <span class="h-px w-8 bg-gold-400" aria-hidden="true" />
-                    Ilmiy-nazariy jurnal
-                    <span v-if="issn" class="hidden sm:inline">
-                        · {{ issn }}
-                    </span>
+                    <span
+                        >Ilmiy-nazariy jurnal<span
+                            v-if="issn"
+                            class="hidden sm:inline"
+                            >&nbsp;·&nbsp;{{ issn }}</span
+                        ></span
+                    >
                     <span class="h-px w-8 bg-gold-400" aria-hidden="true" />
                 </p>
                 <component
@@ -316,11 +319,11 @@ onBeforeUnmount(() => clearTimeout(timer));
             </div>
         </div>
 
-        <!-- Boshqaruv -->
+        <!-- Boshqaruv: strelkalar pastki burchaklarda, o'rtada nuqtalar (home.png) -->
         <template v-if="count > 1">
             <button
                 type="button"
-                class="absolute top-1/2 left-4 z-20 hidden size-12 -translate-y-1/2 items-center justify-center rounded-lg border border-white/30 bg-white/10 text-white backdrop-blur transition-colors hover:bg-white/20 sm:flex lg:left-8"
+                class="absolute bottom-5 left-4 z-20 flex size-10 items-center justify-center rounded-lg border-2 border-white/80 bg-black/10 text-white backdrop-blur-sm transition-colors hover:bg-white hover:text-navy-900 sm:bottom-8 sm:left-8 sm:size-12"
                 aria-label="Oldingi slayd"
                 @click="prev"
             >
@@ -328,7 +331,7 @@ onBeforeUnmount(() => clearTimeout(timer));
             </button>
             <button
                 type="button"
-                class="absolute top-1/2 right-4 z-20 hidden size-12 -translate-y-1/2 items-center justify-center rounded-lg border border-white/30 bg-white/10 text-white backdrop-blur transition-colors hover:bg-white/20 sm:flex lg:right-8"
+                class="absolute right-4 bottom-5 z-20 flex size-10 items-center justify-center rounded-lg border-2 border-white/80 bg-black/10 text-white backdrop-blur-sm transition-colors hover:bg-white hover:text-navy-900 sm:right-8 sm:bottom-8 sm:size-12"
                 aria-label="Keyingi slayd"
                 @click="next"
             >
@@ -336,49 +339,31 @@ onBeforeUnmount(() => clearTimeout(timer));
             </button>
 
             <div
-                class="absolute bottom-7 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2"
+                class="absolute bottom-7 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1 sm:bottom-11"
+                role="tablist"
+                aria-label="Slaydlar"
             >
                 <button
                     v-for="(item, index) in items"
                     :key="item.key"
                     type="button"
-                    class="group relative h-6 w-10 cursor-pointer"
+                    role="tab"
+                    class="group flex size-6 cursor-pointer items-center justify-center"
                     :aria-label="`${index + 1}-slayd`"
+                    :aria-selected="index === active"
                     :aria-current="index === active ? 'true' : undefined"
                     @click="go(index)"
                 >
                     <span
-                        class="absolute inset-x-0 top-1/2 h-1 -translate-y-1/2 overflow-hidden rounded-full bg-white/30 transition-colors group-hover:bg-white/50"
-                    >
-                        <span
-                            v-if="index === active"
-                            :key="`progress-${active}`"
-                            :class="[
-                                'absolute inset-y-0 left-0 rounded-full bg-gold-400',
-                                autoplay ? 'hero-progress' : 'w-full',
-                            ]"
-                            :style="{ animationDuration: `${INTERVAL}ms` }"
-                        />
-                    </span>
+                        :class="[
+                            'block size-2.5 rounded-full border-2 transition-all duration-300',
+                            index === active
+                                ? 'scale-110 border-white bg-white shadow-[0_0_0_3px_rgba(255,255,255,0.25)]'
+                                : 'border-white/80 bg-transparent group-hover:bg-white/50',
+                        ]"
+                    />
                 </button>
             </div>
         </template>
     </section>
 </template>
-
-<style scoped>
-.hero-progress {
-    animation-name: hero-progress;
-    animation-timing-function: linear;
-    animation-fill-mode: forwards;
-}
-
-@keyframes hero-progress {
-    from {
-        width: 0%;
-    }
-    to {
-        width: 100%;
-    }
-}
-</style>
