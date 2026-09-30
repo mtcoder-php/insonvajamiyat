@@ -37,7 +37,7 @@ defineProps<HomePageProps>();
 
     <div class="bg-white">
         <div
-            class="mx-auto grid w-full max-w-[1800px] gap-6 px-4 py-10 sm:px-6 lg:w-[95%] lg:grid-cols-[minmax(0,1fr)_20rem] lg:px-0 lg:py-12 xl:grid-cols-[minmax(0,1fr)_22rem] 2xl:grid-cols-[minmax(0,1fr)_24rem]"
+            class="mx-auto grid w-full max-w-[1800px] gap-6 px-4 py-10 sm:px-6 lg:w-[90%] lg:grid-cols-[minmax(0,1fr)_20rem] lg:px-0 lg:py-12 xl:grid-cols-[minmax(0,1fr)_22rem] 2xl:grid-cols-[minmax(0,1fr)_24rem]"
         >
             <div class="min-w-0 space-y-6">
                 <LatestIssueCard :issue="latestIssue" />
