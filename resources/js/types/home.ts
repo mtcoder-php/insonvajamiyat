@@ -81,7 +81,18 @@ export type HomeStats = {
     subjects: number;
 };
 
+/** Bosh sahifa slayderi (banner yoki config'dagi standart slayd) */
+export type HeroSlide = {
+    key: string;
+    title: string;
+    subtitle: string | null;
+    imageUrl: string | null;
+    linkUrl: string | null;
+    buttonText: string | null;
+};
+
 export type HomePageProps = {
+    heroSlides: HeroSlide[];
     stats: HomeStats;
     latestIssue: LatestIssue | null;
     latestArticles: ArticleCard[];

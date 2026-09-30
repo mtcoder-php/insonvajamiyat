@@ -5,6 +5,7 @@ namespace Tests\Feature\Web;
 use App\Enums\ArticleStatus;
 use App\Models\Article;
 use App\Models\ArticleAuthor;
+use App\Models\Banner;
 use App\Models\Event;
 use App\Models\JournalIssue;
 use App\Models\Partner;
@@ -33,6 +34,30 @@ class HomePageTest extends TestCase
                 ->has('latestArticles', 0)
                 ->has('announcements', 0)
                 ->where('stats.articles', 0)
+            );
+    }
+
+    public function test_hero_uses_default_slides_when_there_are_no_banners()
+    {
+        $this->get(route('home'))
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('heroSlides', count((array) config('journal.hero_slides')))
+                ->where('heroSlides.0.title', config('journal.hero_slides.0.title'))
+                ->where('heroSlides.0.linkUrl', route('articles.index'))
+            );
+    }
+
+    public function test_active_banners_replace_default_slides()
+    {
+        Banner::factory()->create(['title' => ['uz' => 'Birinchi banner'], 'sort_order' => 1]);
+        Banner::factory()->create(['title' => ['uz' => 'Muddati tugagan'], 'ends_at' => now()->subDay()]);
+        Banner::factory()->create(['title' => ['uz' => 'Nofaol'], 'is_active' => false]);
+
+        $this->get(route('home'))
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('heroSlides', 1)
+                ->where('heroSlides.0.title', 'Birinchi banner')
+                ->whereNot('heroSlides.0.imageUrl', null)
             );
     }
 

@@ -74,6 +74,13 @@ Demo hisoblar (`APP_ENV=local` bo'lganda seed qilinadi):
 Lokal seed bosh sahifa uchun namunaviy kontent ham yaratadi (3 ta son,
 16 ta maqola, e'lonlar, tadbirlar, hamkorlar — `DemoContentSeeder`).
 
+## Bosh sahifa slayderi
+
+Slaydlar admin paneldagi bannerlardan olinadi; faol banner bo'lmasa
+`config/journal.php` → `hero_slides` dagi standart slaydlar chiqadi.
+Standart slaydlar rasmlari: `public/images/hero/slide-1.webp`, `slide-2.webp`,
+`slide-3.webp` (tavsiya 1920×720). Fayl yo'q bo'lsa slayd brend fonida ko'rinadi.
+
 ## Serverga joylashtirish (production)
 
 ```bash

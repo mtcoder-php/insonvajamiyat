@@ -6,18 +6,21 @@ use App\Enums\PartnerType;
 use App\Enums\PostType;
 use App\Enums\RoleName;
 use App\Http\Resources\Web\ArticleCardResource;
+use App\Http\Resources\Web\BannerResource;
 use App\Http\Resources\Web\EventResource;
 use App\Http\Resources\Web\IssueCardResource;
 use App\Http\Resources\Web\PartnerResource;
 use App\Http\Resources\Web\PostResource;
 use App\Http\Resources\Web\SubjectResource;
 use App\Models\Article;
+use App\Models\Banner;
 use App\Models\Event;
 use App\Models\JournalIssue;
 use App\Models\Partner;
 use App\Models\Post;
 use App\Models\Subject;
 use App\Models\User;
+use Illuminate\Support\Facades\Route;
 
 /**
  * Bosh sahifa ma'lumotlari.
@@ -139,5 +142,38 @@ class HomePageService
         $partners = Partner::query()->active()->ofType($type)->get();
 
         return PartnerResource::collection($partners)->resolve();
+    }
+
+    /**
+     * Slayder: admin paneldagi faol bannerlar, ular bo'lmasa —
+     * config('journal.hero_slides') dagi standart slaydlar.
+     * Standart slayd rasmi public/ da hali yo'q bo'lsa, imageUrl = null
+     * (frontend brend fonini ko'rsatadi).
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function heroSlides(): array
+    {
+        $banners = Banner::query()->visible()->get();
+
+        if ($banners->isNotEmpty()) {
+            return BannerResource::collection($banners)->resolve();
+        }
+
+        /** @var array<int, array{title: string, subtitle?: string|null, image?: string|null, button_text?: string|null, route?: string|null}> $defaults */
+        $defaults = (array) config('journal.hero_slides', []);
+
+        return array_map(fn (array $slide, int $index): array => [
+            'key' => "default-{$index}",
+            'title' => $slide['title'],
+            'subtitle' => $slide['subtitle'] ?? null,
+            'imageUrl' => isset($slide['image']) && is_file(public_path($slide['image']))
+                ? asset($slide['image'])
+                : null,
+            'linkUrl' => isset($slide['route']) && Route::has($slide['route'])
+                ? route($slide['route'])
+                : null,
+            'buttonText' => $slide['button_text'] ?? null,
+        ], $defaults, array_keys($defaults));
     }
 }

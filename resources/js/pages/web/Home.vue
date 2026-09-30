@@ -3,7 +3,7 @@ import { Head } from '@inertiajs/vue3';
 import { FileText } from '@lucide/vue';
 import ArticleListItem from '@/components/web/ArticleListItem.vue';
 import AnnouncementsCard from '@/components/web/home/AnnouncementsCard.vue';
-import HomeHero from '@/components/web/home/HomeHero.vue';
+import HeroSlider from '@/components/web/home/HeroSlider.vue';
 import HomeStats from '@/components/web/home/HomeStats.vue';
 import IndexingPartners from '@/components/web/home/IndexingPartners.vue';
 import JournalFactsCard from '@/components/web/home/JournalFactsCard.vue';
@@ -28,7 +28,7 @@ defineProps<HomePageProps>();
 <template>
     <Head title="Bosh sahifa" />
 
-    <HomeHero :issue="latestIssue" />
+    <HeroSlider :slides="heroSlides" :issue="latestIssue" />
     <HomeStats :stats="stats" />
 
     <section class="bg-white py-16 lg:py-20">
