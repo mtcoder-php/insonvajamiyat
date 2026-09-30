@@ -5,7 +5,6 @@ namespace Tests\Feature\Web;
 use App\Enums\ArticleStatus;
 use App\Models\Article;
 use App\Models\ArticleAuthor;
-use App\Models\Banner;
 use App\Models\Event;
 use App\Models\JournalIssue;
 use App\Models\Partner;
@@ -18,42 +17,23 @@ use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 /**
- * Bosh sahifa (ikki dizayn varianti) va ommaviy maqola/son sahifalari.
+ * Bosh sahifa va ommaviy maqola/son sahifalari.
  */
 class HomePageTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_home_renders_modern_variant_by_default()
+    public function test_home_renders_with_empty_database()
     {
         $this->get(route('home'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
-                ->component('web/home/Modern')
-                ->where('variant', 'modern')
+                ->component('web/Home')
                 ->where('latestIssue', null)
                 ->has('latestArticles', 0)
-                ->has('monthlyArticles.months', 12)
+                ->has('announcements', 0)
                 ->where('stats.articles', 0)
             );
-    }
-
-    public function test_variant_can_be_switched_with_query_parameter()
-    {
-        $this->get(route('home', ['variant' => 'classic']))
-            ->assertInertia(fn (Assert $page) => $page
-                ->component('web/home/Classic')
-                ->where('variant', 'classic')
-                ->where('monthlyArticles', null)
-            );
-    }
-
-    public function test_unknown_variant_falls_back_to_config()
-    {
-        config(['journal.home_variant' => 'classic']);
-
-        $this->get(route('home', ['variant' => 'nope']))
-            ->assertInertia(fn (Assert $page) => $page->component('web/home/Classic'));
     }
 
     public function test_home_shows_only_published_content()
@@ -78,10 +58,7 @@ class HomePageTest extends TestCase
         Partner::factory()->indexing()->create();
         Partner::factory()->create(['is_active' => false]);
 
-        Banner::factory()->create();
-        Banner::factory()->create(['ends_at' => now()->subDay()]);
-
-        $this->get(route('home', ['variant' => 'classic']))
+        $this->get(route('home'))
             ->assertInertia(fn (Assert $page) => $page
                 ->where('stats.articles', 1)
                 ->where('stats.issues', 1)
@@ -100,21 +77,7 @@ class HomePageTest extends TestCase
                 ->has('events', 1)
                 ->has('indexing', 1)
                 ->has('partners', 0)
-                ->has('banners', 1)
                 ->where('subjects.0.articlesCount', 1)
-            );
-    }
-
-    public function test_monthly_chart_counts_articles_of_current_year()
-    {
-        Article::factory()->published(now()->startOfYear()->addDays(2))->create();
-        Article::factory()->published(now()->startOfYear()->addDays(3))->create();
-        Article::factory()->published(now()->subYear())->create();
-
-        $this->get(route('home'))
-            ->assertInertia(fn (Assert $page) => $page
-                ->where('monthlyArticles.year', (int) now()->year)
-                ->where('monthlyArticles.months.0', 2)
             );
     }
 

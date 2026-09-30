@@ -73,8 +73,6 @@ Demo hisoblar (`APP_ENV=local` bo'lganda seed qilinadi):
 
 Lokal seed bosh sahifa uchun namunaviy kontent ham yaratadi (3 ta son,
 16 ta maqola, e'lonlar, tadbirlar, hamkorlar — `DemoContentSeeder`).
-Bosh sahifaning ikki dizayn varianti: `/?variant=modern` (home_2.png) va
-`/?variant=classic` (home.png); standarti `.env` dagi `JOURNAL_HOME_VARIANT`.
 
 ## Serverga joylashtirish (production)
 

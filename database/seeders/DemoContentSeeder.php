@@ -117,10 +117,10 @@ class DemoContentSeeder extends Seeder
             ['Tahririyat tarkibi yangilandi', "Tahririyat kengashiga yangi a'zolar qabul qilindi."],
         ];
         $news = [
-            'Jurnalning navbatdagi soni nashrga tayyor',
-            "Xalqaro ilmiy hamkorlik bo'yicha yangi kelishuv",
-            '"Ilm va jamiyat" mavzusida ilmiy anjuman',
-            'Saytimizda yangi imkoniyatlar: maqola yuborish platformasi',
+            ['Jurnalning navbatdagi soni nashrga tayyor', "Yangi sonda tarix, etnologiya va falsafa yo'nalishlaridagi maqolalar o'rin oladi."],
+            ["Xalqaro ilmiy hamkorlik bo'yicha yangi kelishuv", "Xorijiy universitetlar bilan qo'shma tadqiqotlar va taqrizchilar almashinuvi yo'lga qo'yiladi."],
+            ['"Ilm va jamiyat" mavzusida ilmiy anjuman', "Anjumanda yosh tadqiqotchilar o'z ilmiy natijalarini taqdim etishdi."],
+            ['Saytimizda yangi imkoniyatlar: maqola yuborish platformasi', 'Endi maqolalar onlayn yuboriladi va taqriz jarayoni shaxsiy kabinetda kuzatiladi.'],
         ];
 
         foreach ($announcements as $i => [$title, $excerpt]) {
@@ -132,10 +132,11 @@ class DemoContentSeeder extends Seeder
             ]);
         }
 
-        foreach ($news as $i => $title) {
+        foreach ($news as $i => [$title, $excerpt]) {
             Post::factory()->create([
                 'type' => PostType::News,
                 'title' => ['uz' => $title],
+                'excerpt' => ['uz' => $excerpt],
                 'slug' => Str::slug($title),
                 'published_at' => now()->subDays(2 + $i * 7),
             ]);

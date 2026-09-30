@@ -26,7 +26,7 @@ class AreaAccessTest extends TestCase
     {
         $this->get(route('home'))
             ->assertInertia(fn (Assert $page) => $page
-                ->component('web/home/Modern')
+                ->component('web/Home')
                 ->where('auth.user', null)
                 ->where('auth.isStaff', false)
             );

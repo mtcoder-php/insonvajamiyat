@@ -73,15 +73,6 @@ export type PartnerItem = {
     url: string | null;
 };
 
-export type BannerItem = {
-    id: number;
-    title: string;
-    subtitle: string | null;
-    imageUrl: string | null;
-    linkUrl: string | null;
-    buttonText: string | null;
-};
-
 export type HomeStats = {
     articles: number;
     authors: number;
@@ -90,15 +81,7 @@ export type HomeStats = {
     subjects: number;
 };
 
-export type MonthlyArticles = {
-    year: number;
-    months: number[];
-};
-
-export type HomeVariant = 'modern' | 'classic';
-
 export type HomePageProps = {
-    variant: HomeVariant;
     stats: HomeStats;
     latestIssue: LatestIssue | null;
     latestArticles: ArticleCard[];
@@ -108,6 +91,4 @@ export type HomePageProps = {
     events: EventItem[];
     partners: PartnerItem[];
     indexing: PartnerItem[];
-    banners: BannerItem[];
-    monthlyArticles: MonthlyArticles | null;
 };

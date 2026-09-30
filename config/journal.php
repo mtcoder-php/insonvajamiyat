@@ -28,10 +28,6 @@ return [
 
     'frequency' => env('JOURNAL_FREQUENCY', 'Yiliga 4 marta (kvartal)'),
 
-    // Bosh sahifa dizayni: 'modern' (home_2.png) yoki 'classic' (home.png).
-    // Vaqtincha ?variant=classic|modern orqali ham tanlash mumkin.
-    'home_variant' => env('JOURNAL_HOME_VARIANT', 'modern'),
-
     'contact' => [
         'email' => env('JOURNAL_EMAIL', 'info@insonvajamiyat.uz'),
         'phone' => env('JOURNAL_PHONE', '+998 71 234 56 78'),
