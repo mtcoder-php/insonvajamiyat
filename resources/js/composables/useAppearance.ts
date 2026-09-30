@@ -10,8 +10,39 @@ export type UseAppearanceReturn = {
     updateAppearance: (value: Appearance) => void;
 };
 
+/**
+ * Ommaviy sayt (web/*) va auth sahifalari faqat yorug' mavzuda chiqadi —
+ * dizayn shunga mo'ljallangan. Qorong'i mavzu admin panel va kabinet uchun.
+ */
+export function isLightOnlyComponent(component: string): boolean {
+    return component.startsWith('web/') || component.startsWith('auth/');
+}
+
+/** Sahifa almashganda <html data-theme> ni yangilab, mavzuni qayta qo'llaydi */
+export function applyThemeForComponent(component: string): void {
+    if (typeof document === 'undefined') {
+        return;
+    }
+
+    if (isLightOnlyComponent(component)) {
+        document.documentElement.dataset.theme = 'light-only';
+    } else {
+        delete document.documentElement.dataset.theme;
+    }
+
+    updateTheme(
+        (localStorage.getItem('appearance') as Appearance | null) || 'system',
+    );
+}
+
 export function updateTheme(value: Appearance): void {
     if (typeof window === 'undefined') {
+        return;
+    }
+
+    if (document.documentElement.dataset.theme === 'light-only') {
+        document.documentElement.classList.remove('dark');
+
         return;
     }
 

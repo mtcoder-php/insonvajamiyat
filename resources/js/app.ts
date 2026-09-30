@@ -1,5 +1,8 @@
-import { createInertiaApp } from '@inertiajs/vue3';
-import { initializeTheme } from '@/composables/useAppearance';
+import { createInertiaApp, router } from '@inertiajs/vue3';
+import {
+    applyThemeForComponent,
+    initializeTheme,
+} from '@/composables/useAppearance';
 import AdminLayout from '@/layouts/AdminLayout.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import AuthLayout from '@/layouts/AuthLayout.vue';
@@ -48,6 +51,11 @@ void createInertiaApp({
 
 // This will set light / dark mode on page load...
 initializeTheme();
+
+// Web/auth sahifalari — faqat yorug' mavzu; admin/kabinetga o'tganda foydalanuvchi tanlovi qaytadi
+router.on('navigate', (event) => {
+    applyThemeForComponent(event.detail.page.component);
+});
 
 // This will listen for flash toast data from the server...
 initializeFlashToast();

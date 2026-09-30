@@ -37,6 +37,14 @@ class HomePageTest extends TestCase
             );
     }
 
+    public function test_public_pages_are_rendered_in_light_theme_only()
+    {
+        $this->withCookie('appearance', 'dark')
+            ->get(route('home'))
+            ->assertSee('data-theme="light-only"', false)
+            ->assertDontSee('class="dark"', false);
+    }
+
     public function test_hero_uses_default_slides_when_there_are_no_banners()
     {
         $this->get(route('home'))
