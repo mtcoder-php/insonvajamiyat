@@ -27,6 +27,19 @@ final class MediaUrl
         return Storage::disk(self::DISK)->url($path);
     }
 
+    /**
+     * public/ papkasidagi statik fayl URL'i (masalan, standart muqova).
+     * Fayl mavjud bo'lmasa null.
+     */
+    public static function publicAsset(mixed $path): ?string
+    {
+        if (! is_string($path) || $path === '' || ! is_file(public_path($path))) {
+            return null;
+        }
+
+        return asset($path);
+    }
+
     /** Fayl hajmi (bayt) yoki fayl topilmasa null */
     public static function size(?string $path): ?int
     {

@@ -28,6 +28,10 @@ return [
 
     'frequency' => env('JOURNAL_FREQUENCY', 'Yiliga 4 marta (kvartal)'),
 
+    // Jurnal soniga alohida muqova yuklanmagan bo'lsa ishlatiladigan umumiy muqova
+    // (public/ ichidagi yo'l). Fayl topilmasa — muqova avtomatik chiziladi.
+    'default_issue_cover' => env('JOURNAL_DEFAULT_ISSUE_COVER', 'coverimg/cover.png'),
+
     'contact' => [
         'email' => env('JOURNAL_EMAIL', 'info@insonvajamiyat.uz'),
         'phone' => env('JOURNAL_PHONE', '+998 71 234 56 78'),

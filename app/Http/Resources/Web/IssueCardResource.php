@@ -33,7 +33,9 @@ class IssueCardResource extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'doi' => $this->doi,
-            'coverUrl' => MediaUrl::from($this->cover_image_path),
+            // Songa muqova yuklanmagan bo'lsa — jurnalning umumiy muqovasi
+            'coverUrl' => MediaUrl::from($this->cover_image_path)
+                ?? MediaUrl::publicAsset(config('journal.default_issue_cover')),
             'pdfUrl' => MediaUrl::from($this->full_pdf_path),
             'pdfSize' => MediaUrl::size($this->full_pdf_path),
             'tocUrl' => MediaUrl::from($this->toc_file_path),

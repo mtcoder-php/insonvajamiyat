@@ -114,6 +114,24 @@ class HomePageTest extends TestCase
             );
     }
 
+    public function test_issue_without_own_cover_uses_default_journal_cover()
+    {
+        JournalIssue::factory()->published()->create();
+
+        // Standart muqova sifatida public/ dagi mavjud fayl
+        config(['journal.default_issue_cover' => 'favicon.ico']);
+
+        $this->get(route('home'))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('latestIssue.coverUrl', asset('favicon.ico'))
+            );
+
+        config(['journal.default_issue_cover' => 'coverimg/mavjud-emas.png']);
+
+        $this->get(route('home'))
+            ->assertInertia(fn (Assert $page) => $page->where('latestIssue.coverUrl', null));
+    }
+
     public function test_published_article_page_is_public_and_drafts_are_hidden()
     {
         $article = Article::factory()->published()->create();
