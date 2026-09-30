@@ -65,13 +65,17 @@ function select(code: LocaleCode): void {
                 />
             </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" :side-offset="6" class="w-40 p-1">
+        <DropdownMenuContent
+            align="end"
+            :side-offset="6"
+            class="w-44 border-line bg-white p-1 text-navy-900 shadow-[0_16px_40px_-16px_rgba(0,30,60,0.35)]"
+        >
             <DropdownMenuItem
                 v-for="locale in locales"
                 :key="locale.code"
                 :class="
                     cn(
-                        'cursor-pointer justify-between rounded-md px-3 py-2 text-sm',
+                        'cursor-pointer justify-between rounded-md px-3 py-2 text-sm transition-colors focus:bg-brand-50 focus:text-brand-700 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-700',
                         locale.code === current
                             ? 'bg-navy-50 font-semibold text-navy-950'
                             : 'text-navy-700',

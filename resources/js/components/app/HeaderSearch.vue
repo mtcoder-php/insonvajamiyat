@@ -51,7 +51,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown));
             @keydown.esc="input?.blur()"
         />
         <kbd
-            class="pointer-events-none absolute top-1/2 right-2.5 hidden -translate-y-1/2 items-center gap-0.5 rounded-md border border-line bg-surface-muted px-1.5 py-0.5 font-sans text-[11px] font-medium text-navy-500 sm:inline-flex"
+            class="pointer-events-none absolute top-1/2 right-2.5 hidden -translate-y-1/2 items-center gap-0.5 rounded-md border border-navy-100 bg-navy-50 px-1.5 py-0.5 font-sans text-[11px] font-medium text-navy-500 sm:inline-flex"
         >
             {{ isMac ? '⌘' : 'Ctrl' }} + K
         </kbd>
