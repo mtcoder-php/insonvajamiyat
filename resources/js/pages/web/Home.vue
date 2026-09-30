@@ -4,7 +4,6 @@ import { FileText } from '@lucide/vue';
 import ArticleListItem from '@/components/web/ArticleListItem.vue';
 import AnnouncementsCard from '@/components/web/home/AnnouncementsCard.vue';
 import HeroSlider from '@/components/web/home/HeroSlider.vue';
-import HomeStats from '@/components/web/home/HomeStats.vue';
 import IndexingPartners from '@/components/web/home/IndexingPartners.vue';
 import JournalFactsCard from '@/components/web/home/JournalFactsCard.vue';
 import NewsAndEvents from '@/components/web/home/NewsAndEvents.vue';
@@ -30,7 +29,6 @@ defineProps<HomePageProps>();
 
     <HeroSlider :slides="heroSlides" />
     <SubjectsStrip :subjects="subjects" />
-    <HomeStats :stats="stats" />
 
     <section class="bg-white py-16 lg:py-20">
         <div

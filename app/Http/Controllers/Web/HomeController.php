@@ -19,7 +19,6 @@ class HomeController extends Controller
     {
         return Inertia::render('web/Home', [
             'heroSlides' => fn () => $home->heroSlides(),
-            'stats' => fn () => $home->stats(),
             'latestIssue' => fn () => $home->latestIssue(),
             'latestArticles' => fn () => $home->latestArticles(),
             'subjects' => fn () => $home->subjects(),

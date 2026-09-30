@@ -33,7 +33,6 @@ class HomePageTest extends TestCase
                 ->where('latestIssue', null)
                 ->has('latestArticles', 0)
                 ->has('announcements', 0)
-                ->where('stats.articles', 0)
             );
     }
 
@@ -93,9 +92,6 @@ class HomePageTest extends TestCase
 
         $this->get(route('home'))
             ->assertInertia(fn (Assert $page) => $page
-                ->where('stats.articles', 1)
-                ->where('stats.issues', 1)
-                ->where('stats.indexes', 1)
                 ->has('latestArticles', 1)
                 ->where('latestArticles.0.title', $published->title)
                 ->where('latestArticles.0.authors', 'A. Karimov')
@@ -167,7 +163,6 @@ class HomePageTest extends TestCase
 
         $this->get(route('home'))
             ->assertInertia(fn (Assert $page) => $page
-                ->where('stats.issues', 3)
                 ->has('latestArticles', 6)
                 ->has('announcements', 3)
                 ->has('events', 3)

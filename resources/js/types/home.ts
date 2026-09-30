@@ -73,14 +73,6 @@ export type PartnerItem = {
     url: string | null;
 };
 
-export type HomeStats = {
-    articles: number;
-    authors: number;
-    issues: number;
-    indexes: number;
-    subjects: number;
-};
-
 /** Bosh sahifa slayderi (banner yoki config'dagi standart slayd) */
 export type HeroSlide = {
     key: string;
@@ -93,7 +85,6 @@ export type HeroSlide = {
 
 export type HomePageProps = {
     heroSlides: HeroSlide[];
-    stats: HomeStats;
     latestIssue: LatestIssue | null;
     latestArticles: ArticleCard[];
     subjects: SubjectSummary[];

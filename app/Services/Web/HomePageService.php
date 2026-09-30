@@ -4,7 +4,6 @@ namespace App\Services\Web;
 
 use App\Enums\PartnerType;
 use App\Enums\PostType;
-use App\Enums\RoleName;
 use App\Http\Resources\Web\ArticleCardResource;
 use App\Http\Resources\Web\BannerResource;
 use App\Http\Resources\Web\EventResource;
@@ -19,7 +18,6 @@ use App\Models\JournalIssue;
 use App\Models\Partner;
 use App\Models\Post;
 use App\Models\Subject;
-use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -32,24 +30,6 @@ class HomePageService
 {
     /** Bosh sahifadagi "So'nggi maqolalar" soni */
     public const LATEST_ARTICLES = 6;
-
-    /**
-     * Raqamli ko'rsatkichlar (hero ostidagi qator va "Jurnal statistikasi").
-     *
-     * @return array{articles: int, authors: int, issues: int, indexes: int, subjects: int}
-     */
-    public function stats(): array
-    {
-        return [
-            'articles' => Article::query()->published()->count(),
-            'authors' => User::query()
-                ->whereHas('roles', fn ($q) => $q->where('name', RoleName::Author->value))
-                ->count(),
-            'issues' => JournalIssue::query()->published()->count(),
-            'indexes' => Partner::query()->active()->ofType(PartnerType::Indexing)->count(),
-            'subjects' => Subject::query()->active()->whereNull('parent_id')->count(),
-        ];
-    }
 
     /**
      * Eng so'nggi chop etilgan son (mundarijadagi yo'nalishlar bilan).
