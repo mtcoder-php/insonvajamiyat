@@ -9,3 +9,4 @@ export * from './cabinet';
 export * from './payments';
 export * from './editorial';
 export * from './reviews';
+export * from './messages';

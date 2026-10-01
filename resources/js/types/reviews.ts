@@ -74,6 +74,11 @@ export type ReviewDetail = {
         abstracts: Record<LocaleCode, string | null>;
         titles: Record<LocaleCode, string | null>;
         keywords: string[];
+        authorResponse: {
+            version: number;
+            note: string | null;
+            createdAt: string | null;
+        } | null;
         files: ReviewFile[];
     };
     form: {

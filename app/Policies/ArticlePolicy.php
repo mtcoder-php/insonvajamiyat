@@ -56,6 +56,20 @@ class ArticlePolicy
         return $article->submitter_id === $user->id && $article->status === ArticleStatus::Draft;
     }
 
+    /**
+     * Muallif ↔ tahririyat yozishmasi: maqola mualliflari yoki articles.message_author
+     * ruxsati bor xodim (qoralamada yozishma yo'q).
+     */
+    public function message(User $user, Article $article): bool
+    {
+        if ($article->status === ArticleStatus::Draft) {
+            return false;
+        }
+
+        return $this->isAuthor($user, $article)
+            || $user->can(PermissionName::ArticlesMessageAuthor->value);
+    }
+
     public function downloadFiles(User $user, Article $article): bool
     {
         return $this->view($user, $article);

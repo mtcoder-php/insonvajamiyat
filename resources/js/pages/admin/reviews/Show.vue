@@ -279,6 +279,27 @@ const history = computed(() =>
                     >
                         <div class="grid content-start gap-4">
                             <div
+                                v-if="article.authorResponse?.note"
+                                class="rounded-xl border border-orange-200 bg-orange-50/50 p-4 transition-shadow hover:shadow-[0_12px_26px_-20px_rgba(234,88,12,0.5)]"
+                            >
+                                <p
+                                    class="text-[11px] font-semibold tracking-wide text-orange-700 uppercase"
+                                >
+                                    Muallif javobi · v{{
+                                        article.authorResponse.version
+                                    }}
+                                </p>
+                                <p
+                                    class="mt-1.5 text-[13px] leading-relaxed whitespace-pre-line text-navy-800"
+                                >
+                                    {{ article.authorResponse.note }}
+                                </p>
+                                <p class="mt-2 text-[11px] text-navy-500">
+                                    Oldingi raund izohlariga javob. Tuzatilgan
+                                    fayl «Fayllar» tabida birinchi turadi.
+                                </p>
+                            </div>
+                            <div
                                 v-for="item in abstracts"
                                 :key="item.code"
                                 class="rounded-xl border border-line p-4 transition-shadow hover:shadow-[0_12px_26px_-20px_rgba(0,36,66,0.5)]"

@@ -3,9 +3,11 @@
 namespace App\Services\Cabinet;
 
 use App\Enums\ArticleStatus;
+use App\Enums\MessageChannel;
 use App\Http\Resources\Cabinet\AuthorArticleResource;
 use App\Models\Article;
 use App\Models\ArticleStatusHistory;
+use App\Models\Message;
 use App\Models\User;
 use App\Services\Articles\ArticleTimeline;
 use Illuminate\Database\Eloquent\Builder;
@@ -129,29 +131,58 @@ class AuthorDashboardService
     }
 
     /**
-     * Tahririyatdan xabarlar: muallifga ko'rinadigan, izohli holat o'zgarishlari.
+     * So'nggi xabarlar: tahririyat yozishmasi (muallifning o'zi yozganlardan tashqari) va
+     * muallifga ko'rinadigan, izohli holat o'zgarishlari — vaqt bo'yicha aralash.
      *
-     * @return array<int, array{id: int, sender: string, message: string, title: string, url: string, createdAt: string}>
+     * @return array<int, array{id: string, sender: string, message: string, title: string, url: string, createdAt: string, unread: bool}>
      */
     public function messages(User $user, int $limit = 3): array
     {
-        return ArticleStatusHistory::query()
-            ->whereIn('article_id', $this->articles($user)->select('id'))
+        $articleIds = $this->articles($user)->select('id');
+
+        $history = ArticleStatusHistory::query()
+            ->whereIn('article_id', $articleIds)
             ->where('is_visible_to_author', true)
             ->whereNotNull('comment')
+            ->where(fn (Builder $q) => $q->whereNull('changed_by')->orWhere('changed_by', '!=', $user->id))
             ->with('article')
             ->latest('created_at')
             ->latest('id')
             ->limit($limit)
             ->get()
             ->map(fn (ArticleStatusHistory $history): array => [
-                'id' => $history->id,
+                'id' => 'h'.$history->id,
                 'sender' => $history->to_status === ArticleStatus::InReview ? 'Taqrizchi' : 'Tahririyat',
                 'message' => (string) $history->comment,
                 'title' => $history->article->title,
                 'url' => route('cabinet.articles.show', $history->article->uuid),
                 'createdAt' => $history->created_at->toIso8601String(),
-            ])
+                'unread' => false,
+            ]);
+
+        $messages = Message::query()
+            ->whereIn('article_id', $articleIds)
+            ->where('channel', MessageChannel::AuthorEditor->value)
+            ->where('sender_id', '!=', $user->id)
+            ->with('article')
+            ->latest('created_at')
+            ->latest('id')
+            ->limit($limit)
+            ->get()
+            ->map(fn (Message $message): array => [
+                'id' => 'm'.$message->id,
+                'sender' => 'Tahririyat',
+                'message' => $message->body,
+                'title' => $message->article->title,
+                'url' => route('cabinet.articles.show', $message->article->uuid),
+                'createdAt' => $message->created_at->toIso8601String(),
+                'unread' => $message->read_at === null,
+            ]);
+
+        return $messages->concat($history)
+            ->sortByDesc('createdAt')
+            ->take($limit)
+            ->values()
             ->all();
     }
 

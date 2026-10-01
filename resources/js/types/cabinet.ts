@@ -57,12 +57,14 @@ export type TimelineStep = {
 };
 
 export type AuthorMessage = {
-    id: number;
+    /** 'm12' — yozishma xabari, 'h34' — holat izohi */
+    id: string;
     sender: string;
     message: string;
     title: string;
     url: string;
     createdAt: string;
+    unread: boolean;
 };
 
 export type AuthorChart = {

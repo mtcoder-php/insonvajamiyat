@@ -50,6 +50,23 @@ const selectedUuid = computed(() => props.selected?.uuid ?? null);
 const loading = ref<string | null>(null);
 const inviteOpen = ref(false);
 
+// Maqola kartasining faol tabi; boshqa maqola tanlanganda "Asosiy"ga qaytadi
+const detailTab = ref<
+    'main' | 'documents' | 'reviewers' | 'messages' | 'process'
+>('main');
+
+watch(
+    () => props.selected?.uuid,
+    () => (detailTab.value = 'main'),
+);
+
+function openMessages(): void {
+    detailTab.value = 'messages';
+    document
+        .getElementById('article-detail')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
 function query(extra: Record<string, string> = {}): Record<string, string> {
     const q: Record<string, string> = { queue: form.queue, ...extra };
 
@@ -145,7 +162,10 @@ function page(url: string): void {
                 class="grid items-start gap-5 2xl:grid-cols-[minmax(0,1fr)_19rem]"
             >
                 <ArticleDetail
+                    id="article-detail"
                     :key="selected.uuid"
+                    v-model:tab="detailTab"
+                    class="scroll-mt-28"
                     :article="selected"
                     @invite="inviteOpen = true"
                 />
@@ -166,6 +186,7 @@ function page(url: string): void {
                         :article="selected"
                         :editors="editors"
                         @invite="inviteOpen = true"
+                        @message="openMessages"
                     />
                 </aside>
             </div>

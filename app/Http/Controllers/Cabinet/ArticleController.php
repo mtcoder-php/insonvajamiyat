@@ -18,7 +18,9 @@ use App\Models\Review;
 use App\Models\User;
 use App\Services\Articles\ArticleTimeline;
 use App\Services\Articles\ArticleWorkflow;
+use App\Services\Articles\RevisionService;
 use App\Services\Cabinet\AuthorDashboardService;
+use App\Services\Messages\ArticleMessageService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -79,9 +81,19 @@ class ArticleController extends Controller
         ]);
     }
 
-    public function show(Request $request, Article $article, ArticleTimeline $timeline): Response
-    {
+    public function show(
+        Request $request,
+        Article $article,
+        ArticleTimeline $timeline,
+        ArticleMessageService $messages,
+        RevisionService $revisions,
+    ): Response {
         Gate::authorize('view', $article);
+
+        /** @var User $user */
+        $user = $request->user();
+        $messages->markRead($article, $user);
+        $revision = Gate::allows('update', $article) ? $revisions->request($article) : null;
 
         $article->load([
             'subject', 'articleType', 'issues', 'authors', 'files',
@@ -143,6 +155,15 @@ class ArticleController extends Controller
             'steps' => $timeline->for($article),
             'payment' => $this->payment($article),
             'reviews' => $this->reviews($article),
+            'revision' => $revision !== null
+                ? [...$revision, 'url' => route('cabinet.articles.revision.store', $article->uuid)]
+                : null,
+            'messages' => [
+                'items' => $messages->thread($article, $user),
+                'sendUrl' => Gate::allows('message', $article)
+                    ? route('cabinet.articles.messages.store', $article->uuid)
+                    : null,
+            ],
         ]);
     }
 

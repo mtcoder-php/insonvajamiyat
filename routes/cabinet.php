@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\Articles\ArticleMessageController;
 use App\Http\Controllers\Cabinet\ArticleController;
 use App\Http\Controllers\Cabinet\ArticleDraftFileController;
 use App\Http\Controllers\Cabinet\ArticleFileController;
+use App\Http\Controllers\Cabinet\ArticleRevisionController;
 use App\Http\Controllers\Cabinet\ArticleSubmissionController;
 use App\Http\Controllers\Cabinet\DashboardController;
 use Illuminate\Support\Facades\Route;
@@ -41,6 +43,19 @@ Route::prefix('articles')->name('articles.')->group(function (): void {
     Route::post('{article:uuid}/submit', [ArticleSubmissionController::class, 'submit'])
         ->middleware('throttle:10,1')
         ->name('submit');
+
+    // Tuzatish sikli: tuzatilgan versiya (RevisionRequired → Resubmitted)
+    Route::post('{article:uuid}/revision', [ArticleRevisionController::class, 'store'])
+        ->middleware('throttle:10,1')
+        ->name('revision.store');
+
+    // Muallif ↔ tahririyat yozishmasi (fayl havolasi xodimlar uchun ham shu)
+    Route::post('{article:uuid}/messages', [ArticleMessageController::class, 'store'])
+        ->middleware('throttle:20,1')
+        ->name('messages.store');
+    Route::get('{article:uuid}/messages/{message}/attachment', [ArticleMessageController::class, 'attachment'])
+        ->scopeBindings()
+        ->name('messages.attachment');
 
     Route::post('{article:uuid}/files', [ArticleDraftFileController::class, 'store'])
         ->middleware('throttle:30,1')

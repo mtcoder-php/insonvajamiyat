@@ -64,6 +64,7 @@ use Spatie\Translatable\HasTranslations;
  * @property-read Collection<int, JournalIssue> $issues
  * @property-read Collection<int, ArticleFile> $files
  * @property-read Collection<int, ArticleVersion> $versions
+ * @property-read Collection<int, Message> $messages
  * @property-read Collection<int, Payment> $payments
  * @property-read User|null $handlingEditor
  * @property-read Collection<int, ArticleNote> $notes
@@ -186,6 +187,12 @@ class Article extends Model
     public function versions(): HasMany
     {
         return $this->hasMany(ArticleVersion::class)->orderBy('version_number');
+    }
+
+    /** @return HasMany<Message, $this> */
+    public function messages(): HasMany
+    {
+        return $this->hasMany(Message::class)->orderBy('created_at')->orderBy('id');
     }
 
     /**
