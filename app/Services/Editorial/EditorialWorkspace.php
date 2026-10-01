@@ -16,8 +16,8 @@ use App\Models\ArticleVersion;
 use App\Models\EditorialDecision;
 use App\Models\User;
 use App\Services\Articles\ArticleTimeline;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
 
 /**
@@ -270,7 +270,7 @@ class EditorialWorkspace
     /** "2026-0048" — maqolaning tahririyat raqami */
     public static function code(Article $article): string
     {
-        $year = ($article->submitted_at ?? $article->created_at)?->year ?? (int) now()->year;
+        $year = ($article->submitted_at ?? $article->created_at)->year ?? (int) now()->year;
 
         return sprintf('%d-%04d', $year, $article->id);
     }

@@ -140,9 +140,12 @@ class EditorialService
 
     private static function defaultComment(EditorialDecisionType $decision): ?string
     {
-        return match ($decision) {
-            EditorialDecisionType::Accept => __('Tabriklaymiz! Maqolangiz nashrga qabul qilindi.'),
-            default => null,
-        };
+        if ($decision !== EditorialDecisionType::Accept) {
+            return null;
+        }
+
+        $text = __('Tabriklaymiz! Maqolangiz nashrga qabul qilindi.');
+
+        return is_string($text) ? $text : null;
     }
 }
