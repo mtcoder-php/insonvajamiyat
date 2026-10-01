@@ -45,7 +45,7 @@ class ResubmitArticleRequest extends FormRequest
     {
         $files = $this->file('supplementary');
 
-        return is_array($files) ? array_values(array_filter($files, fn (mixed $f): bool => $f instanceof UploadedFile)) : [];
+        return is_array($files) ? array_values($files) : [];
     }
 
     /**
