@@ -5,6 +5,7 @@ import type { RecommendedBook } from '@/types';
 
 /**
  * "Tavsiya etilgan kitoblar" (home.png): muqova, nom, muallif, yil.
+ * Muqova: books.cover_image_path (php artisan app:import-book-covers — public/web/books/<nom>.png).
  */
 defineProps<{ books: RecommendedBook[] }>();
 </script>
@@ -21,7 +22,7 @@ defineProps<{ books: RecommendedBook[] }>();
                     class="group flex gap-3.5 rounded-lg px-2 py-3 transition-colors hover:bg-white"
                 >
                     <span
-                        class="flex h-16 w-12 shrink-0 items-center justify-center overflow-hidden rounded-sm bg-navy-900 shadow-md transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:-rotate-2"
+                        class="flex h-20 w-14 shrink-0 items-center justify-center overflow-hidden rounded-sm bg-navy-900 shadow-[0_6px_14px_-6px_rgba(0,30,60,0.55)] ring-1 ring-black/10 transition-all duration-300 group-hover:-translate-y-1 group-hover:-rotate-2 group-hover:shadow-[0_12px_22px_-8px_rgba(0,30,60,0.6)]"
                     >
                         <img
                             v-if="book.coverUrl"
@@ -32,7 +33,7 @@ defineProps<{ books: RecommendedBook[] }>();
                         />
                         <BookOpen v-else class="size-5 text-gold-300" />
                     </span>
-                    <span class="min-w-0 text-xs leading-snug">
+                    <span class="min-w-0 self-center text-xs leading-snug">
                         <span
                             class="block text-sm font-medium text-navy-900 transition-colors group-hover:text-brand-700"
                         >
