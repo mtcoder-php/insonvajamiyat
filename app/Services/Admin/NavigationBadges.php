@@ -46,6 +46,10 @@ class NavigationBadges
             AdminSection::Articles->value => fn (): int => Article::query()
                 ->whereIn('status', array_map(fn (ArticleStatus $s): string => $s->value, self::AWAITING_EDITOR))
                 ->count(),
+            // Nashr jarayoni: maketga olinishi kutilayotgan va maketlanayotgan maqolalar
+            AdminSection::Production->value => fn (): int => Article::query()
+                ->whereIn('status', [ArticleStatus::Accepted->value, ArticleStatus::InProduction->value])
+                ->count(),
             AdminSection::Issues->value => fn (): int => JournalIssue::query()
                 ->where('status', IssueStatus::Draft->value)
                 ->count(),

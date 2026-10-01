@@ -12,7 +12,8 @@ use Illuminate\Support\Str;
  * Maqola bo'yicha bildirishnoma (bazada + email):
  *   message     — yozishmada yangi xabar;
  *   decision    — tahririyat qarori (tuzatish / qabul / rad);
- *   resubmitted — muallif tuzatilgan versiyani yubordi.
+ *   resubmitted — muallif tuzatilgan versiyani yubordi;
+ *   proof       — korrektura (yakuniy PDF) tayyor / muallif javobi.
  *
  * Qabul qiluvchi muallif bo'lsa havola kabinetga, xodim bo'lsa admin panelga olib boradi.
  */
@@ -23,6 +24,8 @@ class ArticleUpdateNotification extends Notification
     public const DECISION = 'decision';
 
     public const RESUBMITTED = 'resubmitted';
+
+    public const PROOF = 'proof';
 
     public readonly string $headline;
 

@@ -23,6 +23,7 @@ import MessageThread from '@/components/articles/MessageThread.vue';
 import ArticleReviewsCard from '@/components/cabinet/ArticleReviewsCard.vue';
 import ArticleStatusPill from '@/components/cabinet/ArticleStatusPill.vue';
 import CabinetPageHeader from '@/components/cabinet/CabinetPageHeader.vue';
+import ProductionCard from '@/components/cabinet/ProductionCard.vue';
 import RevisionCard from '@/components/cabinet/RevisionCard.vue';
 import StatusTimeline from '@/components/cabinet/StatusTimeline.vue';
 import InputError from '@/components/InputError.vue';
@@ -34,6 +35,7 @@ import type {
     AuthorArticleDetails,
     AuthorArticlePayment,
     ArticleThread,
+    AuthorProduction,
     AuthorReview,
     RevisionRequest,
     TimelineStep,
@@ -49,6 +51,7 @@ const props = defineProps<{
     payment: AuthorArticlePayment | null;
     reviews: AuthorReview[];
     revision: RevisionRequest | null;
+    production: AuthorProduction | null;
     messages: ArticleThread;
 }>();
 
@@ -163,6 +166,8 @@ const historyDot: Record<string, string> = {
 
         <div class="grid gap-5 xl:grid-cols-[minmax(0,1fr)_19rem]">
             <div class="flex min-w-0 flex-col gap-5">
+                <ProductionCard v-if="production" :production="production" />
+
                 <RevisionCard
                     v-if="revision"
                     :revision="revision"

@@ -10,3 +10,4 @@ export * from './payments';
 export * from './editorial';
 export * from './reviews';
 export * from './messages';
+export * from './production';

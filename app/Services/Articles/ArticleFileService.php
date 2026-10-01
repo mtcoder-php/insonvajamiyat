@@ -58,6 +58,16 @@ class ArticleFileService
         return Storage::disk($file->disk)->download($file->path, $file->original_name);
     }
 
+    /** PDF — brauzerda ko'rsatish (iframe uchun), boshqa turlar — yuklab olish */
+    public function inline(ArticleFile $file): StreamedResponse
+    {
+        abort_unless(Storage::disk($file->disk)->exists($file->path), 404);
+
+        return $file->extension() === 'pdf'
+            ? Storage::disk($file->disk)->response($file->path, $file->original_name)
+            : Storage::disk($file->disk)->download($file->path, $file->original_name);
+    }
+
     public function delete(ArticleFile $file): void
     {
         Storage::disk($file->disk)->delete($file->path);

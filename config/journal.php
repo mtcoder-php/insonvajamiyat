@@ -26,6 +26,9 @@ return [
 
     'doi_prefix' => env('JOURNAL_DOI_PREFIX'),  // masalan 10.5281/zenodo
 
+    // Nashr oldidan tekshiruv: plagiat (o'xshashlik) foizining ruxsat etilgan chegarasi
+    'plagiarism_max' => (float) env('JOURNAL_PLAGIARISM_MAX', 20),
+
     'frequency' => env('JOURNAL_FREQUENCY', 'Yiliga 4 marta (kvartal)'),
 
     // Jurnal soniga alohida muqova yuklanmagan bo'lsa ishlatiladigan umumiy muqova

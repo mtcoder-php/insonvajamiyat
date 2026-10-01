@@ -5,19 +5,29 @@ import UserAvatar from '@/components/users/UserAvatar.vue';
 import { textareaClass } from '@/lib/formStyles';
 import { formatDate, formatTime } from '@/lib/format';
 import { cn } from '@/lib/utils';
-import type { EditorialArticle } from '@/types';
+import type { EditorialNote } from '@/types';
 
 /**
- * Muharrir izohlari — tahririyat ichki yozuvlari (muallifga ko'rinmaydi).
+ * Tahririyat izohlari — ichki yozuvlar (muallifga ko'rinmaydi).
+ * Muharrir ish joyi va nashr jarayoni sahifalarida ishlatiladi.
  */
-const props = defineProps<{ article: EditorialArticle }>();
+const props = withDefaults(
+    defineProps<{
+        notes: EditorialNote[];
+        url: string;
+        /** Partial reload uchun prop nomi (masalan, 'selected' yoki 'article') */
+        reload: string;
+        title?: string;
+    }>(),
+    { title: 'Muharrir izohlari' },
+);
 
 const form = useForm({ body: '' });
 
 function submit(): void {
-    form.post(props.article.urls.notes, {
+    form.post(props.url, {
         preserveScroll: true,
-        only: ['selected'],
+        only: [props.reload],
         onSuccess: () => form.reset(),
     });
 }
@@ -29,7 +39,7 @@ function submit(): void {
             class="mb-3 flex items-center gap-2 text-[13px] font-bold text-navy-950"
         >
             <MessageSquareText class="size-4 text-brand-600" />
-            Muharrir izohlari
+            {{ title }}
             <span
                 class="inline-flex items-center gap-1 rounded bg-navy-50 px-1.5 py-0.5 text-[10px] font-medium text-navy-500"
             >
@@ -38,9 +48,9 @@ function submit(): void {
             </span>
         </h3>
 
-        <ul v-if="article.notes.length" class="mb-3 grid gap-2">
+        <ul v-if="notes.length" class="mb-3 grid gap-2">
             <li
-                v-for="note in article.notes"
+                v-for="note in notes"
                 :key="note.id"
                 class="flex gap-3 rounded-lg border border-line bg-[#f8fafd] p-3"
             >

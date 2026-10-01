@@ -21,6 +21,7 @@ use App\Services\Articles\ArticleWorkflow;
 use App\Services\Articles\RevisionService;
 use App\Services\Cabinet\AuthorDashboardService;
 use App\Services\Messages\ArticleMessageService;
+use App\Services\Production\ProductionService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -87,6 +88,7 @@ class ArticleController extends Controller
         ArticleTimeline $timeline,
         ArticleMessageService $messages,
         RevisionService $revisions,
+        ProductionService $production,
     ): Response {
         Gate::authorize('view', $article);
 
@@ -158,6 +160,7 @@ class ArticleController extends Controller
             'revision' => $revision !== null
                 ? [...$revision, 'url' => route('cabinet.articles.revision.store', $article->uuid)]
                 : null,
+            'production' => $this->production($article, $user, $production),
             'messages' => [
                 'items' => $messages->thread($article, $user),
                 'sendUrl' => Gate::allows('message', $article)
@@ -182,6 +185,46 @@ class ArticleController extends Controller
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Maqola qaytarib olindi.')]);
 
         return to_route('cabinet.articles.show', $article->uuid);
+    }
+
+    /**
+     * Nashrga tayyorlash bosqichi muallif uchun: korrektura (yakuniy PDF), DOI, jurnal soni.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function production(Article $article, User $user, ProductionService $production): ?array
+    {
+        if (! in_array($article->status, [ArticleStatus::InProduction, ArticleStatus::Published], true)) {
+            return null;
+        }
+
+        $finalPdf = $production->finalPdf($article);
+        $checklist = $article->production_checklist ?? [];
+        $placement = $article->placement()->with('issue')->first();
+        $approved = $production->authorApproved($article, $finalPdf);
+        $canRespond = $article->status === ArticleStatus::InProduction
+            && $finalPdf !== null
+            && $article->submitter_id === $user->id;
+
+        return [
+            'proof' => $finalPdf !== null ? [
+                'name' => $finalPdf->original_name,
+                'size' => $finalPdf->size,
+                'uploadedAt' => $finalPdf->created_at?->toIso8601String(),
+                'viewUrl' => route('cabinet.articles.files.download', [$article->uuid, $finalPdf->uuid, 'inline' => 1]),
+                'downloadUrl' => route('cabinet.articles.files.download', [$article->uuid, $finalPdf->uuid]),
+            ] : null,
+            'approved' => $approved,
+            'approvedAt' => $approved && is_string($checklist['author_approved_at'] ?? null) ? $checklist['author_approved_at'] : null,
+            'changes' => ! $approved && is_string($checklist['author_changes'] ?? null) ? $checklist['author_changes'] : null,
+            'readyForPublication' => $article->chief_editor_approved_at !== null,
+            'issue' => $placement?->issue->label,
+            'pages' => $placement?->pages(),
+            'doi' => $article->doi,
+            'canRespond' => $canRespond,
+            'approveUrl' => route('cabinet.articles.proof.approve', $article->uuid),
+            'changesUrl' => route('cabinet.articles.proof.changes', $article->uuid),
+        ];
     }
 
     /**

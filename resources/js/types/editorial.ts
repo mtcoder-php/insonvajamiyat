@@ -6,6 +6,17 @@ import type { LocaleCode } from './journal';
 import type { ThreadMessage } from './messages';
 import type { EditorialReview, ReviewerOption } from './reviews';
 
+/** Tahririyat ichki izohi (article_notes) */
+export type EditorialNote = {
+    id: number;
+    body: string;
+    author: string;
+    avatar: string | null;
+    role: string | null;
+    mine: boolean;
+    createdAt: string;
+};
+
 export type EditorialQueue =
     | 'new'
     | 'reviewing'
@@ -102,15 +113,7 @@ export type EditorialArticle = {
     }[];
     reviews: EditorialReview[];
     messages: ThreadMessage[];
-    notes: {
-        id: number;
-        body: string;
-        author: string;
-        avatar: string | null;
-        role: string | null;
-        mine: boolean;
-        createdAt: string;
-    }[];
+    notes: EditorialNote[];
     steps: TimelineStep[];
     can: {
         startReview: boolean;
@@ -128,6 +131,7 @@ export type EditorialArticle = {
         notes: string;
         invite: string;
         message: string;
+        production: string | null;
     };
 };
 
