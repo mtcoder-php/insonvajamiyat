@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import {
     ArrowLeft,
     Download,
     ExternalLink,
     FileText,
     History,
+    PenLine,
     Mail,
     Route,
     Star,
+    Trash2,
     Undo2,
     UsersRound,
 } from '@lucide/vue';
@@ -75,6 +77,20 @@ const details = computed(() =>
         { label: 'DOI', value: props.article.doi },
     ].filter((item) => item.value),
 );
+
+const deleteOpen = ref(false);
+const deleting = ref(false);
+
+function destroyDraft(): void {
+    if (!props.article.destroyUrl) {
+        return;
+    }
+
+    deleting.value = true;
+    router.delete(props.article.destroyUrl, {
+        onFinish: () => (deleting.value = false),
+    });
+}
 
 const withdrawOpen = ref(false);
 const withdrawForm = useForm({ reason: '' });
@@ -344,8 +360,29 @@ const historyDot: Record<string, string> = {
                             <ExternalLink class="size-4" />
                             Saytda ko'rish
                         </a>
+                        <Link
+                            v-if="article.can.edit && article.editUrl"
+                            :href="article.editUrl"
+                            class="group flex items-center gap-3 rounded-lg bg-brand-600 px-3.5 py-2.5 text-[13px] font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-brand-700"
+                        >
+                            <PenLine
+                                class="size-4 transition-transform group-hover:-rotate-12"
+                            />
+                            Formani davom ettirish
+                        </Link>
                         <button
-                            v-if="article.can.withdraw"
+                            v-if="article.can.delete && article.destroyUrl"
+                            type="button"
+                            class="group flex items-center gap-3 rounded-lg border border-red-200 bg-white px-3.5 py-2.5 text-[13px] font-medium text-red-700 transition-all hover:-translate-y-0.5 hover:bg-red-50"
+                            @click="deleteOpen = true"
+                        >
+                            <Trash2
+                                class="size-4 transition-transform group-hover:-rotate-12"
+                            />
+                            Qoralamani o'chirish
+                        </button>
+                        <button
+                            v-if="article.can.withdraw && !article.can.delete"
                             type="button"
                             class="group flex items-center gap-3 rounded-lg border border-red-200 bg-white px-3.5 py-2.5 text-[13px] font-medium text-red-700 transition-all hover:-translate-y-0.5 hover:bg-red-50"
                             @click="withdrawOpen = true"
@@ -369,6 +406,17 @@ const historyDot: Record<string, string> = {
             </aside>
         </div>
     </div>
+
+    <ActionDialog
+        v-model:open="deleteOpen"
+        title="Qoralamani o'chirasizmi?"
+        description="Kiritilgan barcha ma'lumotlar va yuklangan fayllar butunlay o'chiriladi."
+        :icon="Trash2"
+        tone="danger"
+        confirm-text="O'chirish"
+        :processing="deleting"
+        @confirm="destroyDraft"
+    />
 
     <ActionDialog
         v-model:open="withdrawOpen"

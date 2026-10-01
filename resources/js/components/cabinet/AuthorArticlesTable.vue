@@ -27,9 +27,6 @@ const { offset = 0 } = defineProps<{
     items: AuthorArticle[];
     offset?: number;
 }>();
-
-const editable = (article: AuthorArticle): boolean =>
-    article.statusGroup === 'draft' || article.statusGroup === 'revision';
 </script>
 
 <template>
@@ -108,10 +105,14 @@ const editable = (article: AuthorArticle): boolean =>
                             class="ml-auto flex w-max overflow-hidden rounded-lg border border-line bg-white shadow-[0_1px_2px_rgba(0,30,60,0.05)] transition-all duration-200 group-hover:border-brand-200 group-hover:shadow-[0_6px_14px_-10px_rgba(0,108,246,0.6)]"
                         >
                             <Link
-                                :href="article.url"
+                                :href="article.editUrl ?? article.url"
                                 class="px-3 py-1.5 text-xs font-semibold text-brand-700 transition-colors hover:bg-brand-50"
                             >
-                                Tafsilotlar
+                                {{
+                                    article.editUrl
+                                        ? 'Davom ettirish'
+                                        : 'Tafsilotlar'
+                                }}
                             </Link>
                             <DropdownMenu>
                                 <DropdownMenuTrigger
@@ -146,19 +147,27 @@ const editable = (article: AuthorArticle): boolean =>
                                             Saytda ko'rish
                                         </a>
                                     </DropdownMenuItem>
-                                    <template v-if="editable(article)">
+                                    <template v-if="article.editUrl">
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem as-child>
+                                            <Link :href="article.editUrl">
+                                                <PenLine class="size-4" />
+                                                Formani davom ettirish
+                                            </Link>
+                                        </DropdownMenuItem>
+                                    </template>
+                                    <template
+                                        v-else-if="
+                                            article.statusGroup === 'revision'
+                                        "
+                                    >
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem
                                             disabled
                                             title="Tez orada"
                                         >
                                             <PenLine class="size-4" />
-                                            {{
-                                                article.statusGroup ===
-                                                'revision'
-                                                    ? 'Tuzatilgan variantni yuborish'
-                                                    : 'Tahrirlash'
-                                            }}
+                                            Tuzatilgan variantni yuborish
                                         </DropdownMenuItem>
                                     </template>
                                 </DropdownMenuContent>

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use Spatie\Translatable\Facades\Translatable;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -67,6 +68,10 @@ class AppServiceProvider extends ServiceProvider
     protected function configureDefaults(): void
     {
         Date::use(CarbonImmutable::class);
+
+        // Tarjimali maydon joriy tilda bo'lmasa — fallback_locale, u ham bo'lmasa mavjud istalgan til
+        // (masalan, faqat ruscha sarlavhali maqola o'zbekcha interfeysda bo'sh ko'rinmasligi uchun)
+        Translatable::fallback(fallbackAny: true);
 
         DB::prohibitDestructiveCommands(
             app()->isProduction(),
