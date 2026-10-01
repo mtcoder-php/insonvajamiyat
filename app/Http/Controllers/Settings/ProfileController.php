@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Settings;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\ProfileDeleteRequest;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
+use App\Http\Resources\Admin\UserDetailResource;
+use App\Models\User;
+use App\Services\Users\ProfileService;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -12,15 +15,25 @@ use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
+/**
+ * Shaxsiy profil (barcha foydalanuvchilar): ma'lumotlar, rasm va akkauntni o'chirish.
+ */
 class ProfileController extends Controller
 {
+    public function __construct(private readonly ProfileService $profiles) {}
+
     /**
      * Show the user's profile settings page.
      */
     public function edit(Request $request): Response
     {
+        /** @var User $user */
+        $user = $request->user();
+        $user->load(['roles', 'authorProfile']);
+
         return Inertia::render('settings/Profile', [
-            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
+            'profile' => UserDetailResource::make($user)->resolve(),
+            'mustVerifyEmail' => $user instanceof MustVerifyEmail,
             'status' => $request->session()->get('status'),
         ]);
     }
@@ -30,15 +43,14 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        /** @var User $user */
+        $user = $request->user();
+        $data = $request->validated();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
+        $this->profiles->updatePersonal($user, $data);
+        $this->profiles->updateAcademic($user, $data);
 
-        $request->user()->save();
-
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Profile updated.')]);
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('Profil saqlandi.')]);
 
         return to_route('profile.edit');
     }

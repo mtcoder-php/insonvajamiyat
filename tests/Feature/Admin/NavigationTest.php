@@ -24,6 +24,15 @@ class NavigationTest extends TestCase
         $admin = User::factory()->withRole(RoleName::SuperAdmin)->create();
 
         foreach (AdminSection::cases() as $section) {
+            // Tayyor bo'limlar o'z sahifasini ochadi (masalan, admin/users/Index)
+            if ($section->isReady()) {
+                $this->actingAs($admin)
+                    ->get(route('admin.'.$section->routeKey().'.index'))
+                    ->assertOk();
+
+                continue;
+            }
+
             $this->actingAs($admin)
                 ->get(route('admin.'.$section->routeKey().'.index'))
                 ->assertOk()

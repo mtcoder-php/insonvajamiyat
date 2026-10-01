@@ -94,8 +94,12 @@ class HandleInertiaRequests extends Middleware
             return ['user' => null, 'roles' => [], 'permissions' => [], 'isStaff' => false];
         }
 
+        // Profil rasmi URL'i header va menyularda ishlatiladi (author_profiles.avatar_path)
+        $userData = $user->toArray();
+        $userData['avatar'] = $user->avatarUrl();
+
         return [
-            'user' => $user,
+            'user' => $userData,
             'roles' => $user->getRoleNames()->values(),
             'permissions' => $user->isSuperAdmin()
                 ? ['*']

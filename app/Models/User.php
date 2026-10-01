@@ -3,12 +3,15 @@
 namespace App\Models;
 
 use App\Enums\RoleName;
+use App\Support\MediaUrl;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -39,6 +42,8 @@ use Spatie\Permission\Traits\HasRoles;
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  * @property-read AuthorProfile|null $authorProfile
+ * @property-read Collection<int, Article> $submittedArticles
+ * @property-read Collection<int, Payment> $payments
  */
 #[Fillable(['name', 'email', 'password', 'phone', 'locale'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
@@ -69,6 +74,34 @@ class User extends Authenticatable implements MustVerifyEmail
     public function authorProfile(): HasOne
     {
         return $this->hasOne(AuthorProfile::class);
+    }
+
+    /**
+     * Foydalanuvchi yuborgan maqolalar.
+     *
+     * @return HasMany<Article, $this>
+     */
+    public function submittedArticles(): HasMany
+    {
+        return $this->hasMany(Article::class, 'submitter_id');
+    }
+
+    /** @return HasMany<Payment, $this> */
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    /** @return HasMany<AiRequest, $this> */
+    public function aiRequests(): HasMany
+    {
+        return $this->hasMany(AiRequest::class);
+    }
+
+    /** Profil rasmi URL'i (author_profiles.avatar_path) yoki null */
+    public function avatarUrl(): ?string
+    {
+        return MediaUrl::from($this->authorProfile?->avatar_path);
     }
 
     /** Admin panelga kira oladigan xodimmi (muallifdan boshqa istalgan rol) */

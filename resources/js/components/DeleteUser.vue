@@ -1,90 +1,111 @@
 <script setup lang="ts">
 import { Form } from '@inertiajs/vue3';
+import { TriangleAlert, Trash2 } from '@lucide/vue';
 import { useTemplateRef } from 'vue';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
-import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
-import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogClose,
     DialogContent,
     DialogDescription,
-    DialogFooter,
-    DialogHeader,
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
+import {
+    dangerButtonClass,
+    inputClass,
+    secondaryButtonClass,
+} from '@/lib/formStyles';
+import { cn } from '@/lib/utils';
 
+/**
+ * Akkauntni o'chirish (parol bilan tasdiqlanadi). Akkaunt yumshoq o'chiriladi —
+ * administrator kerak bo'lsa tiklashi mumkin.
+ */
 const passwordInput = useTemplateRef('passwordInput');
 </script>
 
 <template>
-    <div class="space-y-6">
-        <Heading
-            variant="small"
-            title="Delete account"
-            description="Delete your account and all of its resources"
-        />
-        <div
-            class="space-y-4 rounded-lg border border-red-100 bg-red-50 p-4 dark:border-red-200/10 dark:bg-red-700/10"
-        >
-            <div class="relative space-y-0.5 text-red-600 dark:text-red-100">
-                <p class="font-medium">Warning</p>
-                <p class="text-sm">
-                    Please proceed with caution, this cannot be undone.
+    <section
+        class="rounded-xl border border-red-200 bg-white shadow-[0_1px_2px_rgba(0,30,60,0.05)]"
+    >
+        <div class="flex flex-wrap items-center gap-4 p-5">
+            <span
+                class="flex size-10 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-600"
+            >
+                <TriangleAlert class="size-5" />
+            </span>
+            <div class="min-w-0 flex-1">
+                <h2 class="font-sans text-[15px] font-bold text-navy-950">
+                    Akkauntni o'chirish
+                </h2>
+                <p class="mt-0.5 text-xs text-navy-500">
+                    Akkauntingiz o'chiriladi va tizimga kira olmaysiz. Ehtiyot
+                    bo'ling.
                 </p>
             </div>
             <Dialog>
                 <DialogTrigger as-child>
-                    <Button variant="destructive" data-test="delete-user-button"
-                        >Delete account</Button
+                    <button
+                        type="button"
+                        :class="cn(dangerButtonClass, 'h-9')"
+                        data-test="delete-user-button"
                     >
+                        <Trash2 class="size-4" />
+                        Akkauntni o'chirish
+                    </button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent
+                    class="gap-0 overflow-hidden border-line bg-white p-0 text-navy-900 sm:max-w-md"
+                >
                     <Form
                         v-bind="ProfileController.destroy.form()"
                         reset-on-success
                         @error="() => passwordInput?.focus()"
-                        :options="{
-                            preserveScroll: true,
-                        }"
-                        class="space-y-6"
+                        :options="{ preserveScroll: true }"
                         v-slot="{ errors, processing, reset, clearErrors }"
                     >
-                        <DialogHeader class="space-y-3">
-                            <DialogTitle
-                                >Are you sure you want to delete your
-                                account?</DialogTitle
+                        <div class="flex gap-4 p-6">
+                            <span
+                                class="flex size-11 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-600"
                             >
-                            <DialogDescription>
-                                Once your account is deleted, all of its
-                                resources and data will also be permanently
-                                deleted. Please enter your password to confirm
-                                you would like to permanently delete your
-                                account.
-                            </DialogDescription>
-                        </DialogHeader>
-
-                        <div class="grid gap-2">
-                            <Label for="password" class="sr-only"
-                                >Password</Label
-                            >
-                            <PasswordInput
-                                id="password"
-                                name="password"
-                                ref="passwordInput"
-                                placeholder="Password"
-                            />
-                            <InputError :message="errors.password" />
+                                <Trash2 class="size-5" />
+                            </span>
+                            <div class="min-w-0 flex-1">
+                                <DialogTitle
+                                    class="font-sans text-base font-bold text-navy-950"
+                                >
+                                    Akkauntni o'chirmoqchimisiz?
+                                </DialogTitle>
+                                <DialogDescription
+                                    class="mt-1 text-sm leading-relaxed text-navy-600"
+                                >
+                                    Tasdiqlash uchun parolingizni kiriting.
+                                </DialogDescription>
+                                <div class="mt-4 grid gap-1.5">
+                                    <label for="delete-password" class="sr-only"
+                                        >Parol</label
+                                    >
+                                    <PasswordInput
+                                        id="delete-password"
+                                        name="password"
+                                        ref="passwordInput"
+                                        :class="inputClass"
+                                        placeholder="Parol"
+                                    />
+                                    <InputError :message="errors.password" />
+                                </div>
+                            </div>
                         </div>
-
-                        <DialogFooter class="gap-2">
+                        <div
+                            class="flex justify-end gap-2 border-t border-line bg-[#f8fafc] px-6 py-3"
+                        >
                             <DialogClose as-child>
-                                <Button
-                                    variant="secondary"
+                                <button
+                                    type="button"
+                                    :class="cn(secondaryButtonClass, 'h-9')"
                                     @click="
                                         () => {
                                             clearErrors();
@@ -92,22 +113,21 @@ const passwordInput = useTemplateRef('passwordInput');
                                         }
                                     "
                                 >
-                                    Cancel
-                                </Button>
+                                    Bekor qilish
+                                </button>
                             </DialogClose>
-
-                            <Button
+                            <button
                                 type="submit"
-                                variant="destructive"
+                                :class="cn(dangerButtonClass, 'h-9')"
                                 :disabled="processing"
                                 data-test="confirm-delete-user-button"
                             >
-                                Delete account
-                            </Button>
-                        </DialogFooter>
+                                O'chirish
+                            </button>
+                        </div>
                     </Form>
                 </DialogContent>
             </Dialog>
         </div>
-    </div>
+    </section>
 </template>

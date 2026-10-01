@@ -2,13 +2,26 @@
 
 namespace App\Http\Requests\Settings;
 
-use App\Concerns\ProfileValidationRules;
+use App\Concerns\UserProfileValidationRules;
+use App\Models\User;
+use App\Support\PhoneNumber;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * Shaxsiy profil: familiya, ism, otasining ismi, email, telefon, til va ilmiy ma'lumotlar.
+ */
 class ProfileUpdateRequest extends FormRequest
 {
-    use ProfileValidationRules;
+    use UserProfileValidationRules;
+
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'phone' => PhoneNumber::normalize($this->string('phone')->toString() ?: null),
+            'orcid' => $this->filled('orcid') ? strtoupper(trim($this->string('orcid')->toString())) : null,
+        ]);
+    }
 
     /**
      * Get the validation rules that apply to the request.
@@ -17,6 +30,28 @@ class ProfileUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
-        return $this->profileRules($this->user()->id);
+        /** @var User $user */
+        $user = $this->user();
+
+        return [
+            ...$this->personalRules($user->id),
+            ...$this->academicRules($user->authorProfile),
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        return $this->profileAttributeNames();
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return $this->profileMessages();
     }
 }
