@@ -147,6 +147,7 @@ export type ProductionArticle = {
         approve: boolean;
         revoke: boolean;
         cancel: boolean;
+        publish: boolean;
         note: boolean;
     };
     urls: {
@@ -159,6 +160,8 @@ export type ProductionArticle = {
         revoke: string;
         cancel: string;
         notes: string;
+        publish: string;
+        public: string | null;
     };
 };
 
@@ -187,6 +190,8 @@ export type AuthorProduction = {
     approvedAt: string | null;
     changes: string | null;
     readyForPublication: boolean;
+    publishedAt: string | null;
+    publicUrl: string | null;
     issue: string | null;
     pages: string | null;
     doi: string | null;

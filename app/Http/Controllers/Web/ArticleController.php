@@ -3,27 +3,48 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Web\ArticleCardResource;
 use App\Models\Article;
+use App\Services\Web\ArticlePageService;
+use App\Support\MediaUrl;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
 /**
- * Nashr etilgan maqola sahifasi (to'liq dizayn — "web maqola view page.png" bosqichida).
+ * Nashr etilgan maqola sahifasi (web maqola view page.png).
  */
 class ArticleController extends Controller
 {
-    public function show(Article $article): Response
+    /** Bir tashrifchi bir maqolani qayta ko'rganda hisob shu vaqt ichida oshmaydi (soniya) */
+    public const VIEW_WINDOW = 6 * 3600;
+
+    public function show(Request $request, Article $article, ArticlePageService $page): Response
     {
         abort_unless($article->isPublished(), 404);
 
-        $article->load(['authors', 'subject']);
+        $this->countView($request, $article);
 
         return Inertia::render('web/articles/Show', [
-            'article' => [
-                ...ArticleCardResource::make($article)->resolve(),
-                'abstract' => $article->abstract,
+            'article' => $page->show($article),
+            'links' => [
+                'guidelines' => route('guidelines'),
+                'template' => MediaUrl::publicAsset(config('journal.article_template')),
+                'about' => route('about'),
             ],
         ]);
+    }
+
+    /** Ko'rishlar soni: sessiya bo'yicha VIEW_WINDOW ichida bir marta */
+    private function countView(Request $request, Article $article): void
+    {
+        $key = 'viewed_articles.'.$article->id;
+        $last = $request->session()->get($key);
+
+        if (is_int($last) && $last > now()->getTimestamp() - self::VIEW_WINDOW) {
+            return;
+        }
+
+        $request->session()->put($key, now()->getTimestamp());
+        $article->increment('views_count');
     }
 }

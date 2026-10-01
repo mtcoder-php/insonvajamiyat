@@ -9,6 +9,7 @@ use App\Models\JournalIssue;
 use App\Models\User;
 use App\Services\Issues\IssueService;
 use App\Services\Issues\IssueWorkspace;
+use App\Services\Publishing\PublishService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -74,6 +75,19 @@ class IssueController extends Controller
         Inertia::flash('toast', ['type' => 'success', 'message' => __("Son o'chirildi.")]);
 
         return to_route('admin.issues.index');
+    }
+
+    /** Sonni chop etish: tayyor maqolalar nashr etiladi, son saytda ko'rinadi */
+    public function publish(Request $request, JournalIssue $issue, PublishService $publisher): RedirectResponse
+    {
+        $published = $publisher->publishIssue($issue, $this->user($request));
+
+        Inertia::flash('toast', [
+            'type' => 'success',
+            'message' => __(':label soni chop etildi (:count ta maqola).', ['label' => $issue->label, 'count' => $published->count()]),
+        ]);
+
+        return to_route('admin.issues.show', $issue->slug);
     }
 
     /** Muqova (rasm), butun son PDF yoki mundarija PDF */

@@ -13,6 +13,7 @@ use App\Models\IssueArticle;
 use App\Models\JournalIssue;
 use App\Models\User;
 use App\Services\Editorial\EditorialWorkspace;
+use App\Services\Publishing\PublishService;
 use App\Support\MediaUrl;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Storage;
@@ -22,6 +23,8 @@ use Illuminate\Support\Facades\Storage;
  */
 class IssueWorkspace
 {
+    public function __construct(private readonly PublishService $publisher) {}
+
     /**
      * @return array<int, array<string, mixed>>
      */
@@ -126,6 +129,8 @@ class IssueWorkspace
             ];
         })->all();
 
+        $isDraft = $issue->status === IssueStatus::Draft;
+        $problems = $isDraft ? $this->publisher->issueProblems($issue) : [];
         $total = count($articles);
         $ready = collect($articles)->where('ready', true)->count();
         $withPages = collect($articles)->filter(fn (array $a): bool => $a['pageFrom'] !== null && $a['pageTo'] !== null)->count();
@@ -150,6 +155,8 @@ class IssueWorkspace
                 'toc' => $this->file($issue->toc_file_path),
             ],
             'articles' => $articles,
+            'problems' => $problems,
+            'publicUrl' => $isDraft ? null : route('issues.show', $issue->slug),
             'summary' => [
                 'total' => $total,
                 'ready' => $ready,
@@ -160,7 +167,7 @@ class IssueWorkspace
             'can' => [
                 'manage' => $canManage,
                 'delete' => $canManage && $issue->status === IssueStatus::Draft && $total === 0,
-                'publish' => false,
+                'publish' => $isDraft && $problems === [] && $user->can(PermissionName::IssuesPublish->value),
             ],
             'urls' => [
                 'index' => route('admin.issues.index'),
@@ -172,6 +179,7 @@ class IssueWorkspace
                 'reorder' => route('admin.issues.articles.reorder', $issue->slug),
                 'paginate' => route('admin.issues.articles.paginate', $issue->slug),
                 'toc' => route('admin.issues.toc', $issue->slug),
+                'publish' => route('admin.issues.publish', $issue->slug),
             ],
         ];
     }

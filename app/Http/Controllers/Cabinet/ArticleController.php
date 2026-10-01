@@ -218,6 +218,8 @@ class ArticleController extends Controller
             'approvedAt' => $approved && is_string($checklist['author_approved_at'] ?? null) ? $checklist['author_approved_at'] : null,
             'changes' => ! $approved && is_string($checklist['author_changes'] ?? null) ? $checklist['author_changes'] : null,
             'readyForPublication' => $article->chief_editor_approved_at !== null,
+            'publishedAt' => $article->published_at?->toIso8601String(),
+            'publicUrl' => $article->isPublished() ? route('articles.show', (string) $article->slug) : null,
             'issue' => $placement?->issue->label,
             'pages' => $placement?->pages(),
             'doi' => $article->doi,
