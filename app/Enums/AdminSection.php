@@ -7,8 +7,8 @@ namespace App\Enums;
  *
  * Har bir bo'lim: URL segmenti, route nomi (admin.{routeKey}.index),
  * kerakli ruxsat va keyingi bosqichda quriladigan CRUD imkoniyatlari.
- * Bo'lim to'liq ishlab chiqilgach, routes/admin.php da o'z controller'iga
- * o'tkaziladi va bu yerdan `isReady()` orqali chiqariladi.
+ * Bo'lim to'liq ishlab chiqilgach `isReady()` true qaytaradi va
+ * routes/admin.php da o'z controller'i bilan ro'yxatdan o'tadi.
  */
 enum AdminSection: string
 {
@@ -37,6 +37,18 @@ enum AdminSection: string
             self::Audit => 'audit',
             self::System => 'system',
             default => $this->value,
+        };
+    }
+
+    /**
+     * Bo'lim to'liq ishlab chiqilganmi (o'z controller'i bor).
+     * Tayyor bo'lmaganlari vaqtinchalik admin/Section sahifasini ochadi.
+     */
+    public function isReady(): bool
+    {
+        return match ($this) {
+            self::Users => true,
+            default => false,
         };
     }
 

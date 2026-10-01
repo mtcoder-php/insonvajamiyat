@@ -165,3 +165,16 @@ export function formatCompact(value: number): string {
 export function formatSum(value: number): string {
     return `${formatNumber(value)} so'm`;
 }
+
+/** +998901234567 → "+998 90 123 45 67" (boshqa formatlar o'zgarishsiz) */
+export function formatPhone(value: string | null | undefined): string {
+    if (!value) {
+        return '';
+    }
+
+    const match = /^\+998(\d{2})(\d{3})(\d{2})(\d{2})$/.exec(value);
+
+    return match
+        ? `+998 ${match[1]} ${match[2]} ${match[3]} ${match[4]}`
+        : value;
+}

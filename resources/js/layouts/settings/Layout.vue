@@ -1,71 +1,94 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
-import Heading from '@/components/Heading.vue';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
+import { Link, usePage } from '@inertiajs/vue3';
+import { Palette, ShieldCheck, UserRound } from '@lucide/vue';
+import { computed } from 'vue';
+import UserAvatar from '@/components/users/UserAvatar.vue';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
-import { toUrl } from '@/lib/utils';
+import { primaryRoleLabel } from '@/lib/roles';
+import { cn, toUrl } from '@/lib/utils';
 import { edit as editAppearance } from '@/routes/appearance';
 import { edit as editProfile } from '@/routes/profile';
 import { edit as editSecurity } from '@/routes/security';
-import type { NavItem } from '@/types';
+import type { NavItem, User } from '@/types';
 
-const sidebarNavItems: NavItem[] = [
-    {
-        title: 'Profile',
-        href: editProfile(),
-    },
-    {
-        title: 'Security',
-        href: editSecurity(),
-    },
-    {
-        title: 'Appearance',
-        href: editAppearance(),
-    },
+/**
+ * Shaxsiy sozlamalar: profil, xavfsizlik, ko'rinish.
+ * Yuqorida foydalanuvchi kartasi va bo'limlar (tab) menyusi.
+ */
+const tabs: NavItem[] = [
+    { title: 'Profil', href: editProfile(), icon: UserRound },
+    { title: 'Xavfsizlik', href: editSecurity(), icon: ShieldCheck },
+    { title: "Ko'rinish", href: editAppearance(), icon: Palette },
 ];
 
 const { isCurrentOrParentUrl } = useCurrentUrl();
+const page = usePage();
+
+const user = computed(() => page.props.auth.user as User);
+const role = computed(() => primaryRoleLabel(page.props.auth.roles));
 </script>
 
 <template>
-    <div class="px-4 py-6">
-        <Heading
-            title="Settings"
-            description="Manage your profile and account settings"
-        />
+    <div class="flex flex-1 flex-col gap-5 bg-[#f5f7fb] p-4 md:p-6">
+        <section
+            class="relative isolate overflow-hidden rounded-2xl bg-navy-950 px-5 py-5 text-white shadow-[0_16px_36px_-22px_rgba(0,30,60,0.8)] sm:px-6"
+        >
+            <div
+                class="absolute inset-0 -z-10 bg-girih opacity-[0.07]"
+                aria-hidden="true"
+            />
+            <div
+                class="absolute -top-24 right-0 -z-10 size-72 rounded-full bg-brand-500/30 blur-3xl"
+                aria-hidden="true"
+            />
 
-        <div class="flex flex-col lg:flex-row lg:space-x-12">
-            <aside class="w-full max-w-xl lg:w-48">
-                <nav
-                    class="flex flex-col space-y-1 space-x-0"
-                    aria-label="Settings"
-                >
-                    <Button
-                        v-for="item in sidebarNavItems"
-                        :key="toUrl(item.href)"
-                        variant="ghost"
-                        :class="[
-                            'w-full justify-start',
-                            { 'bg-muted': isCurrentOrParentUrl(item.href) },
-                        ]"
-                        as-child
+            <div class="flex flex-wrap items-center gap-4">
+                <UserAvatar
+                    :name="user.name"
+                    :url="user.avatar"
+                    size="lg"
+                    class="ring-white/20"
+                />
+                <div class="min-w-0 flex-1">
+                    <p
+                        class="text-xs font-medium tracking-wider text-gold-300 uppercase"
                     >
-                        <Link :href="item.href">
-                            <component :is="item.icon" class="h-4 w-4" />
-                            {{ item.title }}
-                        </Link>
-                    </Button>
-                </nav>
-            </aside>
-
-            <Separator class="my-6 lg:hidden" />
-
-            <div class="flex-1 md:max-w-2xl">
-                <section class="max-w-xl space-y-12">
-                    <slot />
-                </section>
+                        Shaxsiy sozlamalar
+                    </p>
+                    <h1
+                        class="mt-0.5 truncate font-sans text-xl font-bold text-white sm:text-2xl"
+                    >
+                        {{ user.name }}
+                    </h1>
+                    <p class="truncate text-sm text-white/70">
+                        {{ role }} · {{ user.email }}
+                    </p>
+                </div>
             </div>
-        </div>
+
+            <nav
+                class="mt-5 -mb-1 flex gap-1 overflow-x-auto"
+                aria-label="Sozlamalar bo'limlari"
+            >
+                <Link
+                    v-for="tab in tabs"
+                    :key="toUrl(tab.href)"
+                    :href="tab.href"
+                    :class="
+                        cn(
+                            'inline-flex shrink-0 items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-semibold transition-all',
+                            isCurrentOrParentUrl(tab.href)
+                                ? 'bg-white text-navy-950 shadow-sm'
+                                : 'text-white/75 hover:bg-white/10 hover:text-white',
+                        )
+                    "
+                >
+                    <component :is="tab.icon" class="size-4" />
+                    {{ tab.title }}
+                </Link>
+            </nav>
+        </section>
+
+        <slot />
     </div>
 </template>

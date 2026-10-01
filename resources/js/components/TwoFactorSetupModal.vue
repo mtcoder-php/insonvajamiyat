@@ -46,26 +46,26 @@ const pinInputContainerRef = useTemplateRef('pinInputContainerRef');
 const modalConfig = computed<TwoFactorConfigContent>(() => {
     if (props.twoFactorEnabled) {
         return {
-            title: 'Two-factor authentication enabled',
+            title: 'Ikki bosqichli himoya yoqildi',
             description:
-                'Two-factor authentication is now enabled. Scan the QR code or enter the setup key in your authenticator app.',
-            buttonText: 'Close',
+                'Ikki bosqichli himoya yoqildi. QR kodni skanerlang yoki kalitni autentifikator ilovasiga kiriting.',
+            buttonText: 'Yopish',
         };
     }
 
     if (showVerificationStep.value) {
         return {
-            title: 'Verify authentication code',
-            description: 'Enter the 6-digit code from your authenticator app',
-            buttonText: 'Continue',
+            title: 'Kodni tasdiqlang',
+            description: 'Autentifikator ilovasidagi 6 xonali kodni kiriting',
+            buttonText: 'Davom etish',
         };
     }
 
     return {
-        title: 'Enable two-factor authentication',
+        title: 'Ikki bosqichli himoyani yoqish',
         description:
-            'To finish enabling two-factor authentication, scan the QR code or enter the setup key in your authenticator app',
-        buttonText: 'Continue',
+            'Yakunlash uchun QR kodni skanerlang yoki kalitni autentifikator ilovasiga (Google Authenticator, Microsoft Authenticator) kiriting',
+        buttonText: 'Davom etish',
     };
 });
 
@@ -197,7 +197,7 @@ watch(
                                 class="absolute inset-0 top-1/2 h-px w-full bg-border"
                             />
                             <span class="relative bg-card px-2 py-1"
-                                >or, enter the code manually</span
+                                >yoki kodni qo'lda kiriting</span
                             >
                         </div>
 
@@ -279,14 +279,14 @@ watch(
                                     @click="showVerificationStep = false"
                                     :disabled="processing"
                                 >
-                                    Back
+                                    Orqaga
                                 </Button>
                                 <Button
                                     type="submit"
                                     class="w-auto flex-1"
                                     :disabled="processing || code.length < 6"
                                 >
-                                    Confirm
+                                    Tasdiqlash
                                 </Button>
                             </div>
                         </div>

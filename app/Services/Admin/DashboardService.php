@@ -143,7 +143,7 @@ class DashboardService
                     'issue' => $article->issues->first()?->label,
                     'submittedAt' => $article->submitted_at?->toIso8601String(),
                     'status' => $article->status->value,
-                    'statusGroup' => $this->groupOf($article->status),
+                    'statusGroup' => self::groupOf($article->status),
                     'statusLabel' => $article->status->label(),
                     'coverUrl' => MediaUrl::from($article->cover_image_path),
                 ];
@@ -336,7 +336,7 @@ class DashboardService
         return $counts;
     }
 
-    private function groupOf(ArticleStatus $status): string
+    public static function groupOf(ArticleStatus $status): string
     {
         foreach (self::STATUS_GROUPS as $key => $statuses) {
             if (in_array($status, $statuses, true)) {
