@@ -52,9 +52,11 @@ void createInertiaApp({
 // This will set light / dark mode on page load...
 initializeTheme();
 
-// Web/auth sahifalari — faqat yorug' mavzu; admin/kabinetga o'tganda foydalanuvchi tanlovi qaytadi
+// Web/auth/kabinet sahifalari — faqat yorug' mavzu; admin panelga o'tganda foydalanuvchi tanlovi qaytadi
 router.on('navigate', (event) => {
-    applyThemeForComponent(event.detail.page.component);
+    const { component, props } = event.detail.page;
+
+    applyThemeForComponent(component, props.auth?.isStaff === true);
 });
 
 // This will listen for flash toast data from the server...

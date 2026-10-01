@@ -136,6 +136,17 @@ export function timeAgo(value: string | null | undefined): string {
 }
 
 /** 28.06.2026 10:15 */
+/** ISO → "14:32" (bo'sh/yaroqsiz qiymat — "") */
+export function formatTime(value: string | null | undefined): string {
+    const date = value ? new Date(value) : null;
+
+    if (!date || Number.isNaN(date.getTime())) {
+        return '';
+    }
+
+    return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+}
+
 export function formatDateTime(value: string | null | undefined): string {
     const date = value ? new Date(value) : null;
 

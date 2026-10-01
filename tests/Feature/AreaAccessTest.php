@@ -49,7 +49,9 @@ class AreaAccessTest extends TestCase
                 ->component('cabinet/Dashboard')
                 ->where('auth.isStaff', false)
                 ->where('auth.roles', ['author'])
-                ->has('profile')
+                ->has('profileCompleted')
+                ->has('cards', 5)
+                ->has('chart.months', 6)
             );
     }
 
