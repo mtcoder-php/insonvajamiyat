@@ -7,3 +7,4 @@ export * from './users';
 export * from './ui';
 export * from './cabinet';
 export * from './payments';
+export * from './editorial';
