@@ -19,6 +19,7 @@ use App\Models\EditorialDecision;
 use App\Models\Review;
 use App\Models\User;
 use App\Services\Articles\ArticleTimeline;
+use App\Services\Messages\ArticleMessageService;
 use App\Services\Reviews\ReviewService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -45,7 +46,10 @@ class EditorialWorkspace
         'all' => [],
     ];
 
-    public function __construct(private readonly ArticleTimeline $timeline) {}
+    public function __construct(
+        private readonly ArticleTimeline $timeline,
+        private readonly ArticleMessageService $messages,
+    ) {}
 
     /**
      * @return array<string, int>
@@ -156,6 +160,11 @@ class EditorialWorkspace
         ]);
 
         $canDecide = Gate::forUser($user)->allows('decide', $article);
+        $canMessage = Gate::forUser($user)->allows('message', $article)
+            && $user->can(PermissionName::ArticlesMessageAuthor->value);
+
+        // Muallif xabarlari muharrir maqolani ochganda o'qilgan hisoblanadi
+        $this->messages->markRead($article, $user);
         $canInvite = $user->can(PermissionName::ArticlesAssignReviewer->value)
             && in_array($article->status, ReviewService::INVITABLE, true);
 
@@ -249,6 +258,7 @@ class EditorialWorkspace
                     ? route('admin.articles.reviews.destroy', [$article->uuid, $review->id])
                     : null,
             ])->all(),
+            'messages' => $this->messages->thread($article, $user),
             'notes' => $article->notes->map(fn (ArticleNote $note): array => [
                 'id' => $note->id,
                 'body' => $note->body,
@@ -264,6 +274,7 @@ class EditorialWorkspace
                 'decide' => $canDecide,
                 'assign' => $canDecide && ! $article->status->isFinal(),
                 'invite' => $canInvite,
+                'message' => $canMessage,
                 'note' => true,
             ],
             'availableDecisions' => $canDecide
@@ -281,6 +292,7 @@ class EditorialWorkspace
                 'editor' => route('admin.articles.editor', $article->uuid),
                 'notes' => route('admin.articles.notes', $article->uuid),
                 'invite' => route('admin.articles.reviewers.store', $article->uuid),
+                'message' => route('admin.articles.messages.store', $article->uuid),
             ],
         ];
     }

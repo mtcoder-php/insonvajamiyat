@@ -15,6 +15,7 @@ import {
 import { computed, ref, watch } from 'vue';
 import EditorialNotes from '@/components/admin/articles/EditorialNotes.vue';
 import ReviewsPanel from '@/components/admin/articles/ReviewsPanel.vue';
+import MessageThread from '@/components/articles/MessageThread.vue';
 import ArticleStatusPill from '@/components/cabinet/ArticleStatusPill.vue';
 import { formatDate, formatFileSize, formatTime } from '@/lib/format';
 import { cn } from '@/lib/utils';
@@ -27,16 +28,18 @@ const props = defineProps<{ article: EditorialArticle }>();
 
 const emit = defineEmits<{ invite: [] }>();
 
-type Tab = 'main' | 'documents' | 'reviewers' | 'process';
+type Tab = 'main' | 'documents' | 'reviewers' | 'messages' | 'process';
 
 const tabs: { key: Tab; label: string }[] = [
     { key: 'main', label: "Asosiy ma'lumotlar" },
     { key: 'documents', label: 'Hujjatlar' },
     { key: 'reviewers', label: 'Taqrizchilar' },
+    { key: 'messages', label: 'Yozishma' },
     { key: 'process', label: 'Jarayon' },
 ];
 
-const tab = ref<Tab>('main');
+// Tab ota sahifadan boshqariladi ("Muallifga xabar yuborish" → Yozishma)
+const tab = defineModel<Tab>('tab', { default: 'main' });
 
 const languageLabels: Record<LocaleCode, string> = {
     uz: "O'zbekcha",
@@ -98,6 +101,11 @@ const fileTint = (file: EditorialFile): string =>
                 @click="tab = item.key"
             >
                 {{ item.label }}
+                <span
+                    v-if="item.key === 'messages' && article.messages.length"
+                    class="ml-1 rounded-full bg-brand-50 px-1.5 text-[10px] text-brand-700"
+                    >{{ article.messages.length }}</span
+                >
             </button>
         </div>
 
@@ -415,6 +423,23 @@ const fileTint = (file: EditorialFile): string =>
             <!-- Taqrizchilar -->
             <div v-show="tab === 'reviewers'">
                 <ReviewsPanel :article="article" @invite="emit('invite')" />
+            </div>
+
+            <!-- Yozishma -->
+            <div v-show="tab === 'messages'">
+                <p class="mb-3 text-xs text-navy-500">
+                    Muallif bilan yozishma. Muallif xodim ismini emas,
+                    «Tahririyat» yozuvini ko'radi; yangi xabar unga email orqali
+                    ham yuboriladi.
+                </p>
+                <MessageThread
+                    :messages="article.messages"
+                    :send-url="
+                        article.can.message ? article.urls.message : null
+                    "
+                    empty-text="Muallif bilan yozishma hali boshlanmagan."
+                    placeholder="Muallifga xabar..."
+                />
             </div>
 
             <!-- Jarayon -->

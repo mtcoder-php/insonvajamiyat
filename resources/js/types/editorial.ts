@@ -3,6 +3,7 @@
  */
 import type { ArticleStatusGroup, TimelineStep } from './cabinet';
 import type { LocaleCode } from './journal';
+import type { ThreadMessage } from './messages';
 import type { EditorialReview, ReviewerOption } from './reviews';
 
 export type EditorialQueue =
@@ -100,6 +101,7 @@ export type EditorialArticle = {
         createdAt: string;
     }[];
     reviews: EditorialReview[];
+    messages: ThreadMessage[];
     notes: {
         id: number;
         body: string;
@@ -115,6 +117,7 @@ export type EditorialArticle = {
         decide: boolean;
         assign: boolean;
         invite: boolean;
+        message: boolean;
         note: boolean;
     };
     availableDecisions: EditorialDecisionKey[];
@@ -124,6 +127,7 @@ export type EditorialArticle = {
         editor: string;
         notes: string;
         invite: string;
+        message: string;
     };
 };
 

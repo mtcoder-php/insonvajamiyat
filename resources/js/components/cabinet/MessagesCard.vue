@@ -34,6 +34,11 @@ defineProps<{ items: AuthorMessage[] }>();
                                 class="text-[13px] font-semibold text-navy-900"
                             >
                                 {{ item.sender }}
+                                <span
+                                    v-if="item.unread"
+                                    class="ml-1 inline-block size-2 rounded-full bg-brand-500 align-middle"
+                                    aria-label="O'qilmagan"
+                                />
                             </span>
                             <span
                                 class="shrink-0 text-[11px] text-navy-400 tabular-nums"

@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\Users\UserAvatarController;
 use App\Http\Controllers\Admin\Users\UserController;
 use App\Http\Controllers\Admin\Users\UserPasswordController;
 use App\Http\Controllers\Admin\Users\UserStatusController;
+use App\Http\Controllers\Articles\ArticleMessageController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -69,6 +70,10 @@ Route::middleware('permission:'.AdminSection::Articles->permission()->value)
             Route::post('{article:uuid}/decision', [EditorialController::class, 'decide'])->name('decision');
             Route::put('{article:uuid}/editor', [EditorialController::class, 'assignEditor'])->name('editor');
         });
+
+        Route::post('{article:uuid}/messages', [ArticleMessageController::class, 'store'])
+            ->middleware(['permission:'.PermissionName::ArticlesMessageAuthor->value, 'throttle:30,1'])
+            ->name('messages.store');
 
         Route::middleware('permission:'.PermissionName::ArticlesAssignReviewer->value)->group(function () {
             Route::post('{article:uuid}/reviewers', [ReviewerAssignmentController::class, 'store'])->name('reviewers.store');

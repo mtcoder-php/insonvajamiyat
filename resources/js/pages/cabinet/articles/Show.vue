@@ -8,6 +8,7 @@ import {
     History,
     PenLine,
     Mail,
+    MessagesSquare,
     Route,
     Star,
     Trash2,
@@ -18,9 +19,11 @@ import { computed, ref } from 'vue';
 import DashCard from '@/components/admin/dashboard/DashCard.vue';
 import ActionDialog from '@/components/admin/ui/ActionDialog.vue';
 import ArticlePaymentCard from '@/components/cabinet/ArticlePaymentCard.vue';
+import MessageThread from '@/components/articles/MessageThread.vue';
 import ArticleReviewsCard from '@/components/cabinet/ArticleReviewsCard.vue';
 import ArticleStatusPill from '@/components/cabinet/ArticleStatusPill.vue';
 import CabinetPageHeader from '@/components/cabinet/CabinetPageHeader.vue';
+import RevisionCard from '@/components/cabinet/RevisionCard.vue';
 import StatusTimeline from '@/components/cabinet/StatusTimeline.vue';
 import InputError from '@/components/InputError.vue';
 import { textareaClass } from '@/lib/formStyles';
@@ -30,7 +33,9 @@ import { index, show, withdraw } from '@/routes/cabinet/articles';
 import type {
     AuthorArticleDetails,
     AuthorArticlePayment,
+    ArticleThread,
     AuthorReview,
+    RevisionRequest,
     TimelineStep,
 } from '@/types';
 
@@ -43,6 +48,8 @@ const props = defineProps<{
     steps: TimelineStep[];
     payment: AuthorArticlePayment | null;
     reviews: AuthorReview[];
+    revision: RevisionRequest | null;
+    messages: ArticleThread;
 }>();
 
 defineOptions({
@@ -156,6 +163,41 @@ const historyDot: Record<string, string> = {
 
         <div class="grid gap-5 xl:grid-cols-[minmax(0,1fr)_19rem]">
             <div class="flex min-w-0 flex-col gap-5">
+                <RevisionCard
+                    v-if="revision"
+                    :revision="revision"
+                    :has-reviews="reviews.length > 0"
+                />
+
+                <ArticleReviewsCard
+                    v-if="reviews.length"
+                    id="reviews"
+                    class="scroll-mt-24"
+                    :reviews="reviews"
+                />
+
+                <DashCard
+                    v-if="messages.sendUrl || messages.items.length"
+                    id="yozishma"
+                    class="scroll-mt-24"
+                >
+                    <h2
+                        class="mb-1 flex items-center gap-2 font-sans text-[15px] font-bold text-navy-950"
+                    >
+                        <MessagesSquare class="size-[18px] text-brand-600" />
+                        Tahririyat bilan yozishma
+                    </h2>
+                    <p class="mb-4 text-xs text-navy-500">
+                        Maqola bo'yicha savollaringizni shu yerda yozing — javob
+                        email orqali ham xabar qilinadi.
+                    </p>
+                    <MessageThread
+                        :messages="messages.items"
+                        :send-url="messages.sendUrl"
+                        empty-text="Tahririyat bilan yozishma hali boshlanmagan."
+                    />
+                </DashCard>
+
                 <DashCard title="Maqola ma'lumotlari">
                     <dl
                         class="grid gap-x-6 gap-y-3 sm:grid-cols-2 2xl:grid-cols-3"
@@ -202,8 +244,6 @@ const historyDot: Record<string, string> = {
                         </div>
                     </div>
                 </DashCard>
-
-                <ArticleReviewsCard v-if="reviews.length" :reviews="reviews" />
 
                 <div class="grid gap-5 lg:grid-cols-2">
                     <DashCard>

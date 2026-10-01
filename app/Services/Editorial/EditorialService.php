@@ -9,6 +9,7 @@ use App\Models\Article;
 use App\Models\ArticleNote;
 use App\Models\EditorialDecision;
 use App\Models\User;
+use App\Notifications\ArticleUpdateNotification;
 use App\Services\Articles\ArticleWorkflow;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -103,7 +104,7 @@ class EditorialService
             ]);
         }
 
-        return DB::transaction(function () use ($article, $editor, $decision, $commentToAuthor, $internalNote): EditorialDecision {
+        $record = DB::transaction(function () use ($article, $editor, $decision, $commentToAuthor, $internalNote): EditorialDecision {
             if ($article->handling_editor_id === null) {
                 $article->handling_editor_id = $editor->id;
             }
@@ -125,6 +126,16 @@ class EditorialService
 
             return $record;
         });
+
+        // Muallifga: qaror va izoh (baza + email)
+        $article->submitter->notify(new ArticleUpdateNotification(
+            $article,
+            ArticleUpdateNotification::DECISION,
+            __('Tahririyat qarori: :decision', ['decision' => $decision->label()]),
+            $commentToAuthor ?? self::defaultComment($decision),
+        ));
+
+        return $record;
     }
 
     public function addNote(Article $article, User $author, string $body): ArticleNote

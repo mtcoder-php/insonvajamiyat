@@ -3,12 +3,14 @@
 namespace App\Services\Reviews;
 
 use App\Enums\ArticleFileType;
+use App\Enums\ArticleVersionType;
 use App\Enums\EditorialDecisionType;
 use App\Enums\Language;
 use App\Enums\ReviewCriterion;
 use App\Enums\ReviewRecommendation;
 use App\Enums\ReviewStatus;
 use App\Models\ArticleFile;
+use App\Models\ArticleVersion;
 use App\Models\EditorialDecision;
 use App\Models\Review;
 use App\Models\User;
@@ -102,8 +104,13 @@ class ReviewerWorkspace
      */
     public function detail(Review $review): array
     {
-        $review->load(['article.subject', 'article.articleType', 'article.files', 'article.decisions']);
+        $review->load(['article.subject', 'article.articleType', 'article.files', 'article.decisions', 'article.versions']);
         $article = $review->article;
+        // Qayta taqrizda: muallifning oldingi raund taqrizlariga javobi (anonim)
+        $response = $article->versions
+            ->filter(fn (ArticleVersion $v): bool => $v->type === ArticleVersionType::Revision && $v->review_round < $review->round)
+            ->sortByDesc('version_number')
+            ->first();
         $canSeeFiles = in_array($review->status, [ReviewStatus::Accepted, ReviewStatus::Completed], true);
         // Shu raund bo'yicha muharrir yakuniy qarori (taqrizga yuborishdan tashqari)
         $decided = $article->decisions->first(
@@ -131,9 +138,13 @@ class ReviewerWorkspace
                 'abstracts' => $this->localized($review, 'abstract'),
                 'titles' => $this->localized($review, 'title'),
                 'keywords' => $this->keywords($review),
+                'authorResponse' => $response instanceof ArticleVersion
+                    ? ['version' => $response->version_number, 'note' => $response->change_note, 'createdAt' => $response->created_at?->toIso8601String()]
+                    : null,
                 'files' => $canSeeFiles
                     ? $article->files
                         ->filter(fn (ArticleFile $file): bool => in_array($file->type, [ArticleFileType::Manuscript, ArticleFileType::Revision, ArticleFileType::Supplementary], true))
+                        ->sortByDesc('id')
                         ->values()
                         ->map(fn (ArticleFile $file): array => [
                             'uuid' => $file->uuid,

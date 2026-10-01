@@ -50,7 +50,7 @@ function startReview(): void {
     );
 }
 
-const emit = defineEmits<{ invite: [] }>();
+const emit = defineEmits<{ invite: []; message: [] }>();
 
 const decision = ref<EditorialDecisionKey | null>(null);
 const dialogOpen = ref(false);
@@ -170,15 +170,21 @@ const item =
             </button>
             <button
                 type="button"
-                disabled
-                title="Xabarlar bosqichida qo'shiladi"
-                :class="cn(item, 'border-line text-navy-700')"
+                :disabled="!article.can.message"
+                :class="
+                    cn(
+                        item,
+                        'border-line text-navy-800 enabled:hover:border-brand-300 enabled:hover:bg-brand-50 enabled:hover:text-brand-800',
+                    )
+                "
+                @click="emit('message')"
             >
-                <MessageCircle class="size-[18px] text-navy-400" />
+                <MessageCircle class="size-[18px] text-brand-600" />
                 <span class="flex-1 text-left">Muallifga xabar yuborish</span>
                 <span
-                    class="rounded bg-navy-50 px-1.5 text-[10px] text-navy-400"
-                    >tez orada</span
+                    v-if="article.messages.length"
+                    class="rounded-full bg-brand-50 px-1.5 text-[10px] font-semibold text-brand-700"
+                    >{{ article.messages.length }}</span
                 >
             </button>
 
