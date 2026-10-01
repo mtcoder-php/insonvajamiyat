@@ -1,49 +1,102 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import {
-    ArrowRight,
-    BookOpen,
-    FileDown,
-    FileText,
-    Fingerprint,
-} from '@lucide/vue';
+import { ArrowRight, BookOpen, FileText, Files } from '@lucide/vue';
+import type { Component } from 'vue';
+import { computed } from 'vue';
 import HomeCard from '@/components/web/home/HomeCard.vue';
 import IssueCover from '@/components/web/IssueCover.vue';
+import { cn } from '@/lib/utils';
 import { index as issuesIndex } from '@/routes/issues';
 import type { LatestIssue } from '@/types';
 
 /**
- * "So'nggi son" (home.png): muqova, son raqami, nomi, PDF/DOI havolalari.
+ * "So'nggi son" (home.png): katta muqova, son raqami, nomi,
+ * Mundarija / To'liq son / DOI havolalari (ikonkalari bilan), qisqa tavsif.
+ * Fayl hali yuklanmagan bo'lsa — havola xira ko'rinishda, bosilmaydi.
  */
-defineProps<{ issue: LatestIssue | null }>();
+const props = defineProps<{ issue: LatestIssue | null }>();
+
+type Resource = {
+    key: string;
+    label: string;
+    href: string | null;
+    icon?: Component;
+    external?: boolean;
+};
+
+const resources = computed<Resource[]>(() => {
+    const issue = props.issue;
+
+    if (!issue) {
+        return [];
+    }
+
+    const items: Resource[] = [
+        {
+            key: 'toc',
+            label: 'Mundarija (PDF)',
+            href: issue.tocUrl,
+            icon: FileText,
+        },
+        {
+            key: 'pdf',
+            label: "To'liq son (PDF)",
+            href: issue.pdfUrl,
+            icon: Files,
+        },
+    ];
+
+    if (issue.doi) {
+        items.push({
+            key: 'doi',
+            label: `DOI: ${issue.doi}`,
+            href: `https://doi.org/${issue.doi}`,
+            external: true,
+        });
+    }
+
+    return items;
+});
 </script>
 
 <template>
     <HomeCard
+        size="lg"
         title="So'nggi son"
         :href="issuesIndex()"
-        link-text="Barcha sonlar"
+        link-text="Barchasini ko'rish"
     >
-        <div v-if="issue" class="flex flex-col gap-6 sm:flex-row">
+        <div
+            v-if="issue"
+            class="flex flex-col gap-7 sm:flex-row sm:items-start"
+        >
+            <!-- Muqova -->
             <Link
                 :href="issue.url"
-                class="group mx-auto block w-40 shrink-0 sm:mx-0 sm:w-44"
+                class="group relative mx-auto block w-52 shrink-0 sm:mx-0 sm:w-56 xl:w-64"
                 :aria-label="`${issue.label} sonini ochish`"
             >
+                <span
+                    class="absolute inset-x-4 -bottom-3 h-6 rounded-full bg-navy-950/25 blur-xl transition-all duration-500 group-hover:inset-x-2 group-hover:bg-navy-950/35"
+                    aria-hidden="true"
+                />
                 <IssueCover
                     :src="issue.coverUrl"
                     :number="issue.number"
                     :year="issue.year"
-                    class="transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_18px_36px_-12px_rgba(0,30,60,0.45)]"
+                    class="relative rounded-sm shadow-[0_14px_30px_-14px_rgba(0,30,60,0.55)] transition-all duration-500 ease-out group-hover:-translate-y-1.5 group-hover:shadow-[0_26px_44px_-16px_rgba(0,30,60,0.6)]"
                 />
             </Link>
 
-            <div class="flex min-w-0 flex-1 flex-col">
-                <p class="font-serif text-2xl font-bold text-navy-950">
+            <!-- Ma'lumot -->
+            <div class="flex min-w-0 flex-1 flex-col sm:pt-1">
+                <p
+                    class="font-serif text-2xl font-bold text-navy-950 sm:text-[28px]"
+                >
                     {{ issue.label }}
                 </p>
                 <h3
-                    class="mt-1.5 font-serif text-lg leading-snug font-normal text-navy-800"
+                    class="mt-2 font-serif text-lg leading-snug font-normal text-navy-800 sm:text-xl"
                 >
                     <Link
                         :href="issue.url"
@@ -53,56 +106,62 @@ defineProps<{ issue: LatestIssue | null }>();
                     </Link>
                 </h3>
 
-                <ul
-                    v-if="issue.tocUrl || issue.pdfUrl || issue.doi"
-                    class="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-navy-700"
-                >
-                    <li v-if="issue.tocUrl">
-                        <a
-                            :href="issue.tocUrl"
-                            target="_blank"
-                            rel="noopener"
-                            class="inline-flex items-center gap-1.5 transition-colors hover:text-brand-700"
+                <ul class="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3">
+                    <li v-for="item in resources" :key="item.key">
+                        <component
+                            :is="item.href ? 'a' : 'span'"
+                            :href="item.href ?? undefined"
+                            :target="item.href ? '_blank' : undefined"
+                            :rel="
+                                item.href
+                                    ? item.external
+                                        ? 'noopener noreferrer'
+                                        : 'noopener'
+                                    : undefined
+                            "
+                            :title="
+                                item.href
+                                    ? undefined
+                                    : 'Fayl tez orada yuklanadi'
+                            "
+                            :class="
+                                cn(
+                                    'group/res inline-flex items-center gap-2 text-[13px] text-navy-800 transition-colors',
+                                    item.href
+                                        ? 'hover:text-brand-700'
+                                        : 'cursor-default opacity-60',
+                                )
+                            "
                         >
-                            <FileText class="size-4 text-navy-800" />
-                            Mundarija (PDF)
-                        </a>
-                    </li>
-                    <li v-if="issue.pdfUrl">
-                        <a
-                            :href="issue.pdfUrl"
-                            target="_blank"
-                            rel="noopener"
-                            class="inline-flex items-center gap-1.5 transition-colors hover:text-brand-700"
-                        >
-                            <FileDown class="size-4 text-navy-800" />
-                            To'liq son (PDF)
-                        </a>
-                    </li>
-                    <li v-if="issue.doi">
-                        <a
-                            :href="`https://doi.org/${issue.doi}`"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="inline-flex items-center gap-1.5 transition-colors hover:text-brand-700"
-                        >
-                            <Fingerprint class="size-4 text-navy-800" />
-                            DOI: {{ issue.doi }}
-                        </a>
+                            <span
+                                v-if="item.icon"
+                                class="flex size-8 shrink-0 items-center justify-center rounded-full bg-white text-navy-800 shadow-[0_2px_6px_-2px_rgba(0,30,60,0.25)] ring-1 ring-navy-100 transition-all duration-300 group-hover/res:-translate-y-0.5 group-hover/res:text-brand-700 group-hover/res:ring-brand-200"
+                            >
+                                <component :is="item.icon" class="size-4" />
+                            </span>
+                            <span
+                                v-else
+                                class="flex size-8 shrink-0 items-center justify-center rounded-full bg-navy-900 text-[10px] font-bold tracking-tight text-white shadow-[0_2px_6px_-2px_rgba(0,30,60,0.45)] transition-all duration-300 group-hover/res:-translate-y-0.5 group-hover/res:bg-brand-700"
+                                aria-hidden="true"
+                            >
+                                doi
+                            </span>
+                            {{ item.label }}
+                        </component>
                     </li>
                 </ul>
 
                 <p
                     v-if="issue.description"
-                    class="mt-4 line-clamp-3 font-serif text-[15px] leading-relaxed text-navy-700"
+                    class="mt-5 line-clamp-3 max-w-xl font-serif text-[15px] leading-relaxed text-navy-700 sm:text-base"
                 >
                     {{ issue.description }}
                 </p>
 
-                <div class="mt-auto pt-5">
+                <div class="mt-auto pt-6">
                     <Link
                         :href="issue.url"
-                        class="group inline-flex h-10 items-center gap-2 rounded-full bg-navy-900 px-6 text-sm font-semibold text-white shadow-md shadow-navy-900/20 transition-all hover:-translate-y-0.5 hover:bg-navy-800 hover:shadow-lg"
+                        class="group inline-flex h-11 items-center gap-2 rounded-full bg-navy-900 px-7 text-sm font-semibold text-white shadow-md shadow-navy-900/20 transition-all hover:-translate-y-0.5 hover:bg-navy-800 hover:shadow-lg hover:shadow-navy-900/25"
                     >
                         Sonni ko'rish
                         <ArrowRight

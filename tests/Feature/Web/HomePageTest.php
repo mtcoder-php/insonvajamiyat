@@ -118,7 +118,8 @@ class HomePageTest extends TestCase
     {
         JournalIssue::factory()->published()->create();
 
-        // Standart muqova sifatida public/ dagi mavjud fayl
+        // Standart muqova sifatida public/ dagi mavjud fayl ("So'nggi son" muqovasi yo'q)
+        config(['journal.latest_issue_cover' => 'mavjud-emas.png']);
         config(['journal.default_issue_cover' => 'favicon.ico']);
 
         $this->get(route('home'))
@@ -130,6 +131,26 @@ class HomePageTest extends TestCase
 
         $this->get(route('home'))
             ->assertInertia(fn (Assert $page) => $page->where('latestIssue.coverUrl', null));
+    }
+
+    public function test_latest_issue_block_uses_its_own_cover_when_issue_has_none()
+    {
+        JournalIssue::factory()->published()->create();
+
+        config(['journal.latest_issue_cover' => 'robots.txt', 'journal.default_issue_cover' => 'favicon.ico']);
+
+        $this->get(route('home'))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('latestIssue.coverUrl', asset('robots.txt'))
+            );
+
+        // Songa o'z muqovasi yuklangan bo'lsa — o'shasi
+        JournalIssue::query()->update(['cover_image_path' => 'covers/2026-1.png']);
+
+        $this->get(route('home'))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('latestIssue.coverUrl', fn (string $url) => str_ends_with($url, 'covers/2026-1.png'))
+            );
     }
 
     public function test_published_article_page_is_public_and_drafts_are_hidden()

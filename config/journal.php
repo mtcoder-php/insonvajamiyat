@@ -32,6 +32,10 @@ return [
     // (public/ ichidagi yo'l). Fayl topilmasa — muqova avtomatik chiziladi.
     'default_issue_cover' => env('JOURNAL_DEFAULT_ISSUE_COVER', 'coverimg/cover.png'),
 
+    // Bosh sahifadagi "So'nggi son" bloki uchun muqova (songa alohida muqova
+    // yuklanmagan bo'lsa). Fayl topilmasa — default_issue_cover ishlatiladi.
+    'latest_issue_cover' => env('JOURNAL_LATEST_ISSUE_COVER', 'web/latest_issue/latest_issue.png'),
+
     'contact' => [
         'email' => env('JOURNAL_EMAIL', 'info@insonvajamiyat.uz'),
         'phone' => env('JOURNAL_PHONE', '+998 71 234 56 78'),

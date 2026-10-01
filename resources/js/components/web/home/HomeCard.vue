@@ -19,6 +19,8 @@ const props = withDefaults(
         linkText?: string;
         tone?: 'warm' | 'navy' | 'cream';
         as?: 'section' | 'aside' | 'div';
+        /** Sarlavha o'lchami: lg — asosiy bloklar uchun (masalan, "So'nggi son") */
+        size?: 'md' | 'lg';
         class?: HTMLAttributes['class'];
     }>(),
     {
@@ -27,6 +29,7 @@ const props = withDefaults(
         linkText: "Barchasini ko'rish",
         tone: 'warm',
         as: 'section',
+        size: 'md',
         class: undefined,
     },
 );
@@ -63,7 +66,10 @@ const titleTones = {
                 v-if="title"
                 :class="
                     cn(
-                        'font-serif text-lg leading-tight font-bold sm:text-xl',
+                        'font-serif leading-tight font-bold',
+                        props.size === 'lg'
+                            ? 'text-2xl sm:text-[28px]'
+                            : 'text-lg sm:text-xl',
                         titleTones[tone],
                     )
                 "

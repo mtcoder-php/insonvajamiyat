@@ -69,20 +69,24 @@ class DemoContentSeeder extends Seeder
         $submitter = User::query()->where('email', 'author@insonvajamiyat.test')->first()
             ?? User::factory()->author()->createOne();
 
-        // Sonlar: 1–3-sonlar, har biri ~3 oy oralig'ida (oxirgisi — eng yangi)
+        // Sonlar: o'tgan yilning 3–4-sonlari va joriy yilning 1-soni (eng yangisi,
+        // bosh sahifadagi "So'nggi son" — dizayndagi kabi maxsus son)
         $year = (int) now()->year;
+        $description = "Ushbu sonda jamiyat taraqqiyoti, tarixiy jarayonlar, etnologik tadqiqotlar va falsafiy qarashlarga oid ilmiy maqolalar o'rin olgan.";
         $issues = [];
 
-        foreach ([1, 2, 3] as $number) {
-            $issues[] = JournalIssue::factory()->published(
-                now()->subDays((3 - $number) * 90 + 5),
-            )->createOne([
-                'year' => $year,
+        foreach ([[$year - 1, 3, 185], [$year - 1, 4, 95], [$year, 1, 5]] as [$issueYear, $number, $daysAgo]) {
+            $isLatest = $issueYear === $year;
+
+            $issues[] = JournalIssue::factory()->published(now()->subDays($daysAgo))->createOne([
+                'year' => $issueYear,
                 'number' => $number,
-                'slug' => "{$year}-{$number}",
-                'doi' => "10.5281/zenodo.{$year}{$number}0",
-                'title' => ['uz' => '"Inson va Jamiyat" ilmiy jurnali'],
-                'description' => ['uz' => "Ushbu sonda jamiyat taraqqiyoti, tarixiy jarayonlar, etnologik tadqiqotlar va falsafiy qarashlarga oid ilmiy maqolalar o'rin olgan."],
+                'slug' => "{$issueYear}-{$number}",
+                'doi' => "10.12345/rj.{$issueYear}.{$number}",
+                'title' => ['uz' => $isLatest
+                    ? 'Maxsus son: "Markaziy Osiyo: tarix, madaniyat va inson"'
+                    : '"Inson va Jamiyat" ilmiy jurnali'],
+                'description' => ['uz' => $description],
             ]);
         }
 

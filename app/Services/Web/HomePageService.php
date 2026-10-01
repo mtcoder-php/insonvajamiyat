@@ -17,6 +17,7 @@ use App\Models\JournalIssue;
 use App\Models\Post;
 use App\Models\RecommendedBook;
 use App\Models\Subject;
+use App\Support\MediaUrl;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -56,8 +57,15 @@ class HomePageService
             ->map(fn (Subject $subject): string => $subject->name)
             ->all();
 
+        $card = IssueCardResource::make($issue)->resolve();
+
+        // Songa muqova yuklanmagan bo'lsa — "So'nggi son" bloki uchun maxsus muqova
+        if ($issue->cover_image_path === null) {
+            $card['coverUrl'] = MediaUrl::publicAsset(config('journal.latest_issue_cover')) ?? $card['coverUrl'];
+        }
+
         return [
-            ...IssueCardResource::make($issue)->resolve(),
+            ...$card,
             'subjects' => $subjects,
         ];
     }
