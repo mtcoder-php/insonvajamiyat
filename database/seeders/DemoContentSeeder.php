@@ -55,6 +55,10 @@ class DemoContentSeeder extends Seeder
         ['Urbanizatsiya jarayonlarining mahalla instituti rivojiga ta\'siri', 'anthropology'],
     ];
 
+    private const POST_BODY = "Tahririyat ushbu yangilik yuzasidan barcha mualliflar, taqrizchilar va o'quvchilarni xabardor qiladi. Batafsil ma'lumot uchun jurnal tahririyatiga elektron pochta yoki telefon orqali murojaat qilishingiz mumkin.\n\n«Inson va Jamiyat» ilmiy jurnali ijtimoiy-gumanitar fanlar sohasidagi tadqiqotlarni keng jamoatchilikka yetkazish va ilmiy hamkorlikni rivojlantirishga xizmat qiladi.";
+
+    private const EVENT_DESCRIPTION = "Tadbirda ijtimoiy-gumanitar fanlar sohasidagi olimlar, tadqiqotchilar va doktorantlar ishtirok etadi. Ma'ruzalar asosida tayyorlangan eng yaxshi maqolalar jurnalning navbatdagi sonlarida nashr etilishi mumkin.\n\nIshtirok etish uchun oldindan ro'yxatdan o'tish talab etiladi.";
+
     private const LAST_NAMES = ['Karimov', 'Abdullayeva', "To'xtayeva", 'Saidov', 'Rahmonov', 'Xolmirzayev', 'Qodirov', 'Yusupova', 'Safarov', 'Karimova', 'Ergashev', 'Nazarova'];
 
     private const FIRST_NAMES = ['Anvar', 'Zulfiya', 'Malika', 'Bobur', 'Nodir', 'Sardor', 'Rustam', 'Shahnoza', 'Dilshod', 'Nilufar', 'Jasur', 'Madina'];
@@ -146,6 +150,9 @@ class DemoContentSeeder extends Seeder
             ["Xalqaro ilmiy hamkorlik bo'yicha yangi kelishuv", "Xorijiy universitetlar bilan qo'shma tadqiqotlar va taqrizchilar almashinuvi yo'lga qo'yiladi."],
             ['"Ilm va jamiyat" mavzusida ilmiy anjuman', "Anjumanda yosh tadqiqotchilar o'z ilmiy natijalarini taqdim etishdi."],
             ['Saytimizda yangi imkoniyatlar: maqola yuborish platformasi', 'Endi maqolalar onlayn yuboriladi va taqriz jarayoni shaxsiy kabinetda kuzatiladi.'],
+            ['Jurnal maqolalariga DOI raqamlari berila boshlandi', 'Har bir nashr etilgan maqolaga xalqaro DOI identifikatori biriktiriladi.'],
+            ['Taqrizchilar uchun seminar-trening bo\'lib o\'tdi', 'Seminarda ilmiy taqriz yozish standartlari va akademik halollik masalalari muhokama qilindi.'],
+            ["Mualliflar uchun yo'riqnoma yangilandi", "Maqolalarni rasmiylashtirish, adabiyotlar ro'yxati va annotatsiya talablari aniqlashtirildi."],
         ];
 
         foreach ($announcements as $i => [$title, $excerpt]) {
@@ -163,6 +170,7 @@ class DemoContentSeeder extends Seeder
                 'title' => ['uz' => $title],
                 'excerpt' => ['uz' => $excerpt],
                 'slug' => Str::slug($title),
+                'body' => ['uz' => $excerpt."\n\n".self::POST_BODY],
                 'published_at' => now()->subDays(2 + $i * 7),
             ]);
         }
@@ -174,12 +182,16 @@ class DemoContentSeeder extends Seeder
             ['Xalqaro ilmiy-amaliy konferensiya "Markaziy Osiyoda madaniy meros"', 'Toshkent', 12],
             ['"Ma\'naviyat va jamiyat" ilmiy forumi', 'Samarqand', 35],
             ['Yosh tadqiqotchilar konferensiyasi', 'Buxoro', 64],
+            ["Etnografik ekspeditsiyalar natijalari bo'yicha davra suhbati", 'Xiva', 88],
+            ['Ilmiy maqola yozish bo\'yicha onlayn master-klass', 'Onlayn', 110],
+            ['"Tarix va xotira" ilmiy seminari', 'Toshkent', -20],
         ];
 
         foreach ($events as [$title, $location, $days]) {
             Event::factory()->create([
                 'title' => ['uz' => $title],
                 'location' => ['uz' => $location],
+                'description' => ['uz' => self::EVENT_DESCRIPTION],
                 'slug' => Str::slug($title),
                 'starts_at' => now()->addDays($days)->setTime(10, 0),
             ]);

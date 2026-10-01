@@ -2,9 +2,11 @@
 
 use App\Http\Controllers\DashboardRedirectController;
 use App\Http\Controllers\Web\ArticleController;
+use App\Http\Controllers\Web\EventController;
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\IssueController;
 use App\Http\Controllers\Web\LocaleController;
+use App\Http\Controllers\Web\NewsController;
 use App\Http\Controllers\Web\NewsletterSubscriptionController;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +25,10 @@ Route::inertia('articles', 'web/articles/Index')->name('articles.index');
 Route::get('articles/{article}', [ArticleController::class, 'show'])->name('articles.show');
 Route::inertia('issues', 'web/issues/Index')->name('issues.index');
 Route::get('issues/{issue}', [IssueController::class, 'show'])->name('issues.show');
+Route::get('news', [NewsController::class, 'index'])->name('news.index');
+Route::get('news/{post:slug}', [NewsController::class, 'show'])->name('news.show');
+Route::get('events', [EventController::class, 'index'])->name('events.index');
+Route::get('events/{event:slug}', [EventController::class, 'show'])->name('events.show');
 Route::inertia('guidelines', 'web/Guidelines')->name('guidelines');
 Route::inertia('contact', 'web/Contact')->name('contact');
 

@@ -21,8 +21,8 @@ class HomeController extends Controller
             'latestIssue' => fn () => $home->latestIssue(),
             'latestArticles' => fn () => $home->latestArticles(),
             'subjects' => fn () => $home->subjects(),
-            'news' => fn () => $home->posts(PostType::News, 4),
-            'events' => fn () => $home->upcomingEvents(),
+            'news' => fn () => $home->posts(PostType::News, 6),
+            'events' => fn () => $home->upcomingEvents(4),
             'books' => fn () => $home->recommendedBooks(),
         ]);
     }

@@ -207,8 +207,10 @@ class HomePageTest extends TestCase
         $this->get(route('home'))
             ->assertInertia(fn (Assert $page) => $page
                 ->has('latestArticles', 6)
-                ->has('news', 4)
-                ->has('events', 3)
+                ->has('news', 6)
+                ->has('events', 4)
+                ->where('news.0.url', fn (string $url) => str_contains($url, '/news/'))
+                ->where('events.0.url', fn (string $url) => str_contains($url, '/events/'))
                 ->has('books', 3)
                 ->whereNot('latestIssue.doi', null)
                 ->whereNot('latestIssue', null)

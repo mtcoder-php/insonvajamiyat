@@ -54,7 +54,11 @@ export type PostItem = {
     excerpt: string | null;
     isPinned: boolean;
     publishedAt: string | null;
+    url: string;
+    imageUrl: string | null;
 };
+
+export type PostDetail = PostItem & { body: string | null };
 
 export type EventItem = {
     id: number;
@@ -64,6 +68,12 @@ export type EventItem = {
     startsAt: string;
     endsAt: string | null;
     registrationUrl: string | null;
+    url: string;
+};
+
+export type EventDetail = EventItem & {
+    description: string | null;
+    isPast: boolean;
 };
 
 /** Bosh sahifa slayderi (banner yoki config'dagi standart slayd) */
