@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
         // Lokal ishlab chiqish uchun demo hisoblar (parol: password)
         User::factory()->withRole(RoleName::SuperAdmin)->create([
             'name' => 'Super Admin',
-            'email' => 'admin@insonvajamiyat.test',
+            'email' => 'mukhtorturdiyev@gmail.com',
         ]);
 
         User::factory()->withRole(RoleName::Editor)->create([
