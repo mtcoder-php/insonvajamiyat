@@ -3,8 +3,10 @@
 use App\Enums\AdminSection;
 use App\Enums\PermissionName;
 use App\Http\Controllers\Admin\Articles\EditorialController;
+use App\Http\Controllers\Admin\Articles\ReviewerAssignmentController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\Payments\PaymentController;
+use App\Http\Controllers\Admin\Reviews\ReviewController;
 use App\Http\Controllers\Admin\SectionController;
 use App\Http\Controllers\Admin\Users\UserAvatarController;
 use App\Http\Controllers\Admin\Users\UserController;
@@ -67,7 +69,29 @@ Route::middleware('permission:'.AdminSection::Articles->permission()->value)
             Route::post('{article:uuid}/decision', [EditorialController::class, 'decide'])->name('decision');
             Route::put('{article:uuid}/editor', [EditorialController::class, 'assignEditor'])->name('editor');
         });
+
+        Route::middleware('permission:'.PermissionName::ArticlesAssignReviewer->value)->group(function () {
+            Route::post('{article:uuid}/reviewers', [ReviewerAssignmentController::class, 'store'])->name('reviewers.store');
+            Route::delete('{article:uuid}/reviews/{review}', [ReviewerAssignmentController::class, 'destroy'])->name('reviews.destroy');
+        });
     });
+
+/*
+| Taqrizlarim — taqrizchi ish joyi (TZ 4.2.3)
+*/
+Route::prefix('reviews')->name('reviews.')->group(function () {
+    // Taqriz fayli: taqrizchi yoki maqolalarni ko'ra oladigan xodim (controller'da tekshiriladi)
+    Route::get('{review}/attachment', [ReviewController::class, 'attachment'])->name('attachment');
+
+    Route::middleware('permission:'.PermissionName::ReviewsSubmit->value)->group(function () {
+        Route::get('/', [ReviewController::class, 'index'])->name('index');
+        Route::get('{review}', [ReviewController::class, 'show'])->name('show');
+        Route::post('{review}/accept', [ReviewController::class, 'accept'])->name('accept');
+        Route::post('{review}/decline', [ReviewController::class, 'decline'])->name('decline');
+        Route::put('{review}', [ReviewController::class, 'update'])->name('update');
+        Route::get('{review}/files/{file:uuid}', [ReviewController::class, 'file'])->name('files');
+    });
+});
 
 /*
 | To'lovlar (TZ 4.2.8): ro'yxat, qo'lda tasdiqlash, to'lovdan ozod qilish

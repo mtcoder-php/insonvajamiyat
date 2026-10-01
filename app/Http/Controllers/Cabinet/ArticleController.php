@@ -3,14 +3,18 @@
 namespace App\Http\Controllers\Cabinet;
 
 use App\Enums\ArticleStatus;
+use App\Enums\EditorialDecisionType;
 use App\Enums\PaymentPurpose;
 use App\Enums\PaymentStatus;
+use App\Enums\ReviewCriterion;
+use App\Enums\ReviewStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Cabinet\AuthorArticleResource;
 use App\Models\Article;
 use App\Models\ArticleAuthor;
 use App\Models\ArticleFile;
 use App\Models\ArticleStatusHistory;
+use App\Models\Review;
 use App\Models\User;
 use App\Services\Articles\ArticleTimeline;
 use App\Services\Articles\ArticleWorkflow;
@@ -138,6 +142,7 @@ class ArticleController extends Controller
             ],
             'steps' => $timeline->for($article),
             'payment' => $this->payment($article),
+            'reviews' => $this->reviews($article),
         ]);
     }
 
@@ -156,6 +161,42 @@ class ArticleController extends Controller
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Maqola qaytarib olindi.')]);
 
         return to_route('cabinet.articles.show', $article->uuid);
+    }
+
+    /**
+     * Taqriz natijalari muallif uchun (blind review): taqrizchi ismi o'rniga "Taqrizchi N",
+     * faqat yakunlangan va shu raund bo'yicha muharrir qarori chiqqan taqrizlar.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function reviews(Article $article): array
+    {
+        $decidedRounds = $article->decisions()
+            ->where('decision', '!=', EditorialDecisionType::SendToReview->value)
+            ->pluck('round')
+            ->all();
+
+        return $article->reviews()
+            ->where('status', ReviewStatus::Completed->value)
+            ->whereIn('round', $decidedRounds)
+            ->get()
+            ->groupBy('round')
+            ->sortKeysDesc()
+            ->flatMap(fn ($reviews) => $reviews->values()->map(fn (Review $review, int $i): array => [
+                'id' => $review->id,
+                'label' => __('Taqrizchi :n', ['n' => $i + 1]),
+                'round' => $review->round,
+                'recommendation' => $review->recommendation?->label(),
+                'score' => $review->score !== null ? (float) $review->score : null,
+                'criteria' => array_map(fn (ReviewCriterion $c): array => [
+                    'label' => $c->label(),
+                    'value' => isset($review->criteria_scores[$c->value]) ? (float) $review->criteria_scores[$c->value] : null,
+                ], ReviewCriterion::cases()),
+                'comments' => $review->comments_to_author,
+                'completedAt' => $review->completed_at?->toIso8601String(),
+            ]))
+            ->values()
+            ->all();
     }
 
     /**

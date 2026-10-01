@@ -6,6 +6,8 @@ use App\Enums\ArticleStatus;
 use App\Enums\EditorialDecisionType;
 use App\Enums\Language;
 use App\Enums\PermissionName;
+use App\Enums\ReviewCriterion;
+use App\Enums\ReviewStatus;
 use App\Enums\RoleName;
 use App\Models\Article;
 use App\Models\ArticleAuthor;
@@ -14,8 +16,10 @@ use App\Models\ArticleNote;
 use App\Models\ArticleStatusHistory;
 use App\Models\ArticleVersion;
 use App\Models\EditorialDecision;
+use App\Models\Review;
 use App\Models\User;
 use App\Services\Articles\ArticleTimeline;
+use App\Services\Reviews\ReviewService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
@@ -148,9 +152,12 @@ class EditorialWorkspace
         $article->load([
             'submitter.authorProfile', 'subject', 'articleType', 'issues', 'authors', 'handlingEditor',
             'files', 'versions.files', 'statusHistories.changedBy', 'notes.user', 'decisions.editor',
+            'reviews.reviewer',
         ]);
 
         $canDecide = Gate::forUser($user)->allows('decide', $article);
+        $canInvite = $user->can(PermissionName::ArticlesAssignReviewer->value)
+            && in_array($article->status, ReviewService::INVITABLE, true);
 
         return [
             'uuid' => $article->uuid,
@@ -215,6 +222,33 @@ class EditorialWorkspace
                 'editor' => $d->editor->name,
                 'createdAt' => $d->created_at->toIso8601String(),
             ])->all(),
+            'reviews' => $article->reviews->sortByDesc('round')->values()->map(fn (Review $review): array => [
+                'id' => $review->id,
+                'reviewer' => $review->reviewer->name,
+                'reviewerId' => $review->reviewer_id,
+                'round' => $review->round,
+                'status' => $review->status->value,
+                'statusLabel' => $review->status->label(),
+                'invitedAt' => $review->created_at?->toIso8601String(),
+                'dueAt' => $review->due_at?->toIso8601String(),
+                'daysLeft' => $review->status->isActive() ? $review->daysLeft() : null,
+                'completedAt' => $review->completed_at?->toIso8601String(),
+                'recommendation' => $review->recommendation?->value,
+                'recommendationLabel' => $review->recommendation?->label(),
+                'score' => $review->score !== null ? (float) $review->score : null,
+                'criteria' => array_map(fn (ReviewCriterion $c): array => [
+                    'label' => $c->label(),
+                    'value' => isset($review->criteria_scores[$c->value]) ? (float) $review->criteria_scores[$c->value] : null,
+                ], ReviewCriterion::cases()),
+                'commentsToAuthor' => $review->status === ReviewStatus::Completed ? $review->comments_to_author : null,
+                'commentsToEditor' => $review->comments_to_editor,
+                'attachmentUrl' => $review->attachment_path !== null && $review->status === ReviewStatus::Completed
+                    ? route('admin.reviews.attachment', $review->id)
+                    : null,
+                'cancelUrl' => $review->status->isActive() && $user->can(PermissionName::ArticlesAssignReviewer->value)
+                    ? route('admin.articles.reviews.destroy', [$article->uuid, $review->id])
+                    : null,
+            ])->all(),
             'notes' => $article->notes->map(fn (ArticleNote $note): array => [
                 'id' => $note->id,
                 'body' => $note->body,
@@ -229,6 +263,7 @@ class EditorialWorkspace
                 'startReview' => $canDecide && in_array($article->status, [ArticleStatus::Submitted, ArticleStatus::Resubmitted], true),
                 'decide' => $canDecide,
                 'assign' => $canDecide && ! $article->status->isFinal(),
+                'invite' => $canInvite,
                 'note' => true,
             ],
             'availableDecisions' => $canDecide
@@ -245,6 +280,7 @@ class EditorialWorkspace
                 'decision' => route('admin.articles.decision', $article->uuid),
                 'editor' => route('admin.articles.editor', $article->uuid),
                 'notes' => route('admin.articles.notes', $article->uuid),
+                'invite' => route('admin.articles.reviewers.store', $article->uuid),
             ],
         ];
     }
@@ -264,6 +300,33 @@ class EditorialWorkspace
             ->filter(fn (User $user): bool => $user->can(PermissionName::ArticlesDecide->value))
             ->map(fn (User $user): array => ['id' => $user->id, 'name' => $user->name])
             ->values()
+            ->all();
+    }
+
+    /**
+     * Taklif qilish mumkin bo'lgan taqrizchilar va ularning joriy yuklamasi.
+     *
+     * @return array<int, array{id: int, name: string, organization: string|null, active: int, completed: int}>
+     */
+    public function reviewers(): array
+    {
+        return User::query()
+            ->active()
+            ->role(RoleName::Reviewer->value)
+            ->with('authorProfile')
+            ->withCount([
+                'reviews as active_reviews_count' => fn (Builder $q) => $q->whereIn('status', [ReviewStatus::Invited->value, ReviewStatus::Accepted->value]),
+                'reviews as completed_reviews_count' => fn (Builder $q) => $q->where('status', ReviewStatus::Completed->value),
+            ])
+            ->orderBy('name')
+            ->get()
+            ->map(fn (User $user): array => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'organization' => $user->authorProfile?->organization,
+                'active' => (int) $user->getAttribute('active_reviews_count'),
+                'completed' => (int) $user->getAttribute('completed_reviews_count'),
+            ])
             ->all();
     }
 

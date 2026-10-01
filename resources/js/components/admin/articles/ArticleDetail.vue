@@ -14,6 +14,7 @@ import {
 } from '@lucide/vue';
 import { computed, ref, watch } from 'vue';
 import EditorialNotes from '@/components/admin/articles/EditorialNotes.vue';
+import ReviewsPanel from '@/components/admin/articles/ReviewsPanel.vue';
 import ArticleStatusPill from '@/components/cabinet/ArticleStatusPill.vue';
 import { formatDate, formatFileSize, formatTime } from '@/lib/format';
 import { cn } from '@/lib/utils';
@@ -23,6 +24,8 @@ import type { EditorialArticle, EditorialFile, LocaleCode } from '@/types';
  * O'rta ustun: tanlangan maqola — asosiy ma'lumotlar, hujjatlar, taqrizchilar, jarayon.
  */
 const props = defineProps<{ article: EditorialArticle }>();
+
+const emit = defineEmits<{ invite: [] }>();
 
 type Tab = 'main' | 'documents' | 'reviewers' | 'process';
 
@@ -411,22 +414,7 @@ const fileTint = (file: EditorialFile): string =>
 
             <!-- Taqrizchilar -->
             <div v-show="tab === 'reviewers'">
-                <div
-                    class="flex flex-col items-center gap-3 rounded-xl border border-dashed border-navy-200 bg-[#f8fafd] px-6 py-10 text-center"
-                >
-                    <span
-                        class="flex size-12 items-center justify-center rounded-full bg-brand-50 text-brand-600"
-                    >
-                        <UsersRound class="size-6" />
-                    </span>
-                    <p class="text-sm font-semibold text-navy-900">
-                        Taqrizchilar hali tayinlanmagan
-                    </p>
-                    <p class="max-w-sm text-xs leading-relaxed text-navy-500">
-                        Taqrizchi tayinlash, taklif muddati va taqriz natijalari
-                        (blind review) keyingi bosqichda shu yerda ko'rinadi.
-                    </p>
-                </div>
+                <ReviewsPanel :article="article" @invite="emit('invite')" />
             </div>
 
             <!-- Jarayon -->

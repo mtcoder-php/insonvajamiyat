@@ -2,6 +2,7 @@ import {
     BookText,
     BrainCircuit,
     ClipboardList,
+    ClipboardPen,
     Cog,
     CreditCard,
     DatabaseBackup,
@@ -25,6 +26,7 @@ import { index as issuesIndex } from '@/routes/admin/issues';
 import { index as messagesIndex } from '@/routes/admin/messages';
 import { index as paymentsIndex } from '@/routes/admin/payments';
 import { index as reportsIndex } from '@/routes/admin/reports';
+import { index as reviewsIndex } from '@/routes/admin/reviews';
 import { index as reviewersIndex } from '@/routes/admin/reviewers';
 import { index as rolesIndex } from '@/routes/admin/roles';
 import { index as settingsIndex } from '@/routes/admin/settings';
@@ -50,6 +52,13 @@ export function adminNavigation(): NavGroup[] {
                     icon: House,
                     permission: 'admin.access',
                     exact: true,
+                },
+                {
+                    title: 'Taqrizlarim',
+                    href: reviewsIndex(),
+                    icon: ClipboardPen,
+                    permission: 'reviews.submit',
+                    badge: 'reviews',
                 },
                 {
                     title: 'Maqolalar',

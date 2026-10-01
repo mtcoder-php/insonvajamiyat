@@ -6,11 +6,13 @@ use App\Enums\AdminSection;
 use App\Enums\ArticleStatus;
 use App\Enums\IssueStatus;
 use App\Enums\PaymentStatus;
+use App\Enums\ReviewStatus;
 use App\Enums\RoleName;
 use App\Models\AiRequest;
 use App\Models\Article;
 use App\Models\JournalIssue;
 use App\Models\Payment;
+use App\Models\Review;
 use App\Models\User;
 
 /**
@@ -61,6 +63,18 @@ class NavigationBadges
         ];
 
         $badges = [];
+
+        // Taqrizchi: javob kutilayotgan va jarayondagi taqrizlari ("Taqrizlarim")
+        if ($user->hasRole(RoleName::Reviewer)) {
+            $reviews = Review::query()
+                ->where('reviewer_id', $user->id)
+                ->whereIn('status', [ReviewStatus::Invited->value, ReviewStatus::Accepted->value])
+                ->count();
+
+            if ($reviews > 0) {
+                $badges['reviews'] = $reviews;
+            }
+        }
 
         foreach ($counters as $key => $count) {
             if (! $user->can(AdminSection::from($key)->permission()->value)) {
