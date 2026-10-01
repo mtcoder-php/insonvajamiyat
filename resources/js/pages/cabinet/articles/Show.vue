@@ -17,6 +17,7 @@ import {
 import { computed, ref } from 'vue';
 import DashCard from '@/components/admin/dashboard/DashCard.vue';
 import ActionDialog from '@/components/admin/ui/ActionDialog.vue';
+import ArticlePaymentCard from '@/components/cabinet/ArticlePaymentCard.vue';
 import ArticleStatusPill from '@/components/cabinet/ArticleStatusPill.vue';
 import CabinetPageHeader from '@/components/cabinet/CabinetPageHeader.vue';
 import StatusTimeline from '@/components/cabinet/StatusTimeline.vue';
@@ -25,7 +26,11 @@ import { textareaClass } from '@/lib/formStyles';
 import { formatDate, formatFileSize, formatTime } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import { index, show, withdraw } from '@/routes/cabinet/articles';
-import type { AuthorArticleDetails, TimelineStep } from '@/types';
+import type {
+    AuthorArticleDetails,
+    AuthorArticlePayment,
+    TimelineStep,
+} from '@/types';
 
 /**
  * Muallif kabineti — maqola sahifasi: holat (timeline), ma'lumotlar, mualliflar,
@@ -34,6 +39,7 @@ import type { AuthorArticleDetails, TimelineStep } from '@/types';
 const props = defineProps<{
     article: AuthorArticleDetails;
     steps: TimelineStep[];
+    payment: AuthorArticlePayment | null;
 }>();
 
 defineOptions({
@@ -347,6 +353,8 @@ const historyDot: Record<string, string> = {
                     </h2>
                     <StatusTimeline :steps="steps" />
                 </DashCard>
+
+                <ArticlePaymentCard v-if="payment" :payment="payment" />
 
                 <DashCard title="Amallar">
                     <div class="flex flex-col gap-2">

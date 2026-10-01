@@ -8,10 +8,12 @@ use App\Enums\PaymentStatus;
 use Database\Factories\PaymentFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -28,11 +30,17 @@ use Illuminate\Support\Carbon;
  * @property PaymentProvider $provider
  * @property PaymentStatus $status
  * @property string|null $receipt_number
+ * @property string|null $provider_transaction_id
+ * @property array<string, mixed>|null $meta
+ * @property int|null $confirmed_by
+ * @property string|null $confirmation_note
  * @property Carbon|null $paid_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read User $user
  * @property-read Article|null $article
+ * @property-read User|null $confirmedBy
+ * @property-read Collection<int, PaymentItem> $items
  */
 #[Fillable(['user_id', 'purpose', 'article_id', 'journal_issue_id', 'amount', 'currency', 'provider', 'receipt_number'])]
 class Payment extends Model
@@ -75,6 +83,18 @@ class Payment extends Model
     public function article(): BelongsTo
     {
         return $this->belongsTo(Article::class);
+    }
+
+    /** @return BelongsTo<User, $this> */
+    public function confirmedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'confirmed_by');
+    }
+
+    /** @return HasMany<PaymentItem, $this> */
+    public function items(): HasMany
+    {
+        return $this->hasMany(PaymentItem::class);
     }
 
     /**

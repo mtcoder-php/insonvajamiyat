@@ -139,6 +139,22 @@ export type AuthorArticleDetails = AuthorArticle & {
     destroyUrl: string | null;
 };
 
+/** Maqola sahifasidagi nashr to'lovi bloki (Cabinet\ArticleController::payment) */
+export type AuthorArticlePayment = {
+    awaiting: boolean;
+    amount: number;
+    currency: string;
+    status: string;
+    statusLabel: string;
+    receipt: string | null;
+    provider: string | null;
+    paidAt: string | null;
+    requisites: Partial<
+        Record<'recipient' | 'bank' | 'account' | 'mfo' | 'inn', string>
+    >;
+    purpose: string | null;
+};
+
 /* ------------------------------------------------------------------
  * Yangi maqola yuborish formasi — App\Services\Cabinet\SubmissionWizardData
  * ------------------------------------------------------------------ */

@@ -21,6 +21,7 @@ use App\Models\Post;
 use App\Models\RecommendedBook;
 use App\Models\Subject;
 use App\Models\User;
+use App\Services\Payments\ManualPaymentService;
 use App\Services\Web\ArticleCoverImporter;
 use App\Services\Web\BookCoverImporter;
 use Illuminate\Database\Seeder;
@@ -422,13 +423,19 @@ class DemoContentSeeder extends Seeder
                 foreach (range(1, 2 + ($m % 3) + $p) as $n) {
                     $paidAt = now()->startOfYear()->addMonths($m)->addDays($n * 3 + $p)->setTime(10 + $n, 15);
 
-                    Payment::factory()->paid($paidAt)->create([
+                    // Kelajakdagi sana bo'lmasin (joriy oy boshida)
+                    if ($paidAt->isFuture()) {
+                        continue;
+                    }
+
+                    $payment = Payment::factory()->paid($paidAt)->createOne([
                         'created_at' => $paidAt,
                         'user_id' => $submitter->id,
                         'purpose' => PaymentPurpose::Publication,
                         'provider' => $provider,
                         'amount' => [150000, 200000, 250000, 80000][($m + $n + $p) % 4],
                     ]);
+                    $payment->forceFill(['receipt_number' => ManualPaymentService::receiptNumber($payment)])->save();
                 }
             }
         }

@@ -47,7 +47,7 @@ enum AdminSection: string
     public function isReady(): bool
     {
         return match ($this) {
-            self::Users => true,
+            self::Users, self::Payments => true,
             default => false,
         };
     }

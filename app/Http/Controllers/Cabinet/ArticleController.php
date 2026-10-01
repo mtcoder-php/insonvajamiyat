@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Cabinet;
 
 use App\Enums\ArticleStatus;
+use App\Enums\PaymentPurpose;
+use App\Enums\PaymentStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Cabinet\AuthorArticleResource;
 use App\Models\Article;
@@ -135,6 +137,7 @@ class ArticleController extends Controller
                 'destroyUrl' => $isDraft ? route('cabinet.articles.destroy', $article->uuid) : null,
             ],
             'steps' => $timeline->for($article),
+            'payment' => $this->payment($article),
         ]);
     }
 
@@ -153,6 +156,46 @@ class ArticleController extends Controller
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Maqola qaytarib olindi.')]);
 
         return to_route('cabinet.articles.show', $article->uuid);
+    }
+
+    /**
+     * Nashr to'lovi: summa, holat, chek raqami; "To'lov kutilmoqda" da — bank rekvizitlari.
+     * Qoralama va bepul (ozod qilingan) maqolada to'lov bloki ko'rsatilmaydi.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function payment(Article $article): ?array
+    {
+        $payment = $article->payments()
+            ->where('purpose', PaymentPurpose::Publication->value)
+            ->where('status', PaymentStatus::Paid->value)
+            ->latest('paid_at')
+            ->first();
+        $awaiting = $article->status === ArticleStatus::AwaitingPayment;
+
+        if (! $awaiting && $payment === null) {
+            return null;
+        }
+
+        $requisites = array_filter(
+            (array) config('journal.payment', []),
+            fn (mixed $value): bool => is_string($value) && $value !== '',
+        );
+
+        return [
+            'awaiting' => $awaiting,
+            'amount' => $payment !== null ? (float) $payment->amount : (float) $article->articleType->price,
+            'currency' => $article->articleType->currency,
+            'status' => $article->payment_status->value,
+            'statusLabel' => $article->payment_status->label(),
+            'receipt' => $payment?->receipt_number,
+            'provider' => $payment?->provider->label(),
+            'paidAt' => $payment?->paid_at?->toIso8601String(),
+            'requisites' => $awaiting ? $requisites : [],
+            'purpose' => $awaiting
+                ? __("Nashr to'lovi: maqola :id", ['id' => mb_strtoupper(mb_substr($article->uuid, 0, 8))])
+                : null,
+        ];
     }
 
     /**

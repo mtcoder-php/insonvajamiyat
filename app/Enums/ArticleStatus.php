@@ -91,7 +91,8 @@ enum ArticleStatus: string
         return match ($this) {
             self::Draft => [self::Submitted, self::Withdrawn],
             self::Submitted => [self::AwaitingPayment, self::UnderReview, self::Withdrawn],
-            self::AwaitingPayment => [self::UnderReview, self::Withdrawn],
+            // To'lov tasdiqlangach (yoki ozod qilinganda) — tahririyat navbatiga (Submitted)
+            self::AwaitingPayment => [self::Submitted, self::UnderReview, self::Withdrawn],
             self::UnderReview => [self::InReview, self::RevisionRequired, self::Accepted, self::Rejected],
             self::InReview => [self::UnderReview, self::RevisionRequired, self::Accepted, self::Rejected],
             self::RevisionRequired => [self::Resubmitted, self::Rejected, self::Withdrawn],

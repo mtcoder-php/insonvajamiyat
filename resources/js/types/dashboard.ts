@@ -43,6 +43,8 @@ export type PaymentsMonthly = {
     year: number;
     click: number[];
     payme: number[];
+    /** Qo'lda tasdiqlangan (bank o'tkazmasi) */
+    manual: number[];
     total: number;
 };
 

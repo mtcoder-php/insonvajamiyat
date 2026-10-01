@@ -64,6 +64,7 @@ use Spatie\Translatable\HasTranslations;
  * @property-read Collection<int, JournalIssue> $issues
  * @property-read Collection<int, ArticleFile> $files
  * @property-read Collection<int, ArticleVersion> $versions
+ * @property-read Collection<int, Payment> $payments
  * @property-read Collection<int, ArticleStatusHistory> $statusHistories
  */
 #[Fillable([
@@ -145,6 +146,12 @@ class Article extends Model
     public function files(): HasMany
     {
         return $this->hasMany(ArticleFile::class)->latest('id');
+    }
+
+    /** @return HasMany<Payment, $this> */
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
     }
 
     /** @return HasMany<ArticleVersion, $this> */

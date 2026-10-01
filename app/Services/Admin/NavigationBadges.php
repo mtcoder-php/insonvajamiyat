@@ -21,7 +21,7 @@ use App\Models\User;
  *   Jurnallar     — shakllantirilayotgan (chop etilmagan) sonlar
  *   Mualliflar    — faol mualliflar
  *   Taqrizchilar  — faol taqrizchilar
- *   To'lovlar     — kutilayotgan / jarayondagi to'lovlar
+ *   To'lovlar     — to'lov kutilayotgan maqolalar + jarayondagi onlayn to'lovlar
  *   AI xizmatlari — bugungi so'rovlar
  *   Xabarlar      — o'qilmagan bildirishnomalar
  * Faqat foydalanuvchi ko'ra oladigan bo'limlar hisoblanadi; 0 bo'lsa badge chiqmaydi.
@@ -49,7 +49,9 @@ class NavigationBadges
                 ->count(),
             AdminSection::Authors->value => fn (): int => User::query()->active()->role(RoleName::Author->value)->count(),
             AdminSection::Reviewers->value => fn (): int => User::query()->active()->role(RoleName::Reviewer->value)->count(),
-            AdminSection::Payments->value => fn (): int => Payment::query()
+            AdminSection::Payments->value => fn (): int => Article::query()
+                ->where('status', ArticleStatus::AwaitingPayment->value)
+                ->count() + Payment::query()
                 ->whereIn('status', [PaymentStatus::Pending->value, PaymentStatus::Processing->value])
                 ->count(),
             AdminSection::Ai->value => fn (): int => AiRequest::query()
