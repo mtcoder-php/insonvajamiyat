@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link, router } from '@inertiajs/vue3';
-import { LogOut, Settings } from '@lucide/vue';
+import { Globe, LogOut, Settings } from '@lucide/vue';
 import {
     DropdownMenuGroup,
     DropdownMenuItem,
@@ -8,12 +8,14 @@ import {
     DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import UserInfo from '@/components/UserInfo.vue';
-import { logout } from '@/routes';
+import { home, logout } from '@/routes';
 import { edit } from '@/routes/profile';
 import type { User } from '@/types';
 
 type Props = {
     user: User;
+    /** Admin/kabinet header'ida — "Saytga o'tish" havolasi */
+    showSiteLink?: boolean;
 };
 
 const handleLogout = () => {
@@ -35,6 +37,12 @@ defineProps<Props>();
             <Link class="block w-full cursor-pointer" :href="edit()" prefetch>
                 <Settings class="mr-2 h-4 w-4" />
                 Sozlamalar
+            </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem v-if="showSiteLink" :as-child="true">
+            <Link class="block w-full cursor-pointer" :href="home()">
+                <Globe class="mr-2 h-4 w-4" />
+                Saytga o'tish
             </Link>
         </DropdownMenuItem>
     </DropdownMenuGroup>

@@ -13,6 +13,10 @@ export type NavItem = {
     isActive?: boolean;
     /** Faqat shu ruxsat bo'lsa ko'rinadi (app/Enums/PermissionName.php) */
     permission?: string;
+    /** adminBadges dagi kalit — menyu yonida raqam chiqadi */
+    badge?: string;
+    /** Faqat aynan shu URL'da faol (aks holda ichki sahifalarda ham faol) */
+    exact?: boolean;
 };
 
 /** Sidebar'dagi sarlavhali guruh */

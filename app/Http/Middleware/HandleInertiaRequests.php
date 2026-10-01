@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Enums\Language;
 use App\Models\User;
+use App\Services\Admin\NavigationBadges;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -51,6 +52,10 @@ class HandleInertiaRequests extends Middleware
             'journal' => fn () => $this->journalPayload(),
             'notifications' => fn () => $user instanceof User
                 ? ['unread' => $user->unreadNotifications()->count()]
+                : null,
+            // Admin sidebar raqamlari — faqat admin panel sahifalarida hisoblanadi
+            'adminBadges' => fn () => $user instanceof User && $request->routeIs('admin.*')
+                ? app(NavigationBadges::class)->for($user)
                 : null,
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
