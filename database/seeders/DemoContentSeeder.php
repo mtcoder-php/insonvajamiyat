@@ -21,6 +21,7 @@ use App\Models\Post;
 use App\Models\RecommendedBook;
 use App\Models\Subject;
 use App\Models\User;
+use App\Services\Web\ArticleCoverImporter;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -123,6 +124,12 @@ class DemoContentSeeder extends Seeder
         $this->seedPartners();
         $this->seedBooks();
         $this->seedDashboardData($submitter, $type->id, $subjects->all());
+
+        // Maqola rasmlari: public/web/article/<sarlavha>.png (bo'lsa).
+        // Testlarda haqiqiy storage'ga fayl yozmaslik uchun o'tkazib yuboriladi.
+        if (! app()->runningUnitTests()) {
+            app(ArticleCoverImporter::class)->import();
+        }
     }
 
     private function seedPosts(): void
