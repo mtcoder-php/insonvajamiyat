@@ -293,6 +293,11 @@ class EditorialWorkspace
                 'notes' => route('admin.articles.notes', $article->uuid),
                 'invite' => route('admin.articles.reviewers.store', $article->uuid),
                 'message' => route('admin.articles.messages.store', $article->uuid),
+                // Qabul qilingan maqola — "Nashr jarayoni" sahifasi (ruxsat bo'lsa)
+                'production' => in_array($article->status, [ArticleStatus::Accepted, ArticleStatus::InProduction, ArticleStatus::Published], true)
+                    && $user->can(PermissionName::ProductionManage->value)
+                    ? route('admin.production.show', $article->uuid)
+                    : null,
             ],
         ];
     }

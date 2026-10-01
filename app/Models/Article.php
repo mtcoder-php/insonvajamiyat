@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -48,6 +49,11 @@ use Spatie\Translatable\HasTranslations;
  * @property int $downloads_count
  * @property string $rating_avg
  * @property int $ratings_count
+ * @property string|null $plagiarism_percent
+ * @property array<string, mixed>|null $production_checklist
+ * @property int|null $layout_editor_id
+ * @property int|null $chief_editor_approved_by
+ * @property Carbon|null $chief_editor_approved_at
  * @property Carbon|null $submitted_at
  * @property Carbon|null $paid_at
  * @property Carbon|null $accepted_at
@@ -67,6 +73,9 @@ use Spatie\Translatable\HasTranslations;
  * @property-read Collection<int, Message> $messages
  * @property-read Collection<int, Payment> $payments
  * @property-read User|null $handlingEditor
+ * @property-read User|null $layoutEditor
+ * @property-read IssueArticle|null $placement
+ * @property-read User|null $chiefApprover
  * @property-read Collection<int, ArticleNote> $notes
  * @property-read Collection<int, Review> $reviews
  * @property-read Collection<int, EditorialDecision> $decisions
@@ -157,6 +166,28 @@ class Article extends Model
     public function handlingEditor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'handling_editor_id');
+    }
+
+    /**
+     * Jurnal sonidagi o'rni (son, sahifalar).
+     *
+     * @return HasOne<IssueArticle, $this>
+     */
+    public function placement(): HasOne
+    {
+        return $this->hasOne(IssueArticle::class);
+    }
+
+    /** @return BelongsTo<User, $this> */
+    public function layoutEditor(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'layout_editor_id');
+    }
+
+    /** @return BelongsTo<User, $this> */
+    public function chiefApprover(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'chief_editor_approved_by');
     }
 
     /** @return HasMany<Review, $this> */

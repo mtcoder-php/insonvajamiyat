@@ -94,6 +94,7 @@ enum PermissionName: string
                 self::ArticlesMessageAuthor,
                 self::IssuesManage,
                 self::IssuesPublish,
+                self::ProductionManage,
                 self::PaymentsView,
                 self::PaymentsRefund,
                 self::ReportsView,

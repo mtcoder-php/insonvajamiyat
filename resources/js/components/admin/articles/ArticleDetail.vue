@@ -357,7 +357,11 @@ const fileTint = (file: EditorialFile): string =>
                     <p v-else class="text-[13px] text-navy-500">Fayllar yo'q</p>
                 </section>
 
-                <EditorialNotes :article="article" />
+                <EditorialNotes
+                    :notes="article.notes"
+                    :url="article.urls.notes"
+                    reload="selected"
+                />
             </div>
 
             <!-- Hujjatlar: versiyalar -->

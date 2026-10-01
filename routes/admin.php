@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\Articles\EditorialController;
 use App\Http\Controllers\Admin\Articles\ReviewerAssignmentController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\Payments\PaymentController;
+use App\Http\Controllers\Admin\Production\ProductionController;
 use App\Http\Controllers\Admin\Reviews\ReviewController;
 use App\Http\Controllers\Admin\SectionController;
 use App\Http\Controllers\Admin\Users\UserAvatarController;
@@ -78,6 +79,32 @@ Route::middleware('permission:'.AdminSection::Articles->permission()->value)
         Route::middleware('permission:'.PermissionName::ArticlesAssignReviewer->value)->group(function () {
             Route::post('{article:uuid}/reviewers', [ReviewerAssignmentController::class, 'store'])->name('reviewers.store');
             Route::delete('{article:uuid}/reviews/{review}', [ReviewerAssignmentController::class, 'destroy'])->name('reviews.destroy');
+        });
+    });
+
+/*
+| Nashr jarayoni (admin publisher page.png): maketlash, yakuniy PDF, tekshiruv, tasdiq
+*/
+Route::middleware('permission:'.AdminSection::Production->permission()->value)
+    ->prefix('production')
+    ->name('production.')
+    ->group(function () {
+        Route::get('/', [ProductionController::class, 'index'])->name('index');
+        Route::get('{article:uuid}', [ProductionController::class, 'show'])->name('show');
+        Route::get('{article:uuid}/files/{file:uuid}', [ProductionController::class, 'file'])
+            ->scopeBindings()
+            ->name('files');
+        Route::post('{article:uuid}/start', [ProductionController::class, 'start'])->name('start');
+        Route::post('{article:uuid}/final-pdf', [ProductionController::class, 'uploadFinalPdf'])->name('final-pdf');
+        Route::put('{article:uuid}/metadata', [ProductionController::class, 'metadata'])->name('metadata');
+        Route::put('{article:uuid}/format', [ProductionController::class, 'format'])->name('format');
+        Route::post('{article:uuid}/cancel', [ProductionController::class, 'cancel'])->name('cancel');
+        Route::post('{article:uuid}/notes', [ProductionController::class, 'addNote'])->name('notes');
+
+        // Bosh muharrir tasdig'i
+        Route::middleware('permission:'.PermissionName::IssuesPublish->value)->group(function () {
+            Route::post('{article:uuid}/approve', [ProductionController::class, 'approve'])->name('approve');
+            Route::post('{article:uuid}/revoke', [ProductionController::class, 'revoke'])->name('revoke');
         });
     });
 

@@ -1,5 +1,6 @@
 import {
     BookText,
+    BookCheck,
     BrainCircuit,
     ClipboardList,
     ClipboardPen,
@@ -25,6 +26,7 @@ import { index as backupsIndex } from '@/routes/admin/backups';
 import { index as issuesIndex } from '@/routes/admin/issues';
 import { index as messagesIndex } from '@/routes/admin/messages';
 import { index as paymentsIndex } from '@/routes/admin/payments';
+import { index as productionIndex } from '@/routes/admin/production';
 import { index as reportsIndex } from '@/routes/admin/reports';
 import { index as reviewsIndex } from '@/routes/admin/reviews';
 import { index as reviewersIndex } from '@/routes/admin/reviewers';
@@ -66,6 +68,13 @@ export function adminNavigation(): NavGroup[] {
                     icon: FileText,
                     permission: 'articles.view_any',
                     badge: 'articles',
+                },
+                {
+                    title: 'Nashr jarayoni',
+                    href: productionIndex(),
+                    icon: BookCheck,
+                    permission: 'production.manage',
+                    badge: 'production',
                 },
                 {
                     title: 'Jurnallar',

@@ -14,6 +14,7 @@ enum AdminSection: string
 {
     // Asosiy
     case Articles = 'articles';
+    case Production = 'production';
     case Issues = 'issues';
     case Authors = 'authors';
     case Reviewers = 'reviewers';
@@ -47,7 +48,7 @@ enum AdminSection: string
     public function isReady(): bool
     {
         return match ($this) {
-            self::Users, self::Payments, self::Articles => true,
+            self::Users, self::Payments, self::Articles, self::Production => true,
             default => false,
         };
     }
@@ -56,6 +57,7 @@ enum AdminSection: string
     {
         return match ($this) {
             self::Articles => 'Maqolalar',
+            self::Production => 'Nashr jarayoni',
             self::Issues => 'Jurnallar',
             self::Authors => 'Mualliflar',
             self::Reviewers => 'Taqrizchilar',
@@ -76,6 +78,7 @@ enum AdminSection: string
     {
         return match ($this) {
             self::Articles => "Yuborilgan maqolalarni ko'rib chiqish, taqrizchi tayinlash va qaror qabul qilish.",
+            self::Production => "Qabul qilingan maqolalarni maketlash, yakuniy PDF, nashr oldidan tekshiruv va bosh muharrir tasdig'i.",
             self::Issues => 'Jurnal sonlarini shakllantirish, maqolalarni joylashtirish va chop etish.',
             self::Authors => "Mualliflar ro'yxati, profillari va ularning maqolalari.",
             self::Reviewers => 'Taqrizchilar bazasi, yuklama va taqrizlar holati.',
@@ -101,6 +104,7 @@ enum AdminSection: string
     {
         return match ($this) {
             self::Articles => ["Ro'yxat: qidiruv, holat va yo'nalish bo'yicha filtr", 'Maqola kartasi: fayllar, versiyalar, tarix', 'Taqrizchi tayinlash', 'Qaror: qabul / tuzatish / rad etish'],
+            self::Production => ['Maketga olish va yakuniy PDF yuklash', 'Muallif korrektura tasdig\'i', 'Nashr oldidan tekshiruv', 'Bosh muharrir tasdig\'i'],
             self::Issues => ['Yangi son yaratish (yil, raqam, DOI, muqova)', 'Maqolalarni songa joylashtirish va tartiblash', 'PDF va mundarija yuklash', 'Chop etish'],
             self::Authors => ["Ro'yxat va qidiruv", 'Profil: ORCID, ish joyi, ilmiy daraja', 'Maqolalar va to\'lovlar tarixi'],
             self::Reviewers => ['Taqrizchi qo\'shish va yo\'nalish biriktirish', 'Faol taqrizlar va muddatlar', 'Taqrizchi reytingi'],
@@ -121,6 +125,7 @@ enum AdminSection: string
     {
         return match ($this) {
             self::Articles, self::Authors => PermissionName::ArticlesViewAny,
+            self::Production => PermissionName::ProductionManage,
             self::Issues => PermissionName::IssuesManage,
             self::Reviewers => PermissionName::ArticlesAssignReviewer,
             self::Payments => PermissionName::PaymentsView,

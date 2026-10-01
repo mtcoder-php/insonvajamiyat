@@ -4,6 +4,7 @@ use App\Http\Controllers\Articles\ArticleMessageController;
 use App\Http\Controllers\Cabinet\ArticleController;
 use App\Http\Controllers\Cabinet\ArticleDraftFileController;
 use App\Http\Controllers\Cabinet\ArticleFileController;
+use App\Http\Controllers\Cabinet\ArticleProofController;
 use App\Http\Controllers\Cabinet\ArticleRevisionController;
 use App\Http\Controllers\Cabinet\ArticleSubmissionController;
 use App\Http\Controllers\Cabinet\DashboardController;
@@ -48,6 +49,14 @@ Route::prefix('articles')->name('articles.')->group(function (): void {
     Route::post('{article:uuid}/revision', [ArticleRevisionController::class, 'store'])
         ->middleware('throttle:10,1')
         ->name('revision.store');
+
+    // Korrektura (yakuniy PDF): muallif tasdiqlaydi yoki tuzatish so'raydi
+    Route::post('{article:uuid}/proof/approve', [ArticleProofController::class, 'approve'])
+        ->middleware('throttle:10,1')
+        ->name('proof.approve');
+    Route::post('{article:uuid}/proof/changes', [ArticleProofController::class, 'changes'])
+        ->middleware('throttle:10,1')
+        ->name('proof.changes');
 
     // Muallif ↔ tahririyat yozishmasi (fayl havolasi xodimlar uchun ham shu)
     Route::post('{article:uuid}/messages', [ArticleMessageController::class, 'store'])

@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { router, useForm } from '@inertiajs/vue3';
+import { Link, router, useForm } from '@inertiajs/vue3';
 import {
+    BookCheck,
     CircleCheck,
     CircleX,
     FilePenLine,
@@ -187,6 +188,20 @@ const item =
                     >{{ article.messages.length }}</span
                 >
             </button>
+
+            <Link
+                v-if="article.urls.production"
+                :href="article.urls.production"
+                :class="
+                    cn(
+                        item,
+                        'border-teal-200 bg-teal-50 text-teal-800 hover:border-teal-300 hover:bg-teal-100',
+                    )
+                "
+            >
+                <BookCheck class="size-[18px] text-teal-600" />
+                Nashr jarayonida ochish
+            </Link>
 
             <template v-if="article.can.decide">
                 <button
