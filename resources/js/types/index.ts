@@ -12,3 +12,4 @@ export * from './reviews';
 export * from './messages';
 export * from './production';
 export * from './issues';
+export * from './article-page';

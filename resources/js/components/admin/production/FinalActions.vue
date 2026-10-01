@@ -2,6 +2,7 @@
 import { router, useForm } from '@inertiajs/vue3';
 import {
     BadgeCheck,
+    ExternalLink,
     FileUp,
     LayoutTemplate,
     LoaderCircle,
@@ -27,7 +28,7 @@ const busy = ref<string | null>(null);
 const cancelOpen = ref(false);
 const cancelForm = useForm({ reason: '' });
 
-function post(key: 'start' | 'approve' | 'revoke'): void {
+function post(key: 'start' | 'approve' | 'revoke' | 'publish'): void {
     busy.value = key;
     router.post(
         props.article.urls[key],
@@ -147,17 +148,39 @@ const item =
                 Tasdiqni bekor qilish
             </button>
 
-            <button
-                type="button"
-                disabled
-                title="Jurnal soni bilan birga chop etiladi (7-bosqich)"
-                :class="cn(item, 'bg-navy-900 text-white')"
+            <a
+                v-if="article.urls.public"
+                :href="article.urls.public"
+                target="_blank"
+                rel="noopener"
+                :class="
+                    cn(
+                        item,
+                        'bg-emerald-600 text-white shadow-[0_10px_22px_-12px_rgba(5,150,105,0.9)] hover:bg-emerald-500',
+                    )
+                "
             >
-                <Send class="size-[18px]" />
-                <span class="flex-1 text-left">Nashr qilish</span>
-                <span class="rounded bg-white/15 px-1.5 text-[10px] font-medium"
-                    >tez orada</span
-                >
+                <ExternalLink class="size-[18px]" />
+                Saytda ko'rish
+            </a>
+            <button
+                v-else
+                type="button"
+                :disabled="!article.can.publish || busy !== null"
+                :title="
+                    article.can.publish
+                        ? 'Chop etilgan songa qo\'shilgan maqolani alohida chop etish'
+                        : 'Maqola jurnal soni bilan birga chop etiladi («Jurnallar» → «Sonni chop etish»)'
+                "
+                :class="cn(item, 'bg-navy-900 text-white hover:bg-brand-700')"
+                @click="post('publish')"
+            >
+                <LoaderCircle
+                    v-if="busy === 'publish'"
+                    class="size-[18px] animate-spin"
+                />
+                <Send v-else class="size-[18px]" />
+                Nashr qilish
             </button>
 
             <button

@@ -12,6 +12,7 @@ use App\Models\ArticleNote;
 use App\Models\JournalIssue;
 use App\Models\User;
 use App\Services\Editorial\EditorialWorkspace;
+use App\Services\Publishing\PublishService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -25,7 +26,10 @@ class ProductionWorkspace
     /** Navbat → holatlar (approved — tasdiqlangan, published — nashr etilgan) */
     public const TABS = ['new', 'production', 'approved', 'published', 'all'];
 
-    public function __construct(private readonly ProductionService $production) {}
+    public function __construct(
+        private readonly ProductionService $production,
+        private readonly PublishService $publisher,
+    ) {}
 
     /**
      * @return array<string, int>
@@ -226,6 +230,8 @@ class ProductionWorkspace
                 'approve' => $canApprove && $inProduction && $ready && $article->chief_editor_approved_at === null,
                 'revoke' => $canApprove && $inProduction && $article->chief_editor_approved_at !== null,
                 'cancel' => $canManage && $inProduction,
+                // Chop etilgan songa keyin qo'shilgan maqola — alohida chop etiladi
+                'publish' => $canApprove && $inProduction && $this->publisher->canPublishArticle($article),
                 'note' => true,
             ],
             'urls' => [
@@ -238,6 +244,8 @@ class ProductionWorkspace
                 'revoke' => route('admin.production.revoke', $article->uuid),
                 'cancel' => route('admin.production.cancel', $article->uuid),
                 'notes' => route('admin.production.notes', $article->uuid),
+                'publish' => route('admin.production.publish', $article->uuid),
+                'public' => $article->isPublished() ? route('articles.show', (string) $article->slug) : null,
             ],
         ];
     }

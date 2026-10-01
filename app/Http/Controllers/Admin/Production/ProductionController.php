@@ -12,6 +12,7 @@ use App\Services\Articles\ArticleFileService;
 use App\Services\Editorial\EditorialService;
 use App\Services\Production\ProductionService;
 use App\Services\Production\ProductionWorkspace;
+use App\Services\Publishing\PublishService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -114,6 +115,14 @@ class ProductionController extends Controller
         $this->production->approve($article, $this->user($request));
 
         return $this->done(__('Maqola nashrga tasdiqlandi.'));
+    }
+
+    /** Chop etilgan songa keyin qo'shilgan maqolani alohida chop etish */
+    public function publish(Request $request, Article $article, PublishService $publisher): RedirectResponse
+    {
+        $publisher->publishArticle($article, $this->user($request));
+
+        return $this->done(__('Maqola chop etildi va saytda e\'lon qilindi.'));
     }
 
     public function revoke(Article $article): RedirectResponse

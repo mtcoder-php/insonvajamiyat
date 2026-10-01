@@ -107,6 +107,7 @@ Route::middleware('permission:'.AdminSection::Production->permission()->value)
         Route::middleware('permission:'.PermissionName::IssuesPublish->value)->group(function () {
             Route::post('{article:uuid}/approve', [ProductionController::class, 'approve'])->name('approve');
             Route::post('{article:uuid}/revoke', [ProductionController::class, 'revoke'])->name('revoke');
+            Route::post('{article:uuid}/publish', [ProductionController::class, 'publish'])->name('publish');
         });
     });
 
@@ -123,6 +124,9 @@ Route::middleware('permission:'.AdminSection::Issues->permission()->value)
         Route::put('{issue}', [IssueController::class, 'update'])->name('update');
         Route::delete('{issue}', [IssueController::class, 'destroy'])->name('destroy');
         Route::get('{issue}/toc', [IssueController::class, 'toc'])->name('toc');
+        Route::post('{issue}/publish', [IssueController::class, 'publish'])
+            ->middleware('permission:'.PermissionName::IssuesPublish->value)
+            ->name('publish');
         Route::post('{issue}/files', [IssueController::class, 'storeFile'])->name('files.store');
         Route::delete('{issue}/files/{type}', [IssueController::class, 'destroyFile'])
             ->whereIn('type', ['cover', 'pdf', 'toc'])

@@ -9,6 +9,7 @@ import {
     FilePenLine,
     Hourglass,
     LoaderCircle,
+    PartyPopper,
 } from '@lucide/vue';
 import { ref } from 'vue';
 import ActionDialog from '@/components/admin/ui/ActionDialog.vue';
@@ -134,7 +135,25 @@ function sendChanges(): void {
                 />
 
                 <div
-                    v-if="production.readyForPublication"
+                    v-if="production.publicUrl"
+                    class="flex flex-wrap items-center gap-3 rounded-lg bg-emerald-50 px-3 py-2.5 text-[13px] font-semibold text-emerald-800"
+                >
+                    <PartyPopper class="size-5 shrink-0" />
+                    <span class="flex-1"
+                        >Maqolangiz {{ formatDate(production.publishedAt) }} da
+                        chop etildi!</span
+                    >
+                    <a
+                        :href="production.publicUrl"
+                        target="_blank"
+                        rel="noopener"
+                        class="inline-flex items-center gap-1 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs text-white transition-colors hover:bg-emerald-500"
+                    >
+                        <ExternalLink class="size-3.5" /> Saytda ko'rish
+                    </a>
+                </div>
+                <div
+                    v-else-if="production.readyForPublication"
                     class="flex items-center gap-2 rounded-lg bg-emerald-50 px-3 py-2.5 text-[13px] font-semibold text-emerald-800"
                 >
                     <BadgeCheck class="size-5 shrink-0" />

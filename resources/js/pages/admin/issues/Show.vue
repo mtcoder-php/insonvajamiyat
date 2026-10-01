@@ -8,6 +8,7 @@ import {
     CircleCheck,
     CircleDashed,
     Download,
+    ExternalLink,
     FilePlus2,
     FileText,
     ImageUp,
@@ -17,6 +18,7 @@ import {
     Printer,
     Send,
     Trash2,
+    TriangleAlert,
     Upload,
 } from '@lucide/vue';
 import { computed, ref } from 'vue';
@@ -47,6 +49,21 @@ defineOptions({
 });
 
 const editOpen = ref(false);
+const publishOpen = ref(false);
+const publishing = ref(false);
+
+function publish(): void {
+    publishing.value = true;
+    router.post(
+        props.issue.urls.publish,
+        {},
+        {
+            preserveScroll: true,
+            onSuccess: () => (publishOpen.value = false),
+            onFinish: () => (publishing.value = false),
+        },
+    );
+}
 const addOpen = ref(false);
 const deleteOpen = ref(false);
 const deleting = ref(false);
@@ -414,18 +431,51 @@ const checks = computed(() => [
                         <BadgeCheck class="size-4" /> Barcha maqolalar nashrga
                         tayyor
                     </div>
-                    <button
-                        type="button"
-                        disabled
-                        title="Sonni chop etish — keyingi (7-) bosqichda"
-                        class="mt-4 flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-navy-900 text-sm font-semibold text-white opacity-60"
+                    <a
+                        v-if="issue.publicUrl"
+                        :href="issue.publicUrl"
+                        target="_blank"
+                        rel="noopener"
+                        class="mt-4 flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 text-sm font-semibold text-white shadow-[0_10px_22px_-12px_rgba(5,150,105,0.9)] transition-all hover:-translate-y-px hover:bg-emerald-500"
                     >
-                        <Send class="size-4" /> Sonni chop etish
-                        <span
-                            class="rounded bg-white/15 px-1.5 text-[10px] font-medium"
-                            >tez orada</span
+                        <ExternalLink class="size-4" /> Saytda ko'rish
+                    </a>
+                    <template v-else>
+                        <ul
+                            v-if="issue.problems.length"
+                            class="mt-4 grid gap-1 rounded-lg bg-amber-50 px-3 py-2.5 text-xs text-amber-900"
                         >
-                    </button>
+                            <li
+                                v-for="problem in issue.problems.slice(0, 5)"
+                                :key="problem"
+                                class="flex gap-1.5"
+                            >
+                                <TriangleAlert
+                                    class="mt-px size-3.5 shrink-0 text-amber-500"
+                                />
+                                {{ problem }}
+                            </li>
+                            <li
+                                v-if="issue.problems.length > 5"
+                                class="pl-5 text-amber-700"
+                            >
+                                va yana {{ issue.problems.length - 5 }} ta...
+                            </li>
+                        </ul>
+                        <button
+                            type="button"
+                            :disabled="!issue.can.publish"
+                            :title="
+                                issue.can.publish
+                                    ? undefined
+                                    : 'Avval yuqoridagi kamchiliklarni bartaraf eting (chop etish — bosh muharrir huquqi)'
+                            "
+                            class="mt-4 flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-navy-900 text-sm font-semibold text-white shadow-[0_10px_22px_-12px_rgba(0,30,60,0.9)] transition-all hover:-translate-y-px hover:bg-brand-700 disabled:pointer-events-none disabled:opacity-50"
+                            @click="publishOpen = true"
+                        >
+                            <Send class="size-4" /> Sonni chop etish
+                        </button>
+                    </template>
                 </section>
 
                 <!-- Fayllar -->
@@ -590,6 +640,16 @@ const checks = computed(() => [
             >
         </label>
     </ActionDialog>
+
+    <ActionDialog
+        v-model:open="publishOpen"
+        title="Sonni chop etish"
+        :description="`${issue.label} soni va undagi ${issue.summary.total} ta maqola saytda e'lon qilinadi, mualliflarga xabar yuboriladi. Chop etilgan maqolalarni keyin o'zgartirib bo'lmaydi.`"
+        :icon="Send"
+        confirm-text="Chop etish"
+        :processing="publishing"
+        @confirm="publish"
+    />
 
     <ActionDialog
         v-model:open="deleteOpen"

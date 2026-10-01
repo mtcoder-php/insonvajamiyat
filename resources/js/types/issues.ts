@@ -96,6 +96,9 @@ export type IssueDetail = {
     hasOwnCover: boolean;
     files: { pdf: IssueFileInfo | null; toc: IssueFileInfo | null };
     articles: IssueArticleRow[];
+    /** Chop etishga to'sqinlik qilayotgan sabablar (qoralama son uchun) */
+    problems: string[];
+    publicUrl: string | null;
     summary: {
         total: number;
         ready: number;
@@ -114,6 +117,7 @@ export type IssueDetail = {
         reorder: string;
         paginate: string;
         toc: string;
+        publish: string;
     };
 };
 
