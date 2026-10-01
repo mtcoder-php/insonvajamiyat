@@ -2,19 +2,27 @@
 
 namespace Database\Seeders;
 
+use App\Enums\AiRequestType;
+use App\Enums\ArticleStatus;
 use App\Enums\PartnerType;
+use App\Enums\PaymentProvider;
+use App\Enums\PaymentPurpose;
 use App\Enums\PostType;
+use App\Models\AiRequest;
 use App\Models\Article;
 use App\Models\ArticleAuthor;
+use App\Models\ArticleStatusHistory;
 use App\Models\ArticleType;
 use App\Models\Event;
 use App\Models\JournalIssue;
 use App\Models\Partner;
+use App\Models\Payment;
 use App\Models\Post;
 use App\Models\RecommendedBook;
 use App\Models\Subject;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 /**
@@ -110,6 +118,7 @@ class DemoContentSeeder extends Seeder
         $this->seedEvents();
         $this->seedPartners();
         $this->seedBooks();
+        $this->seedDashboardData($submitter, $type->id, $subjects->all());
     }
 
     private function seedPosts(): void
@@ -214,6 +223,136 @@ class DemoContentSeeder extends Seeder
                 'author' => $author,
                 'year' => $year,
                 'sort_order' => $i,
+            ]);
+        }
+    }
+
+    /**
+     * Admin dashboard uchun: turli holatdagi maqolalar, holat tarixi,
+     * to'lovlar, AI so'rovlari, oxirgi kirishlar va bildirishnomalar.
+     *
+     * @param  array<array-key, mixed>  $subjects
+     */
+    private function seedDashboardData(User $submitter, int $typeId, array $subjects): void
+    {
+        $inProgress = [
+            ['Zamonaviy ta\'lim texnologiyalari va ularning samaradorligi', ArticleStatus::Submitted],
+            ["O'zbekistonda raqamli iqtisodiyot rivojlanishi", ArticleStatus::UnderReview],
+            ["Sun'iy intellektning ta'lim tizimidagi roli", ArticleStatus::RevisionRequired],
+            ['Milliy qadriyatlar va zamonaviy ta\'lim', ArticleStatus::Accepted],
+            ['Axborot xavfsizligi: muammolar va yechimlar', ArticleStatus::InReview],
+            ["Qadimgi Xorazm sug'orish tizimlari", ArticleStatus::Submitted],
+            ['Mahalla institutining ijtimoiy funksiyalari', ArticleStatus::Resubmitted],
+            ["O'zbek to'y marosimlarining zamonaviy talqini", ArticleStatus::InProduction],
+            ["Temuriylar davri me'morchiligi", ArticleStatus::Accepted],
+            ['Yoshlar orasida kitobxonlik madaniyati', ArticleStatus::AwaitingPayment],
+        ];
+
+        $subjectIds = array_values($subjects);
+
+        foreach ($inProgress as $i => [$title, $status]) {
+            $submittedAt = now()->subHours(6 + $i * 29);
+
+            $article = Article::factory()->status($status)->createOne([
+                'submitter_id' => $submitter->id,
+                'article_type_id' => $typeId,
+                'subject_id' => $subjectIds[$i % count($subjectIds)] ?? null,
+                'title' => ['uz' => $title],
+                'submitted_at' => $submittedAt,
+                'accepted_at' => in_array($status, [ArticleStatus::Accepted, ArticleStatus::InProduction], true)
+                    ? $submittedAt->copy()->addHours(3)
+                    : null,
+            ]);
+
+            ArticleAuthor::factory()->for($article)->create([
+                'last_name' => self::LAST_NAMES[($i + 3) % count(self::LAST_NAMES)],
+                'first_name' => self::FIRST_NAMES[($i + 2) % count(self::FIRST_NAMES)],
+                'is_corresponding' => true,
+            ]);
+
+            ArticleStatusHistory::query()->create([
+                'article_id' => $article->id,
+                'from_status' => ArticleStatus::Draft,
+                'to_status' => ArticleStatus::Submitted,
+                'created_at' => $submittedAt,
+            ]);
+
+            if ($status !== ArticleStatus::Submitted) {
+                ArticleStatusHistory::query()->create([
+                    'article_id' => $article->id,
+                    'from_status' => ArticleStatus::Submitted,
+                    'to_status' => $status,
+                    'created_at' => $submittedAt->copy()->addHours(2),
+                ]);
+            }
+        }
+
+        // To'lovlar: yil boshidan hozirgacha, har oy bir nechtadan
+        for ($m = 0; $m < (int) now()->month; $m++) {
+            foreach ([PaymentProvider::Click, PaymentProvider::Payme] as $p => $provider) {
+                foreach (range(1, 2 + ($m % 3) + $p) as $n) {
+                    $paidAt = now()->startOfYear()->addMonths($m)->addDays($n * 3 + $p)->setTime(10 + $n, 15);
+
+                    Payment::factory()->paid($paidAt)->create([
+                        'created_at' => $paidAt,
+                        'user_id' => $submitter->id,
+                        'purpose' => PaymentPurpose::Publication,
+                        'provider' => $provider,
+                        'amount' => [150000, 200000, 250000, 80000][($m + $n + $p) % 4],
+                    ]);
+                }
+            }
+        }
+
+        Payment::factory()->create([
+            'user_id' => $submitter->id,
+            'provider' => PaymentProvider::Click,
+            'amount' => 200000,
+        ]);
+
+        // AI so'rovlari: joriy va o'tgan oy
+        foreach ([[now(), 42], [now()->subMonthNoOverflow(), 34]] as [$month, $count]) {
+            foreach (range(1, $count) as $n) {
+                AiRequest::factory()->create([
+                    'user_id' => $submitter->id,
+                    'type' => AiRequestType::cases()[$n % 3 === 0 ? 1 : ($n % 5 === 0 ? 2 : 0)],
+                    'created_at' => $month->copy()->startOfMonth()->addHours($n * 3),
+                ]);
+            }
+        }
+
+        // Oxirgi kirishlar (Faol foydalanuvchilar)
+        foreach (['admin', 'editor', 'reviewer', 'author'] as $i => $login) {
+            User::query()
+                ->where('email', "{$login}@insonvajamiyat.test")
+                ->update(['last_login_at' => now()->subMinutes([2, 12, 25, 60][$i])]);
+        }
+
+        // Super Admin uchun namunaviy bildirishnomalar
+        $admin = User::query()->where('email', 'admin@insonvajamiyat.test')->first();
+
+        if ($admin === null) {
+            return;
+        }
+
+        $notifications = [
+            ['article_submitted', 'Yangi maqola yuborildi', "\"Zamonaviy ta'lim texnologiyalari\" maqolasi", 10],
+            ['reviewer_assigned', 'Taqrizchi tayinlandi', 'Axborot xavfsizligi maqolasiga taqrizchi biriktirildi', 32],
+            ['payment_confirmed', "To'lov tasdiqlandi", "Click orqali 150 000 so'm", 60],
+            ['published', 'Nashr etildi', 'Jurnalning navbatdagi soni chop etildi', 180],
+            ['security', 'Xavfsizlik ogohlantirishi', 'Tizimga noma\'lum qurilmadan kirish qayd etildi', 300],
+        ];
+
+        foreach ($notifications as [$kind, $title, $message, $minutes]) {
+            DB::table('notifications')->insert([
+                'id' => (string) Str::uuid(),
+                'type' => 'App\\Notifications\\DemoNotification',
+                'notifiable_type' => User::class,
+                'notifiable_id' => $admin->id,
+                'data' => json_encode(['kind' => $kind, 'title' => $title, 'message' => $message], JSON_UNESCAPED_UNICODE),
+                'read_at' => null,
+                'created_at' => now()->subMinutes($minutes),
+                'updated_at' => now()->subMinutes($minutes),
             ]);
         }
     }

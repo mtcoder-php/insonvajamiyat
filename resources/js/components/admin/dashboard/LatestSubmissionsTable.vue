@@ -1,0 +1,125 @@
+<script setup lang="ts">
+import { Eye, FileText, MoreHorizontal, PenLine } from '@lucide/vue';
+import DashCard from '@/components/admin/dashboard/DashCard.vue';
+import { formatDateTime } from '@/lib/format';
+import { cn } from '@/lib/utils';
+import type { LatestSubmission } from '@/types';
+
+/**
+ * "Yangi kelgan maqolalar" jadvali. Amal tugmalari admin maqola sahifalari
+ * tayyor bo'lgach havolaga aylanadi.
+ */
+defineProps<{ items: LatestSubmission[] }>();
+
+const pill: Record<LatestSubmission['statusGroup'], string> = {
+    new: 'bg-brand-50 text-brand-700 ring-brand-200',
+    reviewing: 'bg-amber-50 text-amber-700 ring-amber-200',
+    revision: 'bg-red-50 text-red-700 ring-red-200',
+    accepted: 'bg-emerald-50 text-emerald-700 ring-emerald-200',
+    published: 'bg-violet-50 text-violet-700 ring-violet-200',
+    other: 'bg-navy-50 text-navy-600 ring-navy-200',
+};
+
+const actions = [
+    { key: 'view', label: "Ko'rish", icon: Eye },
+    { key: 'edit', label: 'Tahrirlash', icon: PenLine },
+    { key: 'more', label: 'Boshqa amallar', icon: MoreHorizontal },
+];
+</script>
+
+<template>
+    <DashCard title="Yangi kelgan maqolalar">
+        <div v-if="items.length" class="-mx-5 overflow-x-auto">
+            <table class="w-full min-w-[720px] text-left text-[13px]">
+                <thead>
+                    <tr
+                        class="border-y border-line bg-[#f8fafc] text-[11px] font-semibold tracking-wide text-navy-500 uppercase"
+                    >
+                        <th class="w-12 py-2.5 pr-2 pl-5">№</th>
+                        <th class="py-2.5 pr-4">Maqola nomi</th>
+                        <th class="py-2.5 pr-4">Muallif</th>
+                        <th class="py-2.5 pr-4">Jurnal soni</th>
+                        <th class="py-2.5 pr-4">Yuborilgan sana</th>
+                        <th class="py-2.5 pr-4">Holati</th>
+                        <th class="py-2.5 pr-5 text-right">Amallar</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-line">
+                    <tr
+                        v-for="(item, index) in items"
+                        :key="item.id"
+                        class="group transition-colors hover:bg-brand-50/40"
+                    >
+                        <td class="py-3 pl-5 text-navy-500 tabular-nums">
+                            {{ index + 1 }}
+                        </td>
+                        <td class="py-3 pr-4">
+                            <div class="flex items-center gap-3">
+                                <span
+                                    class="flex h-11 w-9 shrink-0 items-center justify-center overflow-hidden rounded-md bg-[#f3efe6] text-gold-700 ring-1 ring-black/5 transition-transform duration-300 group-hover:scale-105"
+                                >
+                                    <img
+                                        v-if="item.coverUrl"
+                                        :src="item.coverUrl"
+                                        alt=""
+                                        class="size-full object-cover"
+                                    />
+                                    <FileText v-else class="size-4" />
+                                </span>
+                                <span
+                                    class="line-clamp-2 max-w-72 min-w-48 font-medium text-navy-900 group-hover:text-brand-700"
+                                >
+                                    {{ item.title }}
+                                </span>
+                            </div>
+                        </td>
+                        <td class="py-3 pr-4 whitespace-nowrap text-navy-700">
+                            {{ item.author }}
+                        </td>
+                        <td class="py-3 pr-4 whitespace-nowrap text-navy-700">
+                            {{ item.issue ?? '—' }}
+                        </td>
+                        <td
+                            class="py-3 pr-4 whitespace-nowrap text-navy-600 tabular-nums"
+                        >
+                            {{ formatDateTime(item.submittedAt) }}
+                        </td>
+                        <td class="py-3 pr-4">
+                            <span
+                                :class="
+                                    cn(
+                                        'inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold whitespace-nowrap ring-1 ring-inset',
+                                        pill[item.statusGroup],
+                                    )
+                                "
+                            >
+                                {{ item.statusLabel }}
+                            </span>
+                        </td>
+                        <td class="py-3 pr-5">
+                            <div class="flex justify-end gap-1">
+                                <button
+                                    v-for="action in actions"
+                                    :key="action.key"
+                                    type="button"
+                                    disabled
+                                    :title="`${action.label} — tez orada`"
+                                    :aria-label="action.label"
+                                    class="flex size-8 cursor-not-allowed items-center justify-center rounded-lg border border-line text-navy-500 transition-colors group-hover:border-brand-200 group-hover:text-brand-600"
+                                >
+                                    <component
+                                        :is="action.icon"
+                                        class="size-4"
+                                    />
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p v-else class="py-10 text-center text-sm text-navy-500">
+            Hozircha yangi maqolalar yo'q
+        </p>
+    </DashCard>
+</template>
