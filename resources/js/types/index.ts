@@ -11,3 +11,4 @@ export * from './editorial';
 export * from './reviews';
 export * from './messages';
 export * from './production';
+export * from './issues';
