@@ -182,7 +182,7 @@ class DemoContentSeeder extends Seeder
                 'subject_id' => $subjects[$subjectSlug] ?? null,
                 'title' => ['uz' => $title],
                 'slug' => Str::slug($title),
-                'keywords' => ['uz' => self::KEYWORDS[$subjectSlug] ?? []],
+                'keywords' => ['uz' => self::KEYWORDS[$subjectSlug]],
                 'updated_at' => $publishedAt,
             ]);
 
