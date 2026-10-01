@@ -6,7 +6,7 @@ import { MONTHS_SHORT, formatCompact, formatSum } from '@/lib/format';
 import type { PaymentsMonthly } from '@/types';
 
 /**
- * "To'lovlar statistikasi": Click va Payme tushumlari oyma-oy (bitta o'q),
+ * "To'lovlar statistikasi": Click, Payme va qo'lda tasdiqlangan tushumlar oyma-oy (bitta o'q),
  * yumshoq maydonli chiziqlar, kursor chizig'i va tooltip.
  */
 const props = defineProps<{ data: PaymentsMonthly }>();
@@ -14,6 +14,7 @@ const props = defineProps<{ data: PaymentsMonthly }>();
 const series = [
     { key: 'click', label: 'Click', color: '#1a82f7' },
     { key: 'payme', label: 'Payme', color: '#0fa37f' },
+    { key: 'manual', label: "Qo'lda", color: '#8b5cf6' },
 ] as const;
 
 const W = 440;
@@ -24,7 +25,14 @@ const plotH = H - pad.top - pad.bottom;
 const step = plotW / 11;
 
 const scale = computed(() =>
-    niceScale(Math.max(1, ...props.data.click, ...props.data.payme)),
+    niceScale(
+        Math.max(
+            1,
+            ...props.data.click,
+            ...props.data.payme,
+            ...props.data.manual,
+        ),
+    ),
 );
 
 const x = (month: number): number => pad.left + step * month;

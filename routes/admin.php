@@ -1,7 +1,9 @@
 <?php
 
 use App\Enums\AdminSection;
+use App\Enums\PermissionName;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\Payments\PaymentController;
 use App\Http\Controllers\Admin\SectionController;
 use App\Http\Controllers\Admin\Users\UserAvatarController;
 use App\Http\Controllers\Admin\Users\UserController;
@@ -47,6 +49,22 @@ Route::middleware('permission:'.AdminSection::Users->permission()->value)
 
         Route::post('{user}/avatar', [UserAvatarController::class, 'store'])->name('avatar.store');
         Route::delete('{user}/avatar', [UserAvatarController::class, 'destroy'])->name('avatar.destroy');
+    });
+
+/*
+| To'lovlar (TZ 4.2.8): ro'yxat, qo'lda tasdiqlash, to'lovdan ozod qilish
+*/
+Route::middleware('permission:'.AdminSection::Payments->permission()->value)
+    ->prefix('payments')
+    ->name('payments.')
+    ->group(function () {
+        Route::get('/', [PaymentController::class, 'index'])->name('index');
+        Route::get('{payment:uuid}/proof', [PaymentController::class, 'proof'])->name('proof');
+
+        Route::middleware('permission:'.PermissionName::PaymentsConfirmManually->value)->group(function () {
+            Route::post('articles/{article:uuid}/confirm', [PaymentController::class, 'confirm'])->name('confirm');
+            Route::post('articles/{article:uuid}/waive', [PaymentController::class, 'waive'])->name('waive');
+        });
     });
 
 // Hali ishlab chiqilmagan bo'limlar — vaqtinchalik sahifa (admin/Section).

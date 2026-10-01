@@ -6,3 +6,4 @@ export * from './navigation';
 export * from './users';
 export * from './ui';
 export * from './cabinet';
+export * from './payments';

@@ -152,9 +152,10 @@ class DashboardService
     }
 
     /**
-     * "To'lovlar statistikasi" — joriy yil, oyma-oy muvaffaqiyatli to'lovlar summasi (so'm).
+     * "To'lovlar statistikasi" — joriy yil, oyma-oy muvaffaqiyatli to'lovlar summasi (so'm):
+     * Click, Payme va qo'lda tasdiqlangan (bank o'tkazmasi) to'lovlar.
      *
-     * @return array{year: int, click: array<int, int>, payme: array<int, int>, total: int}
+     * @return array{year: int, click: array<int, int>, payme: array<int, int>, manual: array<int, int>, total: int}
      */
     public function paymentsMonthly(?int $year = null): array
     {
@@ -163,7 +164,6 @@ class DashboardService
         $payments = Payment::query()
             ->paid()
             ->whereYear('paid_at', $year)
-            ->whereIn('provider', [PaymentProvider::Click->value, PaymentProvider::Payme->value])
             ->get(['provider', 'amount', 'paid_at']);
 
         $sum = fn (PaymentProvider $provider): array => $this->perMonth(
@@ -176,6 +176,7 @@ class DashboardService
             'year' => $year,
             'click' => $sum(PaymentProvider::Click),
             'payme' => $sum(PaymentProvider::Payme),
+            'manual' => $sum(PaymentProvider::Manual),
             'total' => (int) round((float) $payments->sum(fn (Payment $p): float => (float) $p->amount)),
         ];
     }

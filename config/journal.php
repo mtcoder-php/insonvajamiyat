@@ -46,6 +46,16 @@ return [
         'address' => env('JOURNAL_ADDRESS', "Toshkent, O'zbekiston"),
     ],
 
+    // Nashr to'lovi uchun bank rekvizitlari (muallif kabinetida "To'lov kutilmoqda" holatida
+    // ko'rsatiladi; to'lovni admin qo'lda tasdiqlaydi). Bo'sh maydonlar ko'rsatilmaydi.
+    'payment' => [
+        'recipient' => env('JOURNAL_PAYMENT_RECIPIENT'),   // Qabul qiluvchi tashkilot
+        'bank' => env('JOURNAL_PAYMENT_BANK'),             // Bank nomi
+        'account' => env('JOURNAL_PAYMENT_ACCOUNT'),       // Hisob raqami
+        'mfo' => env('JOURNAL_PAYMENT_MFO'),               // MFO
+        'inn' => env('JOURNAL_PAYMENT_INN'),               // STIR (INN)
+    ],
+
     // Bo'sh qoldirilgan tarmoqlar footer'da ko'rsatilmaydi
     'socials' => [
         'telegram' => env('JOURNAL_TELEGRAM_URL'),
