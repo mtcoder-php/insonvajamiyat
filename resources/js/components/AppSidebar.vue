@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavMain from '@/components/NavMain.vue';
 import {
@@ -25,6 +25,9 @@ import type { AppArea } from '@/types';
 const props = defineProps<{
     area: AppArea;
 }>();
+
+// Sidebar banner rasmi hali public/ ga qo'yilmagan bo'lsa — naqshli fon
+const bannerFailed = ref(false);
 
 const groups = computed(() =>
     props.area === 'admin' ? adminNavigation() : cabinetNavigation(),
@@ -66,18 +69,35 @@ const homeHref = computed(() =>
 
         <SidebarFooter class="p-3 group-data-[collapsible=icon]:hidden">
             <figure
-                class="relative overflow-hidden rounded-xl border border-sidebar-border bg-white/[0.03] p-4"
+                class="group/quote relative isolate flex min-h-56 flex-col overflow-hidden rounded-xl border border-sidebar-border bg-navy-950 p-4 shadow-[0_12px_32px_-16px_rgba(0,0,0,0.6)] transition-all duration-500 hover:border-gold-500/40"
             >
+                <!-- Fon: public/dashboard/sidebarbanner/sidebarbanner.png -->
+                <img
+                    v-if="!bannerFailed"
+                    src="/dashboard/sidebarbanner/sidebarbanner.png"
+                    alt=""
+                    loading="lazy"
+                    class="absolute inset-0 -z-20 size-full object-cover object-bottom transition-transform duration-[1500ms] ease-out group-hover/quote:scale-105"
+                    @error="bannerFailed = true"
+                />
                 <div
-                    class="pointer-events-none absolute inset-0 bg-girih opacity-[0.06]"
+                    v-else
+                    class="pointer-events-none absolute inset-0 -z-20 bg-girih opacity-[0.06]"
+                    aria-hidden="true"
+                />
+                <!-- Matn o'qilishi uchun yuqoridan qoraytirish -->
+                <div
+                    class="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-navy-950/90 via-navy-950/40 to-navy-950/10"
                     aria-hidden="true"
                 />
                 <blockquote
-                    class="relative font-serif text-[15px] leading-snug text-white/90 italic"
+                    class="font-serif text-[15px] leading-snug text-white/95 italic drop-shadow-sm"
                 >
                     “Ilm — insonni yuksaltiradi, jamiyatni rivojlantiradi.”
                 </blockquote>
-                <div class="relative mt-3 gold-rule w-20" />
+                <div
+                    class="mt-3 gold-rule w-20 transition-all duration-500 group-hover/quote:w-28"
+                />
             </figure>
         </SidebarFooter>
     </Sidebar>
