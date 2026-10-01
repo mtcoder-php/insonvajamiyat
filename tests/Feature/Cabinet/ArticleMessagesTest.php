@@ -99,8 +99,9 @@ class ArticleMessagesTest extends TestCase
                 ->where('messages.items.1.sender', 'Tahririyat')
                 ->where('messages.items.1.side', 'editorial')
                 ->where('messages.sendUrl', route('cabinet.articles.messages.store', $this->article->uuid))
-            )
-            ->assertDontSee($this->editor->name);
+                // Yozishmada xodim ismi ko'rinmaydi — faqat "Tahririyat"
+                ->where('messages.items', fn ($items): bool => ! str_contains((string) json_encode($items), $this->editor->name))
+            );
 
         // Kabinetni ochish bildirishnomani va xabarni o'qilgan qiladi
         $this->assertSame(0, $this->author->unreadNotifications()->count());
