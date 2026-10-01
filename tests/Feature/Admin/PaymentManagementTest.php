@@ -32,6 +32,16 @@ class PaymentManagementTest extends TestCase
         Storage::fake('local');
     }
 
+    /**
+     * Summa JSON orqali o'tganda 150000.0 → 150000 bo'lib qoladi — son sifatida solishtiramiz.
+     *
+     * @return \Closure(mixed): bool
+     */
+    private static function money(int $expected): \Closure
+    {
+        return fn (mixed $value): bool => is_numeric($value) && (float) $value === (float) $expected;
+    }
+
     private function admin(): User
     {
         return User::factory()->withRole(RoleName::SuperAdmin)->createOne();
@@ -79,11 +89,11 @@ class PaymentManagementTest extends TestCase
                 ->where('counts.all', 1)
                 ->has('awaiting.data', 1)
                 ->where('awaiting.data.0.uuid', $article->uuid)
-                ->where('awaiting.data.0.amountDue', 150000.0)
+                ->where('awaiting.data.0.amountDue', self::money(150000))
                 ->where('payments', null)
-                ->where('stats.click.amount', 200000.0)
+                ->where('stats.click.amount', self::money(200000))
                 ->where('stats.awaiting.count', 1)
-                ->where('stats.awaiting.amount', 150000.0)
+                ->where('stats.awaiting.amount', self::money(150000))
                 ->where('can.confirm', true)
             );
     }
@@ -222,7 +232,7 @@ class PaymentManagementTest extends TestCase
             ->get(route('cabinet.articles.show', $article->uuid))
             ->assertInertia(fn (Assert $page) => $page
                 ->where('payment.awaiting', true)
-                ->where('payment.amount', 150000.0)
+                ->where('payment.amount', self::money(150000))
                 ->where('payment.requisites.bank', 'Xalq banki')
                 ->missing('payment.requisites.mfo')
             );
