@@ -19,8 +19,7 @@ class VerifyUserEmail extends Command
 {
     public function handle(): int
     {
-        $argument = $this->argument('email');
-        $email = is_string($argument) ? mb_strtolower(trim($argument)) : '';
+        $email = mb_strtolower(trim($this->argument('email')));
         $user = User::query()->where('email', $email)->first();
 
         if ($user === null) {
