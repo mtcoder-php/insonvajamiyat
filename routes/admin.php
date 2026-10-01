@@ -89,7 +89,10 @@ Route::prefix('reviews')->name('reviews.')->group(function () {
         Route::post('{review}/accept', [ReviewController::class, 'accept'])->name('accept');
         Route::post('{review}/decline', [ReviewController::class, 'decline'])->name('decline');
         Route::put('{review}', [ReviewController::class, 'update'])->name('update');
-        Route::get('{review}/files/{file:uuid}', [ReviewController::class, 'file'])->name('files');
+        // Fayl maqolaga tegishli (Review::files() yo'q) — tegishlilik controllerda tekshiriladi
+        Route::get('{review}/files/{file:uuid}', [ReviewController::class, 'file'])
+            ->withoutScopedBindings()
+            ->name('files');
     });
 });
 
