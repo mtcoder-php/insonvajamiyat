@@ -47,8 +47,17 @@ class ProfileController extends Controller
         $user = $request->user();
         $data = $request->validated();
 
-        $this->profiles->updatePersonal($user, $data);
+        $emailChanged = $this->profiles->updatePersonal($user, $data);
         $this->profiles->updateAcademic($user, $data);
+
+        // Yangi manzilga tasdiqlash havolasi darhol yuboriladi
+        if ($emailChanged && ! $user->hasVerifiedEmail()) {
+            $user->sendEmailVerificationNotification();
+
+            Inertia::flash('toast', ['type' => 'success', 'message' => __('Profil saqlandi. Yangi manzilga tasdiqlash havolasi yuborildi.')]);
+
+            return to_route('profile.edit');
+        }
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Profil saqlandi.')]);
 

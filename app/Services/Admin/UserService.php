@@ -169,6 +169,11 @@ class UserService
             $this->avatars->store($user, $avatar);
         }
 
+        // "Email tasdiqlangan" belgilanmagan bo'lsa — foydalanuvchiga tasdiqlash xati
+        if (! $user->hasVerifiedEmail()) {
+            $user->sendEmailVerificationNotification();
+        }
+
         return $user;
     }
 
@@ -180,10 +185,10 @@ class UserService
         $roles = $this->rolesFrom($data);
         $this->guardRoleChange($user, $roles, $actor);
 
-        DB::transaction(function () use ($user, $data, $roles): void {
+        $emailChanged = DB::transaction(function () use ($user, $data, $roles): bool {
             $verified = ! empty($data['email_verified']);
 
-            $this->profiles->updatePersonal($user, $data, keepVerified: $verified);
+            $emailChanged = $this->profiles->updatePersonal($user, $data, keepVerified: $verified);
             $this->profiles->updateAcademic($user, $data);
 
             // "Email tasdiqlangan" belgisi
@@ -194,10 +199,17 @@ class UserService
             }
 
             $user->syncRoles(array_map(fn (RoleName $r): string => $r->value, $roles));
+
+            return $emailChanged;
         });
 
         if ($avatar !== null) {
             $this->avatars->store($user, $avatar);
+        }
+
+        // Yangi (tasdiqlanmagan) manzilga tasdiqlash xati
+        if ($emailChanged && ! $user->hasVerifiedEmail()) {
+            $user->sendEmailVerificationNotification();
         }
     }
 
