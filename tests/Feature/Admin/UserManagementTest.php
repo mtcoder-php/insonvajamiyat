@@ -4,7 +4,7 @@ namespace Tests\Feature\Admin;
 
 use App\Enums\RoleName;
 use App\Models\User;
-use Illuminate\Auth\Notifications\ResetPassword;
+use App\Notifications\Auth\ResetPasswordNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
@@ -279,7 +279,7 @@ class UserManagementTest extends TestCase
 
         $this->actingAs($admin)->post(route('admin.users.password.reset', $user))->assertRedirect();
 
-        Notification::assertSentTo($user, ResetPassword::class);
+        Notification::assertSentTo($user, ResetPasswordNotification::class);
     }
 
     public function test_admin_can_change_user_avatar(): void

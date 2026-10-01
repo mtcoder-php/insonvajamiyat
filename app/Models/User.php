@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Enums\RoleName;
+use App\Notifications\Auth\ResetPasswordNotification;
+use App\Notifications\Auth\VerifyEmailNotification;
 use App\Support\MediaUrl;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -96,6 +98,22 @@ class User extends Authenticatable implements MustVerifyEmail
     public function aiRequests(): HasMany
     {
         return $this->hasMany(AiRequest::class);
+    }
+
+    /** Tasdiqlash xati — o'zbekcha (App\Notifications\Auth\VerifyEmailNotification) */
+    public function sendEmailVerificationNotification(): void
+    {
+        $this->notify(new VerifyEmailNotification);
+    }
+
+    /**
+     * Parolni tiklash xati — o'zbekcha.
+     *
+     * @param  string  $token
+     */
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new ResetPasswordNotification($token));
     }
 
     /** Profil rasmi URL'i (author_profiles.avatar_path) yoki null */

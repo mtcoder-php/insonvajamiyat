@@ -51,8 +51,9 @@ class ProfileService
      * ($keepVerified = true bo'lsa, masalan admin "tasdiqlangan" deb belgilaganda, saqlanadi).
      *
      * @param  array<string, mixed>  $data
+     * @return bool Email manzili o'zgardimi
      */
-    public function updatePersonal(User $user, array $data, bool $keepVerified = false): void
+    public function updatePersonal(User $user, array $data, bool $keepVerified = false): bool
     {
         $profile = $this->ensureProfile($user);
 
@@ -69,11 +70,15 @@ class ProfileService
             'locale' => $data['locale'] ?? $user->locale,
         ]);
 
-        if ($user->isDirty('email') && ! $keepVerified) {
+        $emailChanged = $user->isDirty('email');
+
+        if ($emailChanged && ! $keepVerified) {
             $user->email_verified_at = null;
         }
 
         $user->save();
+
+        return $emailChanged;
     }
 
     /**

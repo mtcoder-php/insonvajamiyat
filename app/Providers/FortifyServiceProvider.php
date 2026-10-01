@@ -92,6 +92,8 @@ class FortifyServiceProvider extends ServiceProvider
 
         Fortify::verifyEmailView(fn (Request $request) => Inertia::render('auth/VerifyEmail', [
             'status' => $request->session()->get('status'),
+            // Havola qaysi manzilga ketganini ko'rsatish (xato manzilni profilda tuzatish mumkin)
+            'email' => $request->user()?->email,
         ]));
 
         Fortify::registerView(fn () => Inertia::render('auth/Register', [

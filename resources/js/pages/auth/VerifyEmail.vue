@@ -1,11 +1,18 @@
 <script setup lang="ts">
-import { Form, Head } from '@inertiajs/vue3';
+import { Form, Head, Link } from '@inertiajs/vue3';
+import { CircleCheck, MailCheck, PenLine } from '@lucide/vue';
 import TextLink from '@/components/TextLink.vue';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { logout } from '@/routes';
+import { edit as editProfile } from '@/routes/profile';
 import { send } from '@/routes/verification';
 
+/**
+ * Elektron pochtani tasdiqlash. Havola yuborilgan manzil ko'rsatiladi;
+ * manzil xato bo'lsa — profil sahifasida tuzatish mumkin (u yerga
+ * tasdiqlanmagan foydalanuvchi ham kira oladi).
+ */
 defineOptions({
     layout: {
         title: 'Elektron pochtani tasdiqlang',
@@ -16,6 +23,7 @@ defineOptions({
 
 defineProps<{
     status?: string;
+    email?: string | null;
 }>();
 </script>
 
@@ -23,11 +31,37 @@ defineProps<{
     <Head title="Pochtani tasdiqlash" />
 
     <div
-        v-if="status === 'verification-link-sent'"
-        class="mb-6 rounded-lg border border-success/30 bg-success-soft px-4 py-3 text-sm font-medium text-success-ink"
+        v-if="email"
+        class="mb-5 flex items-center gap-3 rounded-lg border border-line bg-[#f8fafc] px-4 py-3"
     >
-        Ro'yxatdan o'tishda ko'rsatilgan manzilga yangi tasdiqlash havolasi
-        yuborildi.
+        <span
+            class="flex size-9 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-600"
+        >
+            <MailCheck class="size-4" />
+        </span>
+        <div class="min-w-0 flex-1">
+            <p class="text-xs text-navy-500">Havola yuborilgan manzil</p>
+            <p class="truncate text-sm font-semibold text-navy-900">
+                {{ email }}
+            </p>
+        </div>
+        <Link
+            :href="editProfile()"
+            class="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-brand-700 hover:text-brand-600"
+            title="Manzil xato bo'lsa, profilda o'zgartiring"
+        >
+            <PenLine class="size-3.5" />
+            O'zgartirish
+        </Link>
+    </div>
+
+    <div
+        v-if="status === 'verification-link-sent'"
+        class="mb-6 flex items-start gap-2 rounded-lg border border-success/30 bg-success-soft px-4 py-3 text-sm font-medium text-success-ink"
+    >
+        <CircleCheck class="mt-0.5 size-4 shrink-0" />
+        Yangi tasdiqlash havolasi yuborildi. Pochtangizni (va "Spam" papkasini)
+        tekshiring.
     </div>
 
     <Form
