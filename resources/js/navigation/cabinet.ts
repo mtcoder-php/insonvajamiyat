@@ -14,7 +14,12 @@ export function cabinetNavigation(): NavGroup[] {
         {
             label: 'Kabinet',
             items: [
-                { title: 'Bosh sahifa', href: dashboard(), icon: LayoutGrid },
+                {
+                    title: 'Bosh sahifa',
+                    href: dashboard(),
+                    icon: LayoutGrid,
+                    exact: true,
+                },
                 {
                     title: 'Profil sozlamalari',
                     href: profileEdit(),

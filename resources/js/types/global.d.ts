@@ -30,6 +30,8 @@ declare module '@inertiajs/core' {
             locales: LocaleOption[];
             notifications: NotificationSummary | null;
             sidebarOpen: boolean;
+            /** Admin sidebar raqamlari (App\\Services\\Admin\\NavigationBadges) */
+            adminBadges?: Record<string, number> | null;
             [key: string]: unknown;
         };
     }

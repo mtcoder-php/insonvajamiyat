@@ -47,7 +47,7 @@ const roleLabel = computed(() => primaryRoleLabel(auth.value.roles));
             </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" class="w-64">
-            <UserMenuContent :user="user" />
+            <UserMenuContent :user="user" show-site-link />
         </DropdownMenuContent>
     </DropdownMenu>
 </template>
