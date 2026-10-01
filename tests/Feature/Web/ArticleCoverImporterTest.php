@@ -40,7 +40,8 @@ class ArticleCoverImporterTest extends TestCase
 
     private function putSource(string $name): void
     {
-        File::copy($this->fakePng($name, 120, 80)->getRealPath(), $this->publicDir.'/web/article/'.$name);
+        // Vaqtinchalik UploadedFile emas — baytlar to'g'ridan-to'g'ri diskka yoziladi
+        File::put($this->publicDir.'/web/article/'.$name, $this->pngContents(120, 80));
     }
 
     public function test_command_attaches_images_by_title_ignoring_apostrophe_style(): void
@@ -53,10 +54,12 @@ class ArticleCoverImporterTest extends TestCase
             'slug' => 'amir-temur',
         ]);
         $other = Article::factory()->published()->create(['title' => ['uz' => 'Rasmsiz maqola']]);
+        Article::factory()->create(['title' => ['uz' => 'Jarayondagi maqola']]); // qoralama
 
         $this->artisan('app:import-article-covers')
             ->expectsOutputToContain('Biriktirildi: 1 ta')
             ->expectsOutputToContain('Rasmsiz maqola')
+            ->expectsOutputToContain('Nashr etilmagan (jarayondagi) 1 ta')
             ->assertSuccessful();
 
         $this->assertSame('articles/covers/amir-temur.png', $matched->refresh()->cover_image_path);
