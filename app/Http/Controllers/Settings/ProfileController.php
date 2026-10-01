@@ -8,7 +8,6 @@ use App\Http\Requests\Settings\ProfileUpdateRequest;
 use App\Http\Resources\Admin\UserDetailResource;
 use App\Models\User;
 use App\Services\Users\ProfileService;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -33,7 +32,8 @@ class ProfileController extends Controller
 
         return Inertia::render('settings/Profile', [
             'profile' => UserDetailResource::make($user)->resolve(),
-            'mustVerifyEmail' => $user instanceof MustVerifyEmail,
+            // User MustVerifyEmail'ni amalga oshiradi — tasdiqlash doim talab qilinadi
+            'mustVerifyEmail' => true,
             'status' => $request->session()->get('status'),
         ]);
     }

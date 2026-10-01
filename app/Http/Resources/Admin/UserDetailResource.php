@@ -25,10 +25,10 @@ class UserDetailResource extends JsonResource
 
         return [
             ...UserListResource::make($this->resource)->resolve($request),
-            'lastName' => $profile?->last_name ?? $this->name,
-            'firstName' => $profile?->first_name ?? '',
+            'lastName' => $profile->last_name ?? $this->name,
+            'firstName' => $profile->first_name ?? '',
             'middleName' => $profile?->middle_name,
-            'fullName' => $profile?->full_name ?? $this->name,
+            'fullName' => $profile->full_name ?? $this->name,
             'locale' => $this->locale,
             'position' => $profile?->position,
             'department' => $profile?->department,
