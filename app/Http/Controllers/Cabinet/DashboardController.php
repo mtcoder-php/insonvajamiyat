@@ -3,26 +3,46 @@
 namespace App\Http\Controllers\Cabinet;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Services\Cabinet\AuthorDashboardService;
+use App\Support\MediaUrl;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
 /**
- * Muallif kabineti — bosh sahifa (/cabinet).
- * Maqolalar statistikasi maqola moduli bilan birga qo'shiladi.
+ * Muallif kabineti — bosh sahifa (dizayn: "Muallif kabineti").
  */
 class DashboardController extends Controller
 {
-    public function __invoke(Request $request): Response
+    public function __invoke(Request $request, AuthorDashboardService $dashboard): Response
     {
-        $user = $request->user()->load('authorProfile');
+        /** @var User $user */
+        $user = $request->user();
+
+        $user->loadMissing('authorProfile');
 
         return Inertia::render('cabinet/Dashboard', [
-            'profile' => $user->authorProfile?->only([
-                'last_name', 'first_name', 'middle_name', 'organization', 'position',
-                'academic_degree', 'orcid',
-            ]),
             'profileCompleted' => $user->authorProfile?->onboarding_completed_at !== null,
+            'cards' => fn () => $dashboard->cards($user),
+            'articles' => fn () => $dashboard->latest($user),
+            'focus' => fn () => $dashboard->focus($user),
+            'messages' => fn () => $dashboard->messages($user),
+            'chart' => fn () => $dashboard->chart($user),
+            'links' => fn () => self::links(),
         ]);
+    }
+
+    /**
+     * Foydali havolalar: maqola shabloni (public/ dagi fayl bo'lsa), yo'riqnoma.
+     *
+     * @return array{template: string|null, guidelines: string}
+     */
+    public static function links(): array
+    {
+        return [
+            'template' => MediaUrl::publicAsset(config('journal.article_template')),
+            'guidelines' => route('guidelines'),
+        ];
     }
 }

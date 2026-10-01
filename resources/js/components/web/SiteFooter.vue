@@ -6,11 +6,19 @@ import BrandLogo from '@/components/brand/BrandLogo.vue';
 import NewsletterForm from '@/components/web/NewsletterForm.vue';
 import SocialIcon from '@/components/web/SocialIcon.vue';
 import { footerQuickLinks, footerUsefulLinks } from '@/navigation/web';
+import { cn } from '@/lib/utils';
 import type { JournalSocialNetwork } from '@/types';
 
 /**
  * Sayt footer'i (dizayn: home_2.png): brend, havolalar, aloqa, obuna formasi.
  */
+const { wide = false } = defineProps<{
+    /** Keng konteyner (muallif kabineti) */
+    wide?: boolean;
+}>();
+
+const container = computed(() => (wide ? 'max-w-[100rem]' : 'max-w-7xl'));
+
 const journal = computed(() => usePage().props.journal);
 
 const socials = computed(
@@ -38,7 +46,12 @@ const year = new Date().getFullYear();
         />
 
         <div
-            class="relative mx-auto grid max-w-7xl grid-cols-2 gap-x-6 gap-y-10 px-4 py-14 sm:px-6 lg:grid-cols-[1.3fr_1fr_1fr_1.35fr_1.5fr] lg:gap-8 lg:px-8"
+            :class="
+                cn(
+                    'relative mx-auto grid grid-cols-2 gap-x-6 gap-y-10 px-4 py-14 sm:px-6 lg:grid-cols-[1.3fr_1fr_1fr_1.35fr_1.5fr] lg:gap-8 lg:px-8',
+                    container,
+                )
+            "
         >
             <div class="col-span-2 lg:col-span-1">
                 <BrandLogo tone="light" size="md" />
@@ -151,7 +164,12 @@ const year = new Date().getFullYear();
 
         <div class="relative border-t border-white/10">
             <div
-                class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-5 text-xs text-white/55 sm:flex-row sm:px-6 lg:px-8"
+                :class="
+                    cn(
+                        'mx-auto flex flex-col items-center justify-between gap-2 px-4 py-5 text-xs text-white/55 sm:flex-row sm:px-6 lg:px-8',
+                        container,
+                    )
+                "
             >
                 <p>
                     © {{ year }} "{{ journal.name }}" ilmiy jurnali. Barcha

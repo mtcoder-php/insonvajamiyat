@@ -48,6 +48,24 @@ enum ArticleStatus: string
         };
     }
 
+    /**
+     * Ko'rinish guruhi (ro'yxatlar, rangli belgilar, statistika uchun):
+     * draft, new, reviewing, revision, accepted, published, rejected, withdrawn.
+     */
+    public function group(): string
+    {
+        return match ($this) {
+            self::Draft => 'draft',
+            self::Submitted, self::AwaitingPayment => 'new',
+            self::UnderReview, self::InReview, self::Resubmitted => 'reviewing',
+            self::RevisionRequired => 'revision',
+            self::Accepted, self::InProduction => 'accepted',
+            self::Published => 'published',
+            self::Rejected => 'rejected',
+            self::Withdrawn => 'withdrawn',
+        };
+    }
+
     /** Tailwind rang nomi — badge komponenti uchun */
     public function color(): string
     {

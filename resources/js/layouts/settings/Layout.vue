@@ -15,21 +15,32 @@ import type { NavItem, User } from '@/types';
  * Shaxsiy sozlamalar: profil, xavfsizlik, ko'rinish.
  * Yuqorida foydalanuvchi kartasi va bo'limlar (tab) menyusi.
  */
-const tabs: NavItem[] = [
-    { title: 'Profil', href: editProfile(), icon: UserRound },
-    { title: 'Xavfsizlik', href: editSecurity(), icon: ShieldCheck },
-    { title: "Ko'rinish", href: editAppearance(), icon: Palette },
-];
-
 const { isCurrentOrParentUrl } = useCurrentUrl();
 const page = usePage();
+
+// "Ko'rinish" (yorug'/qorong'i mavzu) — faqat admin panel uchun; muallif kabineti yorug'
+const tabs = computed<NavItem[]>(() => [
+    { title: 'Profil', href: editProfile(), icon: UserRound },
+    { title: 'Xavfsizlik', href: editSecurity(), icon: ShieldCheck },
+    ...(page.props.auth.isStaff
+        ? [{ title: "Ko'rinish", href: editAppearance(), icon: Palette }]
+        : []),
+]);
 
 const user = computed(() => page.props.auth.user as User);
 const role = computed(() => primaryRoleLabel(page.props.auth.roles));
 </script>
 
 <template>
-    <div class="flex flex-1 flex-col gap-5 bg-[#f5f7fb] p-4 md:p-6">
+    <div
+        :class="
+            cn(
+                'flex flex-1 flex-col gap-5',
+                // Admin panelda o'z foni va chegarasi; muallif kabinetida layout beradi
+                page.props.auth.isStaff && 'bg-[#f5f7fb] p-4 md:p-6',
+            )
+        "
+    >
         <section
             class="relative isolate overflow-hidden rounded-2xl bg-navy-950 px-5 py-5 text-white shadow-[0_16px_36px_-22px_rgba(0,30,60,0.8)] sm:px-6"
         >

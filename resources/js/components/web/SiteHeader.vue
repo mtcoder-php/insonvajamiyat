@@ -18,8 +18,10 @@ import type { NavItem } from '@/types';
 const props = withDefaults(
     defineProps<{
         variant?: 'light' | 'dark';
+        /** Keng konteyner (muallif kabineti: sidebar + kontent + o'ng ustun) */
+        wide?: boolean;
     }>(),
-    { variant: 'dark' },
+    { variant: 'dark', wide: false },
 );
 
 const { isCurrentUrl, isCurrentOrParentUrl } = useCurrentUrl();
@@ -44,7 +46,12 @@ const isActive = (item: NavItem, index: number): boolean =>
         "
     >
         <div
-            class="mx-auto flex h-18 max-w-7xl items-center justify-between gap-6 px-4 sm:px-6 lg:px-8"
+            :class="
+                cn(
+                    'mx-auto flex h-18 items-center justify-between gap-6 px-4 sm:px-6 lg:px-8',
+                    wide ? 'max-w-[100rem]' : 'max-w-7xl',
+                )
+            "
         >
             <Link :href="home()" class="flex shrink-0 items-center">
                 <BrandLogo :tone="isDark ? 'light' : 'dark'" size="sm" />

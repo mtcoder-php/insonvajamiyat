@@ -1,7 +1,13 @@
 @php
-    // Ommaviy sayt va auth sahifalari faqat yorug' mavzuda (dizayn shunga mo'ljallangan);
-    // qorong'i mavzu faqat admin panel va kabinetda ishlaydi.
-    $lightOnly = str_starts_with($page['component'], 'web/') || str_starts_with($page['component'], 'auth/');
+    // Ommaviy sayt, auth va muallif kabineti (shu jumladan muallifning shaxsiy sozlamalari)
+    // faqat yorug' mavzuda — dizayn shunga mo'ljallangan; qorong'i mavzu faqat admin panelda.
+    // resources/js/composables/useAppearance.ts → isLightOnlyComponent() bilan bir xil.
+    $component = $page['component'];
+    $isStaff = (bool) data_get($page, 'props.auth.isStaff', false);
+    $lightOnly = str_starts_with($component, 'web/')
+        || str_starts_with($component, 'auth/')
+        || str_starts_with($component, 'cabinet/')
+        || (! $isStaff && str_starts_with($component, 'settings/'));
 @endphp
 <!DOCTYPE html>
 <html

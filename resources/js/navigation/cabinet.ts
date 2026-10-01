@@ -1,42 +1,75 @@
-import { FileText, Globe, LayoutGrid, UserCog } from '@lucide/vue';
-import { guidelines, home } from '@/routes';
+import {
+    BookOpenText,
+    CircleHelp,
+    FilePen,
+    Files,
+    House,
+    Mail,
+    MessagesSquare,
+    Send,
+    UserRound,
+} from '@lucide/vue';
+import { contact, guidelines } from '@/routes';
 import { dashboard } from '@/routes/cabinet';
+import { create, index } from '@/routes/cabinet/articles';
 import { edit as profileEdit } from '@/routes/profile';
-import type { NavGroup } from '@/types';
+import type { NavGroup, NavItem } from '@/types';
 
 /**
- * Muallif kabineti menyusi (TZ 4.1.3).
- * Yangi bo'limlar (Mening maqolalarim, Yangi maqola, To'lovlar, Xabarlar, AI)
- * tegishli modullar bilan birga shu yerga qo'shiladi.
+ * Muallif kabineti menyusi (TZ 4.1.3, dizayn: "Muallif kabineti").
+ * disabled — modul hali tayyor emas ("tez orada").
  */
+export type CabinetNavItem = NavItem & { disabled?: boolean };
+
+export function cabinetMainNavigation(): CabinetNavItem[] {
+    return [
+        { title: 'Asosiy sahifa', href: dashboard(), icon: House, exact: true },
+        { title: 'Mening maqolalarim', href: index(), icon: Files },
+        { title: 'Yangi maqola yuborish', href: create(), icon: Send },
+        { title: "Profil ma'lumotlari", href: profileEdit(), icon: UserRound },
+        {
+            title: 'Xabarlar',
+            href: dashboard(),
+            icon: Mail,
+            badge: 'notifications',
+            disabled: true,
+        },
+        {
+            title: 'Tahririyat bilan aloqa',
+            href: contact(),
+            icon: MessagesSquare,
+        },
+    ];
+}
+
+export function cabinetUsefulLinks(): CabinetNavItem[] {
+    const url = guidelines.url();
+
+    return [
+        { title: "Yo'riqnoma (PDF)", href: url, icon: BookOpenText },
+        {
+            title: "Maqola yozish bo'yicha maslahatlar",
+            href: `${url}#maslahatlar`,
+            icon: FilePen,
+        },
+        {
+            title: "Tez-tez so'raladigan savollar",
+            href: `${url}#faq`,
+            icon: CircleHelp,
+        },
+    ];
+}
+
+/** Umumiy sidebar (AppSidebar, area="cabinet") uchun guruhlangan ko'rinish */
 export function cabinetNavigation(): NavGroup[] {
     return [
         {
             label: 'Kabinet',
-            items: [
-                {
-                    title: 'Bosh sahifa',
-                    href: dashboard(),
-                    icon: LayoutGrid,
-                    exact: true,
-                },
-                {
-                    title: 'Profil sozlamalari',
-                    href: profileEdit(),
-                    icon: UserCog,
-                },
-            ],
+            items: cabinetMainNavigation().filter((item) => !item.disabled),
         },
         {
-            label: 'Jurnal',
-            items: [
-                { title: 'Saytga qaytish', href: home(), icon: Globe },
-                {
-                    title: "Mualliflar uchun yo'riqnoma",
-                    href: guidelines(),
-                    icon: FileText,
-                },
-            ],
+            label: 'Foydali havolalar',
+            items: cabinetUsefulLinks(),
         },
     ];
 }

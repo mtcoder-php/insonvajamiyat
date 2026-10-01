@@ -62,6 +62,9 @@ use Spatie\Translatable\HasTranslations;
  * @property-read Subject|null $subject
  * @property-read Collection<int, ArticleAuthor> $authors
  * @property-read Collection<int, JournalIssue> $issues
+ * @property-read Collection<int, ArticleFile> $files
+ * @property-read Collection<int, ArticleVersion> $versions
+ * @property-read Collection<int, ArticleStatusHistory> $statusHistories
  */
 #[Fillable([
     'submitter_id', 'article_type_id', 'subject_id', 'language', 'title', 'abstract',
@@ -138,6 +141,28 @@ class Article extends Model
         return $this->belongsTo(Subject::class);
     }
 
+    /** @return HasMany<ArticleFile, $this> */
+    public function files(): HasMany
+    {
+        return $this->hasMany(ArticleFile::class)->latest('id');
+    }
+
+    /** @return HasMany<ArticleVersion, $this> */
+    public function versions(): HasMany
+    {
+        return $this->hasMany(ArticleVersion::class)->orderBy('version_number');
+    }
+
+    /**
+     * Holatlar tarixi (eng eskisi birinchi).
+     *
+     * @return HasMany<ArticleStatusHistory, $this>
+     */
+    public function statusHistories(): HasMany
+    {
+        return $this->hasMany(ArticleStatusHistory::class)->orderBy('created_at')->orderBy('id');
+    }
+
     /** @return HasMany<ArticleAuthor, $this> */
     public function authors(): HasMany
     {
@@ -166,6 +191,18 @@ class Article extends Model
         $query->where('status', ArticleStatus::Published->value)
             ->whereNotNull('published_at')
             ->whereNotNull('slug');
+    }
+
+    /**
+     * Foydalanuvchi muallif bo'lgan maqolalar: yuboruvchi yoki hammuallif.
+     *
+     * @param  Builder<Article>  $query
+     */
+    public function scopeOwnedBy(Builder $query, User $user): void
+    {
+        $query->where(fn (Builder $q) => $q
+            ->where('submitter_id', $user->id)
+            ->orWhereHas('authors', fn (Builder $a) => $a->where('user_id', $user->id)));
     }
 
     public function isPublished(): bool

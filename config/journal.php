@@ -36,6 +36,10 @@ return [
     // yuklanmagan bo'lsa). Fayl topilmasa — default_issue_cover ishlatiladi.
     'latest_issue_cover' => env('JOURNAL_LATEST_ISSUE_COVER', 'web/latest_issue/latest_issue.png'),
 
+    // Muallif kabineti: "Maqola shablonini yuklab olish" (public/ ichidagi yo'l).
+    // Fayl topilmasa tugma ko'rsatilmaydi.
+    'article_template' => env('JOURNAL_ARTICLE_TEMPLATE', 'downloads/maqola-shablon.docx'),
+
     'contact' => [
         'email' => env('JOURNAL_EMAIL', 'info@insonvajamiyat.uz'),
         'phone' => env('JOURNAL_PHONE', '+998 71 234 56 78'),

@@ -55,6 +55,28 @@ class DemoContentSeeder extends Seeder
         ['Urbanizatsiya jarayonlarining mahalla instituti rivojiga ta\'siri', 'anthropology'],
     ];
 
+    /** @var array<string, array<int, string>> Yo'nalish bo'yicha namunaviy kalit so'zlar */
+    private const KEYWORDS = [
+        'history' => ['Tarix', 'Davlatchilik', 'Manbashunoslik', 'Temuriylar'],
+        'ethnology' => ['Etnologiya', 'Madaniyat', "An'ana", 'Etnos'],
+        'ethnography' => ['Etnografiya', 'Marosim', 'Urf-odat', 'Turmush tarzi'],
+        'anthropology' => ['Antropologiya', 'Oila', 'Jamiyat', 'Transformatsiya'],
+        'philosophy' => ['Falsafa', 'Inson', 'Axloq', 'Ijtimoiy ong'],
+        'philology' => ['Filologiya', 'Adabiyot', 'Matn', 'Folklor'],
+        'sociology' => ['Sotsiologiya', 'Yoshlar', 'Identiklik', "So'rovnoma"],
+        'cultural-studies' => ['Madaniyat', "Me'morchilik", 'Meros', 'San\'at'],
+    ];
+
+    /** @var array<string, string> Holatga o'tishda muallifga ko'rinadigan izoh */
+    private const STATUS_COMMENTS = [
+        'awaiting_payment' => "Maqolangiz dastlabki tekshiruvdan o'tdi. Nashr to'lovini amalga oshiring.",
+        'under_review' => "Maqolangiz muharrir tomonidan ko'rib chiqilmoqda.",
+        'in_review' => 'Maqolangiz taqrizchiga yuborildi. Taqriz natijasi haqida xabar beramiz.',
+        'revision_required' => "Maqolangizga kichik o'zgartirishlar kiritish talab qilinmoqda. Taqrizchi izohlari bilan tanishib chiqing.",
+        'accepted' => 'Tabriklaymiz! Maqolangiz nashrga qabul qilindi.',
+        'in_production' => 'Maqolangiz sahifalash (maket) bosqichiga topshirildi.',
+    ];
+
     private const POST_BODY = "Tahririyat ushbu yangilik yuzasidan barcha mualliflar, taqrizchilar va o'quvchilarni xabardor qiladi. Batafsil ma'lumot uchun jurnal tahririyatiga elektron pochta yoki telefon orqali murojaat qilishingiz mumkin.\n\n«Inson va Jamiyat» ilmiy jurnali ijtimoiy-gumanitar fanlar sohasidagi tadqiqotlarni keng jamoatchilikka yetkazish va ilmiy hamkorlikni rivojlantirishga xizmat qiladi.";
 
     private const EVENT_DESCRIPTION = "Tadbirda ijtimoiy-gumanitar fanlar sohasidagi olimlar, tadqiqotchilar va doktorantlar ishtirok etadi. Ma'ruzalar asosida tayyorlangan eng yaxshi maqolalar jurnalning navbatdagi sonlarida nashr etilishi mumkin.\n\nIshtirok etish uchun oldindan ro'yxatdan o'tish talab etiladi.";
@@ -106,6 +128,8 @@ class DemoContentSeeder extends Seeder
                 'subject_id' => $subjects[$subjectSlug] ?? null,
                 'title' => ['uz' => $title],
                 'slug' => Str::slug($title),
+                'keywords' => ['uz' => self::KEYWORDS[$subjectSlug] ?? []],
+                'updated_at' => $publishedAt,
             ]);
 
             foreach (range(0, $index % 2) as $position) {
@@ -274,15 +298,18 @@ class DemoContentSeeder extends Seeder
         ];
 
         $subjectIds = array_values($subjects);
+        $subjectSlugs = array_keys($subjects);
 
         foreach ($inProgress as $i => [$title, $status]) {
             $submittedAt = now()->subHours(6 + $i * 29);
+            $subjectIndex = $i % max(1, count($subjectIds));
 
             $article = Article::factory()->status($status)->createOne([
                 'submitter_id' => $submitter->id,
                 'article_type_id' => $typeId,
-                'subject_id' => $subjectIds[$i % count($subjectIds)] ?? null,
+                'subject_id' => $subjectIds[$subjectIndex] ?? null,
                 'title' => ['uz' => $title],
+                'keywords' => ['uz' => self::KEYWORDS[(string) ($subjectSlugs[$subjectIndex] ?? '')] ?? []],
                 'submitted_at' => $submittedAt,
                 'accepted_at' => in_array($status, [ArticleStatus::Accepted, ArticleStatus::InProduction], true)
                     ? $submittedAt->copy()->addHours(3)
@@ -302,14 +329,26 @@ class DemoContentSeeder extends Seeder
                 'created_at' => $submittedAt,
             ]);
 
-            if ($status !== ArticleStatus::Submitted) {
+            // Muallif kabinetidagi timeline uchun real ketma-ketlik
+            $path = $this->statusPath($status);
+            $previous = ArticleStatus::Submitted;
+            $stepMinutes = intdiv((6 + $i * 29) * 60, count($path) + 1);
+
+            foreach ($path as $step => $to) {
                 ArticleStatusHistory::query()->create([
                     'article_id' => $article->id,
-                    'from_status' => ArticleStatus::Submitted,
-                    'to_status' => $status,
-                    'created_at' => $submittedAt->copy()->addHours(2),
+                    'from_status' => $previous,
+                    'to_status' => $to,
+                    'comment' => self::STATUS_COMMENTS[$to->value] ?? null,
+                    'created_at' => $submittedAt->copy()->addMinutes($stepMinutes * ($step + 1)),
                 ]);
+                $previous = $to;
             }
+
+            // "Oxirgi yangilanish" — oxirgi holat o'zgarishi vaqti
+            Article::query()->whereKey($article->id)->update([
+                'updated_at' => $submittedAt->copy()->addMinutes($stepMinutes * count($path)),
+            ]);
         }
 
         // To'lovlar: yil boshidan hozirgacha, har oy bir nechtadan
@@ -380,5 +419,26 @@ class DemoContentSeeder extends Seeder
                 'updated_at' => now()->subMinutes($minutes),
             ]);
         }
+    }
+
+    /**
+     * "Yuborildi" dan keyingi holatlar zanjiri (namunaviy ma'lumot uchun).
+     *
+     * @return array<int, ArticleStatus>
+     */
+    private function statusPath(ArticleStatus $status): array
+    {
+        $review = [ArticleStatus::UnderReview, ArticleStatus::InReview];
+
+        return match ($status) {
+            ArticleStatus::AwaitingPayment => [ArticleStatus::AwaitingPayment],
+            ArticleStatus::UnderReview => [ArticleStatus::UnderReview],
+            ArticleStatus::InReview => $review,
+            ArticleStatus::RevisionRequired => [...$review, ArticleStatus::RevisionRequired],
+            ArticleStatus::Resubmitted => [...$review, ArticleStatus::RevisionRequired, ArticleStatus::Resubmitted],
+            ArticleStatus::Accepted => [...$review, ArticleStatus::Accepted],
+            ArticleStatus::InProduction => [...$review, ArticleStatus::Accepted, ArticleStatus::InProduction],
+            default => [],
+        };
     }
 }

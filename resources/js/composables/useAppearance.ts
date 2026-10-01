@@ -11,20 +11,33 @@ export type UseAppearanceReturn = {
 };
 
 /**
- * Ommaviy sayt (web/*) va auth sahifalari faqat yorug' mavzuda chiqadi —
- * dizayn shunga mo'ljallangan. Qorong'i mavzu admin panel va kabinet uchun.
+ * Ommaviy sayt (web/*), auth va muallif kabineti (cabinet/*) faqat yorug'
+ * mavzuda chiqadi — dizayn shunga mo'ljallangan. Shaxsiy sozlamalar (settings/*)
+ * muallif uchun kabinet ichida ochiladi, shuning uchun u ham yorug'.
+ * Qorong'i mavzu faqat admin panel (xodimlar) uchun.
  */
-export function isLightOnlyComponent(component: string): boolean {
-    return component.startsWith('web/') || component.startsWith('auth/');
+export function isLightOnlyComponent(
+    component: string,
+    isStaff = false,
+): boolean {
+    return (
+        ['web/', 'auth/', 'cabinet/'].some((prefix) =>
+            component.startsWith(prefix),
+        ) ||
+        (!isStaff && component.startsWith('settings/'))
+    );
 }
 
 /** Sahifa almashganda <html data-theme> ni yangilab, mavzuni qayta qo'llaydi */
-export function applyThemeForComponent(component: string): void {
+export function applyThemeForComponent(
+    component: string,
+    isStaff = false,
+): void {
     if (typeof document === 'undefined') {
         return;
     }
 
-    if (isLightOnlyComponent(component)) {
+    if (isLightOnlyComponent(component, isStaff)) {
         document.documentElement.dataset.theme = 'light-only';
     } else {
         delete document.documentElement.dataset.theme;
