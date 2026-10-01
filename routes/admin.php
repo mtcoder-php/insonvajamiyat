@@ -5,6 +5,8 @@ use App\Enums\PermissionName;
 use App\Http\Controllers\Admin\Articles\EditorialController;
 use App\Http\Controllers\Admin\Articles\ReviewerAssignmentController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\Issues\IssueArticleController;
+use App\Http\Controllers\Admin\Issues\IssueController;
 use App\Http\Controllers\Admin\Payments\PaymentController;
 use App\Http\Controllers\Admin\Production\ProductionController;
 use App\Http\Controllers\Admin\Reviews\ReviewController;
@@ -106,6 +108,36 @@ Route::middleware('permission:'.AdminSection::Production->permission()->value)
             Route::post('{article:uuid}/approve', [ProductionController::class, 'approve'])->name('approve');
             Route::post('{article:uuid}/revoke', [ProductionController::class, 'revoke'])->name('revoke');
         });
+    });
+
+/*
+| Jurnallar (TZ 4.2.3): sonlar, tarkib (tartib, rukn, sahifalar), muqova, PDF, mundarija
+*/
+Route::middleware('permission:'.AdminSection::Issues->permission()->value)
+    ->prefix('issues')
+    ->name('issues.')
+    ->group(function () {
+        Route::get('/', [IssueController::class, 'index'])->name('index');
+        Route::post('/', [IssueController::class, 'store'])->name('store');
+        Route::get('{issue}', [IssueController::class, 'show'])->name('show');
+        Route::put('{issue}', [IssueController::class, 'update'])->name('update');
+        Route::delete('{issue}', [IssueController::class, 'destroy'])->name('destroy');
+        Route::get('{issue}/toc', [IssueController::class, 'toc'])->name('toc');
+        Route::post('{issue}/files', [IssueController::class, 'storeFile'])->name('files.store');
+        Route::delete('{issue}/files/{type}', [IssueController::class, 'destroyFile'])
+            ->whereIn('type', ['cover', 'pdf', 'toc'])
+            ->name('files.destroy');
+
+        Route::post('{issue}/articles', [IssueArticleController::class, 'store'])->name('articles.store');
+        Route::put('{issue}/articles/order', [IssueArticleController::class, 'reorder'])->name('articles.reorder');
+        Route::post('{issue}/articles/paginate', [IssueArticleController::class, 'paginate'])->name('articles.paginate');
+        // Maqola songa issue_articles orqali bog'langan — tegishlilik IssueService'da tekshiriladi
+        Route::put('{issue}/articles/{article:uuid}', [IssueArticleController::class, 'update'])
+            ->withoutScopedBindings()
+            ->name('articles.update');
+        Route::delete('{issue}/articles/{article:uuid}', [IssueArticleController::class, 'destroy'])
+            ->withoutScopedBindings()
+            ->name('articles.destroy');
     });
 
 /*
