@@ -24,6 +24,7 @@ class EventResource extends JsonResource
             'startsAt' => $this->starts_at->toIso8601String(),
             'endsAt' => $this->ends_at?->toIso8601String(),
             'registrationUrl' => $this->registration_url,
+            'url' => route('events.show', $this->slug),
         ];
     }
 }

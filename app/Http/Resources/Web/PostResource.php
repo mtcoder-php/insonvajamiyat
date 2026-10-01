@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Web;
 
 use App\Models\Post;
+use App\Support\MediaUrl;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -26,6 +27,8 @@ class PostResource extends JsonResource
             'excerpt' => $this->excerpt,
             'isPinned' => $this->is_pinned,
             'publishedAt' => $this->published_at?->toDateString(),
+            'url' => route('news.show', $this->slug),
+            'imageUrl' => MediaUrl::from($this->image_path),
         ];
     }
 }

@@ -178,3 +178,19 @@ export function formatPhone(value: string | null | undefined): string {
         ? `+998 ${match[1]} ${match[2]} ${match[3]} ${match[4]}`
         : value;
 }
+
+/** Tadbir sanasi: { day: 13, month: "Oktabr", year: 2026 } */
+export function eventDateParts(value: string): {
+    day: number;
+    month: string;
+    year: number;
+} {
+    const date = new Date(value);
+    const month = MONTHS_LONG[date.getMonth()];
+
+    return {
+        day: date.getDate(),
+        month: month.charAt(0).toUpperCase() + month.slice(1),
+        year: date.getFullYear(),
+    };
+}

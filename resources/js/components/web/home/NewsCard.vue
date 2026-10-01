@@ -1,21 +1,28 @@
 <script setup lang="ts">
-import { Newspaper } from '@lucide/vue';
+import { Link } from '@inertiajs/vue3';
+import { ChevronRight, Newspaper } from '@lucide/vue';
 import HomeCard from '@/components/web/home/HomeCard.vue';
 import { formatDate } from '@/lib/format';
+import { index as newsIndex } from '@/routes/news';
 import type { PostItem } from '@/types';
 
 /**
- * "Yangiliklar" (home.png): sana + sarlavha.
+ * "Yangiliklar" (home.png): sana + sarlavha, har biri yangilik sahifasiga havola.
  */
 defineProps<{ items: PostItem[] }>();
 </script>
 
 <template>
-    <HomeCard title="Yangiliklar">
-        <ul v-if="items.length" class="-mx-2">
+    <HomeCard
+        title="Yangiliklar"
+        :href="newsIndex()"
+        link-text="Barcha yangiliklar"
+    >
+        <ul v-if="items.length" class="-mx-2 divide-y divide-[#ece8df]">
             <li v-for="item in items" :key="item.id">
-                <div
-                    class="group flex items-baseline gap-4 rounded-lg px-2 py-2.5 transition-colors hover:bg-white"
+                <Link
+                    :href="item.url"
+                    class="group flex items-baseline gap-4 rounded-lg px-2 py-3 transition-colors hover:bg-white"
                 >
                     <time
                         v-if="item.publishedAt"
@@ -25,11 +32,14 @@ defineProps<{ items: PostItem[] }>();
                         {{ formatDate(item.publishedAt) }}
                     </time>
                     <span
-                        class="text-sm leading-snug text-navy-800 transition-colors group-hover:text-brand-700"
+                        class="min-w-0 flex-1 text-sm leading-snug text-navy-800 transition-colors group-hover:text-brand-700"
                     >
                         {{ item.title }}
                     </span>
-                </div>
+                    <ChevronRight
+                        class="size-4 shrink-0 self-center text-navy-300 opacity-0 transition-all group-hover:translate-x-0.5 group-hover:text-brand-600 group-hover:opacity-100"
+                    />
+                </Link>
             </li>
         </ul>
         <div

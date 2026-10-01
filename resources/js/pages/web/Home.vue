@@ -39,13 +39,14 @@ defineProps<HomePageProps>();
         <div
             class="mx-auto grid w-full max-w-[1700px] gap-6 px-4 py-10 sm:px-6 lg:w-[90%] lg:grid-cols-[minmax(0,1fr)_20rem] lg:px-0 lg:py-12 xl:grid-cols-[minmax(0,1fr)_22rem] 2xl:grid-cols-[minmax(0,1fr)_24rem]"
         >
-            <div class="min-w-0 space-y-6">
+            <!-- Oxirgi qator (Yangiliklar + Tadbirlar) o'ng ustun balandligigacha cho'ziladi -->
+            <div class="flex min-w-0 flex-col gap-6">
                 <LatestIssueCard :issue="latestIssue" />
                 <LatestArticles :articles="latestArticles" />
                 <FeaturesStrip />
-                <div class="grid gap-6 md:grid-cols-2">
-                    <NewsCard :items="news" />
-                    <EventsCard :events="events" />
+                <div class="grid flex-1 gap-6 md:grid-cols-2">
+                    <NewsCard :items="news" class="h-full" />
+                    <EventsCard :events="events" class="h-full" />
                 </div>
             </div>
 
