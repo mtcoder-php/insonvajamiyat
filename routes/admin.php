@@ -2,6 +2,7 @@
 
 use App\Enums\AdminSection;
 use App\Enums\PermissionName;
+use App\Http\Controllers\Admin\Articles\EditorialController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\Payments\PaymentController;
 use App\Http\Controllers\Admin\SectionController;
@@ -49,6 +50,23 @@ Route::middleware('permission:'.AdminSection::Users->permission()->value)
 
         Route::post('{user}/avatar', [UserAvatarController::class, 'store'])->name('avatar.store');
         Route::delete('{user}/avatar', [UserAvatarController::class, 'destroy'])->name('avatar.destroy');
+    });
+
+/*
+| Maqolalar — muharrir ish joyi (TZ 4.2.2)
+*/
+Route::middleware('permission:'.AdminSection::Articles->permission()->value)
+    ->prefix('articles')
+    ->name('articles.')
+    ->group(function () {
+        Route::get('/', [EditorialController::class, 'index'])->name('index');
+        Route::post('{article:uuid}/notes', [EditorialController::class, 'addNote'])->name('notes');
+
+        Route::middleware('permission:'.PermissionName::ArticlesDecide->value)->group(function () {
+            Route::post('{article:uuid}/start-review', [EditorialController::class, 'startReview'])->name('start-review');
+            Route::post('{article:uuid}/decision', [EditorialController::class, 'decide'])->name('decision');
+            Route::put('{article:uuid}/editor', [EditorialController::class, 'assignEditor'])->name('editor');
+        });
     });
 
 /*

@@ -31,6 +31,12 @@ class ArticlePolicy
             && in_array($article->status, [ArticleStatus::Draft, ArticleStatus::RevisionRequired], true);
     }
 
+    /** Tahririyat qarori: ko'rib chiqishga olish, muharrir biriktirish, tuzatish / qabul / rad */
+    public function decide(User $user, Article $article): bool
+    {
+        return $user->can(PermissionName::ArticlesDecide->value) && $article->status !== ArticleStatus::Draft;
+    }
+
     /** Yangi maqola formasini davom ettirish (faqat yuboruvchi, faqat qoralama) */
     public function editDraft(User $user, Article $article): bool
     {

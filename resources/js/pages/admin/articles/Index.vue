@@ -1,0 +1,176 @@
+<script setup lang="ts">
+import { Head, router } from '@inertiajs/vue3';
+import { FileSearch, Route } from '@lucide/vue';
+import { computed, reactive, ref, watch } from 'vue';
+import DashCard from '@/components/admin/dashboard/DashCard.vue';
+import ArticleDetail from '@/components/admin/articles/ArticleDetail.vue';
+import ArticleQueueList from '@/components/admin/articles/ArticleQueueList.vue';
+import EditorialActions from '@/components/admin/articles/EditorialActions.vue';
+import EditorialStatCards from '@/components/admin/articles/EditorialStatCards.vue';
+import PageHeader from '@/components/admin/ui/PageHeader.vue';
+import StatusTimeline from '@/components/cabinet/StatusTimeline.vue';
+import { dashboard } from '@/routes/admin';
+import { index } from '@/routes/admin/articles';
+import type { EditorialPageProps, EditorialQueue } from '@/types';
+
+/**
+ * Muharrir ish joyi (admin muharir.png): chapda navbat va ro'yxat, o'rtada maqola,
+ * o'ngda jarayon va amallar.
+ */
+const props = defineProps<EditorialPageProps>();
+
+defineOptions({
+    layout: {
+        breadcrumbs: [
+            { title: 'Admin panel', href: dashboard() },
+            { title: 'Maqolalar', href: index() },
+        ],
+    },
+});
+
+const titles: Record<EditorialQueue, string> = {
+    new: 'Yangi maqolalar',
+    reviewing: "Ko'rib chiqilayotganlar",
+    revision: 'Tuzatish talab qilinganlar',
+    accepted: 'Nashrga tayyorlar',
+    payment: "To'lov kutilmoqda",
+    published: 'Nashr etilganlar',
+    closed: 'Rad etilgan va qaytarib olinganlar',
+    mine: 'Mening vazifalarim',
+    all: 'Barcha maqolalar',
+};
+
+const form = reactive({
+    queue: props.filters.queue,
+    search: props.filters.search ?? '',
+});
+
+const selectedUuid = computed(() => props.selected?.uuid ?? null);
+const loading = ref<string | null>(null);
+
+function query(extra: Record<string, string> = {}): Record<string, string> {
+    const q: Record<string, string> = { queue: form.queue, ...extra };
+
+    if (form.search.trim()) {
+        q.search = form.search.trim();
+    }
+
+    return q;
+}
+
+function reload(): void {
+    router.get(index.url(), query(), {
+        preserveState: true,
+        preserveScroll: true,
+        replace: true,
+        only: ['filters', 'articles', 'counts', 'selected'],
+    });
+}
+
+let timer: ReturnType<typeof setTimeout> | undefined;
+
+watch(
+    () => form.search,
+    () => {
+        clearTimeout(timer);
+        timer = setTimeout(reload, 350);
+    },
+);
+watch(() => form.queue, reload);
+watch(
+    () => props.filters.queue,
+    (queue) => (form.queue = queue),
+);
+
+function open(uuid: string): void {
+    loading.value = uuid;
+    router.get(
+        index.url(),
+        query({
+            article: uuid,
+            page: String(props.articles.meta.current_page),
+        }),
+        {
+            preserveState: true,
+            preserveScroll: true,
+            replace: true,
+            only: ['selected'],
+            onFinish: () => (loading.value = null),
+        },
+    );
+}
+
+function page(url: string): void {
+    router.visit(url, {
+        preserveState: true,
+        preserveScroll: true,
+        only: ['articles', 'selected'],
+    });
+}
+</script>
+
+<template>
+    <Head :title="`Maqolalar — ${titles[filters.queue]}`" />
+
+    <div class="flex flex-1 flex-col gap-5 bg-[#f5f7fb] p-4 md:p-6">
+        <PageHeader
+            :title="`Maqolalar — ${titles[filters.queue]}`"
+            description="Yuborilgan maqolalarni ko'rib chiqish, mas'ul muharrir biriktirish va qaror qabul qilish"
+        />
+
+        <EditorialStatCards
+            :stats="stats"
+            :active="form.queue"
+            @select="form.queue = $event"
+        />
+
+        <div class="grid items-start gap-5 xl:grid-cols-[22rem_minmax(0,1fr)]">
+            <ArticleQueueList
+                v-model:queue="form.queue"
+                v-model:search="form.search"
+                :items="articles.data"
+                :meta="articles.meta"
+                :counts="counts"
+                :selected="selectedUuid"
+                :loading="loading"
+                class="xl:sticky xl:top-4"
+                @open="open"
+                @page="page"
+            />
+
+            <div
+                v-if="selected"
+                class="grid items-start gap-5 2xl:grid-cols-[minmax(0,1fr)_19rem]"
+            >
+                <ArticleDetail :key="selected.uuid" :article="selected" />
+
+                <aside
+                    class="grid content-start gap-5 md:grid-cols-2 2xl:grid-cols-1"
+                >
+                    <DashCard>
+                        <h2
+                            class="mb-4 flex items-center gap-2 font-sans text-[15px] font-bold text-navy-950"
+                        >
+                            <Route class="size-[18px] text-brand-600" />
+                            Maqola jarayoni
+                        </h2>
+                        <StatusTimeline :steps="selected.steps" />
+                    </DashCard>
+                    <EditorialActions :article="selected" :editors="editors" />
+                </aside>
+            </div>
+            <div
+                v-else
+                class="flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-navy-200 bg-white px-6 py-20 text-center"
+            >
+                <FileSearch class="size-10 text-navy-300" />
+                <p class="text-sm font-semibold text-navy-900">
+                    Maqola tanlanmagan
+                </p>
+                <p class="text-xs text-navy-500">
+                    Chapdagi ro'yxatdan maqolani tanlang.
+                </p>
+            </div>
+        </div>
+    </div>
+</template>
