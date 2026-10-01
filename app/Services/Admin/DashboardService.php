@@ -13,6 +13,7 @@ use App\Models\ArticleStatusHistory;
 use App\Models\Payment;
 use App\Models\User;
 use App\Support\MediaUrl;
+use Carbon\CarbonInterface;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -347,7 +348,7 @@ class DashboardService
     }
 
     /** Joriy oy va o'tgan oy bo'yicha sanalgan maqolalar o'zgarishi (%) */
-    private function monthTrend(string $column, Carbon $now): ?int
+    private function monthTrend(string $column, CarbonInterface $now): ?int
     {
         $start = $now->copy()->startOfMonth();
         $previousStart = $start->copy()->subMonthNoOverflow();
@@ -363,7 +364,7 @@ class DashboardService
      *
      * @param  array<int, ArticleStatus>  $statuses
      */
-    private function historyTrend(array $statuses, Carbon $now): ?int
+    private function historyTrend(array $statuses, CarbonInterface $now): ?int
     {
         $values = array_map(fn (ArticleStatus $s): string => $s->value, $statuses);
         $weekAgo = $now->copy()->subWeek();
