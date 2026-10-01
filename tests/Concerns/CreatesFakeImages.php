@@ -12,6 +12,14 @@ trait CreatesFakeImages
 {
     protected function fakePng(string $name, int $width, int $height): UploadedFile
     {
+        return UploadedFile::fake()->createWithContent($name, $this->pngContents($width, $height));
+    }
+
+    /**
+     * PNG fayl baytlari (diskka yozish uchun).
+     */
+    protected function pngContents(int $width, int $height): string
+    {
         $chunk = fn (string $type, string $data): string => pack('N', strlen($data)).$type.$data
             .pack('N', crc32($type.$data));
 
@@ -19,11 +27,9 @@ trait CreatesFakeImages
         $row = "\0".str_repeat("\x1a\x82\xf7", $width);
         $pixels = (string) gzcompress(str_repeat($row, $height));
 
-        $png = "\x89PNG\r\n\x1a\n"
+        return "\x89PNG\r\n\x1a\n"
             .$chunk('IHDR', pack('NNCCCCC', $width, $height, 8, 2, 0, 0, 0))
             .$chunk('IDAT', $pixels)
             .$chunk('IEND', '');
-
-        return UploadedFile::fake()->createWithContent($name, $png);
     }
 }

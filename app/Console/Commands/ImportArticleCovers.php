@@ -24,11 +24,15 @@ class ImportArticleCovers extends Command
         $this->info("Biriktirildi: {$result['attached']} ta maqola.");
 
         if ($result['missing'] !== []) {
-            $this->warn('Rasmi topilmagan maqolalar (public/web/article/<sarlavha>.png):');
+            $this->warn('Rasmi topilmagan nashr etilgan maqolalar (public/web/article/<sarlavha>.png):');
 
             foreach ($result['missing'] as $title) {
                 $this->line("  — {$title}");
             }
+        }
+
+        if ($result['missingDrafts'] > 0) {
+            $this->line("Nashr etilmagan (jarayondagi) {$result['missingDrafts']} ta maqolaga rasm topilmadi — saytda ko'rinmaydi.");
         }
 
         return self::SUCCESS;

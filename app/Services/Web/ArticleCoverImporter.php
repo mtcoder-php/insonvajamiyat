@@ -22,13 +22,17 @@ class ArticleCoverImporter
     private const EXTENSIONS = ['png', 'jpg', 'jpeg', 'webp'];
 
     /**
-     * @return array{attached: int, missing: array<int, string>}
+     * missing — rasmi topilmagan nashr etilgan maqolalar (saytda ko'rinadiganlar),
+     * missingDrafts — rasmi topilmagan, hali nashr etilmagan maqolalar soni.
+     *
+     * @return array{attached: int, missing: array<int, string>, missingDrafts: int}
      */
     public function import(bool $force = false): array
     {
         $files = $this->sourceFiles();
         $attached = 0;
         $missing = [];
+        $missingDrafts = 0;
 
         $articles = Article::query()
             ->when(! $force, fn ($query) => $query->whereNull('cover_image_path'))
@@ -39,7 +43,11 @@ class ArticleCoverImporter
             $source = $files[self::normalize($title)] ?? null;
 
             if ($source === null) {
-                $missing[] = $title;
+                if ($article->isPublished()) {
+                    $missing[] = $title;
+                } else {
+                    $missingDrafts++;
+                }
 
                 continue;
             }
@@ -59,7 +67,7 @@ class ArticleCoverImporter
             $attached++;
         }
 
-        return ['attached' => $attached, 'missing' => $missing];
+        return ['attached' => $attached, 'missing' => $missing, 'missingDrafts' => $missingDrafts];
     }
 
     /**
