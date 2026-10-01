@@ -22,7 +22,7 @@ use Inertia\Response;
 
 /**
  * Muallif kabineti — "Mening maqolalarim": ro'yxat, maqola sahifasi, qaytarib olish.
- * Yangi maqola yuborish (create/store) — keyingi bosqichda (bosqichma-bosqich forma).
+ * Yangi maqola yuborish — ArticleSubmissionController (7 bosqichli forma).
  */
 class ArticleController extends Controller
 {
@@ -73,13 +73,6 @@ class ArticleController extends Controller
         ]);
     }
 
-    public function create(): Response
-    {
-        return Inertia::render('cabinet/articles/Create', [
-            'links' => DashboardController::links(),
-        ]);
-    }
-
     public function show(Request $request, Article $article, ArticleTimeline $timeline): Response
     {
         Gate::authorize('view', $article);
@@ -90,6 +83,7 @@ class ArticleController extends Controller
         ]);
 
         $keywords = $article->getTranslation('keywords', app()->getLocale(), true);
+        $isDraft = $article->status === ArticleStatus::Draft;
 
         return Inertia::render('cabinet/articles/Show', [
             'article' => [
@@ -134,7 +128,11 @@ class ArticleController extends Controller
                 'can' => [
                     'withdraw' => Gate::allows('withdraw', $article),
                     'update' => Gate::allows('update', $article),
+                    'edit' => $isDraft && Gate::allows('editDraft', $article),
+                    'delete' => $isDraft && Gate::allows('delete', $article),
                 ],
+                'editUrl' => $isDraft ? route('cabinet.articles.edit', $article->uuid) : null,
+                'destroyUrl' => $isDraft ? route('cabinet.articles.destroy', $article->uuid) : null,
             ],
             'steps' => $timeline->for($article),
         ]);

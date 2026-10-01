@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Cabinet;
 
+use App\Enums\ArticleStatus;
 use App\Models\Article;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -35,6 +36,10 @@ class AuthorArticleResource extends JsonResource
             'updatedAt' => $this->updated_at?->toIso8601String(),
             'url' => route('cabinet.articles.show', $this->uuid),
             'publicUrl' => $this->isPublished() ? route('articles.show', $this->slug) : null,
+            // Qoralama — formani davom ettirish havolasi (faqat yuboruvchiga)
+            'editUrl' => $this->status === ArticleStatus::Draft && $this->submitter_id === $request->user()?->id
+                ? route('cabinet.articles.edit', $this->uuid)
+                : null,
         ];
     }
 }

@@ -55,6 +55,14 @@ class DemoContentSeeder extends Seeder
         ['Urbanizatsiya jarayonlarining mahalla instituti rivojiga ta\'siri', 'anthropology'],
     ];
 
+    /** @var array<string, int> Maqola turlari uchun namunaviy narxlar (so'm) */
+    private const DEMO_PRICES = [
+        'scientific_article' => 150000,
+        'review_article' => 150000,
+        'thesis' => 80000,
+        'express' => 300000,
+    ];
+
     /** @var array<string, array<int, string>> Yo'nalish bo'yicha namunaviy kalit so'zlar */
     private const KEYWORDS = [
         'history' => ['Tarix', 'Davlatchilik', 'Manbashunoslik', 'Temuriylar'],
@@ -141,10 +149,14 @@ class DemoContentSeeder extends Seeder
         $this->call(SubjectSeeder::class);
 
         $subjects = Subject::query()->pluck('id', 'slug');
-        $type = ArticleType::query()->firstOrCreate(
-            ['slug' => 'scientific_article'],
-            ['name' => ['uz' => 'Ilmiy maqola', 'ru' => 'Научная статья', 'en' => 'Research article'], 'price' => 0],
-        );
+        $this->call(ArticleTypeSeeder::class);
+
+        // Lokal sinov uchun namunaviy narxlar (pullik tur → "To'lov kutilmoqda" oqimi)
+        foreach (self::DEMO_PRICES as $slug => $price) {
+            ArticleType::query()->where('slug', $slug)->update(['price' => $price]);
+        }
+
+        $type = ArticleType::query()->where('slug', 'scientific_article')->firstOrFail();
         $submitter = User::query()->where('email', 'author@insonvajamiyat.test')->first()
             ?? User::factory()->author()->createOne(['name' => 'Muallif', 'email' => 'author@insonvajamiyat.test']);
 

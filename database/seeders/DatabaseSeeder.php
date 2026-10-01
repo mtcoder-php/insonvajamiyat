@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call([RolesAndPermissionsSeeder::class, SubjectSeeder::class]);
+        $this->call([RolesAndPermissionsSeeder::class, SubjectSeeder::class, ArticleTypeSeeder::class]);
 
         if (! app()->isLocal()) {
             return;

@@ -31,6 +31,12 @@ class ArticlePolicy
             && in_array($article->status, [ArticleStatus::Draft, ArticleStatus::RevisionRequired], true);
     }
 
+    /** Yangi maqola formasini davom ettirish (faqat yuboruvchi, faqat qoralama) */
+    public function editDraft(User $user, Article $article): bool
+    {
+        return $article->submitter_id === $user->id && $article->status === ArticleStatus::Draft;
+    }
+
     /** Muallif maqolani qaytarib olishi (state machine ruxsat bergan holatlarda) */
     public function withdraw(User $user, Article $article): bool
     {
