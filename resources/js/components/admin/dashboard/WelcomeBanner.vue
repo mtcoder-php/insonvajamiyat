@@ -7,7 +7,7 @@ import { primaryRoleLabel } from '@/lib/roles';
 
 /**
  * "Assalomu alaykum" banneri (super admin dashboard.png).
- * Fon: public/dashboard/banner/banner.png; o'ngda jonli sana va soat.
+ * Fon: public/images/admin/banner.png; o'ngda jonli sana va soat.
  */
 const { auth } = usePermissions();
 
@@ -27,7 +27,7 @@ onMounted(() => {
 });
 onBeforeUnmount(() => clearInterval(timer));
 
-const bannerUrl = '/dashboard/banner/banner.png';
+const bannerUrl = '/images/admin/banner.png';
 </script>
 
 <template>

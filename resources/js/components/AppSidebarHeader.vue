@@ -25,7 +25,7 @@ withDefaults(
 const { isMobile, state, toggleSidebar } = useSidebar();
 
 // Header fon rasmi (public/ papkasida)
-const bannerUrl = '/dashboard/banner/banner.png';
+const bannerUrl = '/images/admin/banner.png';
 </script>
 
 <template>
@@ -33,7 +33,7 @@ const bannerUrl = '/dashboard/banner/banner.png';
         <div
             class="relative flex h-16 items-center gap-3 overflow-hidden bg-navy-950 px-4 md:px-6"
         >
-            <!-- Fon: public/dashboard/banner/banner.png, chapdan to'q ko'k qatlam -->
+            <!-- Fon: public/images/admin/banner.png, chapdan to'q ko'k qatlam -->
             <div
                 class="pointer-events-none absolute inset-0 bg-cover bg-[position:right_center] bg-no-repeat"
                 :style="{ backgroundImage: `url('${bannerUrl}')` }"

@@ -72,10 +72,10 @@ const homeHref = computed(() =>
                 <figure
                     class="group/quote relative isolate flex min-h-56 flex-col overflow-hidden rounded-xl border border-sidebar-border bg-navy-950 p-4 shadow-[0_12px_32px_-16px_rgba(0,0,0,0.6)] transition-all duration-500 hover:border-gold-500/40"
                 >
-                    <!-- Fon: public/dashboard/sidebarbanner/sidebarbanner.png -->
+                    <!-- Fon: public/images/admin/sidebar-banner.png -->
                     <img
                         v-if="!bannerFailed"
-                        src="/dashboard/sidebarbanner/sidebarbanner.png"
+                        src="/images/admin/sidebar-banner.png"
                         alt=""
                         loading="lazy"
                         class="absolute inset-0 -z-20 size-full object-cover object-bottom transition-transform duration-[1500ms] ease-out group-hover/quote:scale-105"
