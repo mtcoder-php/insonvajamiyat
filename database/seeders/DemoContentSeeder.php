@@ -77,6 +77,57 @@ class DemoContentSeeder extends Seeder
         'in_production' => 'Maqolangiz sahifalash (maket) bosqichiga topshirildi.',
     ];
 
+    /** @var array<int, array{0: string, 1: string}> [sarlavha, qisqa matn] */
+    private const ANNOUNCEMENTS = [
+        ['Maqola qabul qilish muddati uzaytirildi', 'Navbatdagi son uchun maqolalar oy oxirigacha qabul qilinadi.'],
+        ['Xalqaro ilmiy-amaliy konferensiya', "\"Yangi O'zbekiston: ilm, ta'lim va innovatsiya\" mavzusida konferensiya o'tkaziladi."],
+        ['Tahririyat tarkibi yangilandi', "Tahririyat kengashiga yangi a'zolar qabul qilindi."],
+    ];
+
+    /** @var array<int, array{0: string, 1: string}> [sarlavha, qisqa matn] */
+    private const NEWS = [
+        ['Jurnalning navbatdagi soni nashrga tayyor', "Yangi sonda tarix, etnologiya va falsafa yo'nalishlaridagi maqolalar o'rin oladi."],
+        ["Xalqaro ilmiy hamkorlik bo'yicha yangi kelishuv", "Xorijiy universitetlar bilan qo'shma tadqiqotlar va taqrizchilar almashinuvi yo'lga qo'yiladi."],
+        ['"Ilm va jamiyat" mavzusida ilmiy anjuman', "Anjumanda yosh tadqiqotchilar o'z ilmiy natijalarini taqdim etishdi."],
+        ['Saytimizda yangi imkoniyatlar: maqola yuborish platformasi', 'Endi maqolalar onlayn yuboriladi va taqriz jarayoni shaxsiy kabinetda kuzatiladi.'],
+        ['Jurnal maqolalariga DOI raqamlari berila boshlandi', 'Har bir nashr etilgan maqolaga xalqaro DOI identifikatori biriktiriladi.'],
+        ['Taqrizchilar uchun seminar-trening bo\'lib o\'tdi', 'Seminarda ilmiy taqriz yozish standartlari va akademik halollik masalalari muhokama qilindi.'],
+        ["Mualliflar uchun yo'riqnoma yangilandi", "Maqolalarni rasmiylashtirish, adabiyotlar ro'yxati va annotatsiya talablari aniqlashtirildi."],
+    ];
+
+    /** @var array<int, array{0: string, 1: string, 2: int}> [nom, joy, necha kundan keyin] */
+    private const EVENTS = [
+        ['Xalqaro ilmiy-amaliy konferensiya "Markaziy Osiyoda madaniy meros"', 'Toshkent', 12],
+        ['"Ma\'naviyat va jamiyat" ilmiy forumi', 'Samarqand', 35],
+        ['Yosh tadqiqotchilar konferensiyasi', 'Buxoro', 64],
+        ["Etnografik ekspeditsiyalar natijalari bo'yicha davra suhbati", 'Xiva', 88],
+        ['Ilmiy maqola yozish bo\'yicha onlayn master-klass', 'Onlayn', 110],
+        ['"Tarix va xotira" ilmiy seminari', 'Toshkent', -20],
+    ];
+
+    /** @var array<int, array{0: string, 1: string, 2: string}> [nom, izoh, url] */
+    private const INDEXING = [
+        ['Google Scholar', 'Indekslangan', 'https://scholar.google.com'],
+        ['CrossRef', 'Hamkorlik', 'https://www.crossref.org'],
+        ['Zenodo', 'DOI berish', 'https://zenodo.org'],
+        ['OpenAIRE', 'Indekslangan', 'https://www.openaire.eu'],
+    ];
+
+    /** @var array<int, string> */
+    private const PARTNERS = [
+        "O'zbekiston Respublikasi Oliy ta'lim, fan va innovatsiyalar vazirligi",
+        'Yangi Asr universiteti',
+        "O'zbekiston Milliy universiteti",
+        'Toshkent davlat pedagogika universiteti',
+    ];
+
+    /** @var array<int, array{0: string, 1: string, 2: int}> [nom, muallif, yil] */
+    private const BOOKS = [
+        ["O'rta Osiyo xalqlari etnologiyasi", 'A. Karimov', 2023],
+        ['Markaziy Osiyo tarixiy manbalari', 'B. Qosimov', 2022],
+        ["O'zbek adabiyoti tarixi", 'D. Rahmonov', 2021],
+    ];
+
     private const POST_BODY = "Tahririyat ushbu yangilik yuzasidan barcha mualliflar, taqrizchilar va o'quvchilarni xabardor qiladi. Batafsil ma'lumot uchun jurnal tahririyatiga elektron pochta yoki telefon orqali murojaat qilishingiz mumkin.\n\n«Inson va Jamiyat» ilmiy jurnali ijtimoiy-gumanitar fanlar sohasidagi tadqiqotlarni keng jamoatchilikka yetkazish va ilmiy hamkorlikni rivojlantirishga xizmat qiladi.";
 
     private const EVENT_DESCRIPTION = "Tadbirda ijtimoiy-gumanitar fanlar sohasidagi olimlar, tadqiqotchilar va doktorantlar ishtirok etadi. Ma'ruzalar asosida tayyorlangan eng yaxshi maqolalar jurnalning navbatdagi sonlarida nashr etilishi mumkin.\n\nIshtirok etish uchun oldindan ro'yxatdan o'tish talab etiladi.";
@@ -95,7 +146,10 @@ class DemoContentSeeder extends Seeder
             ['name' => ['uz' => 'Ilmiy maqola', 'ru' => 'Научная статья', 'en' => 'Research article'], 'price' => 0],
         );
         $submitter = User::query()->where('email', 'author@insonvajamiyat.test')->first()
-            ?? User::factory()->author()->createOne();
+            ?? User::factory()->author()->createOne(['name' => 'Muallif', 'email' => 'author@insonvajamiyat.test']);
+
+        // Qayta ishga tushirilganda oldingi demo ma'lumotlar o'chiriladi (dublikat bo'lmasligi uchun)
+        $this->purgeDemoContent($submitter);
 
         // Sonlar: o'tgan yilning 3–4-sonlari va joriy yilning 1-soni (eng yangisi,
         // bosh sahifadagi "So'nggi son" — dizayndagi kabi maxsus son)
@@ -162,24 +216,52 @@ class DemoContentSeeder extends Seeder
         }
     }
 
+    /**
+     * Shu seeder avval yaratgan demo yozuvlarni o'chiradi — seeder'ni qayta
+     * ishga tushirish mumkin bo'ladi. Faqat demo belgilari bo'yicha:
+     * demo muallifning maqolalari / to'lovlari / AI so'rovlari, DOI 10.12345/rj.* sonlar,
+     * ro'yxatdagi e'lon, tadbir, hamkor va kitoblar, DemoNotification bildirishnomalari.
+     */
+    private function purgeDemoContent(User $submitter): void
+    {
+        DB::transaction(function () use ($submitter): void {
+            $articleIds = DB::table('articles')
+                ->where('submitter_id', $submitter->id)
+                ->orWhereIn('slug', array_map(fn (array $article): string => Str::slug($article[0]), self::ARTICLES))
+                ->pluck('id');
+            $paymentIds = DB::table('payments')->where('user_id', $submitter->id)->pluck('id');
+            $issueIds = DB::table('journal_issues')->where('doi', 'like', '10.12345/rj.%')->pluck('id');
+
+            DB::table('refunds')->whereIn('payment_id', $paymentIds)->delete();
+            DB::table('payments')->whereIn('id', $paymentIds)->delete();
+            DB::table('ai_requests')->where('user_id', $submitter->id)->delete();
+
+            // issue_articles.article_id — restrictOnDelete; qolgan bog'liq jadvallar cascade
+            DB::table('issue_articles')
+                ->whereIn('article_id', $articleIds)
+                ->orWhereIn('journal_issue_id', $issueIds)
+                ->delete();
+            DB::table('articles')->whereIn('id', $articleIds)->delete();
+            DB::table('journal_issues')->whereIn('id', $issueIds)->delete();
+
+            $postSlugs = array_map(
+                fn (array $post): string => Str::slug($post[0]),
+                [...self::ANNOUNCEMENTS, ...self::NEWS],
+            );
+            DB::table('posts')->whereIn('slug', $postSlugs)->delete();
+            DB::table('events')->whereIn('slug', array_map(fn (array $event): string => Str::slug($event[0]), self::EVENTS))->delete();
+
+            $partnerNames = [...array_column(self::INDEXING, 0), ...self::PARTNERS];
+            Partner::query()->whereIn('name->uz', $partnerNames)->get()->each->delete();
+            RecommendedBook::query()->whereIn('title->uz', array_column(self::BOOKS, 0))->get()->each->delete();
+
+            DB::table('notifications')->where('type', 'App\\Notifications\\DemoNotification')->delete();
+        });
+    }
+
     private function seedPosts(): void
     {
-        $announcements = [
-            ['Maqola qabul qilish muddati uzaytirildi', 'Navbatdagi son uchun maqolalar oy oxirigacha qabul qilinadi.'],
-            ['Xalqaro ilmiy-amaliy konferensiya', "\"Yangi O'zbekiston: ilm, ta'lim va innovatsiya\" mavzusida konferensiya o'tkaziladi."],
-            ['Tahririyat tarkibi yangilandi', "Tahririyat kengashiga yangi a'zolar qabul qilindi."],
-        ];
-        $news = [
-            ['Jurnalning navbatdagi soni nashrga tayyor', "Yangi sonda tarix, etnologiya va falsafa yo'nalishlaridagi maqolalar o'rin oladi."],
-            ["Xalqaro ilmiy hamkorlik bo'yicha yangi kelishuv", "Xorijiy universitetlar bilan qo'shma tadqiqotlar va taqrizchilar almashinuvi yo'lga qo'yiladi."],
-            ['"Ilm va jamiyat" mavzusida ilmiy anjuman', "Anjumanda yosh tadqiqotchilar o'z ilmiy natijalarini taqdim etishdi."],
-            ['Saytimizda yangi imkoniyatlar: maqola yuborish platformasi', 'Endi maqolalar onlayn yuboriladi va taqriz jarayoni shaxsiy kabinetda kuzatiladi.'],
-            ['Jurnal maqolalariga DOI raqamlari berila boshlandi', 'Har bir nashr etilgan maqolaga xalqaro DOI identifikatori biriktiriladi.'],
-            ['Taqrizchilar uchun seminar-trening bo\'lib o\'tdi', 'Seminarda ilmiy taqriz yozish standartlari va akademik halollik masalalari muhokama qilindi.'],
-            ["Mualliflar uchun yo'riqnoma yangilandi", "Maqolalarni rasmiylashtirish, adabiyotlar ro'yxati va annotatsiya talablari aniqlashtirildi."],
-        ];
-
-        foreach ($announcements as $i => [$title, $excerpt]) {
+        foreach (self::ANNOUNCEMENTS as $i => [$title, $excerpt]) {
             Post::factory()->announcement()->create([
                 'title' => ['uz' => $title],
                 'excerpt' => ['uz' => $excerpt],
@@ -188,7 +270,7 @@ class DemoContentSeeder extends Seeder
             ]);
         }
 
-        foreach ($news as $i => [$title, $excerpt]) {
+        foreach (self::NEWS as $i => [$title, $excerpt]) {
             Post::factory()->create([
                 'type' => PostType::News,
                 'title' => ['uz' => $title],
@@ -202,16 +284,7 @@ class DemoContentSeeder extends Seeder
 
     private function seedEvents(): void
     {
-        $events = [
-            ['Xalqaro ilmiy-amaliy konferensiya "Markaziy Osiyoda madaniy meros"', 'Toshkent', 12],
-            ['"Ma\'naviyat va jamiyat" ilmiy forumi', 'Samarqand', 35],
-            ['Yosh tadqiqotchilar konferensiyasi', 'Buxoro', 64],
-            ["Etnografik ekspeditsiyalar natijalari bo'yicha davra suhbati", 'Xiva', 88],
-            ['Ilmiy maqola yozish bo\'yicha onlayn master-klass', 'Onlayn', 110],
-            ['"Tarix va xotira" ilmiy seminari', 'Toshkent', -20],
-        ];
-
-        foreach ($events as [$title, $location, $days]) {
+        foreach (self::EVENTS as [$title, $location, $days]) {
             Event::factory()->create([
                 'title' => ['uz' => $title],
                 'location' => ['uz' => $location],
@@ -224,14 +297,7 @@ class DemoContentSeeder extends Seeder
 
     private function seedPartners(): void
     {
-        $indexing = [
-            ['Google Scholar', 'Indekslangan', 'https://scholar.google.com'],
-            ['CrossRef', 'Hamkorlik', 'https://www.crossref.org'],
-            ['Zenodo', 'DOI berish', 'https://zenodo.org'],
-            ['OpenAIRE', 'Indekslangan', 'https://www.openaire.eu'],
-        ];
-
-        foreach ($indexing as $i => [$name, $subtitle, $url]) {
+        foreach (self::INDEXING as $i => [$name, $subtitle, $url]) {
             Partner::factory()->create([
                 'type' => PartnerType::Indexing,
                 'name' => ['uz' => $name],
@@ -241,14 +307,7 @@ class DemoContentSeeder extends Seeder
             ]);
         }
 
-        $partners = [
-            "O'zbekiston Respublikasi Oliy ta'lim, fan va innovatsiyalar vazirligi",
-            'Yangi Asr universiteti',
-            "O'zbekiston Milliy universiteti",
-            'Toshkent davlat pedagogika universiteti',
-        ];
-
-        foreach ($partners as $i => $name) {
+        foreach (self::PARTNERS as $i => $name) {
             Partner::factory()->create([
                 'type' => PartnerType::Partner,
                 'name' => ['uz' => $name],
@@ -260,13 +319,7 @@ class DemoContentSeeder extends Seeder
 
     private function seedBooks(): void
     {
-        $books = [
-            ["O'rta Osiyo xalqlari etnologiyasi", 'A. Karimov', 2023],
-            ['Markaziy Osiyo tarixiy manbalari', 'B. Qosimov', 2022],
-            ["O'zbek adabiyoti tarixi", 'D. Rahmonov', 2021],
-        ];
-
-        foreach ($books as $i => [$title, $author, $year]) {
+        foreach (self::BOOKS as $i => [$title, $author, $year]) {
             RecommendedBook::factory()->create([
                 'title' => ['uz' => $title],
                 'author' => $author,
