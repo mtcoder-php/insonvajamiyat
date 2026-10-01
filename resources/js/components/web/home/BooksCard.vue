@@ -19,10 +19,10 @@ defineProps<{ books: RecommendedBook[] }>();
                     :href="book.url ?? undefined"
                     :target="book.url ? '_blank' : undefined"
                     :rel="book.url ? 'noopener noreferrer' : undefined"
-                    class="group flex gap-3.5 rounded-lg px-2 py-3 transition-colors hover:bg-white"
+                    class="group flex gap-4 rounded-lg px-2 py-3.5 transition-colors hover:bg-white"
                 >
                     <span
-                        class="flex h-20 w-14 shrink-0 items-center justify-center overflow-hidden rounded-sm bg-navy-900 shadow-[0_6px_14px_-6px_rgba(0,30,60,0.55)] ring-1 ring-black/10 transition-all duration-300 group-hover:-translate-y-1 group-hover:-rotate-2 group-hover:shadow-[0_12px_22px_-8px_rgba(0,30,60,0.6)]"
+                        class="flex h-28 w-20 shrink-0 items-center justify-center overflow-hidden rounded-sm bg-navy-900 shadow-[0_6px_14px_-6px_rgba(0,30,60,0.55)] ring-1 ring-black/10 transition-all duration-300 group-hover:-translate-y-1 group-hover:-rotate-2 group-hover:shadow-[0_12px_22px_-8px_rgba(0,30,60,0.6)]"
                     >
                         <img
                             v-if="book.coverUrl"
@@ -31,18 +31,21 @@ defineProps<{ books: RecommendedBook[] }>();
                             loading="lazy"
                             class="size-full object-cover"
                         />
-                        <BookOpen v-else class="size-5 text-gold-300" />
+                        <BookOpen v-else class="size-7 text-gold-300" />
                     </span>
                     <span class="min-w-0 self-center text-xs leading-snug">
                         <span
-                            class="block text-sm font-medium text-navy-900 transition-colors group-hover:text-brand-700"
+                            class="block text-[15px] leading-snug font-medium text-navy-900 transition-colors group-hover:text-brand-700"
                         >
                             {{ book.title }}
                         </span>
-                        <span class="mt-0.5 block text-navy-500">
+                        <span class="mt-1.5 block text-[13px] text-navy-500">
                             Muallif: {{ book.author }}
                         </span>
-                        <span v-if="book.year" class="block text-navy-400">
+                        <span
+                            v-if="book.year"
+                            class="mt-0.5 block text-[13px] text-navy-400"
+                        >
                             {{ book.year }}
                         </span>
                     </span>
