@@ -3,6 +3,7 @@
  */
 import type { ArticleStatusGroup, TimelineStep } from './cabinet';
 import type { LocaleCode } from './journal';
+import type { EditorialReview, ReviewerOption } from './reviews';
 
 export type EditorialQueue =
     | 'new'
@@ -98,6 +99,7 @@ export type EditorialArticle = {
         editor: string;
         createdAt: string;
     }[];
+    reviews: EditorialReview[];
     notes: {
         id: number;
         body: string;
@@ -112,6 +114,7 @@ export type EditorialArticle = {
         startReview: boolean;
         decide: boolean;
         assign: boolean;
+        invite: boolean;
         note: boolean;
     };
     availableDecisions: EditorialDecisionKey[];
@@ -120,6 +123,7 @@ export type EditorialArticle = {
         decision: string;
         editor: string;
         notes: string;
+        invite: string;
     };
 };
 
@@ -147,4 +151,5 @@ export type EditorialPageProps = {
     };
     selected: EditorialArticle | null;
     editors: { id: number; name: string }[];
+    reviewers: ReviewerOption[];
 };

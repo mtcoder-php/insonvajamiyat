@@ -4,6 +4,7 @@ import { FileSearch, Route } from '@lucide/vue';
 import { computed, reactive, ref, watch } from 'vue';
 import DashCard from '@/components/admin/dashboard/DashCard.vue';
 import ArticleDetail from '@/components/admin/articles/ArticleDetail.vue';
+import AssignReviewersDialog from '@/components/admin/articles/AssignReviewersDialog.vue';
 import ArticleQueueList from '@/components/admin/articles/ArticleQueueList.vue';
 import EditorialActions from '@/components/admin/articles/EditorialActions.vue';
 import EditorialStatCards from '@/components/admin/articles/EditorialStatCards.vue';
@@ -47,6 +48,7 @@ const form = reactive({
 
 const selectedUuid = computed(() => props.selected?.uuid ?? null);
 const loading = ref<string | null>(null);
+const inviteOpen = ref(false);
 
 function query(extra: Record<string, string> = {}): Record<string, string> {
     const q: Record<string, string> = { queue: form.queue, ...extra };
@@ -142,7 +144,11 @@ function page(url: string): void {
                 v-if="selected"
                 class="grid items-start gap-5 2xl:grid-cols-[minmax(0,1fr)_19rem]"
             >
-                <ArticleDetail :key="selected.uuid" :article="selected" />
+                <ArticleDetail
+                    :key="selected.uuid"
+                    :article="selected"
+                    @invite="inviteOpen = true"
+                />
 
                 <aside
                     class="grid content-start gap-5 md:grid-cols-2 2xl:grid-cols-1"
@@ -156,7 +162,11 @@ function page(url: string): void {
                         </h2>
                         <StatusTimeline :steps="selected.steps" />
                     </DashCard>
-                    <EditorialActions :article="selected" :editors="editors" />
+                    <EditorialActions
+                        :article="selected"
+                        :editors="editors"
+                        @invite="inviteOpen = true"
+                    />
                 </aside>
             </div>
             <div
@@ -173,4 +183,11 @@ function page(url: string): void {
             </div>
         </div>
     </div>
+
+    <AssignReviewersDialog
+        v-if="selected"
+        v-model:open="inviteOpen"
+        :article="selected"
+        :reviewers="reviewers"
+    />
 </template>

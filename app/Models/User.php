@@ -123,6 +123,15 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /** Admin panelga kira oladigan xodimmi (muallifdan boshqa istalgan rol) */
+    /** Taqrizchi sifatidagi taqrizlari
+     *
+     * @return HasMany<Review, $this>
+     */
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class, 'reviewer_id');
+    }
+
     public function isStaff(): bool
     {
         return $this->hasAnyRole(RoleName::staff());

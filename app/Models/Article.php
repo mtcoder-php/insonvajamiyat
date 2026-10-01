@@ -67,6 +67,7 @@ use Spatie\Translatable\HasTranslations;
  * @property-read Collection<int, Payment> $payments
  * @property-read User|null $handlingEditor
  * @property-read Collection<int, ArticleNote> $notes
+ * @property-read Collection<int, Review> $reviews
  * @property-read Collection<int, EditorialDecision> $decisions
  * @property-read Collection<int, ArticleStatusHistory> $statusHistories
  */
@@ -155,6 +156,12 @@ class Article extends Model
     public function handlingEditor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'handling_editor_id');
+    }
+
+    /** @return HasMany<Review, $this> */
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class)->orderBy('round')->orderBy('id');
     }
 
     /** @return HasMany<ArticleNote, $this> */

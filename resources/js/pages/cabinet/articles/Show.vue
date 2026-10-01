@@ -18,6 +18,7 @@ import { computed, ref } from 'vue';
 import DashCard from '@/components/admin/dashboard/DashCard.vue';
 import ActionDialog from '@/components/admin/ui/ActionDialog.vue';
 import ArticlePaymentCard from '@/components/cabinet/ArticlePaymentCard.vue';
+import ArticleReviewsCard from '@/components/cabinet/ArticleReviewsCard.vue';
 import ArticleStatusPill from '@/components/cabinet/ArticleStatusPill.vue';
 import CabinetPageHeader from '@/components/cabinet/CabinetPageHeader.vue';
 import StatusTimeline from '@/components/cabinet/StatusTimeline.vue';
@@ -29,6 +30,7 @@ import { index, show, withdraw } from '@/routes/cabinet/articles';
 import type {
     AuthorArticleDetails,
     AuthorArticlePayment,
+    AuthorReview,
     TimelineStep,
 } from '@/types';
 
@@ -40,6 +42,7 @@ const props = defineProps<{
     article: AuthorArticleDetails;
     steps: TimelineStep[];
     payment: AuthorArticlePayment | null;
+    reviews: AuthorReview[];
 }>();
 
 defineOptions({
@@ -199,6 +202,8 @@ const historyDot: Record<string, string> = {
                         </div>
                     </div>
                 </DashCard>
+
+                <ArticleReviewsCard v-if="reviews.length" :reviews="reviews" />
 
                 <div class="grid gap-5 lg:grid-cols-2">
                     <DashCard>

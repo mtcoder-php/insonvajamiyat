@@ -50,6 +50,8 @@ function startReview(): void {
     );
 }
 
+const emit = defineEmits<{ invite: [] }>();
+
 const decision = ref<EditorialDecisionKey | null>(null);
 const dialogOpen = ref(false);
 
@@ -135,15 +137,35 @@ const item =
 
             <button
                 type="button"
-                disabled
-                title="Taqrizchilar bosqichida qo'shiladi"
-                :class="cn(item, 'border-line text-navy-700')"
+                :disabled="!article.can.invite"
+                :title="
+                    article.can.invite
+                        ? undefined
+                        : 'Taqrizchi faqat ko\'rib chiqilayotgan maqolaga tayinlanadi'
+                "
+                :class="
+                    cn(
+                        item,
+                        'border-line text-navy-800 enabled:hover:border-brand-300 enabled:hover:bg-brand-50 enabled:hover:text-brand-700',
+                    )
+                "
+                @click="emit('invite')"
             >
-                <UsersRound class="size-[18px] text-navy-400" />
+                <UsersRound class="size-[18px] text-brand-600" />
                 <span class="flex-1 text-left">Taqrizchilarni tayinlash</span>
                 <span
-                    class="rounded bg-navy-50 px-1.5 text-[10px] text-navy-400"
-                    >tez orada</span
+                    v-if="article.reviews.length"
+                    class="rounded-full bg-brand-50 px-1.5 text-[10px] font-semibold text-brand-700 tabular-nums"
+                    >{{
+                        article.reviews.filter((r) => r.status === 'completed')
+                            .length
+                    }}/{{
+                        article.reviews.filter(
+                            (r) =>
+                                r.status !== 'cancelled' &&
+                                r.status !== 'declined',
+                        ).length
+                    }}</span
                 >
             </button>
             <button
