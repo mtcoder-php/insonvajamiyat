@@ -55,7 +55,7 @@ async function copy(): Promise<void> {
             </button>
         </div>
         <p
-            class="rounded-lg border border-line bg-[#fbfcfe] p-3 text-xs leading-relaxed break-words text-navy-700"
+            class="rounded-lg border border-line bg-[#fbfcfe] p-3 text-xs leading-relaxed [overflow-wrap:anywhere] text-navy-700"
         >
             {{ citations[format] }}
         </p>
