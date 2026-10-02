@@ -31,16 +31,25 @@ use Illuminate\Support\Carbon;
  * @property PaymentStatus $status
  * @property string|null $receipt_number
  * @property string|null $provider_transaction_id
+ * @property string|null $provider_paydoc_id
+ * @property int|null $provider_state
+ * @property int|null $provider_create_time
+ * @property int|null $provider_perform_time
+ * @property int|null $provider_cancel_time
+ * @property int|null $cancel_reason
  * @property array<string, mixed>|null $meta
  * @property int|null $confirmed_by
  * @property string|null $confirmation_note
  * @property Carbon|null $paid_at
+ * @property Carbon|null $cancelled_at
+ * @property Carbon|null $refunded_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read User $user
  * @property-read Article|null $article
  * @property-read User|null $confirmedBy
  * @property-read Collection<int, PaymentItem> $items
+ * @property-read Collection<int, PaymentLog> $logs
  */
 #[Fillable(['user_id', 'purpose', 'article_id', 'journal_issue_id', 'amount', 'currency', 'provider', 'receipt_number'])]
 class Payment extends Model
@@ -70,6 +79,11 @@ class Payment extends Model
             'paid_at' => 'datetime',
             'cancelled_at' => 'datetime',
             'refunded_at' => 'datetime',
+            'provider_state' => 'integer',
+            'provider_create_time' => 'integer',
+            'provider_perform_time' => 'integer',
+            'provider_cancel_time' => 'integer',
+            'cancel_reason' => 'integer',
         ];
     }
 
@@ -95,6 +109,12 @@ class Payment extends Model
     public function items(): HasMany
     {
         return $this->hasMany(PaymentItem::class);
+    }
+
+    /** @return HasMany<PaymentLog, $this> */
+    public function logs(): HasMany
+    {
+        return $this->hasMany(PaymentLog::class);
     }
 
     /**

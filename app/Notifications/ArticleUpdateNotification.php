@@ -15,7 +15,8 @@ use Illuminate\Support\Str;
  *   resubmitted — muallif tuzatilgan versiyani yubordi;
  *   proof       — korrektura (yakuniy PDF) tayyor / muallif javobi;
  *   submitted   — tahririyatga yangi maqola keldi (muharrirlar);
- *   review      — taqriz taklifi / taqrizchi javobi / taqriz topshirildi.
+ *   review      — taqriz taklifi / taqrizchi javobi / taqriz topshirildi;
+ *   payment     — nashr to'lovi qabul qilindi (Click / Payme).
  *
  * Qabul qiluvchi muallif bo'lsa havola kabinetga, xodim bo'lsa admin panelga olib boradi.
  */
@@ -32,6 +33,8 @@ class ArticleUpdateNotification extends Notification
     public const SUBMITTED = 'submitted';
 
     public const REVIEW = 'review';
+
+    public const PAYMENT = 'payment';
 
     public readonly string $headline;
 

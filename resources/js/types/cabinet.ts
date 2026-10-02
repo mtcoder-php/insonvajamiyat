@@ -155,6 +155,24 @@ export type AuthorArticlePayment = {
         Record<'recipient' | 'bank' | 'account' | 'mfo' | 'inn', string>
     >;
     purpose: string | null;
+    online: AuthorOnlinePayment | null;
+};
+
+/** Click / Payme orqali to'lash (faqat sozlangan tizimlar) */
+export type AuthorOnlinePayment = {
+    payUrl: string;
+    providers: { value: 'click' | 'payme'; label: string }[];
+    /** To'lov tizimida tranzaksiya ochilgan, tasdiq kutilmoqda */
+    processing: boolean;
+    lastAttempt: {
+        provider: string;
+        status: string;
+        statusLabel: string;
+        at: string | null;
+    } | null;
+    /** Foydalanuvchi to'lov sahifasidan qaytdi (?payment=return) */
+    returned: boolean;
+    pollSeconds: number;
 };
 
 /* ------------------------------------------------------------------

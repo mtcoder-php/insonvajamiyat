@@ -35,17 +35,7 @@ return [
         ],
     ],
 
-    // To'lov tizimlari (to'lovlar moduli). Kalitlar bo'sh bo'lsa "Tizim holati"da sozlanmagan ko'rinadi
-    'click' => [
-        'service_id' => env('CLICK_SERVICE_ID'),
-        'merchant_id' => env('CLICK_MERCHANT_ID'),
-        'secret_key' => env('CLICK_SECRET_KEY'),
-    ],
-
-    'payme' => [
-        'merchant_id' => env('PAYME_MERCHANT_ID'),
-        'key' => env('PAYME_KEY'),
-    ],
+    // To'lov tizimlari (Click, Payme) — config/payments.php
 
     // AI xizmatlari (Anthropic Claude API)
     'anthropic' => [

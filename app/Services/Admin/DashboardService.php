@@ -13,6 +13,7 @@ use App\Models\ArticleStatusHistory;
 use App\Models\Payment;
 use App\Models\User;
 use App\Services\Notifications\NotificationCenter;
+use App\Services\Payments\OnlinePaymentService;
 use App\Support\MediaUrl;
 use Carbon\CarbonInterface;
 use Illuminate\Notifications\DatabaseNotification;
@@ -300,8 +301,7 @@ class DashboardService
             $databaseUp = false;
         }
 
-        $paymentsConfigured = filled(config('services.click.service_id'))
-            || filled(config('services.payme.merchant_id'));
+        $paymentsConfigured = app(OnlinePaymentService::class)->providers() !== [];
 
         return [
             ['key' => 'web', 'label' => 'Web server', 'state' => 'up'],

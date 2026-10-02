@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Cabinet;
 
 use App\Enums\ArticleStatus;
 use App\Enums\EditorialDecisionType;
+use App\Enums\PaymentProvider;
 use App\Enums\PaymentPurpose;
 use App\Enums\PaymentStatus;
 use App\Enums\ReviewCriterion;
@@ -21,6 +22,7 @@ use App\Services\Articles\ArticleWorkflow;
 use App\Services\Articles\RevisionService;
 use App\Services\Cabinet\AuthorDashboardService;
 use App\Services\Messages\ArticleMessageService;
+use App\Services\Payments\OnlinePaymentService;
 use App\Services\Production\ProductionService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
@@ -89,6 +91,7 @@ class ArticleController extends Controller
         ArticleMessageService $messages,
         RevisionService $revisions,
         ProductionService $production,
+        OnlinePaymentService $payments,
     ): Response {
         Gate::authorize('view', $article);
 
@@ -155,7 +158,7 @@ class ArticleController extends Controller
                 'destroyUrl' => $isDraft ? route('cabinet.articles.destroy', $article->uuid) : null,
             ],
             'steps' => $timeline->for($article),
-            'payment' => $this->payment($article),
+            'payment' => $this->payment($article, $payments, $request->query('payment') === 'return'),
             'reviews' => $this->reviews($article),
             'revision' => $revision !== null
                 ? [...$revision, 'url' => route('cabinet.articles.revision.store', $article->uuid)]
@@ -276,7 +279,7 @@ class ArticleController extends Controller
      *
      * @return array<string, mixed>|null
      */
-    private function payment(Article $article): ?array
+    private function payment(Article $article, OnlinePaymentService $payments, bool $returned): ?array
     {
         $payment = $article->payments()
             ->where('purpose', PaymentPurpose::Publication->value)
@@ -307,6 +310,34 @@ class ArticleController extends Controller
             'purpose' => $awaiting
                 ? __("Nashr to'lovi: maqola :id", ['id' => mb_strtoupper(mb_substr($article->uuid, 0, 8))])
                 : null,
+            'online' => $awaiting && Gate::allows('pay', $article) ? $this->onlineOptions($article, $payments, $returned) : null,
+        ];
+    }
+
+    /**
+     * Click / Payme tugmalari va oxirgi onlayn urinish holati.
+     *
+     * @return array<string, mixed>
+     */
+    private function onlineOptions(Article $article, OnlinePaymentService $payments, bool $returned): array
+    {
+        $attempt = $payments->lastAttempt($article);
+
+        return [
+            'payUrl' => route('cabinet.articles.pay', $article->uuid),
+            'providers' => array_map(fn (PaymentProvider $provider): array => [
+                'value' => $provider->value,
+                'label' => $provider->label(),
+            ], $payments->providers()),
+            'processing' => $attempt !== null && $attempt->status === PaymentStatus::Processing,
+            'lastAttempt' => $attempt !== null && $attempt->status !== PaymentStatus::Pending ? [
+                'provider' => $attempt->provider->label(),
+                'status' => $attempt->status->value,
+                'statusLabel' => $attempt->status->label(),
+                'at' => $attempt->updated_at?->toIso8601String(),
+            ] : null,
+            'returned' => $returned,
+            'pollSeconds' => (int) config('payments.return_poll_seconds', 120),
         ];
     }
 

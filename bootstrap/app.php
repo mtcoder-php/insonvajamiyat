@@ -27,6 +27,12 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->name('cabinet.')
                 ->group(base_path('routes/cabinet.php'));
 
+            // Click / Payme webhook'lari — /payments/* (sessiya va CSRF'siz)
+            Route::middleware('throttle:300,1')
+                ->prefix('payments')
+                ->name('payments.')
+                ->group(base_path('routes/payments.php'));
+
             // Admin panel — /admin/* (faqat xodimlar)
             Route::middleware(['web', 'auth', 'verified', 'staff'])
                 ->prefix('admin')
