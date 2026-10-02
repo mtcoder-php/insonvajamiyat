@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Enums\Language;
 use App\Models\User;
 use App\Services\Admin\NavigationBadges;
+use App\Services\Notifications\NotificationCenter;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -50,8 +51,10 @@ class HandleInertiaRequests extends Middleware
                 'label' => $language->label(),
             ], Language::cases()),
             'journal' => fn () => $this->journalPayload(),
+            // Header'dagi qo'ng'iroqcha: o'qilmaganlar soni va so'nggi bildirishnomalar
+            // (frontend har 30 soniyada faqat shu propni yangilaydi — usePoll)
             'notifications' => fn () => $user instanceof User
-                ? ['unread' => $user->unreadNotifications()->count()]
+                ? app(NotificationCenter::class)->summary($user)
                 : null,
             // Admin sidebar raqamlari — faqat admin panel sahifalarida hisoblanadi
             'adminBadges' => fn () => $user instanceof User && $request->routeIs('admin.*')

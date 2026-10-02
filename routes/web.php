@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardRedirectController;
+use App\Http\Controllers\Notifications\NotificationController;
 use App\Http\Controllers\Web\ArticleCatalogController;
 use App\Http\Controllers\Web\ArticleController;
 use App\Http\Controllers\Web\ArticlePdfController;
@@ -51,5 +52,13 @@ Route::post('newsletter', [NewsletterSubscriptionController::class, 'store'])
 Route::get('dashboard', DashboardRedirectController::class)
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
+
+// Bildirishnomalar (header'dagi qo'ng'iroqcha, kabinetdagi "Xabarlar")
+Route::middleware(['auth', 'verified'])->prefix('notifications')->name('notifications.')->group(function (): void {
+    Route::post('read-all', [NotificationController::class, 'readAll'])->name('read-all');
+    Route::post('{notification}/read', [NotificationController::class, 'open'])
+        ->whereUuid('notification')
+        ->name('read');
+});
 
 require __DIR__.'/settings.php';

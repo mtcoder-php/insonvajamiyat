@@ -12,8 +12,10 @@ use App\Models\ArticleAuthor;
 use App\Models\ArticleStatusHistory;
 use App\Models\Payment;
 use App\Models\User;
+use App\Services\Notifications\NotificationCenter;
 use App\Support\MediaUrl;
 use Carbon\CarbonInterface;
+use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -247,19 +249,10 @@ class DashboardService
         return $user->notifications()
             ->limit($limit)
             ->get()
-            ->map(function ($notification): array {
-                /** @var array<string, mixed> $data */
-                $data = (array) $notification->data;
-
-                return [
-                    'id' => (string) $notification->id,
-                    'kind' => is_string($data['kind'] ?? null) ? $data['kind'] : 'info',
-                    'title' => is_string($data['title'] ?? null) ? $data['title'] : 'Bildirishnoma',
-                    'message' => is_string($data['message'] ?? null) ? $data['message'] : null,
-                    'read' => $notification->read_at !== null,
-                    'createdAt' => $notification->created_at?->toIso8601String(),
-                ];
-            })
+            ->map(fn (DatabaseNotification $notification): array => [
+                ...NotificationCenter::item($notification),
+                'message' => NotificationCenter::item($notification)['body'],
+            ])
             ->all();
     }
 

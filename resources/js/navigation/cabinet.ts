@@ -12,6 +12,7 @@ import {
 import { contact, guidelines } from '@/routes';
 import { dashboard } from '@/routes/cabinet';
 import { create, index } from '@/routes/cabinet/articles';
+import { index as messagesIndex } from '@/routes/cabinet/messages';
 import { edit as profileEdit } from '@/routes/profile';
 import type { NavGroup, NavItem } from '@/types';
 
@@ -29,10 +30,9 @@ export function cabinetMainNavigation(): CabinetNavItem[] {
         { title: "Profil ma'lumotlari", href: profileEdit(), icon: UserRound },
         {
             title: 'Xabarlar',
-            href: dashboard(),
+            href: messagesIndex(),
             icon: Mail,
             badge: 'notifications',
-            disabled: true,
         },
         {
             title: 'Tahririyat bilan aloqa',

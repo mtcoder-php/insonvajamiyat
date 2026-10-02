@@ -174,7 +174,7 @@ class AuthorDashboardService
                 'sender' => 'Tahririyat',
                 'message' => $message->body,
                 'title' => $message->article->title,
-                'url' => route('cabinet.articles.show', $message->article->uuid),
+                'url' => route('cabinet.messages.index', ['article' => $message->article->uuid]),
                 'createdAt' => $message->created_at->toIso8601String(),
                 'unread' => $message->read_at === null,
             ]);

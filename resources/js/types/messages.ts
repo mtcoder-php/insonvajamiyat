@@ -25,3 +25,33 @@ export type RevisionRequest = {
     round: number;
     url: string;
 };
+
+/** Kabinet → Xabarlar: maqola bo'yicha yozishma (App\Services\Cabinet\AuthorInbox) */
+export type InboxConversation = {
+    uuid: string;
+    code: string;
+    title: string;
+    status: string;
+    statusLabel: string;
+    statusGroup: string;
+    unread: number;
+    last: {
+        body: string;
+        mine: boolean;
+        fromEditorial: boolean;
+        createdAt: string;
+    } | null;
+    submittedAt: string | null;
+    url: string;
+    articleUrl: string;
+};
+
+export type InboxThread = {
+    uuid: string;
+    code: string;
+    title: string;
+    statusLabel: string;
+    articleUrl: string;
+    items: ThreadMessage[];
+    sendUrl: string | null;
+};

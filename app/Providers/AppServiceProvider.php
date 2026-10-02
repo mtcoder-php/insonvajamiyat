@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Enums\RoleName;
 use App\Models\User;
 use App\Services\Audit\AuditEventSubscriber;
+use App\Services\Notifications\EditorialNotifier;
 use Carbon\CarbonImmutable;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Support\Facades\Date;
@@ -64,6 +65,9 @@ class AppServiceProvider extends ServiceProvider
 
         // Audit log: kirish/chiqish, muvaffaqiyatsiz urinishlar, maqola holatlari
         Event::subscribe(AuditEventSubscriber::class);
+
+        // Tahririyat xodimlariga bildirishnomalar (yangi maqola navbatga tushdi)
+        Event::subscribe(EditorialNotifier::class);
     }
 
     /**

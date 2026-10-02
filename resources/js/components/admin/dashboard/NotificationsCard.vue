@@ -7,6 +7,7 @@ import {
     ShieldAlert,
     UserCheck,
 } from '@lucide/vue';
+import { router } from '@inertiajs/vue3';
 import type { Component } from 'vue';
 import DashCard from '@/components/admin/dashboard/DashCard.vue';
 import { timeAgo } from '@/lib/format';
@@ -27,6 +28,10 @@ const kinds: Record<string, { icon: Component; tint: string }> = {
     },
     published: { icon: BookOpenCheck, tint: 'bg-violet-50 text-violet-600' },
     security: { icon: ShieldAlert, tint: 'bg-red-50 text-red-600' },
+    submitted: { icon: FileText, tint: 'bg-emerald-50 text-emerald-600' },
+    review: { icon: UserCheck, tint: 'bg-orange-50 text-orange-600' },
+    proof: { icon: BookOpenCheck, tint: 'bg-teal-50 text-teal-600' },
+    message: { icon: Bell, tint: 'bg-brand-50 text-brand-600' },
 };
 
 const fallback = { icon: Bell, tint: 'bg-navy-50 text-navy-600' };
@@ -38,7 +43,13 @@ const fallback = { icon: Bell, tint: 'bg-navy-50 text-navy-600' };
             <li
                 v-for="item in items"
                 :key="item.id"
-                class="group flex gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-[#f6f8fb]"
+                :class="
+                    cn(
+                        'group flex gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-[#f6f8fb]',
+                        item.openUrl && 'cursor-pointer',
+                    )
+                "
+                @click="item.openUrl && router.post(item.openUrl)"
             >
                 <span
                     :class="
@@ -63,6 +74,12 @@ const fallback = { icon: Bell, tint: 'bg-navy-50 text-navy-600' };
                             class="size-1.5 shrink-0 rounded-full bg-brand-500"
                             aria-label="O'qilmagan"
                         />
+                    </p>
+                    <p
+                        v-if="item.articleTitle"
+                        class="truncate text-xs text-brand-700"
+                    >
+                        {{ item.articleTitle }}
                     </p>
                     <p
                         v-if="item.message"
