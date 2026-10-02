@@ -37,7 +37,7 @@ class MessagesController extends Controller
         $tab = in_array($tab, self::TABS, true) ? $tab : 'messages';
         $onlyUnread = $request->boolean('unread');
 
-        $conversations = $inbox->conversations($user);
+        $conversations = collect($inbox->conversations($user));
 
         $selected = null;
         $uuid = $request->string('article')->toString();
@@ -62,7 +62,7 @@ class MessagesController extends Controller
                 ];
 
                 // O'qilgan holatni ro'yxatda ham yangilash
-                $conversations = $inbox->conversations($user);
+                $conversations = collect($inbox->conversations($user));
             }
         }
 

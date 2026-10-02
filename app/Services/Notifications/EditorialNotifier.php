@@ -53,11 +53,13 @@ class EditorialNotifier
     public function reviewersInvited(Article $article, Collection $reviews): void
     {
         foreach ($reviews as $review) {
+            $due = $review->due_at !== null ? __('Javob muddati: :date', ['date' => $review->due_at->format('d.m.Y')]) : null;
+
             $review->reviewer->notify(new ArticleUpdateNotification(
                 $article,
                 ArticleUpdateNotification::REVIEW,
                 __('Sizga yangi taqriz taklifi keldi'),
-                $review->due_at !== null ? __('Javob muddati: :date', ['date' => $review->due_at->format('d.m.Y')]) : null,
+                is_string($due) ? $due : null,
                 toStaff: true,
                 link: route('admin.reviews.show', $review->id),
             ));
