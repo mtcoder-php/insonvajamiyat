@@ -60,6 +60,6 @@ class AuditLog extends Model
     {
         $days = max(30, (int) config('journal.audit.retention_days', 365));
 
-        return static::query()->where('created_at', '<', now()->subDays($days));
+        return AuditLog::query()->where('created_at', '<', now()->subDays($days));
     }
 }
