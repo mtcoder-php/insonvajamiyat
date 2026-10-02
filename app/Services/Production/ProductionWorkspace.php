@@ -13,6 +13,7 @@ use App\Models\JournalIssue;
 use App\Models\User;
 use App\Services\Editorial\EditorialWorkspace;
 use App\Services\Publishing\PublishService;
+use App\Support\MediaUrl;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -182,6 +183,7 @@ class ProductionWorkspace
                 'viewUrl' => $file->extension() === 'pdf' ? route('admin.production.files', [$article->uuid, $file->uuid]) : null,
                 'downloadUrl' => route('admin.production.files', [$article->uuid, $file->uuid, 'download' => 1]),
             ])->all(),
+            'coverUrl' => MediaUrl::from($article->cover_image_path),
             'finalPdf' => $finalPdf !== null ? [
                 'name' => $finalPdf->original_name,
                 'size' => $finalPdf->size,
@@ -232,6 +234,7 @@ class ProductionWorkspace
                 'revoke' => $canApprove && $inProduction && $article->chief_editor_approved_at !== null,
                 'waiveProof' => $canApprove && $this->production->canWaiveAuthor($article, $finalPdf),
                 'cancel' => $canManage && $inProduction,
+                'cover' => $canManage && in_array($status, [ArticleStatus::Accepted, ArticleStatus::InProduction, ArticleStatus::Published], true),
                 // Chop etilgan songa keyin qo'shilgan maqola — alohida chop etiladi
                 'publish' => $canApprove && $inProduction && $this->publisher->canPublishArticle($article),
                 'note' => true,
@@ -246,6 +249,7 @@ class ProductionWorkspace
                 'revoke' => route('admin.production.revoke', $article->uuid),
                 'waiveProof' => route('admin.production.waive-proof', $article->uuid),
                 'cancel' => route('admin.production.cancel', $article->uuid),
+                'cover' => route('admin.production.cover', $article->uuid),
                 'notes' => route('admin.production.notes', $article->uuid),
                 'publish' => route('admin.production.publish', $article->uuid),
                 'public' => $article->isPublished() ? route('articles.show', (string) $article->slug) : null,

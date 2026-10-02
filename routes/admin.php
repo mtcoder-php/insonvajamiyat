@@ -101,6 +101,8 @@ Route::middleware('permission:'.AdminSection::Production->permission()->value)
         Route::post('{article:uuid}/start', [ProductionController::class, 'start'])->name('start');
         Route::post('{article:uuid}/final-pdf', [ProductionController::class, 'uploadFinalPdf'])->name('final-pdf');
         Route::put('{article:uuid}/metadata', [ProductionController::class, 'metadata'])->name('metadata');
+        Route::post('{article:uuid}/cover', [ProductionController::class, 'uploadCover'])->name('cover');
+        Route::delete('{article:uuid}/cover', [ProductionController::class, 'removeCover'])->name('cover.destroy');
         Route::put('{article:uuid}/format', [ProductionController::class, 'format'])->name('format');
         Route::post('{article:uuid}/cancel', [ProductionController::class, 'cancel'])->name('cancel');
         Route::post('{article:uuid}/notes', [ProductionController::class, 'addNote'])->name('notes');

@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\Production\ProductionMetadataRequest;
 use App\Models\Article;
 use App\Models\ArticleFile;
 use App\Models\User;
+use App\Services\Articles\ArticleCoverService;
 use App\Services\Articles\ArticleFileService;
 use App\Services\Editorial\EditorialService;
 use App\Services\Production\ProductionService;
@@ -78,6 +79,29 @@ class ProductionController extends Controller
         $this->production->start($article, $this->user($request));
 
         return $this->done(__('Maqola maketga olindi.'));
+    }
+
+    /** Maqola rasmi (saytdagi katalog va maqola sahifasi uchun) — nashrdan keyin ham almashtiriladi */
+    public function uploadCover(Request $request, Article $article, ArticleCoverService $covers): RedirectResponse
+    {
+        $request->validate(
+            ['cover' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096', 'dimensions:min_width=600,min_height=400']],
+            [],
+            ['cover' => __('Maqola rasmi')],
+        );
+        $image = $request->file('cover');
+        abort_unless($image instanceof UploadedFile, 422);
+
+        $covers->store($article, $image);
+
+        return $this->done(__('Maqola rasmi yangilandi.'));
+    }
+
+    public function removeCover(Article $article, ArticleCoverService $covers): RedirectResponse
+    {
+        $covers->remove($article);
+
+        return $this->done(__("Maqola rasmi o'chirildi."));
     }
 
     public function uploadFinalPdf(Request $request, Article $article): RedirectResponse

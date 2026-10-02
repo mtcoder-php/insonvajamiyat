@@ -118,6 +118,7 @@ export type ProductionArticle = {
         position: number;
     } | null;
     files: ProductionFile[];
+    coverUrl: string | null;
     finalPdf: { name: string; size: number; uploadedAt: string | null } | null;
     preview: {
         name: string;
@@ -149,6 +150,7 @@ export type ProductionArticle = {
         revoke: boolean;
         waiveProof: boolean;
         cancel: boolean;
+        cover: boolean;
         publish: boolean;
         note: boolean;
     };
@@ -162,6 +164,7 @@ export type ProductionArticle = {
         revoke: string;
         waiveProof: string;
         cancel: string;
+        cover: string;
         notes: string;
         publish: string;
         public: string | null;
