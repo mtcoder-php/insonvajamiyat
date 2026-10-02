@@ -65,6 +65,7 @@ export type ProductionFile = {
     typeLabel: string;
     extension: string;
     size: number;
+    pageCount: number | null;
     uploadedAt: string | null;
     viewUrl: string | null;
     downloadUrl: string;
@@ -121,7 +122,12 @@ export type ProductionArticle = {
     coverUrl: string | null;
     /** Serverning fayl yuklash chegarasi (bayt), 0 — cheklanmagan */
     uploadLimit: number;
-    finalPdf: { name: string; size: number; uploadedAt: string | null } | null;
+    finalPdf: {
+        name: string;
+        size: number;
+        pageCount: number | null;
+        uploadedAt: string | null;
+    } | null;
     preview: {
         name: string;
         isFinal: boolean;

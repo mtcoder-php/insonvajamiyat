@@ -152,7 +152,7 @@ class IssueService
             ]);
         }
 
-        return DB::transaction(function () use ($issue, $articles): int {
+        $count = DB::transaction(function () use ($issue, $articles): int {
             $position = (int) IssueArticle::query()->where('journal_issue_id', $issue->id)->max('position');
 
             foreach ($articles as $article) {
@@ -174,6 +174,10 @@ class IssueService
 
             return $articles->count();
         });
+
+        $this->repaginateIfComplete($issue);
+
+        return $count;
     }
 
     public function detach(JournalIssue $issue, Article $article): void
@@ -189,6 +193,8 @@ class IssueService
             $this->renumber($issue);
             $this->resetApproval($article);
         });
+
+        $this->repaginateIfComplete($issue);
     }
 
     /**
@@ -237,6 +243,38 @@ class IssueService
                 $placement?->forceFill(['position' => $index + 1])->save();
             }
         });
+
+        $this->repaginateIfComplete($issue);
+    }
+
+    /**
+     * Sondagi barcha maqolalarning hajmi (PDF dagi betlar soni) ma'lum bo'lsa — sahifalarni
+     * avtomatik qayta hisoblaydi (tartib o'zgarganda, maqola qo'shilganda/chiqarilganda,
+     * yangi yakuniy PDF yuklanganda). Boshlang'ich bet — hozirgi eng kichik bet yoki 1.
+     * Chop etilgan maqolasi bor sonda hech narsa o'zgarmaydi.
+     *
+     * @return bool sahifalar qayta hisoblandimi
+     */
+    public function repaginateIfComplete(JournalIssue $issue): bool
+    {
+        $placements = IssueArticle::query()
+            ->where('journal_issue_id', $issue->id)
+            ->with('article')
+            ->get();
+
+        if ($placements->isEmpty()) {
+            return false;
+        }
+
+        foreach ($placements as $placement) {
+            if (! $this->editable($placement->article) || ($placement->article->pages_count ?? 0) < 1) {
+                return false;
+            }
+        }
+
+        $start = max(1, (int) ($placements->min('page_from') ?? 1));
+
+        return $this->paginate($issue, $start)['updated'] > 0;
     }
 
     /**
