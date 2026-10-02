@@ -181,8 +181,10 @@ class ReportsTest extends TestCase
             'completed_at' => now()->subDays(4),
             'due_at' => now()->subDays(2),
         ]);
+        // Ikkinchi raund (bitta raundda taqrizchi bir marta tayinlanadi — unique indeks)
         Review::factory()->for($article)->createOne([
             'reviewer_id' => $reviewer->id,
+            'round' => 2,
             'created_at' => now()->subDays(5),
             'due_at' => now()->subDay(),
         ]);
