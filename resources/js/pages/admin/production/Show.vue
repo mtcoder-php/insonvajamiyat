@@ -20,6 +20,7 @@ import {
 } from '@lucide/vue';
 import { computed, ref } from 'vue';
 import EditorialNotes from '@/components/admin/articles/EditorialNotes.vue';
+import ArticleCoverCard from '@/components/admin/production/ArticleCoverCard.vue';
 import FinalActions from '@/components/admin/production/FinalActions.vue';
 import MetadataDialog from '@/components/admin/production/MetadataDialog.vue';
 import ProductionChecklist from '@/components/admin/production/ProductionChecklist.vue';
@@ -628,6 +629,8 @@ const info = computed(() =>
                         </button>
                     </div>
                 </section>
+
+                <ArticleCoverCard :article="article" />
 
                 <FinalActions :article="article" @upload="fileInput?.click()" />
             </aside>
