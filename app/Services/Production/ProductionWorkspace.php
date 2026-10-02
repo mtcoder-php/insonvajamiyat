@@ -199,6 +199,7 @@ class ProductionWorkspace
             'production' => [
                 'formatOk' => ($checklist['format_ok'] ?? false) === true,
                 'authorApproved' => $this->production->authorApproved($article, $finalPdf),
+                'proof' => $this->production->proofState($article, $finalPdf),
                 'authorApprovedAt' => is_string($checklist['author_approved_at'] ?? null) ? $checklist['author_approved_at'] : null,
                 'authorChanges' => is_string($checklist['author_changes'] ?? null) ? $checklist['author_changes'] : null,
                 'authorChangesAt' => is_string($checklist['author_changes_at'] ?? null) ? $checklist['author_changes_at'] : null,
@@ -229,6 +230,7 @@ class ProductionWorkspace
                 'edit' => $canManage && in_array($status, [ArticleStatus::Accepted, ArticleStatus::InProduction], true),
                 'approve' => $canApprove && $inProduction && $ready && $article->chief_editor_approved_at === null,
                 'revoke' => $canApprove && $inProduction && $article->chief_editor_approved_at !== null,
+                'waiveProof' => $canApprove && $this->production->canWaiveAuthor($article, $finalPdf),
                 'cancel' => $canManage && $inProduction,
                 // Chop etilgan songa keyin qo'shilgan maqola — alohida chop etiladi
                 'publish' => $canApprove && $inProduction && $this->publisher->canPublishArticle($article),
@@ -242,6 +244,7 @@ class ProductionWorkspace
                 'format' => route('admin.production.format', $article->uuid),
                 'approve' => route('admin.production.approve', $article->uuid),
                 'revoke' => route('admin.production.revoke', $article->uuid),
+                'waiveProof' => route('admin.production.waive-proof', $article->uuid),
                 'cancel' => route('admin.production.cancel', $article->uuid),
                 'notes' => route('admin.production.notes', $article->uuid),
                 'publish' => route('admin.production.publish', $article->uuid),

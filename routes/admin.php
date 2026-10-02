@@ -108,6 +108,7 @@ Route::middleware('permission:'.AdminSection::Production->permission()->value)
         // Bosh muharrir tasdig'i
         Route::middleware('permission:'.PermissionName::IssuesPublish->value)->group(function () {
             Route::post('{article:uuid}/approve', [ProductionController::class, 'approve'])->name('approve');
+            Route::post('{article:uuid}/waive-proof', [ProductionController::class, 'waiveProof'])->name('waive-proof');
             Route::post('{article:uuid}/revoke', [ProductionController::class, 'revoke'])->name('revoke');
             Route::post('{article:uuid}/publish', [ProductionController::class, 'publish'])->name('publish');
         });

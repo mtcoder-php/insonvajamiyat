@@ -110,6 +110,16 @@ class ProductionController extends Controller
         return $this->done(__('Tekshiruv yangilandi.'));
     }
 
+    /** Korrektura muddati o'tdi, muallif javob bermadi — bosh muharrir qarori bilan davom ettirish */
+    public function waiveProof(Request $request, Article $article): RedirectResponse
+    {
+        $validated = $request->validate(['reason' => ['required', 'string', 'min:10', 'max:1000']]);
+
+        $this->production->waiveAuthorApproval($article, $this->user($request), (string) $validated['reason']);
+
+        return $this->done(__('Korrektura tahririyat qarori bilan tasdiqlandi.'));
+    }
+
     public function approve(Request $request, Article $article): RedirectResponse
     {
         $this->production->approve($article, $this->user($request));

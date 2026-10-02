@@ -202,6 +202,7 @@ class ArticleController extends Controller
         $checklist = $article->production_checklist ?? [];
         $placement = $article->placement()->with('issue')->first();
         $approved = $production->authorApproved($article, $finalPdf);
+        $proof = $production->proofState($article, $finalPdf);
         $canRespond = $article->status === ArticleStatus::InProduction
             && $finalPdf !== null
             && $article->submitter_id === $user->id;
@@ -215,6 +216,10 @@ class ArticleController extends Controller
                 'downloadUrl' => route('cabinet.articles.files.download', [$article->uuid, $finalPdf->uuid]),
             ] : null,
             'approved' => $approved,
+            'state' => $proof['state'],
+            'dueAt' => $proof['dueAt'],
+            'waivedAt' => $proof['waived']['at'] ?? null,
+            'deadlineDays' => ProductionService::proofDeadlineDays(),
             'approvedAt' => $approved && is_string($checklist['author_approved_at'] ?? null) ? $checklist['author_approved_at'] : null,
             'changes' => ! $approved && is_string($checklist['author_changes'] ?? null) ? $checklist['author_changes'] : null,
             'readyForPublication' => $article->chief_editor_approved_at !== null,

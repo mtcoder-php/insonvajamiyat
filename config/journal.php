@@ -105,6 +105,13 @@ return [
         ],
     ],
 
+    // Korrektura (muallif yakuniy PDF ni tekshiradi): javob muddati va eslatma.
+    // Muddat o'tgach bosh muharrir sababini yozib muallifsiz tasdiqlashi mumkin.
+    'proof' => [
+        'deadline_days' => (int) env('JOURNAL_PROOF_DAYS', 5),
+        'reminder_hours' => (int) env('JOURNAL_PROOF_REMINDER_HOURS', 24),
+    ],
+
     // Audit log: yozuvlar shuncha kun saqlanadi, keyin `php artisan model:prune` o'chiradi
     'audit' => [
         'retention_days' => (int) env('AUDIT_RETENTION_DAYS', 365),
