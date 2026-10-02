@@ -24,6 +24,7 @@ use Illuminate\Support\Carbon;
  * @property string $original_name
  * @property string $mime_type
  * @property int $size
+ * @property int|null $page_count
  * @property string|null $checksum
  * @property int|null $uploaded_by
  * @property Carbon|null $created_at
@@ -32,7 +33,7 @@ use Illuminate\Support\Carbon;
  */
 #[Fillable([
     'article_id', 'article_version_id', 'type', 'disk', 'path', 'original_name',
-    'mime_type', 'size', 'checksum', 'uploaded_by',
+    'mime_type', 'size', 'page_count', 'checksum', 'uploaded_by',
 ])]
 class ArticleFile extends Model
 {
@@ -56,6 +57,7 @@ class ArticleFile extends Model
         return [
             'type' => ArticleFileType::class,
             'size' => 'integer',
+            'page_count' => 'integer',
         ];
     }
 

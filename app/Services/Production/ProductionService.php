@@ -15,6 +15,7 @@ use App\Notifications\ArticleUpdateNotification;
 use App\Services\Articles\ArticleFileService;
 use App\Services\Articles\ArticleWorkflow;
 use App\Services\Audit\AuditLogger;
+use App\Services\Issues\IssueService;
 use App\Services\Messages\ArticleMessageService;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\UploadedFile;
@@ -50,6 +51,7 @@ class ProductionService
         private readonly ArticleFileService $files,
         private readonly ArticleMessageService $messages,
         private readonly AuditLogger $audit,
+        private readonly IssueService $issues,
     ) {}
 
     /** Korrektura uchun beriladigan muddat (kun) */
@@ -106,6 +108,16 @@ class ProductionService
         $file = DB::transaction(function () use ($article, $pdf, $user): ArticleFile {
             $file = $this->files->store($article, $pdf, ArticleFileType::FinalPdf, $user);
 
+            // Betlar soni PDF dan: maqola hajmi va sondagi oraliq avtomatik yangilanadi
+            if ($file->page_count !== null) {
+                $article->pages_count = $file->page_count;
+                $placement = $article->placement()->first();
+
+                if ($placement !== null && $placement->page_from !== null) {
+                    $placement->forceFill(['page_to' => $placement->page_from + $file->page_count - 1])->save();
+                }
+            }
+
             $this->resetApproval($article);
             $this->setChecklist($article, [
                 'author_approved_at' => null,
@@ -127,6 +139,13 @@ class ProductionService
             return $file;
         });
 
+        // Hajm o'zgargan bo'lsa — sondagi keyingi maqolalarning sahifalari ham suriladi
+        $issue = $article->placement()->with('issue')->first()?->issue;
+
+        if ($issue !== null && $file->page_count !== null) {
+            $this->issues->repaginateIfComplete($issue);
+        }
+
         $article->submitter->notify(new ArticleUpdateNotification(
             $article,
             ArticleUpdateNotification::PROOF,
@@ -146,14 +165,21 @@ class ProductionService
     {
         $this->ensureStatus($article, [ArticleStatus::Accepted, ArticleStatus::InProduction]);
 
-        DB::transaction(function () use ($article, $data): void {
+        $pdfPages = $this->finalPdf($article)?->page_count;
+
+        // PDF dagi betlar soni ma'lum bo'lsa — oxirgi bet avtomatik (qo'lda kiritilgani e'tiborsiz)
+        if ($pdfPages !== null && $data['page_from'] !== null) {
+            $data['page_to'] = $data['page_from'] + $pdfPages - 1;
+        }
+
+        DB::transaction(function () use ($article, $data, $pdfPages): void {
             $article->forceFill([
                 'doi' => $data['doi'],
                 'udc' => $data['udc'],
                 'plagiarism_percent' => $data['plagiarism_percent'],
-                'pages_count' => $data['page_from'] !== null && $data['page_to'] !== null
+                'pages_count' => $pdfPages ?? ($data['page_from'] !== null && $data['page_to'] !== null
                     ? $data['page_to'] - $data['page_from'] + 1
-                    : $article->pages_count,
+                    : $article->pages_count),
             ]);
 
             if ($data['issue_id'] === null) {

@@ -180,6 +180,7 @@ class ProductionWorkspace
                 'typeLabel' => $file->type->label(),
                 'extension' => $file->extension(),
                 'size' => $file->size,
+                'pageCount' => $file->page_count,
                 'uploadedAt' => $file->created_at?->toIso8601String(),
                 'viewUrl' => $file->extension() === 'pdf' ? route('admin.production.files', [$article->uuid, $file->uuid]) : null,
                 'downloadUrl' => route('admin.production.files', [$article->uuid, $file->uuid, 'download' => 1]),
@@ -189,6 +190,7 @@ class ProductionWorkspace
             'finalPdf' => $finalPdf !== null ? [
                 'name' => $finalPdf->original_name,
                 'size' => $finalPdf->size,
+                'pageCount' => $finalPdf->page_count,
                 'uploadedAt' => $finalPdf->created_at?->toIso8601String(),
             ] : null,
             'preview' => $previewFile !== null ? [

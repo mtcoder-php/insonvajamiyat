@@ -372,7 +372,10 @@ const info = computed(() =>
                                     >
                                     <span class="text-[11px] text-navy-500"
                                         >{{ file.typeLabel }} ·
-                                        {{ formatFileSize(file.size) }}</span
+                                        {{ formatFileSize(file.size)
+                                        }}<template v-if="file.pageCount">
+                                            · {{ file.pageCount }} bet</template
+                                        ></span
                                     >
                                 </span>
                                 <a

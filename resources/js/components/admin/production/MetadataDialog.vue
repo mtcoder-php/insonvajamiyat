@@ -35,6 +35,18 @@ watch(open, (value) => {
 
 const errors = computed(() => form.errors as Record<string, string>);
 
+// Yakuniy PDF dagi betlar soni ma'lum bo'lsa — oxirgi bet avtomatik hisoblanadi
+const pdfPages = computed(() => props.article.finalPdf?.pageCount ?? null);
+
+watch(
+    () => [form.page_from, pdfPages.value] as const,
+    ([from, count]) => {
+        if (count && from) {
+            form.page_to = from + count - 1;
+        }
+    },
+);
+
 const pages = computed(() =>
     form.page_from && form.page_to && form.page_to >= form.page_from
         ? form.page_to - form.page_from + 1
@@ -120,6 +132,14 @@ function submit(): void {
                     </option>
                 </SelectInput>
             </FormField>
+            <p
+                v-if="pdfPages"
+                class="-mb-1 rounded-lg bg-brand-50 px-3 py-2 text-xs text-brand-800"
+            >
+                Yakuniy PDF da {{ pdfPages }} bet. Odatda sahifalarni
+                «Jurnallar» bo'limida son bo'yicha avtomatik hisoblash yetarli —
+                bu yerda faqat istisno holatda boshlang'ich betni kiriting.
+            </p>
             <div class="grid grid-cols-2 gap-4">
                 <FormField
                     label="Boshlang'ich bet"
@@ -139,13 +159,20 @@ function submit(): void {
                     label="Oxirgi bet"
                     for="page-to"
                     :error="errors.page_to"
-                    :hint="pages ? `${pages} bet` : undefined"
+                    :hint="
+                        pdfPages
+                            ? `PDF dan avtomatik: ${pdfPages} bet`
+                            : pages
+                              ? `${pages} bet`
+                              : undefined
+                    "
                 >
                     <input
                         id="page-to"
                         v-model.number="form.page_to"
                         type="number"
                         min="1"
+                        :readonly="pdfPages !== null"
                         :disabled="!form.issue_id"
                         :class="cn(inputClass, 'tabular-nums')"
                     />

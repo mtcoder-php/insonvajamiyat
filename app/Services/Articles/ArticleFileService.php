@@ -7,6 +7,7 @@ use App\Models\Article;
 use App\Models\ArticleFile;
 use App\Models\ArticleVersion;
 use App\Models\User;
+use App\Support\PdfPageCounter;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -37,6 +38,7 @@ class ArticleFileService
 
         $realPath = $file->getRealPath();
         $checksum = $realPath !== false ? hash_file('sha256', $realPath) : false;
+        $pageCount = $realPath !== false && $extension === 'pdf' ? PdfPageCounter::count($realPath) : null;
 
         return $article->files()->create([
             'article_version_id' => $version?->id,
@@ -46,6 +48,7 @@ class ArticleFileService
             'original_name' => $file->getClientOriginalName(),
             'mime_type' => $file->getMimeType() ?? 'application/octet-stream',
             'size' => $file->getSize() ?: 0,
+            'page_count' => $pageCount !== null ? min($pageCount, 65535) : null,
             'checksum' => $checksum !== false ? $checksum : null,
             'uploaded_by' => $uploader?->id,
         ]);
