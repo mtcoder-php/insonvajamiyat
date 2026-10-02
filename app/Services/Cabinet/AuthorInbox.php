@@ -9,7 +9,6 @@ use App\Models\Message;
 use App\Models\User;
 use App\Services\Editorial\EditorialWorkspace;
 use App\Services\Messages\ArticleMessageService;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 /**
@@ -24,9 +23,9 @@ class AuthorInbox
      * Muallifning (yuborilgan) maqolalari: oxirgi xabar, o'qilmaganlar soni.
      * Avval xabari borlar (eng yangisi tepada), keyin xabarsizlar.
      *
-     * @return Collection<int, array<string, mixed>>
+     * @return array<int, array<string, mixed>>
      */
-    public function conversations(User $user): Collection
+    public function conversations(User $user): array
     {
         $articles = Article::query()
             ->ownedBy($user)
@@ -69,12 +68,13 @@ class AuthorInbox
                 ];
             })
             ->sortByDesc(fn (array $c): int => $c['sortKey'])
-            ->values();
+            ->values()
+            ->all();
     }
 
     /** Barcha yozishmalardagi o'qilmagan xabarlar */
     public function unreadTotal(User $user): int
     {
-        return (int) $this->conversations($user)->sum('unread');
+        return (int) collect($this->conversations($user))->sum('unread');
     }
 }
