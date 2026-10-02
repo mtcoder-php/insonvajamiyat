@@ -50,6 +50,14 @@ class ArticlePolicy
             && $article->status->canTransitionTo(ArticleStatus::Withdrawn);
     }
 
+    /** Nashr to'lovini onlayn (Click / Payme) to'lash — faqat yuboruvchi, faqat "To'lov kutilmoqda" holatida */
+    public function pay(User $user, Article $article): bool
+    {
+        return $article->submitter_id === $user->id
+            && $article->status === ArticleStatus::AwaitingPayment
+            && ! $article->payment_status->isSettled();
+    }
+
     /** Qoralamani butunlay o'chirish */
     public function delete(User $user, Article $article): bool
     {

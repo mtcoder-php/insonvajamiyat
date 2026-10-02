@@ -41,6 +41,7 @@ enum AuditEvent: string
     // To'lovlar
     case PaymentConfirmed = 'payment.confirmed';
     case PaymentWaived = 'payment.waived';
+    case PaymentPaidOnline = 'payment.paid_online';
 
     // Foydalanuvchilar
     case UserCreated = 'user.created';
@@ -75,6 +76,7 @@ enum AuditEvent: string
             self::IssuePublished => 'Jurnal soni chop etildi',
             self::PaymentConfirmed => "To'lov qo'lda tasdiqlandi",
             self::PaymentWaived => "To'lovdan ozod qilindi",
+            self::PaymentPaidOnline => "Onlayn to'lov qabul qilindi",
             self::UserCreated => "Foydalanuvchi qo'shildi",
             self::UserUpdated => "Foydalanuvchi ma'lumotlari o'zgardi",
             self::UserBlocked => 'Foydalanuvchi bloklandi',

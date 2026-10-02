@@ -9,6 +9,7 @@ import {
     FilePlus2,
     Gavel,
     Info,
+    Wallet,
     LoaderCircle,
     MessageSquareText,
     RotateCcw,
@@ -62,6 +63,7 @@ const meta: Record<string, { icon: Component; tint: string }> = {
     proof: { icon: BookCheck, tint: 'bg-teal-50 text-teal-600' },
     submitted: { icon: FilePlus2, tint: 'bg-emerald-50 text-emerald-600' },
     review: { icon: ClipboardPen, tint: 'bg-orange-50 text-orange-600' },
+    payment: { icon: Wallet, tint: 'bg-emerald-50 text-emerald-600' },
 };
 const fallback = { icon: Info, tint: 'bg-navy-50 text-navy-500' };
 

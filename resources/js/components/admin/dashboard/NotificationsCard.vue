@@ -32,6 +32,7 @@ const kinds: Record<string, { icon: Component; tint: string }> = {
     review: { icon: UserCheck, tint: 'bg-orange-50 text-orange-600' },
     proof: { icon: BookOpenCheck, tint: 'bg-teal-50 text-teal-600' },
     message: { icon: Bell, tint: 'bg-brand-50 text-brand-600' },
+    payment: { icon: CreditCard, tint: 'bg-emerald-50 text-emerald-600' },
 };
 
 const fallback = { icon: Bell, tint: 'bg-navy-50 text-navy-600' };

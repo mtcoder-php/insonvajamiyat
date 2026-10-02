@@ -4,6 +4,7 @@ use App\Http\Controllers\Articles\ArticleMessageController;
 use App\Http\Controllers\Cabinet\ArticleController;
 use App\Http\Controllers\Cabinet\ArticleDraftFileController;
 use App\Http\Controllers\Cabinet\ArticleFileController;
+use App\Http\Controllers\Cabinet\ArticlePaymentController;
 use App\Http\Controllers\Cabinet\ArticleProofController;
 use App\Http\Controllers\Cabinet\ArticleRevisionController;
 use App\Http\Controllers\Cabinet\ArticleSubmissionController;
@@ -48,6 +49,11 @@ Route::prefix('articles')->name('articles.')->group(function (): void {
     Route::post('{article:uuid}/submit', [ArticleSubmissionController::class, 'submit'])
         ->middleware('throttle:10,1')
         ->name('submit');
+
+    // Nashr to'lovi: Click / Payme sahifasiga yo'naltirish
+    Route::post('{article:uuid}/pay', [ArticlePaymentController::class, 'store'])
+        ->middleware('throttle:10,1')
+        ->name('pay');
 
     // Tuzatish sikli: tuzatilgan versiya (RevisionRequired → Resubmitted)
     Route::post('{article:uuid}/revision', [ArticleRevisionController::class, 'store'])
