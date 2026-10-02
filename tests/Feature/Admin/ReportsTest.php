@@ -70,7 +70,7 @@ class ReportsTest extends TestCase
         return $article;
     }
 
-    private function query(array $extra = []): array
+    private function periodQuery(array $extra = []): array
     {
         return ['from' => '2026-09-01', 'to' => '2026-09-20', ...$extra];
     }
@@ -100,7 +100,7 @@ class ReportsTest extends TestCase
         $this->article(['submitted_at' => Carbon::parse('2026-05-01')]);
 
         $this->actingAs($this->admin())
-            ->get(route('admin.reports.index', $this->query()))
+            ->get(route('admin.reports.index', $this->periodQuery()))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->where('filters.from', '2026-09-01')
@@ -136,7 +136,7 @@ class ReportsTest extends TestCase
         $admin = $this->admin();
 
         $this->actingAs($admin)
-            ->get(route('admin.reports.index', $this->query(['subject' => 'history'])))
+            ->get(route('admin.reports.index', $this->periodQuery(['subject' => 'history'])))
             ->assertInertia(fn (Assert $page) => $page
                 ->where('filters.subject', 'history')
                 ->where('kpis.0.value', 1)
@@ -144,7 +144,7 @@ class ReportsTest extends TestCase
             );
 
         $this->actingAs($admin)
-            ->get(route('admin.reports.index', $this->query(['status' => 'rejected'])))
+            ->get(route('admin.reports.index', $this->periodQuery(['status' => 'rejected'])))
             ->assertInertia(fn (Assert $page) => $page
                 ->where('filters.status', 'rejected')
                 ->where('articles.meta.total', 1)
@@ -152,7 +152,7 @@ class ReportsTest extends TestCase
             );
 
         $this->actingAs($admin)
-            ->get(route('admin.reports.index', $this->query(['q' => 'temur'])))
+            ->get(route('admin.reports.index', $this->periodQuery(['q' => 'temur'])))
             ->assertInertia(fn (Assert $page) => $page->where('articles.meta.total', 1));
     }
 
@@ -163,7 +163,7 @@ class ReportsTest extends TestCase
         Payment::factory()->createOne(['provider' => PaymentProvider::Click, 'amount' => 999000]); // to'lanmagan
 
         $this->actingAs($this->admin())
-            ->get(route('admin.reports.index', $this->query()))
+            ->get(route('admin.reports.index', $this->periodQuery()))
             ->assertInertia(fn (Assert $page) => $page
                 ->where('revenue.total', 350000)
                 ->where('revenue.count', 2)
@@ -188,7 +188,7 @@ class ReportsTest extends TestCase
         ]);
 
         $this->actingAs($this->admin())
-            ->get(route('admin.reports.index', $this->query(['tab' => 'reviewers'])))
+            ->get(route('admin.reports.index', $this->periodQuery(['tab' => 'reviewers'])))
             ->assertInertia(fn (Assert $page) => $page
                 ->where('filters.tab', 'reviewers')
                 ->where('dynamics', null)
@@ -206,7 +206,7 @@ class ReportsTest extends TestCase
         $this->article(['title' => ['uz' => '=Xavfli sarlavha']]);
 
         $response = $this->actingAs($admin = $this->admin())
-            ->get(route('admin.reports.export', ['type' => 'articles', ...$this->query()]));
+            ->get(route('admin.reports.export', ['type' => 'articles', ...$this->periodQuery()]));
 
         $response->assertOk();
         $this->assertStringContainsString('text/csv', (string) $response->headers->get('Content-Type'));
@@ -231,7 +231,7 @@ class ReportsTest extends TestCase
         $this->article();
 
         $this->actingAs($this->admin())
-            ->get(route('admin.reports.print', $this->query()))
+            ->get(route('admin.reports.print', $this->periodQuery()))
             ->assertOk()
             ->assertSee('Statistik hisobot')
             ->assertSee('01.09.2026 – 20.09.2026');
