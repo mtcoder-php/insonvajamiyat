@@ -68,6 +68,8 @@ export type DashboardNotification = {
     kind: string;
     title: string;
     message: string | null;
+    articleTitle?: string | null;
+    openUrl?: string;
     read: boolean;
     createdAt: string | null;
 };

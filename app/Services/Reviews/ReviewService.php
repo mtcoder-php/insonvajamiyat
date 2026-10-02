@@ -15,6 +15,7 @@ use App\Models\Review;
 use App\Models\User;
 use App\Services\Articles\ArticleWorkflow;
 use App\Services\Audit\AuditLogger;
+use App\Services\Notifications\EditorialNotifier;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -45,6 +46,7 @@ class ReviewService
     public function __construct(
         private readonly ArticleWorkflow $workflow,
         private readonly AuditLogger $audit,
+        private readonly EditorialNotifier $notifier,
     ) {}
 
     /**
@@ -83,7 +85,7 @@ class ReviewService
             ]);
         }
 
-        return DB::transaction(function () use ($article, $fresh, $dueDays, $editor, $round, $newRound): Collection {
+        $reviews = DB::transaction(function () use ($article, $fresh, $dueDays, $editor, $round, $newRound): Collection {
             $reviews = $fresh->values()->map(fn (User $reviewer): Review => $article->reviews()->create([
                 'reviewer_id' => $reviewer->id,
                 'assigned_by' => $editor->id,
@@ -120,6 +122,10 @@ class ReviewService
 
             return $reviews;
         });
+
+        $this->notifier->reviewersInvited($article, $reviews);
+
+        return $reviews;
     }
 
     public function accept(Review $review, User $reviewer): void
@@ -128,6 +134,8 @@ class ReviewService
         $this->ensureStatus($review, [ReviewStatus::Invited]);
 
         $review->forceFill(['status' => ReviewStatus::Accepted, 'responded_at' => now()])->save();
+
+        $this->notifier->reviewerResponded($review, 'accepted');
     }
 
     public function decline(Review $review, User $reviewer, ?string $reason): void
@@ -140,6 +148,8 @@ class ReviewService
             'responded_at' => now(),
             'comments_to_editor' => $reason,
         ])->save();
+
+        $this->notifier->reviewerResponded($review, 'declined', $reason);
     }
 
     /**
@@ -198,6 +208,10 @@ class ReviewService
 
             $review->save();
         });
+
+        if ($submit) {
+            $this->notifier->reviewerResponded($review, 'completed');
+        }
     }
 
     /** Muharrir taklifni bekor qiladi (faqat hali yakunlanmagan taqriz) */

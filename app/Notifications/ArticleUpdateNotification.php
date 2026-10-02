@@ -13,7 +13,9 @@ use Illuminate\Support\Str;
  *   message     — yozishmada yangi xabar;
  *   decision    — tahririyat qarori (tuzatish / qabul / rad);
  *   resubmitted — muallif tuzatilgan versiyani yubordi;
- *   proof       — korrektura (yakuniy PDF) tayyor / muallif javobi.
+ *   proof       — korrektura (yakuniy PDF) tayyor / muallif javobi;
+ *   submitted   — tahririyatga yangi maqola keldi (muharrirlar);
+ *   review      — taqriz taklifi / taqrizchi javobi / taqriz topshirildi.
  *
  * Qabul qiluvchi muallif bo'lsa havola kabinetga, xodim bo'lsa admin panelga olib boradi.
  */
@@ -27,6 +29,10 @@ class ArticleUpdateNotification extends Notification
 
     public const PROOF = 'proof';
 
+    public const SUBMITTED = 'submitted';
+
+    public const REVIEW = 'review';
+
     public readonly string $headline;
 
     /**
@@ -38,6 +44,7 @@ class ArticleUpdateNotification extends Notification
         array|string|null $headline,
         public readonly ?string $body = null,
         public readonly bool $toStaff = false,
+        public readonly ?string $link = null,
     ) {
         $this->headline = is_string($headline) ? $headline : '';
     }
@@ -52,6 +59,10 @@ class ArticleUpdateNotification extends Notification
 
     public function url(): string
     {
+        if ($this->link !== null) {
+            return $this->link;
+        }
+
         return $this->toStaff
             ? route('admin.articles.index', ['queue' => 'all', 'article' => $this->article->uuid])
             : route('cabinet.articles.show', $this->article->uuid);

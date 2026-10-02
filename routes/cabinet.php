@@ -8,6 +8,7 @@ use App\Http\Controllers\Cabinet\ArticleProofController;
 use App\Http\Controllers\Cabinet\ArticleRevisionController;
 use App\Http\Controllers\Cabinet\ArticleSubmissionController;
 use App\Http\Controllers\Cabinet\DashboardController;
+use App\Http\Controllers\Cabinet\MessagesController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,6 +23,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', DashboardController::class)->name('dashboard');
+
+// Xabarlar: tahririyat bilan yozishmalar va bildirishnomalar
+Route::get('messages', MessagesController::class)->name('messages.index');
 
 Route::prefix('articles')->name('articles.')->group(function (): void {
     Route::get('/', [ArticleController::class, 'index'])->name('index');
