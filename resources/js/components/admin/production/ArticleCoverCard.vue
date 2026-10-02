@@ -2,6 +2,7 @@
 import { router } from '@inertiajs/vue3';
 import { ImagePlus, LoaderCircle, RefreshCw, Trash2 } from '@lucide/vue';
 import { ref } from 'vue';
+import { formatLimit, prepareImage } from '@/lib/image';
 import { cn } from '@/lib/utils';
 import type { ProductionArticle } from '@/types';
 
@@ -16,20 +17,35 @@ const busy = ref(false);
 const dragging = ref(false);
 const error = ref<string | null>(null);
 
-function upload(file: File | null | undefined): void {
-    if (!file) {
+async function upload(picked: File | null | undefined): Promise<void> {
+    if (!picked) {
         return;
     }
 
     error.value = null;
     busy.value = true;
+
+    // Katta suratlar brauzerda 1600 px gacha kichraytiriladi va siqiladi
+    const file = await prepareImage(picked);
+    const limit = props.article.uploadLimit;
+
+    if (limit > 0 && file.size > limit) {
+        busy.value = false;
+        error.value = `Fayl hajmi (${formatLimit(file.size)}) serverdagi chegaradan (${formatLimit(limit)}) katta. Kichikroq rasm tanlang yoki php.ini da upload_max_filesize va post_max_size ni oshiring.`;
+
+        return;
+    }
+
     router.post(
         props.article.urls.cover,
         { cover: file },
         {
             preserveScroll: true,
             forceFormData: true,
-            onError: (errors) => (error.value = errors.cover ?? null),
+            onError: (errors) =>
+                (error.value =
+                    errors.cover ??
+                    "Rasmni yuklab bo'lmadi. Fayl hajmi va formatini tekshiring."),
             onFinish: () => {
                 busy.value = false;
 
@@ -51,7 +67,7 @@ function remove(): void {
 
 function onDrop(event: DragEvent): void {
     dragging.value = false;
-    upload(event.dataTransfer?.files[0]);
+    void upload(event.dataTransfer?.files[0]);
 }
 </script>
 
@@ -133,7 +149,8 @@ function onDrop(event: DragEvent): void {
                 >Rasm tanlang yoki shu yerga tashlang</span
             >
             <span class="text-[11px] text-navy-500"
-                >JPG, PNG yoki WEBP · kamida 600×400 px · 4 MB gacha</span
+                >JPG, PNG yoki WEBP · kamida 600×400 px · katta rasm avtomatik
+                kichraytiriladi</span
             >
         </button>
         <p v-else class="text-[13px] text-navy-500">Rasm yuklanmagan.</p>
@@ -149,7 +166,9 @@ function onDrop(event: DragEvent): void {
             type="file"
             accept="image/jpeg,image/png,image/webp"
             class="hidden"
-            @change="upload(($event.target as HTMLInputElement).files?.[0])"
+            @change="
+                void upload(($event.target as HTMLInputElement).files?.[0])
+            "
         />
     </section>
 </template>

@@ -119,6 +119,8 @@ export type ProductionArticle = {
     } | null;
     files: ProductionFile[];
     coverUrl: string | null;
+    /** Serverning fayl yuklash chegarasi (bayt), 0 — cheklanmagan */
+    uploadLimit: number;
     finalPdf: { name: string; size: number; uploadedAt: string | null } | null;
     preview: {
         name: string;

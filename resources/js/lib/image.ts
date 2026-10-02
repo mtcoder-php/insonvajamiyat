@@ -80,3 +80,70 @@ export async function prepareAvatar(file: File): Promise<File> {
 
     return new File([blob], `avatar.${extension}`, { type: blob.type });
 }
+
+/**
+ * Rasmni brauzerda kichraytirish va siqish (yuklashdan oldin):
+ * katta suratlar (telefon kamerasi, 5–15 MB) server chegarasidan oshmasligi uchun.
+ * Uzun tomoni maxSide dan oshsa kichraytiriladi; natija — JPEG (shaffof joylar oq fon).
+ * Kichik va yengil rasmlar o'zgarishsiz qaytariladi.
+ */
+export async function prepareImage(
+    file: File,
+    { maxSide = 1600, maxBytes = 1_500_000, quality = 0.85 } = {},
+): Promise<File> {
+    if (!file.type.startsWith('image/') || file.type === 'image/gif') {
+        return file;
+    }
+
+    const bitmap = await createImageBitmap(file).catch(() => null);
+
+    if (!bitmap) {
+        return file;
+    }
+
+    const scale = Math.min(1, maxSide / Math.max(bitmap.width, bitmap.height));
+
+    if (scale === 1 && file.size <= maxBytes) {
+        bitmap.close();
+
+        return file;
+    }
+
+    const width = Math.round(bitmap.width * scale);
+    const height = Math.round(bitmap.height * scale);
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+
+    const context = canvas.getContext('2d');
+
+    if (!context) {
+        bitmap.close();
+
+        return file;
+    }
+
+    context.fillStyle = '#ffffff';
+    context.fillRect(0, 0, width, height);
+    context.drawImage(bitmap, 0, 0, width, height);
+    bitmap.close();
+
+    const blob = await new Promise<Blob | null>((resolve) =>
+        canvas.toBlob(resolve, 'image/jpeg', quality),
+    );
+
+    if (!blob || blob.size >= file.size) {
+        return file;
+    }
+
+    const name = file.name.replace(/\.[^.]+$/, '') + '.jpg';
+
+    return new File([blob], name, { type: 'image/jpeg' });
+}
+
+/** 2097152 → "2 MB" */
+export function formatLimit(bytes: number): string {
+    return bytes >= 1024 ** 2
+        ? `${Math.round((bytes / 1024 ** 2) * 10) / 10} MB`
+        : `${Math.round(bytes / 1024)} KB`;
+}
