@@ -77,11 +77,11 @@ class IssueArchiveService
      */
     public function show(JournalIssue $issue): array
     {
-        $issue->loadCount(['articles' => fn (Builder $q) => $q->published()]);
+        $issue->loadCount(['articles' => fn ($q) => $q->published()]);
 
         $placements = IssueArticle::query()
             ->where('journal_issue_id', $issue->id)
-            ->whereHas('article', fn (Builder $q) => $q->published())
+            ->whereHas('article', fn ($q) => $q->published())
             ->with(['article.authors', 'article.subject', 'article.files' => fn ($q) => $q->where('type', ArticleFileType::FinalPdf->value)])
             ->orderBy('position')
             ->get();
@@ -156,7 +156,7 @@ class IssueArchiveService
      */
     private function cards(Collection $issues): array
     {
-        $issues->loadCount(['articles' => fn (Builder $q) => $q->published()]);
+        $issues->loadCount(['articles' => fn ($q) => $q->published()]);
         $authors = $this->authorsCount($issues->modelKeys());
 
         return $issues->map(fn (JournalIssue $issue): array => [

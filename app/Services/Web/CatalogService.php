@@ -123,7 +123,7 @@ class CatalogService
     public function subjects(): array
     {
         return Subject::query()
-            ->withCount(['articles' => fn (Builder $q) => $q->published()])
+            ->withCount(['articles' => fn ($q) => $q->published()])
             ->orderByDesc('articles_count')
             ->get()
             ->filter(fn (Subject $s): bool => (int) $s->getAttribute('articles_count') > 0)
@@ -210,11 +210,14 @@ class CatalogService
         return [
             'articles' => (clone $published)->count(),
             'issues' => JournalIssue::query()->where('status', IssueStatus::Published->value)->count(),
-            'authors' => DB::table('article_authors')
-                ->whereIn('article_id', (clone $published)->select('id'))
-                ->select(['last_name', 'first_name'])
-                ->distinct()
-                ->get()
+            'authors' => DB::query()
+                ->fromSub(
+                    DB::table('article_authors')
+                        ->whereIn('article_id', (clone $published)->select('id'))
+                        ->select(['last_name', 'first_name'])
+                        ->distinct(),
+                    'unique_authors',
+                )
                 ->count(),
             'subjects' => count($this->subjects()),
         ];
