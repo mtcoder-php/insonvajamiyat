@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardRedirectController;
+use App\Http\Controllers\Web\ArticleCatalogController;
 use App\Http\Controllers\Web\ArticleController;
 use App\Http\Controllers\Web\ArticlePdfController;
 use App\Http\Controllers\Web\EventController;
@@ -22,12 +23,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
 Route::inertia('about', 'web/About')->name('about');
-Route::inertia('articles', 'web/articles/Index')->name('articles.index');
+Route::get('articles', ArticleCatalogController::class)->name('articles.index');
 Route::get('articles/{article}', [ArticleController::class, 'show'])->name('articles.show');
 Route::get('articles/{article}/pdf', ArticlePdfController::class)
     ->middleware('throttle:60,1')
     ->name('articles.pdf');
-Route::inertia('issues', 'web/issues/Index')->name('issues.index');
+Route::get('issues', [IssueController::class, 'index'])->name('issues.index');
 Route::get('issues/{issue}', [IssueController::class, 'show'])->name('issues.show');
 Route::get('news', [NewsController::class, 'index'])->name('news.index');
 Route::get('news/{post:slug}', [NewsController::class, 'show'])->name('news.show');

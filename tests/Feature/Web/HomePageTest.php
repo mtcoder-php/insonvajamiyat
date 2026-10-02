@@ -181,8 +181,10 @@ class HomePageTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('web/issues/Show')
-                ->has('articles', 1)
-                ->where('articles.0.id', $published->id)
+                ->has('sections', 1)
+                ->has('sections.0.articles', 1)
+                ->where('sections.0.articles.0.id', $published->id)
+                ->where('issue.articlesCount', 1)
             );
 
         $draftIssue = JournalIssue::factory()->create();

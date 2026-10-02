@@ -4,27 +4,43 @@ namespace App\Http\Controllers\Web;
 
 use App\Enums\IssueStatus;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Web\ArticleCardResource;
-use App\Http\Resources\Web\IssueCardResource;
 use App\Models\JournalIssue;
+use App\Services\Web\CatalogService;
+use App\Services\Web\IssueArchiveService;
+use App\Support\MediaUrl;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
 /**
- * Jurnal soni sahifasi (to'liq dizayn — "web jurnal sonlari.png" bosqichida).
+ * Jurnal sonlari arxivi (web jurnal sonlari.png) va son sahifasi.
  */
 class IssueController extends Controller
 {
-    public function show(JournalIssue $issue): Response
+    public function index(Request $request, IssueArchiveService $archive, CatalogService $catalog): Response
+    {
+        $tree = $archive->tree();
+        $years = array_column($tree, 'year');
+        $year = $request->filled('year') && in_array($request->integer('year'), $years, true)
+            ? $request->integer('year')
+            : ($years[0] ?? (int) now()->year);
+        $sort = $request->string('sort')->toString() === 'oldest' ? 'oldest' : 'newest';
+
+        return Inertia::render('web/issues/Index', [
+            'filters' => ['year' => $year, 'sort' => $sort],
+            'tree' => $tree,
+            'latest' => $archive->latest(),
+            'yearIssues' => $archive->year($year, $sort),
+            'subjects' => fn () => $catalog->subjects(),
+            'latestArticles' => fn () => $archive->latestArticles(),
+            'hero' => MediaUrl::publicAsset(config('journal.heroes.issues')),
+        ]);
+    }
+
+    public function show(JournalIssue $issue, IssueArchiveService $archive): Response
     {
         abort_unless($issue->status === IssueStatus::Published, 404);
 
-        $issue->loadCount('articles')
-            ->load(['articles' => fn ($q) => $q->published()->with(['authors', 'subject'])]);
-
-        return Inertia::render('web/issues/Show', [
-            'issue' => IssueCardResource::make($issue)->resolve(),
-            'articles' => ArticleCardResource::collection($issue->articles)->resolve(),
-        ]);
+        return Inertia::render('web/issues/Show', $archive->show($issue));
     }
 }
