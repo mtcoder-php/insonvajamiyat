@@ -60,7 +60,8 @@ class PaymePaymentTest extends TestCase
 
         $payment = Payment::query()->where('article_id', $article->id)->latest('id')->firstOrFail();
 
-        $encoded = basename((string) $response->headers->get('Location'));
+        // base64 ichida "/" bo'lishi mumkin — domendan keyingi butun qism olinadi
+        $encoded = substr((string) $response->headers->get('Location'), strlen('https://checkout.test.paycom.uz/'));
         $this->assertStringContainsString('ac.payment_id='.$payment->id.';a=15000000', (string) base64_decode($encoded));
 
         return $payment;
