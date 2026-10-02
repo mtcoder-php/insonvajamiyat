@@ -125,7 +125,7 @@ const references = computed(() =>
         <div
             class="mx-auto grid w-full max-w-[1700px] gap-6 px-4 py-6 sm:px-6 lg:w-[90%] lg:px-0 lg:py-8 xl:grid-cols-[minmax(0,1fr)_21rem]"
         >
-            <div class="grid min-w-0 content-start gap-6">
+            <div class="grid min-w-0 grid-cols-1 content-start gap-6">
                 <!-- Sarlavha kartasi -->
                 <section
                     class="rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(0,30,60,0.05)] sm:p-7"
@@ -315,7 +315,7 @@ const references = computed(() =>
                 <div
                     class="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_19rem]"
                 >
-                    <div class="grid min-w-0 gap-6">
+                    <div class="grid min-w-0 grid-cols-1 gap-6">
                         <!-- Annotatsiya -->
                         <section
                             class="rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(0,30,60,0.05)] sm:p-7"
@@ -388,7 +388,7 @@ const references = computed(() =>
                                 <li
                                     v-for="(item, i) in references"
                                     :key="i"
-                                    class="break-words"
+                                    class="[overflow-wrap:anywhere]"
                                 >
                                     {{ item.replace(/^\d+[.)]\s*/, '') }}
                                 </li>
@@ -446,7 +446,7 @@ const references = computed(() =>
 
                     <!-- PDF va iqtibos -->
                     <aside
-                        class="order-first grid min-w-0 content-start gap-6 lg:sticky lg:top-24 lg:order-none"
+                        class="order-first grid min-w-0 grid-cols-1 content-start gap-6 lg:sticky lg:top-24 lg:order-none"
                     >
                         <section
                             class="rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(0,30,60,0.05)]"
@@ -527,7 +527,7 @@ const references = computed(() =>
             </div>
 
             <!-- O'ng ustun -->
-            <aside class="grid min-w-0 content-start gap-6">
+            <aside class="grid min-w-0 grid-cols-1 content-start gap-6">
                 <section
                     v-if="article.related.length"
                     class="rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(0,30,60,0.05)]"
