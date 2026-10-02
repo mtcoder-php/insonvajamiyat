@@ -95,6 +95,33 @@ class Article extends Model
     public array $translatable = ['title', 'abstract', 'keywords'];
 
     /**
+     * Katalog qidiruvi uchun search_text: barcha tillardagi sarlavha, annotatsiya,
+     * kalit so'zlar, DOI va UDK (kichik harflarda). Mualliflar ismi alohida qidiriladi.
+     */
+    protected static function booted(): void
+    {
+        static::saving(function (Article $article): void {
+            $article->search_text = $article->buildSearchText();
+        });
+    }
+
+    public function buildSearchText(): string
+    {
+        $parts = [];
+
+        foreach (['title', 'abstract', 'keywords'] as $field) {
+            foreach ($this->getTranslations($field) as $value) {
+                $parts[] = is_array($value) ? implode(' ', array_filter($value, 'is_string')) : (string) $value;
+            }
+        }
+
+        $parts[] = (string) $this->doi;
+        $parts[] = (string) $this->udc;
+
+        return mb_strtolower(trim(implode(' ', array_filter($parts, fn (string $p): bool => $p !== ''))));
+    }
+
+    /**
      * Faqat `uuid` ustuni UUID; asosiy kalit (id) auto-increment bo'lib qoladi.
      *
      * @return array<int, string>
