@@ -4,6 +4,7 @@ namespace App\Services\Production;
 
 use App\Enums\ArticleFileType;
 use App\Enums\ArticleStatus;
+use App\Enums\AuditEvent;
 use App\Models\Article;
 use App\Models\ArticleFile;
 use App\Models\IssueArticle;
@@ -12,6 +13,7 @@ use App\Models\User;
 use App\Notifications\ArticleUpdateNotification;
 use App\Services\Articles\ArticleFileService;
 use App\Services\Articles\ArticleWorkflow;
+use App\Services\Audit\AuditLogger;
 use App\Services\Messages\ArticleMessageService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -40,6 +42,7 @@ class ProductionService
         private readonly ArticleWorkflow $workflow,
         private readonly ArticleFileService $files,
         private readonly ArticleMessageService $messages,
+        private readonly AuditLogger $audit,
     ) {}
 
     public static function plagiarismMax(): float
@@ -86,6 +89,11 @@ class ProductionService
 
             $this->resetApproval($article);
             $this->setChecklist($article, ['author_approved_at' => null, 'proof_file' => null]);
+
+            $this->audit->log(AuditEvent::FinalPdfUploaded, $article, [
+                'file' => $file->original_name,
+                'size' => $file->size,
+            ], actor: $user);
 
             return $file;
         });
@@ -171,6 +179,8 @@ class ProductionService
             'chief_editor_approved_at' => now(),
         ])->save();
 
+        $this->audit->log(AuditEvent::ProductionApproved, $article, actor: $chief);
+
         $article->submitter->notify(new ArticleUpdateNotification(
             $article,
             ArticleUpdateNotification::DECISION,
@@ -184,6 +194,8 @@ class ProductionService
         $this->ensureStatus($article, [ArticleStatus::InProduction]);
         $this->resetApproval($article);
         $article->save();
+
+        $this->audit->log(AuditEvent::ProductionApprovalRevoked, $article);
     }
 
     /** Muallif yakuniy PDF ni (korrekturani) tasdiqlaydi */

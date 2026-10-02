@@ -4,11 +4,13 @@ use App\Enums\AdminSection;
 use App\Enums\PermissionName;
 use App\Http\Controllers\Admin\Articles\EditorialController;
 use App\Http\Controllers\Admin\Articles\ReviewerAssignmentController;
+use App\Http\Controllers\Admin\Audit\AuditLogController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\Issues\IssueArticleController;
 use App\Http\Controllers\Admin\Issues\IssueController;
 use App\Http\Controllers\Admin\Payments\PaymentController;
 use App\Http\Controllers\Admin\Production\ProductionController;
+use App\Http\Controllers\Admin\Reports\ReportController;
 use App\Http\Controllers\Admin\Reviews\ReviewController;
 use App\Http\Controllers\Admin\SectionController;
 use App\Http\Controllers\Admin\Users\UserAvatarController;
@@ -178,6 +180,35 @@ Route::middleware('permission:'.AdminSection::Payments->permission()->value)
             Route::post('articles/{article:uuid}/confirm', [PaymentController::class, 'confirm'])->name('confirm');
             Route::post('articles/{article:uuid}/waive', [PaymentController::class, 'waive'])->name('waive');
         });
+    });
+
+/*
+| Statistika va hisobotlar (super admin analistic page.png): davr bo'yicha ko'rsatkichlar,
+| taqrizchilar samaradorligi, CSV (Excel) eksport va chop etiladigan umumiy hisobot
+*/
+Route::middleware('permission:'.AdminSection::Reports->permission()->value)
+    ->prefix('reports')
+    ->name('reports.')
+    ->group(function () {
+        Route::get('/', [ReportController::class, 'index'])->name('index');
+        Route::get('print', [ReportController::class, 'print'])->name('print');
+        Route::get('export/{type}', [ReportController::class, 'export'])
+            ->whereIn('type', ['articles', 'payments', 'reviewers', 'authors'])
+            ->middleware('throttle:20,1')
+            ->name('export');
+    });
+
+/*
+| Audit log (TZ 4.2.9): faqat ko'rish va eksport
+*/
+Route::middleware('permission:'.AdminSection::Audit->permission()->value)
+    ->prefix(AdminSection::Audit->value)
+    ->name('audit.')
+    ->group(function () {
+        Route::get('/', [AuditLogController::class, 'index'])->name('index');
+        Route::get('export', [AuditLogController::class, 'export'])
+            ->middleware('throttle:10,1')
+            ->name('export');
     });
 
 // Hali ishlab chiqilmagan bo'limlar — vaqtinchalik sahifa (admin/Section).

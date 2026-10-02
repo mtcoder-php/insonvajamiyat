@@ -4,6 +4,7 @@ namespace App\Services\Publishing;
 
 use App\Enums\ArticleFileType;
 use App\Enums\ArticleStatus;
+use App\Enums\AuditEvent;
 use App\Enums\IssueStatus;
 use App\Models\Article;
 use App\Models\IssueArticle;
@@ -11,6 +12,7 @@ use App\Models\JournalIssue;
 use App\Models\User;
 use App\Notifications\ArticleUpdateNotification;
 use App\Services\Articles\ArticleWorkflow;
+use App\Services\Audit\AuditLogger;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -27,7 +29,10 @@ use Illuminate\Validation\ValidationException;
  */
 class PublishService
 {
-    public function __construct(private readonly ArticleWorkflow $workflow) {}
+    public function __construct(
+        private readonly ArticleWorkflow $workflow,
+        private readonly AuditLogger $audit,
+    ) {}
 
     /**
      * Chop etishga to'sqinlik qiladigan muammolar (bo'sh — tayyor).
@@ -87,6 +92,8 @@ class PublishService
                 'published_at' => now(),
                 'published_by' => $user->id,
             ])->save();
+
+            $this->audit->log(AuditEvent::IssuePublished, $issue, ['articles' => $articles->count()], actor: $user);
 
             return $articles;
         });

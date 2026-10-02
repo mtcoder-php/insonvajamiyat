@@ -425,16 +425,16 @@ const stats = computed(() => [
                                 :is="stat.icon"
                                 class="size-5 shrink-0 text-brand-600"
                             />
-                            <span class="min-w-0">
+                            <div class="flex min-w-0 flex-col-reverse">
+                                <dt class="truncate text-[11px] text-navy-500">
+                                    {{ stat.label }}
+                                </dt>
                                 <dd
                                     class="text-lg leading-tight font-bold text-navy-950 tabular-nums"
                                 >
                                     {{ formatNumber(stat.value) }}
                                 </dd>
-                                <dt class="truncate text-[11px] text-navy-500">
-                                    {{ stat.label }}
-                                </dt>
-                            </span>
+                            </div>
                         </div>
                     </dl>
                 </section>
