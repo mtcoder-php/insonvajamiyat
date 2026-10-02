@@ -349,7 +349,9 @@ class PaymeMerchantService
             ->where('provider_transaction_id', $transactionId)
             ->first();
 
-        $this->paymentId = $payment?->id ?? $this->paymentId;
+        if ($payment !== null) {
+            $this->paymentId = $payment->id;
+        }
 
         return $payment;
     }
