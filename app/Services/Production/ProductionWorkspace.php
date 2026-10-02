@@ -14,6 +14,7 @@ use App\Models\User;
 use App\Services\Editorial\EditorialWorkspace;
 use App\Services\Publishing\PublishService;
 use App\Support\MediaUrl;
+use App\Support\UploadLimit;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -184,6 +185,7 @@ class ProductionWorkspace
                 'downloadUrl' => route('admin.production.files', [$article->uuid, $file->uuid, 'download' => 1]),
             ])->all(),
             'coverUrl' => MediaUrl::from($article->cover_image_path),
+            'uploadLimit' => UploadLimit::bytes(),
             'finalPdf' => $finalPdf !== null ? [
                 'name' => $finalPdf->original_name,
                 'size' => $finalPdf->size,

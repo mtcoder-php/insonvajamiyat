@@ -27,6 +27,7 @@ import ProductionChecklist from '@/components/admin/production/ProductionCheckli
 import ProductionStepper from '@/components/admin/production/ProductionStepper.vue';
 import ArticleStatusPill from '@/components/cabinet/ArticleStatusPill.vue';
 import { formatDate, formatFileSize } from '@/lib/format';
+import { formatLimit } from '@/lib/image';
 import { cn } from '@/lib/utils';
 import { dashboard } from '@/routes/admin';
 import { index } from '@/routes/admin/production';
@@ -59,6 +60,19 @@ function upload(file: File | null | undefined): void {
     }
 
     uploadError.value = null;
+
+    const limit = props.article.uploadLimit;
+
+    if (limit > 0 && file.size > limit) {
+        uploadError.value = `Fayl hajmi (${formatLimit(file.size)}) serverdagi chegaradan (${formatLimit(limit)}) katta. php.ini da upload_max_filesize va post_max_size ni oshiring.`;
+
+        if (fileInput.value) {
+            fileInput.value.value = '';
+        }
+
+        return;
+    }
+
     uploading.value = true;
     router.post(
         props.article.urls.upload,
