@@ -4,6 +4,7 @@ namespace App\Services\Payments;
 
 use App\Enums\ArticlePaymentStatus;
 use App\Enums\ArticleStatus;
+use App\Enums\AuditEvent;
 use App\Enums\PaymentProvider;
 use App\Enums\PaymentPurpose;
 use App\Enums\PaymentStatus;
@@ -11,6 +12,8 @@ use App\Models\Article;
 use App\Models\Payment;
 use App\Models\User;
 use App\Services\Articles\ArticleWorkflow;
+use App\Services\Audit\AuditLogger;
+use App\Services\Editorial\EditorialWorkspace;
 use Carbon\CarbonInterface;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -32,7 +35,10 @@ class ManualPaymentService
     /** To'lov hujjati (kvitansiya) uchun maxfiy disk */
     public const DISK = 'local';
 
-    public function __construct(private readonly ArticleWorkflow $workflow) {}
+    public function __construct(
+        private readonly ArticleWorkflow $workflow,
+        private readonly AuditLogger $audit,
+    ) {}
 
     /** Maqola turi bo'yicha to'lanishi kerak bo'lgan summa (so'm) */
     public function amountDue(Article $article): float
@@ -98,6 +104,13 @@ class ManualPaymentService
                 ]),
             );
 
+            $this->audit->log(AuditEvent::PaymentConfirmed, $payment, [
+                'article' => EditorialWorkspace::code($article),
+                'amount' => (float) $payment->amount,
+                'paid_at' => $data['paid_at'],
+                'reference' => $data['reference'],
+            ], actor: $admin);
+
             return $payment;
         });
     }
@@ -118,6 +131,8 @@ class ManualPaymentService
                 $admin,
                 __("Maqola nashr to'lovidan ozod qilindi: :reason", ['reason' => $reason]),
             );
+
+            $this->audit->log(AuditEvent::PaymentWaived, $article, ['reason' => $reason], actor: $admin);
         });
     }
 

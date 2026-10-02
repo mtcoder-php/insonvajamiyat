@@ -3,6 +3,7 @@
 namespace App\Services\Editorial;
 
 use App\Enums\ArticleStatus;
+use App\Enums\AuditEvent;
 use App\Enums\EditorialDecisionType;
 use App\Enums\PermissionName;
 use App\Models\Article;
@@ -11,6 +12,7 @@ use App\Models\EditorialDecision;
 use App\Models\User;
 use App\Notifications\ArticleUpdateNotification;
 use App\Services\Articles\ArticleWorkflow;
+use App\Services\Audit\AuditLogger;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -37,7 +39,10 @@ class EditorialService
         EditorialDecisionType::Reject,
     ];
 
-    public function __construct(private readonly ArticleWorkflow $workflow) {}
+    public function __construct(
+        private readonly ArticleWorkflow $workflow,
+        private readonly AuditLogger $audit,
+    ) {}
 
     /**
      * Yangi (yoki qayta yuborilgan) maqolani ko'rib chiqishga olish. Mas'ul muharrir
@@ -73,7 +78,12 @@ class EditorialService
             ]);
         }
 
+        $previous = $article->handling_editor_id;
         $article->forceFill(['handling_editor_id' => $editor?->id])->save();
+
+        if ($previous !== $article->handling_editor_id) {
+            $this->audit->log(AuditEvent::ArticleEditorAssigned, $article, ['editor' => $editor?->name]);
+        }
     }
 
     /**

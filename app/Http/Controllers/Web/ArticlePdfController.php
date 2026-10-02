@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Services\Articles\ArticleFileService;
+use App\Services\Web\ArticleDailyStats;
 use App\Services\Web\ArticlePageService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -15,7 +16,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
  */
 class ArticlePdfController extends Controller
 {
-    public function __invoke(Request $request, Article $article, ArticlePageService $page, ArticleFileService $files): StreamedResponse
+    public function __invoke(Request $request, Article $article, ArticlePageService $page, ArticleFileService $files, ArticleDailyStats $stats): StreamedResponse
     {
         abort_unless($article->isPublished(), 404);
 
@@ -31,6 +32,7 @@ class ArticlePdfController extends Controller
         if ($request->session()->get($key) !== now()->toDateString()) {
             $request->session()->put($key, now()->toDateString());
             $article->increment('downloads_count');
+            $stats->record($article, ArticleDailyStats::DOWNLOADS);
         }
 
         return $files->download($pdf);

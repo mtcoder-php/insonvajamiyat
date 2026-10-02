@@ -3,11 +3,13 @@
 namespace App\Services\Issues;
 
 use App\Enums\ArticleStatus;
+use App\Enums\AuditEvent;
 use App\Enums\IssueStatus;
 use App\Models\Article;
 use App\Models\IssueArticle;
 use App\Models\JournalIssue;
 use App\Models\User;
+use App\Services\Audit\AuditLogger;
 use App\Support\MediaUrl;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -31,6 +33,8 @@ class IssueService
     /** Songa joylashtirish mumkin bo'lgan maqola holatlari */
     public const PLACEABLE = [ArticleStatus::Accepted, ArticleStatus::InProduction];
 
+    public function __construct(private readonly AuditLogger $audit) {}
+
     /** Fayl turlari → journal_issues ustuni */
     public const FILES = [
         'cover' => 'cover_image_path',
@@ -46,6 +50,8 @@ class IssueService
         $issue = new JournalIssue;
         $this->fill($issue, $data);
         $issue->forceFill(['status' => IssueStatus::Draft, 'created_by' => $user->id])->save();
+
+        $this->audit->log(AuditEvent::IssueCreated, $issue, actor: $user);
 
         return $issue;
     }
@@ -89,6 +95,8 @@ class IssueService
 
         Storage::disk(self::DISK)->deleteDirectory('issues/'.$issue->slug);
         $issue->delete();
+
+        $this->audit->log(AuditEvent::IssueDeleted, $issue);
     }
 
     /** Muqova, butun son PDF yoki mundarija PDF yuklash */

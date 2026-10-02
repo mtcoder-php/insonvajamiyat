@@ -3,6 +3,7 @@
 namespace App\Services\Reviews;
 
 use App\Enums\ArticleStatus;
+use App\Enums\AuditEvent;
 use App\Enums\EditorialDecisionType;
 use App\Enums\ReviewCriterion;
 use App\Enums\ReviewRecommendation;
@@ -13,6 +14,7 @@ use App\Models\ArticleFile;
 use App\Models\Review;
 use App\Models\User;
 use App\Services\Articles\ArticleWorkflow;
+use App\Services\Audit\AuditLogger;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -40,7 +42,10 @@ class ReviewService
     /** Taqrizchi taklif qilish mumkin bo'lgan holatlar */
     public const INVITABLE = [ArticleStatus::UnderReview, ArticleStatus::InReview, ArticleStatus::Resubmitted];
 
-    public function __construct(private readonly ArticleWorkflow $workflow) {}
+    public function __construct(
+        private readonly ArticleWorkflow $workflow,
+        private readonly AuditLogger $audit,
+    ) {}
 
     /**
      * @param  array<int, int>  $reviewerIds
@@ -106,6 +111,12 @@ class ReviewService
                     __('Maqolangiz mustaqil taqrizchilarga yuborildi. Taqriz natijalari haqida xabar beramiz.'),
                 );
             }
+
+            $this->audit->log(AuditEvent::ReviewInvited, $article, [
+                'reviewers' => $fresh->map(fn (User $u): string => $u->name)->values()->all(),
+                'round' => $round,
+                'due_days' => $dueDays,
+            ], actor: $editor);
 
             return $reviews;
         });
@@ -195,6 +206,11 @@ class ReviewService
         $this->ensureStatus($review, [ReviewStatus::Invited, ReviewStatus::Accepted]);
 
         $review->forceFill(['status' => ReviewStatus::Cancelled])->save();
+
+        $this->audit->log(AuditEvent::ReviewCancelled, $review->article, [
+            'review' => $review->id,
+            'reviewer' => $review->reviewer->name,
+        ]);
     }
 
     /**

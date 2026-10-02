@@ -2,9 +2,11 @@
 
 namespace App\Services\Admin;
 
+use App\Enums\AuditEvent;
 use App\Enums\PaymentStatus;
 use App\Enums\RoleName;
 use App\Models\User;
+use App\Services\Audit\AuditLogger;
 use App\Services\Users\AvatarService;
 use App\Services\Users\ProfileService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -32,6 +34,7 @@ class UserService
     public function __construct(
         private readonly ProfileService $profiles,
         private readonly AvatarService $avatars,
+        private readonly AuditLogger $audit,
     ) {}
 
     /**
@@ -169,6 +172,8 @@ class UserService
             $this->avatars->store($user, $avatar);
         }
 
+        $this->audit->log(AuditEvent::UserCreated, $user, ['new' => $this->snapshot($user)], actor: $actor);
+
         // "Email tasdiqlangan" belgilanmagan bo'lsa — foydalanuvchiga tasdiqlash xati
         if (! $user->hasVerifiedEmail()) {
             $user->sendEmailVerificationNotification();
@@ -184,6 +189,7 @@ class UserService
     {
         $roles = $this->rolesFrom($data);
         $this->guardRoleChange($user, $roles, $actor);
+        $before = $this->snapshot($user);
 
         $emailChanged = DB::transaction(function () use ($user, $data, $roles): bool {
             $verified = ! empty($data['email_verified']);
@@ -207,6 +213,12 @@ class UserService
             $this->avatars->store($user, $avatar);
         }
 
+        $changes = AuditLogger::diff($before, $this->snapshot($user->refresh()));
+
+        if ($changes !== [] || $avatar !== null) {
+            $this->audit->log(AuditEvent::UserUpdated, $user, $avatar !== null ? [...$changes, 'avatar' => true] : $changes, actor: $actor);
+        }
+
         // Yangi (tasdiqlanmagan) manzilga tasdiqlash xati
         if ($emailChanged && ! $user->hasVerifiedEmail()) {
             $user->sendEmailVerificationNotification();
@@ -218,11 +230,15 @@ class UserService
         $this->guardNotSelf($user, $actor, __("O'zingizni bloklay olmaysiz."));
 
         $user->block($reason);
+
+        $this->audit->log(AuditEvent::UserBlocked, $user, ['reason' => $reason], actor: $actor);
     }
 
     public function unblock(User $user): void
     {
         $user->unblock();
+
+        $this->audit->log(AuditEvent::UserUnblocked, $user);
     }
 
     public function delete(User $user, User $actor): void
@@ -230,16 +246,39 @@ class UserService
         $this->guardNotSelf($user, $actor, __("O'zingizni o'chira olmaysiz."));
 
         $user->delete();
+
+        $this->audit->log(AuditEvent::UserDeleted, $user, actor: $actor);
     }
 
     public function restore(User $user): void
     {
         $user->restore();
+
+        $this->audit->log(AuditEvent::UserRestored, $user);
     }
 
     public function setPassword(User $user, string $password): void
     {
         $user->forceFill(['password' => $password])->save();
+
+        $this->audit->log(AuditEvent::UserPasswordChanged, $user);
+    }
+
+    /**
+     * Audit uchun foydalanuvchining asosiy ma'lumotlari (parolsiz).
+     *
+     * @return array{name: string, email: string, roles: string, email_verified: bool}
+     */
+    private function snapshot(User $user): array
+    {
+        $roles = $user->roles()->pluck('name')->filter(fn (mixed $r): bool => is_string($r))->sort()->implode(', ');
+
+        return [
+            'name' => $user->name,
+            'email' => $user->email,
+            'roles' => $roles,
+            'email_verified' => $user->email_verified_at !== null,
+        ];
     }
 
     /**

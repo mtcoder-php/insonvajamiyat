@@ -48,7 +48,8 @@ enum AdminSection: string
     public function isReady(): bool
     {
         return match ($this) {
-            self::Users, self::Payments, self::Articles, self::Production, self::Issues => true,
+            self::Users, self::Payments, self::Articles, self::Production, self::Issues,
+            self::Reports, self::Audit => true,
             default => false,
         };
     }
@@ -64,7 +65,7 @@ enum AdminSection: string
             self::Payments => "To'lovlar",
             self::Ai => 'AI xizmatlari',
             self::Messages => 'Xabarlar',
-            self::Reports => 'Hisobotlar',
+            self::Reports => 'Statistika va hisobotlar',
             self::Settings => 'Sozlamalar',
             self::Users => 'Foydalanuvchilar',
             self::Roles => 'Rollar va ruxsatlar',

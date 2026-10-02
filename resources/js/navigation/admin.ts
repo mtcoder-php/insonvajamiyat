@@ -119,7 +119,7 @@ export function adminNavigation(): NavGroup[] {
                     badge: 'messages',
                 },
                 {
-                    title: 'Hisobotlar',
+                    title: 'Statistika',
                     href: reportsIndex(),
                     icon: FileChartColumn,
                     permission: 'reports.view',

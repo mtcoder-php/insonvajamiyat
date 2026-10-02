@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Article;
+use App\Services\Web\ArticleDailyStats;
 use App\Services\Web\ArticlePageService;
 use App\Support\MediaUrl;
 use Illuminate\Http\Request;
@@ -18,11 +19,11 @@ class ArticleController extends Controller
     /** Bir tashrifchi bir maqolani qayta ko'rganda hisob shu vaqt ichida oshmaydi (soniya) */
     public const VIEW_WINDOW = 6 * 3600;
 
-    public function show(Request $request, Article $article, ArticlePageService $page): Response
+    public function show(Request $request, Article $article, ArticlePageService $page, ArticleDailyStats $stats): Response
     {
         abort_unless($article->isPublished(), 404);
 
-        $this->countView($request, $article);
+        $this->countView($request, $article, $stats);
 
         return Inertia::render('web/articles/Show', [
             'article' => $page->show($article),
@@ -35,7 +36,7 @@ class ArticleController extends Controller
     }
 
     /** Ko'rishlar soni: sessiya bo'yicha VIEW_WINDOW ichida bir marta */
-    private function countView(Request $request, Article $article): void
+    private function countView(Request $request, Article $article, ArticleDailyStats $stats): void
     {
         $key = 'viewed_articles.'.$article->id;
         $last = $request->session()->get($key);
@@ -46,5 +47,6 @@ class ArticleController extends Controller
 
         $request->session()->put($key, now()->getTimestamp());
         $article->increment('views_count');
+        $stats->record($article, ArticleDailyStats::VIEWS);
     }
 }

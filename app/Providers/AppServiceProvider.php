@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Enums\RoleName;
 use App\Models\User;
+use App\Services\Audit\AuditEventSubscriber;
 use Carbon\CarbonImmutable;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Support\Facades\Date;
@@ -60,6 +61,9 @@ class AppServiceProvider extends ServiceProvider
                 'last_login_ip' => request()->ip(),
             ])->saveQuietly();
         });
+
+        // Audit log: kirish/chiqish, muvaffaqiyatsiz urinishlar, maqola holatlari
+        Event::subscribe(AuditEventSubscriber::class);
     }
 
     /**

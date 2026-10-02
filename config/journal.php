@@ -105,4 +105,9 @@ return [
         ],
     ],
 
+    // Audit log: yozuvlar shuncha kun saqlanadi, keyin `php artisan model:prune` o'chiradi
+    'audit' => [
+        'retention_days' => (int) env('AUDIT_RETENTION_DAYS', 365),
+    ],
+
 ];
