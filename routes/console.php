@@ -11,3 +11,6 @@ Artisan::command('inspire', function () {
 
 // Audit log: saqlash muddati (journal.audit.retention_days) o'tgan yozuvlarni tozalash
 Schedule::command('model:prune', ['--model' => [AuditLog::class]])->dailyAt('03:15');
+
+// Korrektura muddati: muallifga eslatma va muddat o'tganda tahririyatga xabar
+Schedule::command('app:proof-reminders')->hourlyAt(7);

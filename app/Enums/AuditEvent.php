@@ -31,6 +31,7 @@ enum AuditEvent: string
     case FinalPdfUploaded = 'production.final_pdf';
     case ProductionApproved = 'production.approved';
     case ProductionApprovalRevoked = 'production.revoked';
+    case ProofApprovalWaived = 'production.proof_waived';
 
     // Jurnal sonlari
     case IssueCreated = 'issue.created';
@@ -68,6 +69,7 @@ enum AuditEvent: string
             self::FinalPdfUploaded => 'Yakuniy PDF yuklandi',
             self::ProductionApproved => "Bosh muharrir tasdig'i",
             self::ProductionApprovalRevoked => 'Tasdiq bekor qilindi',
+            self::ProofApprovalWaived => 'Korrektura muallifsiz tasdiqlandi',
             self::IssueCreated => 'Jurnal soni yaratildi',
             self::IssueDeleted => "Jurnal soni o'chirildi",
             self::IssuePublished => 'Jurnal soni chop etildi',
@@ -96,7 +98,7 @@ enum AuditEvent: string
         return match ($this) {
             self::LoginFailed, self::Lockout, self::UserDeleted, self::IssueDeleted, self::UserBlocked => 'danger',
             self::PaymentConfirmed, self::PaymentWaived, self::UserPasswordChanged, self::PasswordReset,
-            self::ProductionApprovalRevoked, self::ReportExported, self::UserUpdated => 'warning',
+            self::ProductionApprovalRevoked, self::ReportExported, self::UserUpdated, self::ProofApprovalWaived => 'warning',
             default => 'info',
         };
     }

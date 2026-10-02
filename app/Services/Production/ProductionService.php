@@ -5,6 +5,7 @@ namespace App\Services\Production;
 use App\Enums\ArticleFileType;
 use App\Enums\ArticleStatus;
 use App\Enums\AuditEvent;
+use App\Enums\RoleName;
 use App\Models\Article;
 use App\Models\ArticleFile;
 use App\Models\IssueArticle;
@@ -15,7 +16,9 @@ use App\Services\Articles\ArticleFileService;
 use App\Services\Articles\ArticleWorkflow;
 use App\Services\Audit\AuditLogger;
 use App\Services\Messages\ArticleMessageService;
+use Carbon\CarbonImmutable;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -32,6 +35,10 @@ use Illuminate\Validation\ValidationException;
  *   proof_file         — muallif javob bergan yakuniy PDF (uuid)
  *   author_approved_at — muallif korrekturani tasdiqlagan vaqt
  *   author_changes     — muallifning tuzatish so'rovi (oxirgisi), author_changes_at
+ *   proof_due_at       — korrektura muddati (yakuniy PDF yuklanganda: config journal.proof.deadline_days)
+ *   proof_reminded_at, proof_overdue_notified_at — eslatmalar yuborilgan vaqt (app:proof-reminders)
+ *   author_waived_file, author_waived_at, author_waived_by, author_waived_reason —
+ *                        muddat o'tgach bosh muharrir muallif roziligisiz tasdiqlagan (sababi bilan)
  *
  * Yangi PDF yuklansa yoki meta ma'lumot o'zgarsa bosh muharrir tasdig'i bekor bo'ladi;
  * muallif roziligi faqat o'zi ko'rgan PDF uchun amal qiladi.
@@ -44,6 +51,18 @@ class ProductionService
         private readonly ArticleMessageService $messages,
         private readonly AuditLogger $audit,
     ) {}
+
+    /** Korrektura uchun beriladigan muddat (kun) */
+    public static function proofDeadlineDays(): int
+    {
+        return max(1, config()->integer('journal.proof.deadline_days', 5));
+    }
+
+    /** Muddat tugashidan necha soat oldin muallifga eslatma yuboriladi */
+    public static function proofReminderHours(): int
+    {
+        return max(1, config()->integer('journal.proof.reminder_hours', 24));
+    }
 
     public static function plagiarismMax(): float
     {
@@ -88,7 +107,17 @@ class ProductionService
             $file = $this->files->store($article, $pdf, ArticleFileType::FinalPdf, $user);
 
             $this->resetApproval($article);
-            $this->setChecklist($article, ['author_approved_at' => null, 'proof_file' => null]);
+            $this->setChecklist($article, [
+                'author_approved_at' => null,
+                'proof_file' => null,
+                'proof_due_at' => now()->addDays(self::proofDeadlineDays())->toIso8601String(),
+                'proof_reminded_at' => null,
+                'proof_overdue_notified_at' => null,
+                'author_waived_file' => null,
+                'author_waived_at' => null,
+                'author_waived_by' => null,
+                'author_waived_reason' => null,
+            ]);
 
             $this->audit->log(AuditEvent::FinalPdfUploaded, $article, [
                 'file' => $file->original_name,
@@ -102,7 +131,9 @@ class ProductionService
             $article,
             ArticleUpdateNotification::PROOF,
             __('Korrektura tayyor: yakuniy PDF ni tekshiring'),
-            __("Maqolangizning maketlangan varianti tayyor. Kabinetda PDF ni ko'rib chiqing va tasdiqlang yoki tuzatishlarni yozing."),
+            __("Maqolangizning maketlangan varianti tayyor. Kabinetda PDF ni ko'rib chiqing va :date gacha tasdiqlang yoki maketdagi xatolarni yozing.", [
+                'date' => now()->addDays(self::proofDeadlineDays())->format('d.m.Y H:i'),
+            ]),
         ));
 
         return $file;
@@ -229,6 +260,10 @@ class ProductionService
             'author_approved_at' => null,
             'author_changes' => $comment,
             'author_changes_at' => now()->toIso8601String(),
+            'author_waived_file' => null,
+            'author_waived_at' => null,
+            'author_waived_by' => null,
+            'author_waived_reason' => null,
         ]);
         $this->resetApproval($article);
         $article->save();
@@ -261,6 +296,220 @@ class ProductionService
         return $finalPdf !== null
             && ($checklist['proof_file'] ?? null) === $finalPdf->uuid
             && ! empty($checklist['author_approved_at']);
+    }
+
+    /** Joriy yakuniy PDF bo'yicha bosh muharrir muallif roziligisiz tasdiqlaganmi */
+    public function authorWaived(Article $article, ?ArticleFile $finalPdf = null): bool
+    {
+        $finalPdf ??= $this->finalPdf($article);
+        $checklist = $article->production_checklist ?? [];
+
+        return $finalPdf !== null
+            && ($checklist['author_waived_file'] ?? null) === $finalPdf->uuid
+            && ! empty($checklist['author_waived_at']);
+    }
+
+    /** Korrektura bosqichi yopilgan: muallif tasdiqlagan yoki tahririyat qarori bilan o'tkazilgan */
+    public function proofResolved(Article $article, ?ArticleFile $finalPdf = null): bool
+    {
+        $finalPdf ??= $this->finalPdf($article);
+
+        return $this->authorApproved($article, $finalPdf) || $this->authorWaived($article, $finalPdf);
+    }
+
+    /** Muallif joriy PDF bo'yicha tuzatish so'ragan (yangi PDF kutilmoqda) */
+    public function proofChangesRequested(Article $article, ?ArticleFile $finalPdf = null): bool
+    {
+        $finalPdf ??= $this->finalPdf($article);
+        $checklist = $article->production_checklist ?? [];
+
+        return $finalPdf !== null
+            && ($checklist['proof_file'] ?? null) === $finalPdf->uuid
+            && is_string($checklist['author_changes'] ?? null)
+            && ! $this->authorApproved($article, $finalPdf);
+    }
+
+    /**
+     * Korrektura muddati. Funksiya qo'shilishidan oldin yuklangan PDF uchun —
+     * PDF yuklangan vaqtdan hisoblanadi.
+     */
+    public function proofDueAt(Article $article, ?ArticleFile $finalPdf = null): ?CarbonImmutable
+    {
+        $finalPdf ??= $this->finalPdf($article);
+
+        if ($finalPdf === null) {
+            return null;
+        }
+
+        $due = $article->production_checklist['proof_due_at'] ?? null;
+
+        if (is_string($due) && $due !== '') {
+            return CarbonImmutable::parse($due);
+        }
+
+        return $finalPdf->created_at !== null
+            ? CarbonImmutable::instance($finalPdf->created_at)->addDays(self::proofDeadlineDays())
+            : null;
+    }
+
+    /**
+     * Korrektura holati (admin va kabinet uchun).
+     *
+     * state: none (PDF yo'q) | pending (muallif javobi kutilmoqda) | overdue (muddat o'tgan) |
+     *        changes (muallif tuzatish so'ragan) | approved | waived
+     *
+     * @return array{state: string, dueAt: string|null, overdue: bool, waived: array{at: string|null, by: string|null, reason: string|null}|null}
+     */
+    public function proofState(Article $article, ?ArticleFile $finalPdf = null): array
+    {
+        $finalPdf ??= $this->finalPdf($article);
+        $checklist = $article->production_checklist ?? [];
+        $due = $this->proofDueAt($article, $finalPdf);
+        $overdue = $due !== null && now()->greaterThan($due);
+
+        $state = match (true) {
+            $finalPdf === null => 'none',
+            $this->authorApproved($article, $finalPdf) => 'approved',
+            $this->authorWaived($article, $finalPdf) => 'waived',
+            $this->proofChangesRequested($article, $finalPdf) => 'changes',
+            $overdue => 'overdue',
+            default => 'pending',
+        };
+
+        return [
+            'state' => $state,
+            'dueAt' => $due?->toIso8601String(),
+            'overdue' => $state === 'overdue',
+            'waived' => $state === 'waived' ? [
+                'at' => is_string($checklist['author_waived_at'] ?? null) ? $checklist['author_waived_at'] : null,
+                'by' => is_string($checklist['author_waived_by'] ?? null) ? $checklist['author_waived_by'] : null,
+                'reason' => is_string($checklist['author_waived_reason'] ?? null) ? $checklist['author_waived_reason'] : null,
+            ] : null,
+        ];
+    }
+
+    /** Bosh muharrir muallif roziligisiz tasdiqlay oladimi (muddat o'tgan, javob yo'q) */
+    public function canWaiveAuthor(Article $article, ?ArticleFile $finalPdf = null): bool
+    {
+        return $article->status === ArticleStatus::InProduction
+            && $this->proofState($article, $finalPdf)['state'] === 'overdue';
+    }
+
+    /**
+     * Korrektura muddati o'tdi, muallif javob bermadi — bosh muharrir qarori bilan
+     * muallif roziligi bandini yopish. Sabab majburiy; muallifga xabar va audit yoziladi.
+     */
+    public function waiveAuthorApproval(Article $article, User $chief, string $reason): void
+    {
+        $this->ensureStatus($article, [ArticleStatus::InProduction]);
+        $finalPdf = $this->finalPdf($article);
+
+        if (! $this->canWaiveAuthor($article, $finalPdf) || $finalPdf === null) {
+            throw ValidationException::withMessages([
+                'reason' => __("Muallif roziligisiz tasdiqlash faqat korrektura muddati o'tgan va muallif javob bermagan holatda mumkin."),
+            ]);
+        }
+
+        DB::transaction(function () use ($article, $chief, $reason, $finalPdf): void {
+            $this->setChecklist($article, [
+                'author_waived_file' => $finalPdf->uuid,
+                'author_waived_at' => now()->toIso8601String(),
+                'author_waived_by' => $chief->name,
+                'author_waived_reason' => $reason,
+            ]);
+
+            $this->audit->log(AuditEvent::ProofApprovalWaived, $article, [
+                'file' => $finalPdf->original_name,
+                'due_at' => $this->proofDueAt($article, $finalPdf),
+                'reason' => $reason,
+            ], actor: $chief);
+        });
+
+        $article->submitter->notify(new ArticleUpdateNotification(
+            $article,
+            ArticleUpdateNotification::PROOF,
+            __('Korrektura tahririyat qarori bilan tasdiqlandi'),
+            $reason,
+        ));
+    }
+
+    /**
+     * Korrektura eslatmalari (har soatda: app:proof-reminders).
+     * Muddat tugashiga oz qolganda — muallifga, muddat o'tganda — maketchi va bosh muharrirlarga.
+     *
+     * @return array{reminded: int, overdue: int}
+     */
+    public function sendProofReminders(): array
+    {
+        $counts = ['reminded' => 0, 'overdue' => 0];
+        $now = now();
+
+        $articles = Article::query()
+            ->where('status', ArticleStatus::InProduction->value)
+            ->with(['submitter', 'layoutEditor'])
+            ->get();
+
+        foreach ($articles as $article) {
+            $finalPdf = $this->finalPdf($article);
+            $state = $this->proofState($article, $finalPdf);
+            $checklist = $article->production_checklist ?? [];
+            $due = $state['dueAt'] !== null ? CarbonImmutable::parse($state['dueAt']) : null;
+
+            if ($due === null) {
+                continue;
+            }
+
+            if ($state['state'] === 'pending'
+                && empty($checklist['proof_reminded_at'])
+                && $now->greaterThanOrEqualTo($due->subHours(self::proofReminderHours()))) {
+                $article->submitter->notify(new ArticleUpdateNotification(
+                    $article,
+                    ArticleUpdateNotification::PROOF,
+                    __('Eslatma: korrektura muddati tugayapti'),
+                    self::t("Yakuniy PDF ni :date gacha tasdiqlang yoki maketdagi xatolarni yozing. Javob bo'lmasa, tahririyat maqolani o'z qarori bilan nashrga yuborishi mumkin.", [
+                        'date' => $due->format('d.m.Y H:i'),
+                    ]),
+                ));
+                $this->setChecklist($article, ['proof_reminded_at' => $now->toIso8601String()]);
+                $counts['reminded']++;
+            }
+
+            if ($state['state'] === 'overdue' && empty($checklist['proof_overdue_notified_at'])) {
+                foreach ($this->proofStaff($article) as $staff) {
+                    $staff->notify(new ArticleUpdateNotification(
+                        $article,
+                        ArticleUpdateNotification::PROOF,
+                        __("Korrektura muddati o'tdi: muallif javob bermadi"),
+                        self::t('Bosh muharrir muallifga yana murojaat qilishi yoki nashr jarayonida «Muallifsiz tasdiqlash» orqali davom ettirishi mumkin.'),
+                        toStaff: true,
+                    ));
+                }
+
+                $this->setChecklist($article, ['proof_overdue_notified_at' => $now->toIso8601String()]);
+                $counts['overdue']++;
+            }
+        }
+
+        return $counts;
+    }
+
+    /**
+     * Muddat o'tgani haqida xabar oladigan xodimlar: maketchi va bosh muharrirlar.
+     *
+     * @return Collection<int, User>
+     */
+    private function proofStaff(Article $article): Collection
+    {
+        $chiefs = User::query()
+            ->where('is_blocked', false)
+            ->whereHas('roles', fn ($q) => $q->where('name', RoleName::ChiefEditor->value))
+            ->get();
+
+        return collect([$article->layoutEditor])
+            ->merge($chiefs)
+            ->filter(fn (?User $user): bool => $user !== null)
+            ->unique('id')
+            ->values();
     }
 
     /**
@@ -328,12 +577,24 @@ class ProductionService
             [
                 'key' => 'author',
                 'label' => self::t('Muallif roziligi olingan'),
-                'ok' => $this->authorApproved($article, $finalPdf),
-                'hint' => ($checklist['author_changes'] ?? null) !== null && ! $this->authorApproved($article, $finalPdf)
-                    ? self::t("Muallif tuzatish so'ragan")
-                    : null,
+                'ok' => $this->proofResolved($article, $finalPdf),
+                'hint' => $this->proofHint($article, $finalPdf),
             ],
         ];
+    }
+
+    private function proofHint(Article $article, ?ArticleFile $finalPdf): ?string
+    {
+        $state = $this->proofState($article, $finalPdf);
+        $due = $state['dueAt'] !== null ? CarbonImmutable::parse($state['dueAt'])->format('d.m.Y H:i') : null;
+
+        return match ($state['state']) {
+            'changes' => self::t("Muallif tuzatish so'ragan — yangi PDF yuklang"),
+            'waived' => self::t('Tahririyat qarori bilan (muallif muddatida javob bermadi)'),
+            'overdue' => self::t("Muddat o'tgan (:date) — muallif javob bermadi", ['date' => $due]),
+            'pending' => $due !== null ? self::t('Javob muddati: :date', ['date' => $due]) : null,
+            default => null,
+        };
     }
 
     public function ready(Article $article): bool
@@ -353,7 +614,8 @@ class ProductionService
         $issueAssigned = $article->placement()->exists();
         $started = in_array($article->status, [ArticleStatus::InProduction, ArticleStatus::Published], true);
         $published = $article->status === ArticleStatus::Published;
-        $authorApproved = $this->authorApproved($article, $finalPdf);
+        $authorApproved = $this->proofResolved($article, $finalPdf);
+        $proofDate = $checklist['author_approved_at'] ?? $checklist['author_waived_at'] ?? null;
         $startedAt = $article->statusHistories()
             ->where('to_status', ArticleStatus::InProduction->value)
             ->latest('id')
@@ -363,7 +625,7 @@ class ProductionService
             ['accepted', self::t('Qabul qilindi'), true, $article->accepted_at?->toIso8601String()],
             ['layout', self::t('Maket'), $started, $startedAt],
             ['pdf', self::t('Yakuniy PDF'), $finalPdf !== null, $finalPdf?->created_at?->toIso8601String()],
-            ['proof', self::t('Muallif tasdig\'i'), $authorApproved, $authorApproved && is_string($checklist['author_approved_at'] ?? null) ? $checklist['author_approved_at'] : null],
+            ['proof', self::t('Muallif tasdig\'i'), $authorApproved, $authorApproved && is_string($proofDate) ? $proofDate : null],
             ['issue', self::t('Jurnal soni'), $issueAssigned, null],
             ['approval', self::t('Bosh muharrir'), $article->chief_editor_approved_at !== null, $article->chief_editor_approved_at?->toIso8601String()],
             ['publish', self::t('Nashr'), $published, $article->published_at?->toIso8601String()],

@@ -3,6 +3,7 @@ import { router, useForm } from '@inertiajs/vue3';
 import {
     BadgeCheck,
     BookOpenCheck,
+    CalendarClock,
     CircleCheck,
     Download,
     ExternalLink,
@@ -10,11 +11,12 @@ import {
     Hourglass,
     LoaderCircle,
     PartyPopper,
+    ShieldAlert,
 } from '@lucide/vue';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import ActionDialog from '@/components/admin/ui/ActionDialog.vue';
 import { textareaClass } from '@/lib/formStyles';
-import { formatDate, formatFileSize } from '@/lib/format';
+import { formatDate, formatDateTime, formatFileSize } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { AuthorProduction } from '@/types';
 
@@ -25,6 +27,33 @@ import type { AuthorProduction } from '@/types';
 const props = defineProps<{ production: AuthorProduction }>();
 
 const approving = ref(false);
+
+// Muddatgacha qolgan vaqt: "2 kun 5 soat" / "3 soat"
+const timeLeft = computed(() => {
+    if (!props.production.dueAt) {
+        return null;
+    }
+
+    const ms = new Date(props.production.dueAt).getTime() - Date.now();
+
+    if (ms <= 0) {
+        return null;
+    }
+
+    const hours = Math.floor(ms / 3_600_000);
+    const days = Math.floor(hours / 24);
+
+    return days > 0
+        ? `${days} kun ${hours % 24} soat`
+        : `${Math.max(1, hours)} soat`;
+});
+
+const awaiting = computed(
+    () =>
+        props.production.canRespond &&
+        (props.production.state === 'pending' ||
+            props.production.state === 'overdue'),
+);
 const changesOpen = ref(false);
 const changesForm = useForm({ comment: '' });
 
@@ -128,6 +157,84 @@ function sendChanges(): void {
                         <Download class="size-4" /> Yuklab olish
                     </a>
                 </div>
+                <div
+                    v-if="awaiting"
+                    :class="
+                        cn(
+                            'flex flex-wrap items-center gap-3 rounded-lg border px-3 py-2.5 text-[13px]',
+                            production.state === 'overdue'
+                                ? 'border-red-200 bg-red-50 text-red-800'
+                                : 'border-amber-200 bg-amber-50 text-amber-900',
+                        )
+                    "
+                >
+                    <ShieldAlert
+                        v-if="production.state === 'overdue'"
+                        class="size-5 shrink-0"
+                    />
+                    <CalendarClock v-else class="size-5 shrink-0" />
+                    <span class="flex-1">
+                        <template v-if="production.state === 'overdue'">
+                            Javob muddati
+                            <b>{{ formatDateTime(production.dueAt) }}</b> da
+                            tugadi. Iltimos, hoziroq javob bering — aks holda
+                            tahririyat maqolani o'z qarori bilan nashrga
+                            yuborishi mumkin.
+                        </template>
+                        <template v-else>
+                            Korrekturani
+                            <b>{{ formatDateTime(production.dueAt) }}</b>
+                            gacha tasdiqlang yoki tuzatishlarni yozing.
+                        </template>
+                    </span>
+                    <span
+                        v-if="timeLeft"
+                        class="rounded-full bg-white/80 px-2.5 py-0.5 text-xs font-bold tabular-nums"
+                        >{{ timeLeft }} qoldi</span
+                    >
+                </div>
+
+                <details
+                    v-if="awaiting"
+                    class="group rounded-lg border border-line bg-[#fafcff] px-3 py-2.5 text-[13px] text-navy-700"
+                >
+                    <summary
+                        class="cursor-pointer list-none font-semibold text-navy-900 marker:hidden"
+                    >
+                        Korrekturada nimalarni tuzattirish mumkin?
+                        <span class="text-brand-700 group-open:hidden"
+                            >Ko'rish</span
+                        >
+                    </summary>
+                    <div class="mt-2 grid gap-3 sm:grid-cols-2">
+                        <div>
+                            <p class="mb-1 text-xs font-bold text-emerald-700">
+                                Mumkin — maketdagi xatolar
+                            </p>
+                            <ul class="list-disc space-y-0.5 pl-4 text-xs">
+                                <li>imlo, harf va tinish belgilari xatolari</li>
+                                <li>ism-familiya, ish joyi, ORCID</li>
+                                <li>
+                                    formula, jadval va rasmlarning buzilishi
+                                </li>
+                                <li>adabiyotlar ro'yxatidagi xatolar</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p class="mb-1 text-xs font-bold text-red-700">
+                                Mumkin emas — mazmun o'zgarishi
+                            </p>
+                            <ul class="list-disc space-y-0.5 pl-4 text-xs">
+                                <li>
+                                    yangi bo'lim, natija yoki xulosa qo'shish
+                                </li>
+                                <li>taqrizdan o'tgan matnni qayta yozish</li>
+                                <li>muallif qo'shish yoki olib tashlash</li>
+                            </ul>
+                        </div>
+                    </div>
+                </details>
+
                 <iframe
                     :src="production.proof.viewUrl"
                     :title="production.proof.name"
@@ -170,6 +277,15 @@ function sendChanges(): void {
                     Bosh muharrir tasdig'i kutilmoqda.
                 </div>
                 <div
+                    v-else-if="production.state === 'waived'"
+                    class="flex items-center gap-2 rounded-lg bg-sky-50 px-3 py-2.5 text-[13px] text-sky-900"
+                >
+                    <BadgeCheck class="size-5 shrink-0" />
+                    Javob muddati o'tgani sababli korrektura
+                    {{ formatDate(production.waivedAt) }} da tahririyat qarori
+                    bilan tasdiqlandi. Xato sezsangiz, darhol tuzatish so'rang.
+                </div>
+                <div
                     v-else-if="production.changes"
                     class="rounded-lg border-l-4 border-orange-400 bg-orange-50/70 px-3 py-2.5 text-[13px] text-navy-800"
                 >
@@ -187,7 +303,8 @@ function sendChanges(): void {
                 >
                     <p class="mr-auto text-xs text-navy-500">
                         Matn, mualliflar, jadval va rasmlarni diqqat bilan
-                        tekshiring.
+                        tekshiring. Javob berish uchun
+                        {{ production.deadlineDays }} kun beriladi.
                     </p>
                     <button
                         type="button"
@@ -229,7 +346,7 @@ function sendChanges(): void {
         <ActionDialog
             v-model:open="changesOpen"
             title="Korrektura bo'yicha tuzatishlar"
-            description="Nimani o'zgartirish kerakligini aniq yozing (bet, satr, to'g'ri variant). Xabar tahririyatga yuboriladi."
+            description="Faqat maketdagi xatolarni yozing (bet, satr, to'g'ri variant). Maqola mazmunini o'zgartirish bu bosqichda mumkin emas. Xabar tahririyatga yuboriladi."
             :icon="FilePenLine"
             confirm-text="Yuborish"
             :processing="changesForm.processing"

@@ -132,6 +132,7 @@ export type ProductionArticle = {
         formatOk: boolean;
         authorApproved: boolean;
         authorApprovedAt: string | null;
+        proof: ProofState;
         authorChanges: string | null;
         authorChangesAt: string | null;
         layoutEditor: string | null;
@@ -146,6 +147,7 @@ export type ProductionArticle = {
         edit: boolean;
         approve: boolean;
         revoke: boolean;
+        waiveProof: boolean;
         cancel: boolean;
         publish: boolean;
         note: boolean;
@@ -158,6 +160,7 @@ export type ProductionArticle = {
         format: string;
         approve: string;
         revoke: string;
+        waiveProof: string;
         cancel: string;
         notes: string;
         publish: string;
@@ -177,6 +180,26 @@ export type ProductionShowProps = {
     issues: IssueOption[];
 };
 
+/** Korrektura holati (ProductionService::proofState) */
+export type ProofStateKey =
+    | 'none'
+    | 'pending'
+    | 'overdue'
+    | 'changes'
+    | 'approved'
+    | 'waived';
+
+export type ProofState = {
+    state: ProofStateKey;
+    dueAt: string | null;
+    overdue: boolean;
+    waived: {
+        at: string | null;
+        by: string | null;
+        reason: string | null;
+    } | null;
+};
+
 /** Muallif kabineti: nashrga tayyorlash bosqichi */
 export type AuthorProduction = {
     proof: {
@@ -188,6 +211,10 @@ export type AuthorProduction = {
     } | null;
     approved: boolean;
     approvedAt: string | null;
+    state: ProofStateKey;
+    dueAt: string | null;
+    waivedAt: string | null;
+    deadlineDays: number;
     changes: string | null;
     readyForPublication: boolean;
     publishedAt: string | null;
