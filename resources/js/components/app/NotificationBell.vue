@@ -134,10 +134,10 @@ const triggerClass = computed(() =>
         <DropdownMenuContent
             align="end"
             :side-offset="8"
-            class="w-[min(24rem,calc(100vw-1.5rem))] overflow-hidden p-0"
+            class="w-[min(24rem,calc(100vw-1.5rem))] overflow-hidden rounded-xl border border-t-[3px] border-[#dbe7f5] border-t-brand-600 bg-white p-0 text-navy-900 [color-scheme:light] shadow-[0_24px_56px_-20px_rgba(0,30,60,0.45),0_0_0_1px_rgba(0,36,66,0.04)]"
         >
             <header
-                class="flex items-center justify-between gap-3 border-b border-line bg-[#f8fafc] px-4 py-3"
+                class="flex items-center justify-between gap-3 border-b border-[#dbe7f5] bg-gradient-to-b from-[#f3f8ff] to-white px-4 py-3"
             >
                 <div>
                     <p class="font-serif text-base font-bold text-navy-950">
@@ -169,7 +169,7 @@ const triggerClass = computed(() =>
 
             <ul
                 v-if="items.length"
-                class="max-h-[min(26rem,70vh)] divide-y divide-line overflow-y-auto"
+                class="max-h-[min(26rem,70vh)] divide-y divide-[#e8eff8] overflow-y-auto"
             >
                 <li v-for="item in items" :key="item.id">
                     <button
@@ -177,8 +177,10 @@ const triggerClass = computed(() =>
                         :disabled="busy !== null"
                         :class="
                             cn(
-                                'group flex w-full items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-brand-50/50 disabled:cursor-wait',
-                                !item.read && 'bg-brand-50/30',
+                                'group flex w-full items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-brand-50 disabled:cursor-wait',
+                                item.read
+                                    ? 'bg-white'
+                                    : 'bg-[#f5f9ff] shadow-[inset_3px_0_0_var(--color-brand-500)]',
                             )
                         "
                         @click="visit(item)"
