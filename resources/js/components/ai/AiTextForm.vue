@@ -20,6 +20,9 @@ const props = defineProps<{
     maxChars: number;
     disabled?: boolean;
     initial?: { text: string; source: string; target: string | null } | null;
+    /** Kabinet: natijani biriktirish uchun muallifning maqolalari */
+    articles?: AiOption[] | null;
+    article?: string | null;
 }>();
 
 const form = useForm({
@@ -29,6 +32,7 @@ const form = useForm({
     target_language:
         props.initial?.target ?? (props.type === 'translation' ? 'en' : null),
     checks: props.checks.map((c) => c.value),
+    article: props.article ?? '',
 });
 
 watch(
@@ -143,6 +147,28 @@ function submit(): void {
         >
             {{ form.errors.target_language }}
         </p>
+
+        <!-- Maqola (kabinet) -->
+        <label v-if="articles && articles.length">
+            <span class="mb-1.5 block text-xs font-semibold text-navy-600"
+                >Maqolaga biriktirish (ixtiyoriy)</span
+            >
+            <SelectInput v-model="form.article">
+                <option value="">— Maqolasiz —</option>
+                <option
+                    v-for="item in articles"
+                    :key="item.value"
+                    :value="item.value"
+                >
+                    {{ item.label }}
+                </option>
+            </SelectInput>
+            <span
+                v-if="form.errors.article"
+                class="mt-1 block text-xs text-red-600"
+                >{{ form.errors.article }}</span
+            >
+        </label>
 
         <!-- Matn -->
         <div>

@@ -38,6 +38,7 @@ export type AiRequestItem = {
     createdAt: string | null;
     url: string;
     user: string | null;
+    article: { uuid: string; title: string } | null;
 };
 
 export type ProofIssueType =
@@ -69,6 +70,7 @@ export type ProofreadResult = {
     savedAt: string | null;
     finalText: string | null;
     saveUrl: string;
+    downloadUrl: string;
 };
 
 export type TranslationVersionItem = {
@@ -187,7 +189,11 @@ export type AiSettingsData = {
 
 export type AiStudioPageProps = {
     tab: AiTab;
-    filters: { type: AiRequestTypeValue | null; scope: 'own' | 'all' };
+    filters: {
+        type: AiRequestTypeValue | null;
+        scope: 'own' | 'all';
+        article: string | null;
+    };
     ready: boolean;
     canManage: boolean;
     languages: AiOption[];
@@ -199,5 +205,13 @@ export type AiStudioPageProps = {
     stats: AiStats;
     activity: AiRequestItem[];
     settings: AiSettingsData | null;
+    /** Kabinet: biriktirish mumkin bo'lgan maqolalar (adminda null) */
+    articles: AiOption[] | null;
     urls: { store: string; index: string };
+};
+
+/** Kabinet → maqola sahifasidagi "AI Studio" bloki */
+export type ArticleAiSummary = {
+    url: string;
+    requests: AiRequestItem[];
 };

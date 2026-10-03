@@ -18,6 +18,7 @@ import {
 import { computed, ref } from 'vue';
 import DashCard from '@/components/admin/dashboard/DashCard.vue';
 import ActionDialog from '@/components/admin/ui/ActionDialog.vue';
+import ArticleAiCard from '@/components/cabinet/ArticleAiCard.vue';
 import ArticlePaymentCard from '@/components/cabinet/ArticlePaymentCard.vue';
 import MessageThread from '@/components/articles/MessageThread.vue';
 import ArticleReviewsCard from '@/components/cabinet/ArticleReviewsCard.vue';
@@ -34,6 +35,7 @@ import { index, show, withdraw } from '@/routes/cabinet/articles';
 import type {
     AuthorArticleDetails,
     AuthorArticlePayment,
+    ArticleAiSummary,
     ArticleThread,
     AuthorProduction,
     AuthorReview,
@@ -53,6 +55,7 @@ const props = defineProps<{
     revision: RevisionRequest | null;
     production: AuthorProduction | null;
     messages: ArticleThread;
+    ai: ArticleAiSummary | null;
 }>();
 
 defineOptions({
@@ -405,6 +408,8 @@ const historyDot: Record<string, string> = {
                 </DashCard>
 
                 <ArticlePaymentCard v-if="payment" :payment="payment" />
+
+                <ArticleAiCard v-if="ai" :ai="ai" />
 
                 <DashCard title="Amallar">
                     <div class="flex flex-col gap-2">

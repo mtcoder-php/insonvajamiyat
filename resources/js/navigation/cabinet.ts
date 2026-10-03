@@ -1,5 +1,6 @@
 import {
     BookOpenText,
+    BrainCircuit,
     CircleHelp,
     FilePen,
     Files,
@@ -11,6 +12,7 @@ import {
 } from '@lucide/vue';
 import { contact, guidelines } from '@/routes';
 import { dashboard } from '@/routes/cabinet';
+import { index as aiIndex } from '@/routes/cabinet/ai';
 import { create, index } from '@/routes/cabinet/articles';
 import { index as messagesIndex } from '@/routes/cabinet/messages';
 import { edit as profileEdit } from '@/routes/profile';
@@ -27,6 +29,7 @@ export function cabinetMainNavigation(): CabinetNavItem[] {
         { title: 'Asosiy sahifa', href: dashboard(), icon: House, exact: true },
         { title: 'Mening maqolalarim', href: index(), icon: Files },
         { title: 'Yangi maqola yuborish', href: create(), icon: Send },
+        { title: 'AI Studio', href: aiIndex(), icon: BrainCircuit },
         { title: "Profil ma'lumotlari", href: profileEdit(), icon: UserRound },
         {
             title: 'Xabarlar',

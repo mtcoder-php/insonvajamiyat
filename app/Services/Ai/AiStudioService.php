@@ -9,8 +9,11 @@ use App\Models\AiRequest;
 use App\Models\PromptTemplate;
 use App\Models\Translation;
 use App\Models\User;
+use App\Support\DocxWriter;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Throwable;
 
 /**
@@ -255,6 +258,21 @@ class AiStudioService
         }
 
         return $text;
+    }
+
+    /** Tahrirlangan matn (saqlangan bo'lsa — o'sha, aks holda qabul qilingan takliflar bilan) Word sifatida */
+    public function proofreadDocx(AiRequest $request): BinaryFileResponse
+    {
+        $text = $request->output_text ?? self::apply($request->input_text, self::issues($request));
+        $title = self::title($request->input_text);
+        $path = DocxWriter::write($title, $text, self::t('Tahrirlangan matn · AI Proofreader'));
+        $name = Str::slug(Str::ascii(Str::limit($title, 60, ''))) ?: 'matn';
+
+        return response()
+            ->download($path, "{$name}-tahrirlangan.docx", [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            ])
+            ->deleteFileAfterSend();
     }
 
     public static function normalize(string $text): string

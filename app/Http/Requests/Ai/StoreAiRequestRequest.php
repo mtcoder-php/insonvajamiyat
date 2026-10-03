@@ -32,6 +32,7 @@ class StoreAiRequestRequest extends FormRequest
                 Rule::in(PromptLibrary::LANGUAGES),
                 'different:source_language',
             ],
+            'article' => ['nullable', 'uuid'],
             'checks' => ['nullable', 'array'],
             'checks.*' => [Rule::in(array_keys(PromptLibrary::CHECKS))],
         ];
