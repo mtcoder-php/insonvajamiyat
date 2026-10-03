@@ -4,6 +4,7 @@ import {
     Check,
     CheckCheck,
     Copy,
+    FileDown,
     LoaderCircle,
     Save,
     Undo2,
@@ -183,6 +184,13 @@ function markClass(issueId: string): string {
                     <Copy v-else class="size-4" />
                     {{ copied ? 'Nusxalandi' : 'Nusxalash' }}
                 </button>
+                <a
+                    :href="result.downloadUrl"
+                    class="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-line bg-white px-3.5 text-[13px] font-semibold text-navy-700 transition-all hover:-translate-y-px hover:border-brand-300 hover:text-brand-700"
+                    title="Qabul qilingan takliflar bilan"
+                >
+                    <FileDown class="size-4" /> Word
+                </a>
                 <button
                     v-if="request.own"
                     type="button"

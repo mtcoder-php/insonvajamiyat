@@ -1,6 +1,8 @@
 <?php
 
+use App\Enums\PermissionName;
 use App\Http\Controllers\Articles\ArticleMessageController;
+use App\Http\Controllers\Cabinet\AiStudioController;
 use App\Http\Controllers\Cabinet\ArticleController;
 use App\Http\Controllers\Cabinet\ArticleDraftFileController;
 use App\Http\Controllers\Cabinet\ArticleFileController;
@@ -27,6 +29,23 @@ Route::get('/', DashboardController::class)->name('dashboard');
 
 // Xabarlar: tahririyat bilan yozishmalar va bildirishnomalar
 Route::get('messages', MessagesController::class)->name('messages.index');
+
+// AI Studio: imlo/uslub tekshiruvi, ilmiy tarjima, tahlil (oylik token limiti bilan)
+Route::middleware('permission:'.PermissionName::AiUse->value)
+    ->prefix('ai')
+    ->name('ai.')
+    ->group(function (): void {
+        Route::get('/', [AiStudioController::class, 'index'])->name('index');
+        Route::post('requests', [AiStudioController::class, 'store'])
+            ->middleware('throttle:10,1')
+            ->name('requests.store');
+        Route::put('requests/{aiRequest:uuid}/proofread', [AiStudioController::class, 'proofread'])->name('requests.proofread');
+        Route::get('requests/{aiRequest:uuid}/download', [AiStudioController::class, 'downloadProofread'])->name('requests.download');
+        Route::post('translations/{translation:uuid}/versions', [AiStudioController::class, 'storeVersion'])
+            ->middleware('throttle:30,1')
+            ->name('translations.versions');
+        Route::get('translations/{translation:uuid}/download', [AiStudioController::class, 'download'])->name('translations.download');
+    });
 
 Route::prefix('articles')->name('articles.')->group(function (): void {
     Route::get('/', [ArticleController::class, 'index'])->name('index');

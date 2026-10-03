@@ -7,16 +7,19 @@ use App\Enums\EditorialDecisionType;
 use App\Enums\PaymentProvider;
 use App\Enums\PaymentPurpose;
 use App\Enums\PaymentStatus;
+use App\Enums\PermissionName;
 use App\Enums\ReviewCriterion;
 use App\Enums\ReviewStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Cabinet\AuthorArticleResource;
+use App\Models\AiRequest;
 use App\Models\Article;
 use App\Models\ArticleAuthor;
 use App\Models\ArticleFile;
 use App\Models\ArticleStatusHistory;
 use App\Models\Review;
 use App\Models\User;
+use App\Services\Ai\AiStudioPresenter;
 use App\Services\Articles\ArticleTimeline;
 use App\Services\Articles\ArticleWorkflow;
 use App\Services\Articles\RevisionService;
@@ -159,6 +162,17 @@ class ArticleController extends Controller
             ],
             'steps' => $timeline->for($article),
             'payment' => $this->payment($article, $payments, $request->query('payment') === 'return'),
+            'ai' => $user->can(PermissionName::AiUse->value) ? [
+                'url' => route('cabinet.ai.index', ['article' => $article->uuid]),
+                'requests' => AiRequest::query()
+                    ->where('user_id', $user->id)
+                    ->where('article_id', $article->id)
+                    ->latest('id')
+                    ->limit(5)
+                    ->get()
+                    ->map(fn (AiRequest $r): array => AiStudioPresenter::for('cabinet.ai')->item($r))
+                    ->all(),
+            ] : null,
             'reviews' => $this->reviews($article),
             'revision' => $revision !== null
                 ? [...$revision, 'url' => route('cabinet.articles.revision.store', $article->uuid)]

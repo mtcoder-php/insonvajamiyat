@@ -51,6 +51,10 @@ class AiStudioPresenter
             'createdAt' => $request->created_at?->toIso8601String(),
             'url' => route($this->routes.'.index', ['tab' => self::tab($request->type), 'request' => $request->uuid]),
             'user' => $withUser ? $request->user->name : null,
+            'article' => $request->article !== null ? [
+                'uuid' => $request->article->uuid,
+                'title' => $request->article->title,
+            ] : null,
         ];
     }
 
@@ -102,6 +106,7 @@ class AiStudioPresenter
                 'savedAt' => is_string($request->result['saved_at'] ?? null) ? $request->result['saved_at'] : null,
                 'finalText' => $request->output_text,
                 'saveUrl' => route($this->routes.'.requests.proofread', $request->uuid),
+                'downloadUrl' => route($this->routes.'.requests.download', $request->uuid),
             ],
         ];
     }
@@ -148,7 +153,7 @@ class AiStudioPresenter
     {
         return $scope
             ->when($type !== null && AiRequestType::tryFrom($type) !== null, fn (Builder $q) => $q->where('type', $type))
-            ->with('user:id,name')
+            ->with(['user:id,name', 'article'])
             ->latest('id')
             ->paginate($perPage, ['*'], 'hpage')
             ->withQueryString();

@@ -152,6 +152,12 @@ const typeTabs: { value: AiRequestTypeValue | null; label: string }[] = [
                                 class="block text-[11px] text-navy-400"
                                 >{{ item.user }}</span
                             >
+                            <span
+                                v-else-if="item.article"
+                                class="block max-w-[15rem] truncate text-[11px] text-brand-700/80"
+                                :title="item.article.title"
+                                >Maqola: {{ item.article.title }}</span
+                            >
                         </td>
                         <td class="px-3 py-2.5 whitespace-nowrap text-navy-600">
                             {{ item.languages }}

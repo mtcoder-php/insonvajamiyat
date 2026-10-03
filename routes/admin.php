@@ -229,6 +229,7 @@ Route::middleware('permission:'.AdminSection::Ai->permission()->value)
             ->middleware('throttle:10,1')
             ->name('requests.store');
         Route::put('requests/{aiRequest:uuid}/proofread', [AiStudioController::class, 'proofread'])->name('requests.proofread');
+        Route::get('requests/{aiRequest:uuid}/download', [AiStudioController::class, 'downloadProofread'])->name('requests.download');
         Route::post('translations/{translation:uuid}/versions', [AiStudioController::class, 'storeVersion'])
             ->middleware('throttle:30,1')
             ->name('translations.versions');
