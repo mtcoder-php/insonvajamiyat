@@ -129,7 +129,7 @@ class AiStudioTest extends TestCase
         $request = $this->submit($editor, 'spell_check', ['checks' => ['spelling', 'style']]);
 
         $this->assertSame(AiRequestStatus::Completed, $request->status);
-        $this->assertSame(240, $request->totalTokens());
+        $this->assertSame(200, $request->totalTokens()); // bitta bo'lak: 120 + 80
         $this->assertCount(2, $request->result['issues'] ?? []);
 
         Http::assertSent(fn (HttpRequest $http): bool => $http->hasHeader('x-api-key', 'sk-ant-test-key-0000000000000')
