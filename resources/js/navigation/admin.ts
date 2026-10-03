@@ -105,10 +105,10 @@ export function adminNavigation(): NavGroup[] {
                     badge: 'payments',
                 },
                 {
-                    title: 'AI xizmatlari',
+                    title: 'AI Studio',
                     href: aiIndex(),
                     icon: BrainCircuit,
-                    permission: 'ai_settings.manage',
+                    permission: 'ai.use',
                     badge: 'ai',
                 },
                 {

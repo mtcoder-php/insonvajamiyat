@@ -50,6 +50,9 @@ enum PermissionName: string
     case SettingsManage = 'settings.manage';
     case AiSettingsManage = 'ai_settings.manage';
 
+    // AI Studio (Proofreader, Translator, Analytics) — xodimlar va mualliflar
+    case AiUse = 'ai.use';
+
     public function label(): string
     {
         return match ($this) {
@@ -73,6 +76,7 @@ enum PermissionName: string
             self::AuditLogView => __("Audit logni ko'rish"),
             self::SettingsManage => __('Tizim sozlamalari'),
             self::AiSettingsManage => __('AI sozlamalari'),
+            self::AiUse => __("AI Studio'dan foydalanish"),
         };
     }
 
@@ -88,6 +92,7 @@ enum PermissionName: string
             RoleName::SuperAdmin => self::cases(),
             RoleName::ChiefEditor => [
                 self::AdminAccess,
+                self::AiUse,
                 self::ArticlesViewAny,
                 self::ArticlesAssignReviewer,
                 self::ArticlesDecide,
@@ -101,6 +106,7 @@ enum PermissionName: string
             ],
             RoleName::Editor => [
                 self::AdminAccess,
+                self::AiUse,
                 self::ArticlesViewAny,
                 self::ArticlesAssignReviewer,
                 self::ArticlesDecide,
@@ -109,18 +115,21 @@ enum PermissionName: string
             ],
             RoleName::Reviewer => [
                 self::AdminAccess,
+                self::AiUse,
                 self::ReviewsSubmit,
             ],
             RoleName::LayoutEditor => [
                 self::AdminAccess,
+                self::AiUse,
                 self::ProductionManage,
                 self::IssuesManage,
             ],
             RoleName::ContentManager => [
                 self::AdminAccess,
+                self::AiUse,
                 self::ContentManage,
             ],
-            RoleName::Author => [],
+            RoleName::Author => [self::AiUse],
         };
     }
 }

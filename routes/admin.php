@@ -2,6 +2,8 @@
 
 use App\Enums\AdminSection;
 use App\Enums\PermissionName;
+use App\Http\Controllers\Admin\Ai\AiSettingsController;
+use App\Http\Controllers\Admin\Ai\AiStudioController;
 use App\Http\Controllers\Admin\Articles\EditorialController;
 use App\Http\Controllers\Admin\Articles\ReviewerAssignmentController;
 use App\Http\Controllers\Admin\Audit\AuditLogController;
@@ -212,6 +214,33 @@ Route::middleware('permission:'.AdminSection::Audit->permission()->value)
         Route::get('export', [AuditLogController::class, 'export'])
             ->middleware('throttle:10,1')
             ->name('export');
+    });
+
+/*
+| AI Studio (super admin ai page.png): Proofreader, Translator, Analytics, tarix va sozlamalar.
+| So'rovlar navbatda bajariladi (ProcessAiRequest), natija sahifada avtomatik yangilanadi.
+*/
+Route::middleware('permission:'.AdminSection::Ai->permission()->value)
+    ->prefix('ai')
+    ->name('ai.')
+    ->group(function () {
+        Route::get('/', [AiStudioController::class, 'index'])->name('index');
+        Route::post('requests', [AiStudioController::class, 'store'])
+            ->middleware('throttle:10,1')
+            ->name('requests.store');
+        Route::put('requests/{aiRequest:uuid}/proofread', [AiStudioController::class, 'proofread'])->name('requests.proofread');
+        Route::post('translations/{translation:uuid}/versions', [AiStudioController::class, 'storeVersion'])
+            ->middleware('throttle:30,1')
+            ->name('translations.versions');
+        Route::get('translations/{translation:uuid}/download', [AiStudioController::class, 'download'])->name('translations.download');
+
+        Route::middleware('permission:'.PermissionName::AiSettingsManage->value)->group(function () {
+            Route::put('settings', [AiSettingsController::class, 'update'])->name('settings.update');
+            Route::delete('settings/api-key', [AiSettingsController::class, 'destroyKey'])->name('settings.key.destroy');
+            Route::put('prompts/{promptTemplate:key}', [AiSettingsController::class, 'updatePrompt'])->name('prompts.update');
+            Route::post('prompts/{promptTemplate:key}/reset', [AiSettingsController::class, 'resetPrompt'])->name('prompts.reset');
+            Route::put('limits/{user}', [AiSettingsController::class, 'updateLimit'])->name('limits.update');
+        });
     });
 
 // Hali ishlab chiqilmagan bo'limlar — vaqtinchalik sahifa (admin/Section).

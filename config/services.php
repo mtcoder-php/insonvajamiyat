@@ -37,10 +37,6 @@ return [
 
     // To'lov tizimlari (Click, Payme) — config/payments.php
 
-    // AI xizmatlari (Anthropic Claude API)
-    'anthropic' => [
-        'key' => env('ANTHROPIC_API_KEY'),
-        'model' => env('ANTHROPIC_MODEL'),
-    ],
+    // AI xizmatlari (Anthropic Claude API) — config/ai.php
 
 ];
