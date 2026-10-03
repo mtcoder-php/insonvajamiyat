@@ -39,7 +39,7 @@ function save(): void {
 </script>
 
 <template>
-    <tr class="transition-colors hover:bg-brand-50/30">
+    <tr class="text-navy-800 transition-colors hover:bg-brand-50/30">
         <td class="px-4 py-2.5">
             <span class="block font-medium text-navy-900">{{ row.name }}</span>
             <span class="block text-[11px] text-navy-400"
@@ -83,7 +83,7 @@ function save(): void {
                     min="0"
                     step="1000"
                     placeholder="Standart"
-                    class="h-8 w-28 rounded-md border border-line px-2 text-right text-[12px] tabular-nums outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-100"
+                    class="h-8 w-28 rounded-md border border-line bg-white px-2 text-right text-[12px] font-medium text-navy-900 tabular-nums outline-none placeholder:text-navy-400 focus:border-brand-400 focus:ring-2 focus:ring-brand-100"
                     aria-label="Shaxsiy limit"
                 />
                 <button
