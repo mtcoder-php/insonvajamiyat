@@ -6,6 +6,7 @@ use App\Enums\RoleName;
 use App\Models\User;
 use App\Services\Audit\AuditEventSubscriber;
 use App\Services\Notifications\EditorialNotifier;
+use App\Services\Settings\SettingsStore;
 use Carbon\CarbonImmutable;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Support\Facades\Date;
@@ -23,7 +24,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Sozlamalar so'rov davomida bir marta o'qiladi (queue worker'da har job uchun yangilanadi)
+        $this->app->scoped(SettingsStore::class);
     }
 
     /**

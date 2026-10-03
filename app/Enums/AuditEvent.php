@@ -43,6 +43,11 @@ enum AuditEvent: string
     case PaymentWaived = 'payment.waived';
     case PaymentPaidOnline = 'payment.paid_online';
 
+    // AI Studio
+    case AiSettingsUpdated = 'ai.settings';
+    case AiPromptUpdated = 'ai.prompt';
+    case AiLimitUpdated = 'ai.limit';
+
     // Foydalanuvchilar
     case UserCreated = 'user.created';
     case UserUpdated = 'user.updated';
@@ -77,6 +82,9 @@ enum AuditEvent: string
             self::PaymentConfirmed => "To'lov qo'lda tasdiqlandi",
             self::PaymentWaived => "To'lovdan ozod qilindi",
             self::PaymentPaidOnline => "Onlayn to'lov qabul qilindi",
+            self::AiSettingsUpdated => "AI sozlamalari o'zgartirildi",
+            self::AiPromptUpdated => "AI ko'rsatma shabloni o'zgartirildi",
+            self::AiLimitUpdated => "Foydalanuvchi AI limiti o'zgartirildi",
             self::UserCreated => "Foydalanuvchi qo'shildi",
             self::UserUpdated => "Foydalanuvchi ma'lumotlari o'zgardi",
             self::UserBlocked => 'Foydalanuvchi bloklandi',
@@ -88,7 +96,7 @@ enum AuditEvent: string
         };
     }
 
-    /** Kategoriya: auth, article, review, production, issue, payment, user, report */
+    /** Kategoriya: auth, article, review, production, issue, payment, ai, user, report */
     public function category(): string
     {
         return explode('.', $this->value, 2)[0];
@@ -100,7 +108,8 @@ enum AuditEvent: string
         return match ($this) {
             self::LoginFailed, self::Lockout, self::UserDeleted, self::IssueDeleted, self::UserBlocked => 'danger',
             self::PaymentConfirmed, self::PaymentWaived, self::UserPasswordChanged, self::PasswordReset,
-            self::ProductionApprovalRevoked, self::ReportExported, self::UserUpdated, self::ProofApprovalWaived => 'warning',
+            self::ProductionApprovalRevoked, self::ReportExported, self::UserUpdated, self::ProofApprovalWaived,
+            self::AiSettingsUpdated, self::AiPromptUpdated, self::AiLimitUpdated => 'warning',
             default => 'info',
         };
     }
@@ -117,6 +126,7 @@ enum AuditEvent: string
             'production' => 'Nashr jarayoni',
             'issue' => 'Jurnal sonlari',
             'payment' => "To'lovlar",
+            'ai' => 'AI Studio',
             'user' => 'Foydalanuvchilar',
             'report' => 'Hisobotlar',
         ];

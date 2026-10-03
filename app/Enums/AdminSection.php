@@ -49,7 +49,7 @@ enum AdminSection: string
     {
         return match ($this) {
             self::Users, self::Payments, self::Articles, self::Production, self::Issues,
-            self::Reports, self::Audit => true,
+            self::Reports, self::Audit, self::Ai => true,
             default => false,
         };
     }
@@ -63,7 +63,7 @@ enum AdminSection: string
             self::Authors => 'Mualliflar',
             self::Reviewers => 'Taqrizchilar',
             self::Payments => "To'lovlar",
-            self::Ai => 'AI xizmatlari',
+            self::Ai => 'AI Studio',
             self::Messages => 'Xabarlar',
             self::Reports => 'Statistika va hisobotlar',
             self::Settings => 'Sozlamalar',
@@ -130,7 +130,7 @@ enum AdminSection: string
             self::Issues => PermissionName::IssuesManage,
             self::Reviewers => PermissionName::ArticlesAssignReviewer,
             self::Payments => PermissionName::PaymentsView,
-            self::Ai => PermissionName::AiSettingsManage,
+            self::Ai => PermissionName::AiUse,
             self::Messages => PermissionName::ArticlesMessageAuthor,
             self::Reports => PermissionName::ReportsView,
             self::Settings => PermissionName::ContentManage,

@@ -12,6 +12,7 @@ use App\Models\ArticleAuthor;
 use App\Models\ArticleStatusHistory;
 use App\Models\Payment;
 use App\Models\User;
+use App\Services\Ai\AiSettings;
 use App\Services\Notifications\NotificationCenter;
 use App\Services\Payments\OnlinePaymentService;
 use App\Support\MediaUrl;
@@ -307,7 +308,7 @@ class DashboardService
             ['key' => 'web', 'label' => 'Web server', 'state' => 'up'],
             ['key' => 'database', 'label' => 'Database', 'state' => $databaseUp ? 'up' : 'down'],
             ['key' => 'payments', 'label' => "To'lov tizimlari (Click/Payme)", 'state' => $paymentsConfigured ? 'up' : 'not_configured'],
-            ['key' => 'ai', 'label' => 'AI server', 'state' => filled(config('services.anthropic.key')) ? 'up' : 'not_configured'],
+            ['key' => 'ai', 'label' => 'AI server', 'state' => app(AiSettings::class)->ready() ? 'up' : 'not_configured'],
         ];
     }
 
