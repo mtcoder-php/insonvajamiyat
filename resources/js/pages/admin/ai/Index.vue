@@ -148,7 +148,9 @@ function retryCurrent(): void {
 <template>
     <Head title="AI Studio" />
 
-    <div class="flex flex-1 flex-col gap-5 bg-[#f5f7fb] p-4 md:p-6">
+    <div
+        class="flex flex-1 flex-col gap-5 bg-[#f5f7fb] p-4 text-navy-900 md:p-6"
+    >
         <PageHeader
             title="AI Studio"
             description="Ilmiy maqolalar uchun sun'iy intellekt yordamida tahrirlash, tarjima va tahlil qilish."
