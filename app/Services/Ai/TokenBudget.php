@@ -62,7 +62,7 @@ class TokenBudget
     {
         $input = (int) ceil(mb_strlen($text) / 3);
 
-        return $input + (int) ceil($input * (self::OUTPUT_FACTOR[$type->value] ?? 1.0)) + self::PROMPT_OVERHEAD * max(1, $chunks);
+        return $input + (int) ceil($input * self::OUTPUT_FACTOR[$type->value]) + self::PROMPT_OVERHEAD * max(1, $chunks);
     }
 
     /**
