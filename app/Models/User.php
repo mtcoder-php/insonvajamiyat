@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -34,6 +35,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property Carbon|null $blocked_at
  * @property string|null $blocked_reason
  * @property int|null $ai_monthly_token_limit
+ * @property Carbon|null $reviews_paused_at
  * @property string|null $two_factor_secret
  * @property string|null $two_factor_recovery_codes
  * @property Carbon|null $two_factor_confirmed_at
@@ -46,6 +48,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read AuthorProfile|null $authorProfile
  * @property-read Collection<int, Article> $submittedArticles
  * @property-read Collection<int, Payment> $payments
+ * @property-read Collection<int, Subject> $subjects
  */
 #[Fillable(['name', 'email', 'password', 'phone', 'locale'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
@@ -69,6 +72,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'blocked_at' => 'datetime',
             'ai_monthly_token_limit' => 'integer',
             'last_login_at' => 'datetime',
+            'reviews_paused_at' => 'datetime',
         ];
     }
 
@@ -130,6 +134,16 @@ class User extends Authenticatable implements MustVerifyEmail
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class, 'reviewer_id');
+    }
+
+    /**
+     * Ilmiy yo'nalishlari (author_subjects): muallif qiziqishlari va taqrizchi mutaxassisligi.
+     *
+     * @return BelongsToMany<Subject, $this>
+     */
+    public function subjects(): BelongsToMany
+    {
+        return $this->belongsToMany(Subject::class, 'author_subjects');
     }
 
     public function isStaff(): bool

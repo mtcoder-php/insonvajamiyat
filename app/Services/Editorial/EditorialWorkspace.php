@@ -17,6 +17,7 @@ use App\Models\ArticleStatusHistory;
 use App\Models\ArticleVersion;
 use App\Models\EditorialDecision;
 use App\Models\Review;
+use App\Models\Subject;
 use App\Models\User;
 use App\Services\Articles\ArticleTimeline;
 use App\Services\Messages\ArticleMessageService;
@@ -322,15 +323,20 @@ class EditorialWorkspace
 
     /**
      * Taklif qilish mumkin bo'lgan taqrizchilar va ularning joriy yuklamasi.
+     * Vaqtincha to'xtatilganlar chiqmaydi. Maqola yo'nalishi taqrizchi yo'nalishlariga
+     * mos kelsa — `matches` (ro'yxat boshida, keyin eng kam band bo'lganlar).
      *
-     * @return array<int, array{id: int, name: string, organization: string|null, active: int, completed: int}>
+     * @return array<int, array{id: int, name: string, organization: string|null, active: int, completed: int, subjects: array<int, string>, matches: bool}>
      */
-    public function reviewers(): array
+    public function reviewers(?Article $article = null): array
     {
+        $subjectId = $article?->subject_id;
+
         return User::query()
             ->active()
+            ->whereNull('reviews_paused_at')
             ->role(RoleName::Reviewer->value)
-            ->with('authorProfile')
+            ->with(['authorProfile', 'subjects'])
             ->withCount([
                 'reviews as active_reviews_count' => fn (Builder $q) => $q->whereIn('status', [ReviewStatus::Invited->value, ReviewStatus::Accepted->value]),
                 'reviews as completed_reviews_count' => fn (Builder $q) => $q->where('status', ReviewStatus::Completed->value),
@@ -343,7 +349,11 @@ class EditorialWorkspace
                 'organization' => $user->authorProfile?->organization,
                 'active' => (int) $user->getAttribute('active_reviews_count'),
                 'completed' => (int) $user->getAttribute('completed_reviews_count'),
+                'subjects' => $user->subjects->map(fn (Subject $s): string => $s->name)->values()->all(),
+                'matches' => $subjectId !== null && $user->subjects->contains('id', $subjectId),
             ])
+            ->sortBy(fn (array $r): string => ($r['matches'] ? '0' : '1').sprintf('%04d', $r['active']).mb_strtolower($r['name']))
+            ->values()
             ->all();
     }
 

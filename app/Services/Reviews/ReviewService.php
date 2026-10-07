@@ -250,7 +250,7 @@ class ReviewService
     /** Taqrizchi bo'la oladigan foydalanuvchi: "Taqrizchi" roli, bloklanmagan */
     public static function canReview(User $user): bool
     {
-        return ! $user->is_blocked && $user->hasRole(RoleName::Reviewer);
+        return ! $user->is_blocked && $user->reviews_paused_at === null && $user->hasRole(RoleName::Reviewer);
     }
 
     private function isAuthor(Article $article, User $user): bool

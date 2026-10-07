@@ -49,7 +49,7 @@ enum AdminSection: string
     {
         return match ($this) {
             self::Users, self::Payments, self::Articles, self::Production, self::Issues,
-            self::Reports, self::Audit, self::Ai, self::Settings => true,
+            self::Reports, self::Audit, self::Ai, self::Settings, self::Authors, self::Reviewers => true,
             default => false,
         };
     }

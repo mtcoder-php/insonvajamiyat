@@ -62,7 +62,7 @@ class EditorialController extends Controller
             ],
             'selected' => fn () => $selected instanceof Article ? $this->workspace->detail($selected, $user) : null,
             'editors' => fn () => $this->workspace->editors(),
-            'reviewers' => fn () => $this->workspace->reviewers(),
+            'reviewers' => fn () => $this->workspace->reviewers($selected instanceof Article ? $selected : null),
         ]);
     }
 
