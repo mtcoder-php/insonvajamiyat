@@ -55,8 +55,8 @@ class SeoAndSecurityTest extends TestCase
         $response = $this->get(route('articles.show', $article))->assertOk();
         $html = (string) $response->getContent();
 
-        $this->assertStringContainsString('>Raqamli jamiyatda &lt;ijtimoiy&gt; kapital — Inson va Jamiyat</title>', $html);
-        $this->assertStringContainsString('<meta name="description" content="Maqolada raqamli jamiyat tahlil qilinadi.">', $html);
+        $this->assertStringContainsString('<title>Raqamli jamiyatda &lt;ijtimoiy&gt; kapital — Inson va Jamiyat</title>', $html);
+        $this->assertStringContainsString('<meta name="description" content="Maqolada raqamli jamiyat tahlil qilinadi." data-inertia="description">', $html);
         $this->assertStringContainsString('<meta property="og:type" content="article">', $html);
         $this->assertStringContainsString('<link rel="canonical" href="'.route('articles.show', $article).'">', $html);
         $this->assertStringNotContainsString('name="robots"', $html);
@@ -84,7 +84,7 @@ class SeoAndSecurityTest extends TestCase
 
         $this->get(route('about'))
             ->assertOk()
-            ->assertSee('>Jurnal haqida — ', false)
+            ->assertSee('<title>Jurnal haqida — ', false)
             ->assertDontSee('name="robots"', false);
 
         $this->get(route('login'))
