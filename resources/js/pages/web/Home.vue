@@ -11,6 +11,7 @@ import LatestArticles from '@/components/web/home/LatestArticles.vue';
 import LatestIssueCard from '@/components/web/home/LatestIssueCard.vue';
 import NewsCard from '@/components/web/home/NewsCard.vue';
 import NewsletterCard from '@/components/web/home/NewsletterCard.vue';
+import PartnersStrip from '@/components/web/home/PartnersStrip.vue';
 import QuickLinksCard from '@/components/web/home/QuickLinksCard.vue';
 import SubjectsStrip from '@/components/web/home/SubjectsStrip.vue';
 import type { HomePageProps } from '@/types';
@@ -21,6 +22,7 @@ import type { HomePageProps } from '@/types';
  *   Slayder → yo'nalishlar qatori →
  *   asosiy qism (so'nggi son, maqolalar, imkoniyatlar, yangiliklar, tadbirlar)
  *   + o'ng ustun (jurnal haqida, ma'lumotlar, obuna, havolalar, aloqa, kitoblar)
+ *   → hamkorlar va indekslash bazalari
  */
 defineOptions({
     layout: { header: 'light' },
@@ -63,4 +65,6 @@ defineProps<HomePageProps>();
             </aside>
         </div>
     </div>
+
+    <PartnersStrip :partners="partners" />
 </template>

@@ -14,6 +14,7 @@ use App\Models\Article;
 use App\Models\Banner;
 use App\Models\Event;
 use App\Models\JournalIssue;
+use App\Models\Partner;
 use App\Models\Post;
 use App\Models\RecommendedBook;
 use App\Models\Subject;
@@ -121,6 +122,28 @@ class HomePageService
         $books = RecommendedBook::query()->active()->limit($limit)->get();
 
         return RecommendedBookResource::collection($books)->resolve();
+    }
+
+    /**
+     * Hamkorlar va indekslash bazalari (bosh sahifa pastidagi logolar qatori).
+     *
+     * @return array<int, array{id: int, type: string, name: string, subtitle: string|null, url: string|null, logoUrl: string|null}>
+     */
+    public function partners(int $limit = 24): array
+    {
+        return Partner::query()
+            ->active()
+            ->limit($limit)
+            ->get()
+            ->map(fn (Partner $p): array => [
+                'id' => $p->id,
+                'type' => $p->type->value,
+                'name' => $p->name,
+                'subtitle' => $p->subtitle ?: null,
+                'url' => $p->url,
+                'logoUrl' => MediaUrl::from($p->logo_path),
+            ])
+            ->all();
     }
 
     /**

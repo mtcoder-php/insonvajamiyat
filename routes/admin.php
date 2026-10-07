@@ -17,6 +17,10 @@ use App\Http\Controllers\Admin\Reviews\ReviewController;
 use App\Http\Controllers\Admin\SectionController;
 use App\Http\Controllers\Admin\Settings\ArticleTypeController;
 use App\Http\Controllers\Admin\Settings\BannerController;
+use App\Http\Controllers\Admin\Settings\EventController;
+use App\Http\Controllers\Admin\Settings\PartnerController;
+use App\Http\Controllers\Admin\Settings\PostController;
+use App\Http\Controllers\Admin\Settings\RecommendedBookController;
 use App\Http\Controllers\Admin\Settings\SettingsController;
 use App\Http\Controllers\Admin\Settings\SubjectController;
 use App\Http\Controllers\Admin\Users\UserAvatarController;
@@ -273,6 +277,22 @@ Route::middleware('permission:'.AdminSection::Settings->permission()->value)
         Route::post('banners', [BannerController::class, 'store'])->name('banners.store');
         Route::put('banners/{banner}', [BannerController::class, 'update'])->name('banners.update');
         Route::delete('banners/{banner}', [BannerController::class, 'destroy'])->name('banners.destroy');
+
+        Route::post('posts', [PostController::class, 'store'])->name('posts.store');
+        Route::put('posts/{post}', [PostController::class, 'update'])->name('posts.update');
+        Route::delete('posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
+
+        Route::post('events', [EventController::class, 'store'])->name('events.store');
+        Route::put('events/{event}', [EventController::class, 'update'])->name('events.update');
+        Route::delete('events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
+
+        Route::post('books', [RecommendedBookController::class, 'store'])->name('books.store');
+        Route::put('books/{book}', [RecommendedBookController::class, 'update'])->name('books.update');
+        Route::delete('books/{book}', [RecommendedBookController::class, 'destroy'])->name('books.destroy');
+
+        Route::post('partners', [PartnerController::class, 'store'])->name('partners.store');
+        Route::put('partners/{partner}', [PartnerController::class, 'update'])->name('partners.update');
+        Route::delete('partners/{partner}', [PartnerController::class, 'destroy'])->name('partners.destroy');
     });
 
 // Hali ishlab chiqilmagan bo'limlar — vaqtinchalik sahifa (admin/Section).

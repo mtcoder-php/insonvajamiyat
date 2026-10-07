@@ -18,6 +18,8 @@ const props = withDefaults(
         multiline?: boolean;
         maxlength?: number;
         placeholder?: string;
+        /** Ko'p qatorli maydon balandligi (qatorlar) */
+        rows?: number;
     }>(),
     {
         errors: () => ({}),
@@ -25,6 +27,7 @@ const props = withDefaults(
         multiline: false,
         maxlength: 255,
         placeholder: '',
+        rows: 3,
     },
 );
 
@@ -94,7 +97,7 @@ function hasError(lang: string): boolean {
                 v-if="multiline"
                 v-show="active === lang.key"
                 v-model="model[lang.key]"
-                rows="3"
+                :rows="rows"
                 :maxlength="maxlength"
                 :placeholder="
                     lang.key === 'uz'
