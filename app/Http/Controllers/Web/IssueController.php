@@ -8,6 +8,7 @@ use App\Models\JournalIssue;
 use App\Services\Web\CatalogService;
 use App\Services\Web\IssueArchiveService;
 use App\Support\MediaUrl;
+use App\Support\Seo\SeoMeta;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -40,6 +41,7 @@ class IssueController extends Controller
     public function show(JournalIssue $issue, IssueArchiveService $archive): Response
     {
         abort_unless($issue->status === IssueStatus::Published, 404);
+        app(SeoMeta::class)->forIssue($issue);
 
         return Inertia::render('web/issues/Show', $archive->show($issue));
     }

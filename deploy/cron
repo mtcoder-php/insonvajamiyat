@@ -1,0 +1,7 @@
+# Laravel rejalashtiruvchisi: zaxira (har 10 daqiqada tekshiradi), korrektura eslatmalari, audit log tozalash.
+# O'rnatish (www-data foydalanuvchisi nomidan):
+#   sudo crontab -u www-data /var/www/insonvajamiyat/deploy/cron
+# Tekshirish:
+#   sudo crontab -u www-data -l
+#   php artisan schedule:list
+* * * * * cd /var/www/insonvajamiyat && /usr/bin/php artisan schedule:run >> /dev/null 2>&1

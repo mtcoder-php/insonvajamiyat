@@ -8,6 +8,7 @@ use App\Services\Audit\AuditEventSubscriber;
 use App\Services\Notifications\EditorialNotifier;
 use App\Services\Settings\SettingsStore;
 use App\Services\Settings\SystemSettings;
+use App\Support\Seo\SeoMeta;
 use Carbon\CarbonImmutable;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Support\Facades\Date;
@@ -27,6 +28,8 @@ class AppServiceProvider extends ServiceProvider
     {
         // Sozlamalar so'rov davomida bir marta o'qiladi (queue worker'da har job uchun yangilanadi)
         $this->app->scoped(SettingsStore::class);
+        // Server tomonidagi SEO teglari (app.blade.php) — har so'rov uchun alohida
+        $this->app->scoped(SeoMeta::class);
     }
 
     /**

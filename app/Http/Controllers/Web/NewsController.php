@@ -6,6 +6,7 @@ use App\Enums\PostType;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Web\PostResource;
 use App\Models\Post;
+use App\Support\Seo\SeoMeta;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -41,6 +42,8 @@ class NewsController extends Controller
             $post->is_published && $post->published_at !== null && $post->published_at->isPast(),
             404,
         );
+
+        app(SeoMeta::class)->forPost($post);
 
         $others = Post::query()
             ->published()

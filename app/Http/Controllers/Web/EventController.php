@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Web\EventResource;
 use App\Models\Event;
+use App\Support\Seo\SeoMeta;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -33,6 +34,7 @@ class EventController extends Controller
     public function show(Event $event): Response
     {
         abort_unless($event->is_published, 404);
+        app(SeoMeta::class)->forEvent($event);
 
         $others = Event::query()
             ->published()

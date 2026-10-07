@@ -8,6 +8,9 @@
         || str_starts_with($component, 'auth/')
         || str_starts_with($component, 'cabinet/')
         || (! $isStaff && str_starts_with($component, 'settings/'));
+
+    // SEO: title, description, Open Graph, canonical, Google Scholar (citation_*), JSON-LD
+    $seo = app(\App\Support\Seo\SeoMeta::class)->resolve($component);
 @endphp
 <!DOCTYPE html>
 <html
@@ -51,13 +54,35 @@
 
         <meta name="theme-color" content="#001e3c">
 
+        <meta name="description" content="{{ $seo['description'] }}">
+        @if ($seo['robots'])
+            <meta name="robots" content="{{ $seo['robots'] }}">
+        @else
+            <link rel="canonical" href="{{ $seo['canonical'] }}">
+        @endif
+        <meta property="og:site_name" content="{{ $seo['siteName'] }}">
+        <meta property="og:type" content="{{ $seo['type'] }}">
+        <meta property="og:title" content="{{ $seo['title'] }}">
+        <meta property="og:description" content="{{ $seo['description'] }}">
+        <meta property="og:url" content="{{ $seo['url'] }}">
+        @if ($seo['image'])
+            <meta property="og:image" content="{{ $seo['image'] }}">
+            <meta name="twitter:card" content="summary_large_image">
+        @endif
+        @foreach ($seo['meta'] as [$name, $content])
+            <meta name="{{ $name }}" content="{{ $content }}">
+        @endforeach
+        @if ($seo['jsonLd'])
+            <script type="application/ld+json">{!! $seo['jsonLd'] !!}</script>
+        @endif
+
         <link rel="icon" href="/favicon.ico" sizes="any">
         <link rel="icon" href="/favicon-96x96.png" type="image/png" sizes="96x96">
         <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
         @vite(['resources/css/app.css', 'resources/js/app.ts', "resources/js/pages/{$page['component']}.vue"])
         <x-inertia::head>
-            <title>{{ config('app.name', 'Laravel') }}</title>
+            <title>{{ $seo['title'] }}</title>
         </x-inertia::head>
     </head>
     <body class="font-sans antialiased">
