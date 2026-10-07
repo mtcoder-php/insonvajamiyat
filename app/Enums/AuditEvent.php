@@ -44,6 +44,11 @@ enum AuditEvent: string
     case PaymentWaived = 'payment.waived';
     case PaymentPaidOnline = 'payment.paid_online';
 
+    // Sayt kontenti va sozlamalar
+    case ContentSaved = 'content.saved';
+    case ContentDeleted = 'content.deleted';
+    case PriceChanged = 'content.price';
+
     // AI Studio
     case AiSettingsUpdated = 'ai.settings';
     case AiPromptUpdated = 'ai.prompt';
@@ -84,6 +89,9 @@ enum AuditEvent: string
             self::PaymentConfirmed => "To'lov qo'lda tasdiqlandi",
             self::PaymentWaived => "To'lovdan ozod qilindi",
             self::PaymentPaidOnline => "Onlayn to'lov qabul qilindi",
+            self::ContentSaved => 'Kontent saqlandi',
+            self::ContentDeleted => "Kontent o'chirildi",
+            self::PriceChanged => "Maqola turi narxi o'zgartirildi",
             self::AiSettingsUpdated => "AI sozlamalari o'zgartirildi",
             self::AiPromptUpdated => "AI ko'rsatma shabloni o'zgartirildi",
             self::AiLimitUpdated => "Foydalanuvchi AI limiti o'zgartirildi",
@@ -98,7 +106,7 @@ enum AuditEvent: string
         };
     }
 
-    /** Kategoriya: auth, article, review, production, issue, payment, ai, user, report */
+    /** Kategoriya: auth, article, review, production, issue, payment, content, ai, user, report */
     public function category(): string
     {
         return explode('.', $this->value, 2)[0];
@@ -111,7 +119,8 @@ enum AuditEvent: string
             self::LoginFailed, self::Lockout, self::UserDeleted, self::IssueDeleted, self::UserBlocked => 'danger',
             self::PaymentConfirmed, self::PaymentWaived, self::UserPasswordChanged, self::PasswordReset,
             self::ProductionApprovalRevoked, self::ReportExported, self::UserUpdated, self::ProofApprovalWaived,
-            self::AiSettingsUpdated, self::AiPromptUpdated, self::AiLimitUpdated => 'warning',
+            self::AiSettingsUpdated, self::AiPromptUpdated, self::AiLimitUpdated,
+            self::PriceChanged, self::ContentDeleted => 'warning',
             default => 'info',
         };
     }
@@ -129,6 +138,7 @@ enum AuditEvent: string
             'issue' => 'Jurnal sonlari',
             'payment' => "To'lovlar",
             'ai' => 'AI Studio',
+            'content' => 'Kontent',
             'user' => 'Foydalanuvchilar',
             'report' => 'Hisobotlar',
         ];

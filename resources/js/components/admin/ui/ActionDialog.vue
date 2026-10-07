@@ -26,8 +26,10 @@ const props = withDefaults(
         tone?: 'primary' | 'danger';
         confirmText: string;
         processing?: boolean;
+        /** lg — keng forma (masalan, tarjimali maydonlar) */
+        size?: 'md' | 'lg';
     }>(),
-    { description: undefined, tone: 'primary', processing: false },
+    { description: undefined, tone: 'primary', processing: false, size: 'md' },
 );
 
 const open = defineModel<boolean>('open', { default: false });
@@ -38,7 +40,14 @@ const emit = defineEmits<{ confirm: [] }>();
 <template>
     <Dialog v-model:open="open">
         <DialogContent
-            class="gap-0 overflow-hidden border-line bg-white p-0 text-navy-900 sm:max-w-md"
+            :class="
+                cn(
+                    'gap-0 overflow-hidden border-line bg-white p-0 text-navy-900',
+                    props.size === 'lg'
+                        ? 'max-h-[92vh] overflow-y-auto sm:max-w-2xl'
+                        : 'sm:max-w-md',
+                )
+            "
         >
             <form @submit.prevent="emit('confirm')">
                 <div class="flex gap-4 p-6">
@@ -72,7 +81,7 @@ const emit = defineEmits<{ confirm: [] }>();
                     </div>
                 </div>
                 <div
-                    class="flex justify-end gap-2 border-t border-line bg-[#f8fafc] px-6 py-3"
+                    class="sticky bottom-0 z-10 flex justify-end gap-2 border-t border-line bg-[#f8fafc] px-6 py-3"
                 >
                     <button
                         type="button"

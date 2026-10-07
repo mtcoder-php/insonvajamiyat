@@ -16,3 +16,4 @@ export * from './article-page';
 export * from './catalog';
 export * from './reports';
 export * from './ai';
+export * from './settings';
