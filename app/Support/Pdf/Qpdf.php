@@ -96,14 +96,15 @@ final class Qpdf
      */
     public static function update(string $input, array $objects, string $output): void
     {
-        $json = tempnam(sys_get_temp_dir(), 'qpdfjson');
-
-        if ($json === false) {
-            throw new RuntimeException('Temporary file could not be created.');
-        }
+        // JSON fayl natija bilan bir papkada yoziladi: snap/AppArmor bilan cheklangan qpdf
+        // tizimning /tmp papkasini o'qiy olmasligi mumkin
+        $json = dirname($output).'/qpdf-update-'.bin2hex(random_bytes(6)).'.json';
 
         try {
-            file_put_contents($json, (string) json_encode(['qpdf' => [['jsonversion' => 2], $objects]], JSON_UNESCAPED_UNICODE));
+            if (file_put_contents($json, (string) json_encode(['qpdf' => [['jsonversion' => 2], $objects]], JSON_UNESCAPED_UNICODE)) === false) {
+                throw new RuntimeException('qpdf JSON file could not be written.');
+            }
+
             self::run([self::binary(), $input, '--update-from-json='.$json, $output]);
         } finally {
             @unlink($json);
