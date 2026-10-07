@@ -15,6 +15,7 @@ use App\Support\MediaUrl;
 use App\Support\Translations;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Expression;
 
 /**
  * Admin → Sozlamalar sahifasi ma'lumotlari: yo'nalishlar, maqola turlari va narxlar, bannerlar,
@@ -343,7 +344,7 @@ class SettingsWorkspace
         $query->where(function ($q) use ($fields, $like, $grammar) {
             foreach ($fields as $field) {
                 foreach (['uz', 'ru', 'en'] as $locale) {
-                    $q->orWhereRaw('lower('.$grammar->wrap($field.'->'.$locale).') like ?', [$like]);
+                    $q->orWhere(new Expression('lower('.$grammar->wrap($field.'->'.$locale).')'), 'like', $like);
                 }
             }
         });
