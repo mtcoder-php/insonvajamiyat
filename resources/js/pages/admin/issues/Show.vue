@@ -25,6 +25,7 @@ import { computed, ref } from 'vue';
 import AddArticlesDialog from '@/components/admin/issues/AddArticlesDialog.vue';
 import IssueArticlesTable from '@/components/admin/issues/IssueArticlesTable.vue';
 import IssueFormDialog from '@/components/admin/issues/IssueFormDialog.vue';
+import IssuePdfBuildCard from '@/components/admin/issues/IssuePdfBuildCard.vue';
 import ActionDialog from '@/components/admin/ui/ActionDialog.vue';
 import { inputClass, secondaryButtonClass } from '@/lib/formStyles';
 import { formatDate, formatFileSize } from '@/lib/format';
@@ -479,6 +480,12 @@ const checks = computed(() => [
                 </section>
 
                 <!-- Fayllar -->
+                <IssuePdfBuildCard
+                    :build="issue.pdfBuild"
+                    :file="issue.files.pdf"
+                    :can-manage="issue.can.manage"
+                />
+
                 <section
                     class="rounded-xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(0,30,60,0.05)]"
                 >

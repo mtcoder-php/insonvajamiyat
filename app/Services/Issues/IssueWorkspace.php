@@ -23,7 +23,10 @@ use Illuminate\Support\Facades\Storage;
  */
 class IssueWorkspace
 {
-    public function __construct(private readonly PublishService $publisher) {}
+    public function __construct(
+        private readonly PublishService $publisher,
+        private readonly IssuePdfBuilder $pdfBuilder,
+    ) {}
 
     /**
      * @return array<int, array<string, mixed>>
@@ -154,6 +157,7 @@ class IssueWorkspace
                 'pdf' => $this->file($issue->full_pdf_path),
                 'toc' => $this->file($issue->toc_file_path),
             ],
+            'pdfBuild' => $this->pdfBuild($issue, $canManage),
             'articles' => $articles,
             'problems' => $problems,
             'publicUrl' => $isDraft ? null : route('issues.show', $issue->slug),
@@ -255,6 +259,46 @@ class IssueWorkspace
         $value = $sections[app()->getLocale()] ?? reset($sections);
 
         return is_string($value) && $value !== '' ? $value : null;
+    }
+
+    /**
+     * Butun son PDF ni avtomatik yig'ish holati va tekshiruv bandlari.
+     *
+     * @return array<string, mixed>
+     */
+    private function pdfBuild(JournalIssue $issue, bool $canManage): array
+    {
+        $checks = $this->pdfBuilder->checks($issue);
+        $busy = $this->pdfBuilder->isBusy($issue);
+
+        // Yig'ilgandan keyin maqola PDF i yoki joylashuvi o'zgargan bo'lsa — eskirgan
+        $stale = false;
+
+        if ($issue->pdf_auto && $issue->pdf_built_at !== null) {
+            $articleIds = IssueArticle::query()->where('journal_issue_id', $issue->id)->pluck('article_id');
+            $stale = ArticleFile::query()
+                ->whereIn('article_id', $articleIds)
+                ->where('type', ArticleFileType::FinalPdf->value)
+                ->where('created_at', '>', $issue->pdf_built_at)
+                ->exists()
+                || IssueArticle::query()
+                    ->where('journal_issue_id', $issue->id)
+                    ->where('updated_at', '>', $issue->pdf_built_at)
+                    ->exists();
+        }
+
+        return [
+            'status' => $issue->pdf_status,
+            'error' => $issue->pdf_error,
+            'pages' => $issue->pdf_pages,
+            'auto' => $issue->pdf_auto,
+            'builtAt' => $issue->pdf_built_at?->toIso8601String(),
+            'busy' => $busy,
+            'stale' => $stale,
+            'checks' => $checks,
+            'canBuild' => $canManage && ! $busy && collect($checks)->every(fn (array $c): bool => $c['ok'] || ! $c['required']),
+            'buildUrl' => route('admin.issues.pdf.build', $issue->slug),
+        ];
     }
 
     public function coverUrl(JournalIssue $issue): ?string

@@ -27,6 +27,13 @@ return [
     'doi_prefix' => env('JOURNAL_DOI_PREFIX'),  // masalan 10.5281/zenodo
 
     // Nashr oldidan tekshiruv: plagiat (o'xshashlik) foizining ruxsat etilgan chegarasi
+    // To'liq son PDF ni avtomatik yig'ish (muqova + mundarija + maqolalar): qpdf 11+ kerak
+    // (`sudo apt install qpdf`). Yo'l — qpdf buyrug'i (PATH da bo'lsa shunchaki "qpdf").
+    'pdf' => [
+        'qpdf' => env('QPDF_BINARY', 'qpdf'),
+        'timeout' => (int) env('ISSUE_PDF_TIMEOUT', 300),
+    ],
+
     'plagiarism_max' => (float) env('JOURNAL_PLAGIARISM_MAX', 20),
 
     'frequency' => env('JOURNAL_FREQUENCY', 'Yiliga 4 marta (kvartal)'),

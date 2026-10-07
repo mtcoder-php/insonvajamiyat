@@ -29,6 +29,11 @@ use Spatie\Translatable\HasTranslations;
  * @property string|null $cover_image_path
  * @property string|null $toc_file_path
  * @property string|null $full_pdf_path
+ * @property string|null $pdf_status
+ * @property string|null $pdf_error
+ * @property int|null $pdf_pages
+ * @property bool $pdf_auto
+ * @property Carbon|null $pdf_built_at
  * @property IssueStatus $status
  * @property Carbon|null $published_at
  * @property int|null $published_by
@@ -63,6 +68,9 @@ class JournalIssue extends Model
             'number' => 'integer',
             'status' => IssueStatus::class,
             'published_at' => 'datetime',
+            'pdf_pages' => 'integer',
+            'pdf_auto' => 'boolean',
+            'pdf_built_at' => 'datetime',
         ];
     }
 
