@@ -73,6 +73,9 @@ enum AuditEvent: string
     // Tizim sozlamalari
     case SettingsUpdated = 'settings.updated';
     case MailTestSent = 'settings.mail_test';
+    case BackupCreated = 'settings.backup_created';
+    case BackupDownloaded = 'settings.backup_downloaded';
+    case BackupDeleted = 'settings.backup_deleted';
 
     // Hisobotlar
     case ReportExported = 'report.exported';
@@ -122,6 +125,9 @@ enum AuditEvent: string
             self::BroadcastSent => 'Ommaviy xabar yuborildi',
             self::SettingsUpdated => "Tizim sozlamalari o'zgartirildi",
             self::MailTestSent => 'Test xat yuborildi',
+            self::BackupCreated => 'Zaxira nusxa yaratildi',
+            self::BackupDownloaded => 'Zaxira nusxa yuklab olindi',
+            self::BackupDeleted => "Zaxira nusxa o'chirildi",
             self::ReportExported => 'Hisobot yuklab olindi',
         };
     }
@@ -141,7 +147,8 @@ enum AuditEvent: string
             self::ProductionApprovalRevoked, self::ReportExported, self::UserUpdated, self::ProofApprovalWaived,
             self::AiSettingsUpdated, self::AiPromptUpdated, self::AiLimitUpdated,
             self::PriceChanged, self::ContentDeleted, self::ReviewerRemoved,
-            self::RolePermissionsUpdated, self::SettingsUpdated, self::BroadcastSent => 'warning',
+            self::RolePermissionsUpdated, self::SettingsUpdated, self::BroadcastSent,
+            self::BackupDownloaded, self::BackupDeleted => 'warning',
             default => 'info',
         };
     }
