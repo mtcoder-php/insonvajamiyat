@@ -15,7 +15,6 @@ use App\Support\MediaUrl;
 use App\Support\Translations;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Query\Expression;
 
 /**
  * Admin → Sozlamalar sahifasi ma'lumotlari: yo'nalishlar, maqola turlari va narxlar, bannerlar,
@@ -324,12 +323,14 @@ class SettingsWorkspace
     }
 
     /**
-     * Tarjima qilinadigan maydonlar bo'yicha qidiruv (uz / ru / en).
+     * Tarjima qilinadigan maydonlar bo'yicha qidiruv (uz / ru / en), registrdan qat'i nazar
+     * (MySQL'da JSON qiymati utf8mb4_bin — shuning uchun lower()).
+     * SQL faqat kod ichidagi literal maydon/til nomlaridan yig'iladi; qidiruv so'zi — parametr.
      *
      * @template TModel of \Illuminate\Database\Eloquent\Model
      *
      * @param  Builder<TModel>  $query
-     * @param  array<int, string>  $fields
+     * @param  list<'title'|'excerpt'|'location'>  $fields
      */
     private function search(Builder $query, array $fields, string $term): void
     {
@@ -337,14 +338,20 @@ class SettingsWorkspace
             return;
         }
 
-        // Registrdan qat'i nazar (MySQL'da JSON qiymati utf8mb4_bin bo'ladi)
         $like = '%'.mb_strtolower($term).'%';
-        $grammar = $query->getQuery()->getGrammar();
+        $driver = $query->getConnection()->getDriverName();
 
-        $query->where(function ($q) use ($fields, $like, $grammar) {
+        $query->where(function ($q) use ($fields, $like, $driver) {
             foreach ($fields as $field) {
                 foreach (['uz', 'ru', 'en'] as $locale) {
-                    $q->orWhere(new Expression('lower('.$grammar->wrap($field.'->'.$locale).')'), 'like', $like);
+                    $path = '\'$."'.$locale.'"\'';
+                    $sql = match ($driver) {
+                        'mysql', 'mariadb' => 'lower(json_unquote(json_extract(`'.$field.'`, '.$path.'))) like ?',
+                        'pgsql' => 'lower("'.$field.'"->>\''.$locale.'\') like ?',
+                        default => 'lower(json_extract("'.$field.'", '.$path.')) like ?',
+                    };
+
+                    $q->orWhereRaw($sql, [$like]);
                 }
             }
         });
