@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Support\Pdf\Qpdf;
 use App\Support\PdfPageCounter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Storage;
@@ -65,6 +66,10 @@ class IssuePdfBuildTest extends TestCase
 
         [$a, $b] = [$this->article(3), $this->article(2)];
         $issue = $this->issue();
+
+        // Testda public/ dagi umumiy muqovaga tayanmaymiz — sonning o'z muqovasi
+        $cover = UploadedFile::fake()->image('cover.jpg', 600, 850)->store('issues/2026-7', 'public');
+        $issue->forceFill(['cover_image_path' => $cover])->save();
 
         $this->actingAs($this->layout)
             ->post(route('admin.issues.articles.store', $issue->slug), ['article_ids' => [$a->id, $b->id]])
