@@ -7,6 +7,7 @@ use App\Models\Article;
 use App\Services\Web\ArticleDailyStats;
 use App\Services\Web\ArticlePageService;
 use App\Support\MediaUrl;
+use App\Support\Seo\SeoMeta;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -24,6 +25,7 @@ class ArticleController extends Controller
         abort_unless($article->isPublished(), 404);
 
         $this->countView($request, $article, $stats);
+        app(SeoMeta::class)->forArticle($article);
 
         return Inertia::render('web/articles/Show', [
             'article' => $page->show($article),

@@ -40,7 +40,8 @@ return [
             'connection' => env('DB_QUEUE_CONNECTION'),
             'table' => env('DB_QUEUE_TABLE', 'jobs'),
             'queue' => env('DB_QUEUE', 'default'),
-            'retry_after' => (int) env('DB_QUEUE_RETRY_AFTER', 90),
+            // Eng uzun job (RunBackup) timeout'i 3600 s — undan katta bo'lmasa job qayta ishga tushib ketadi
+            'retry_after' => (int) env('DB_QUEUE_RETRY_AFTER', 3700),
             'after_commit' => false,
         ],
 

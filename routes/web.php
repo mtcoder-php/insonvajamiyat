@@ -11,6 +11,8 @@ use App\Http\Controllers\Web\IssueController;
 use App\Http\Controllers\Web\LocaleController;
 use App\Http\Controllers\Web\NewsController;
 use App\Http\Controllers\Web\NewsletterSubscriptionController;
+use App\Http\Controllers\Web\RobotsController;
+use App\Http\Controllers\Web\SitemapController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,6 +25,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', HomeController::class)->name('home');
+Route::get('sitemap.xml', SitemapController::class)->name('sitemap');
+Route::get('robots.txt', RobotsController::class)->name('robots');
 Route::inertia('about', 'web/About')->name('about');
 Route::get('articles', ArticleCatalogController::class)->name('articles.index');
 Route::get('articles/{article}', [ArticleController::class, 'show'])->name('articles.show');
