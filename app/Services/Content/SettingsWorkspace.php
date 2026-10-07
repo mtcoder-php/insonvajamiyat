@@ -339,7 +339,7 @@ class SettingsWorkspace
         }
 
         $like = '%'.mb_strtolower($term).'%';
-        $driver = $query->getConnection()->getDriverName();
+        $driver = $query->getModel()->getConnection()->getDriverName();
 
         $query->where(function ($q) use ($fields, $like, $driver) {
             foreach ($fields as $field) {
