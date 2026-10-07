@@ -25,6 +25,8 @@ use App\Http\Controllers\Admin\Settings\PostController;
 use App\Http\Controllers\Admin\Settings\RecommendedBookController;
 use App\Http\Controllers\Admin\Settings\SettingsController;
 use App\Http\Controllers\Admin\Settings\SubjectController;
+use App\Http\Controllers\Admin\System\RoleController;
+use App\Http\Controllers\Admin\System\SystemSettingsController;
 use App\Http\Controllers\Admin\Users\UserAvatarController;
 use App\Http\Controllers\Admin\Users\UserController;
 use App\Http\Controllers\Admin\Users\UserPasswordController;
@@ -319,6 +321,28 @@ Route::middleware('permission:'.AdminSection::Reviewers->permission()->value)
         Route::put('{user}/status', [ReviewerController::class, 'status'])->name('status');
         Route::put('{user}/subjects', [ReviewerController::class, 'subjects'])->name('subjects');
         Route::delete('{user}', [ReviewerController::class, 'destroy'])->name('destroy');
+    });
+
+/*
+| Rollar va ruxsatlar, Tizim sozlamalari
+*/
+Route::middleware('permission:'.AdminSection::Roles->permission()->value)
+    ->prefix('roles')
+    ->name('roles.')
+    ->group(function () {
+        Route::get('/', [RoleController::class, 'index'])->name('index');
+        Route::put('{role}', [RoleController::class, 'update'])->name('update');
+        Route::post('{role}/reset', [RoleController::class, 'reset'])->name('reset');
+    });
+
+Route::middleware('permission:'.AdminSection::System->permission()->value)
+    ->prefix(AdminSection::System->value)
+    ->name('system.')
+    ->group(function () {
+        Route::get('/', [SystemSettingsController::class, 'index'])->name('index');
+        Route::put('journal', [SystemSettingsController::class, 'journal'])->name('journal');
+        Route::put('mail', [SystemSettingsController::class, 'mail'])->name('mail');
+        Route::post('mail/test', [SystemSettingsController::class, 'mailTest'])->name('mail.test')->middleware('throttle:5,1');
     });
 
 // Hali ishlab chiqilmagan bo'limlar — vaqtinchalik sahifa (admin/Section).

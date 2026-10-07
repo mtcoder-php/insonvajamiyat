@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Services\Audit\AuditEventSubscriber;
 use App\Services\Notifications\EditorialNotifier;
 use App\Services\Settings\SettingsStore;
+use App\Services\Settings\SystemSettings;
 use Carbon\CarbonImmutable;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Support\Facades\Date;
@@ -34,6 +35,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+        // Admin → Tizim sozlamalari: jurnal rekvizitlari va SMTP (settings jadvali → config)
+        SystemSettings::apply();
         $this->configureAuthorization();
         $this->configureEvents();
     }
