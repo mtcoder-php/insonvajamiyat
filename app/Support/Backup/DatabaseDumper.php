@@ -74,13 +74,7 @@ final class DatabaseDumper
 
     private function db(): Connection
     {
-        $connection = DB::connection($this->connection);
-
-        if (! $connection instanceof Connection) {
-            throw new RuntimeException('Baza ulanishi topilmadi.');
-        }
-
-        return $connection;
+        return DB::connection($this->connection);
     }
 
     /**
@@ -208,10 +202,6 @@ final class DatabaseDumper
             }
 
             while (($row = $data->fetch(PDO::FETCH_NUM)) !== false) {
-                if (! is_array($row)) {
-                    continue;
-                }
-
                 $values = array_map(fn (mixed $v): string => match (true) {
                     $v === null => 'NULL',
                     is_int($v), is_float($v) => (string) $v,

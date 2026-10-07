@@ -320,13 +320,7 @@ class BackupService
 
     public function disk(): FilesystemAdapter
     {
-        $disk = Storage::disk($this->diskName());
-
-        if (! $disk instanceof FilesystemAdapter) {
-            throw new RuntimeException('Zaxira diski lokal fayl tizimi bo\'lishi kerak.');
-        }
-
-        return $disk;
+        return Storage::disk($this->diskName());
     }
 
     public function diskName(): string
