@@ -14,35 +14,35 @@ defineProps<{ profile: PersonProfile }>();
     <section
         class="overflow-hidden rounded-2xl border border-line bg-white shadow-[0_1px_2px_rgba(0,30,60,0.05)]"
     >
-        <div class="relative isolate h-24 bg-navy-950 sm:h-28">
+        <div class="relative isolate h-14 bg-navy-950 sm:h-16">
             <div
                 class="absolute inset-0 -z-10 bg-girih opacity-[0.07]"
                 aria-hidden="true"
             />
             <div
-                class="absolute -top-20 right-10 -z-10 size-64 rounded-full bg-brand-500/30 blur-3xl"
+                class="absolute -top-24 right-10 -z-10 size-56 rounded-full bg-brand-500/30 blur-3xl"
                 aria-hidden="true"
             />
             <div
-                class="absolute -bottom-24 left-1/3 -z-10 size-56 rounded-full bg-gold-500/15 blur-3xl"
+                class="absolute -bottom-28 left-1/3 -z-10 size-48 rounded-full bg-gold-500/15 blur-3xl"
                 aria-hidden="true"
             />
         </div>
         <div
-            class="flex flex-col gap-4 px-5 pb-5 sm:px-6 lg:flex-row lg:items-end"
+            class="flex flex-col gap-3 px-5 pb-4 sm:px-6 lg:flex-row lg:items-center"
         >
             <div
-                class="-mt-14 shrink-0 self-center rounded-full ring-4 ring-white lg:self-auto"
+                class="relative z-10 -mt-8 shrink-0 self-center rounded-full bg-white ring-4 ring-white lg:-mt-7 lg:self-start"
             >
                 <UserAvatar
                     :name="profile.name"
                     :url="profile.avatarUrl"
-                    size="xl"
+                    size="lg"
                 />
             </div>
-            <div class="min-w-0 flex-1 text-center lg:pt-3 lg:text-left">
+            <div class="min-w-0 flex-1 text-center lg:pt-2 lg:text-left">
                 <h1
-                    class="inline-flex items-center gap-1.5 font-sans text-2xl font-bold tracking-tight [overflow-wrap:anywhere] text-navy-950"
+                    class="inline-flex items-center gap-1.5 font-sans text-xl font-bold tracking-tight [overflow-wrap:anywhere] text-navy-950"
                 >
                     {{ profile.name }}
                     <BadgeCheck
@@ -62,7 +62,7 @@ defineProps<{ profile: PersonProfile }>();
                     }}
                 </p>
                 <div
-                    class="mt-2.5 flex flex-wrap items-center justify-center gap-1.5 lg:justify-start"
+                    class="mt-2 flex flex-wrap items-center justify-center gap-1.5 lg:justify-start"
                 >
                     <span
                         v-if="profile.isBlocked"
@@ -74,7 +74,7 @@ defineProps<{ profile: PersonProfile }>();
                 </div>
             </div>
             <div
-                class="flex flex-wrap items-center justify-center gap-2 lg:justify-end"
+                class="flex flex-wrap items-center justify-center gap-2 lg:justify-end lg:pt-2"
             >
                 <slot name="actions" />
             </div>
