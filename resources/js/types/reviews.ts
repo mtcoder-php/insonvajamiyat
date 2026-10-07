@@ -129,6 +129,10 @@ export type ReviewerOption = {
     organization: string | null;
     active: number;
     completed: number;
+    /** Taqrizchining ilmiy yo'nalishlari */
+    subjects: string[];
+    /** Maqola yo'nalishi taqrizchi yo'nalishlariga mos */
+    matches: boolean;
 };
 
 /** Muallifga ko'rinadigan anonim taqriz */

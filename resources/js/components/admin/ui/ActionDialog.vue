@@ -26,10 +26,18 @@ const props = withDefaults(
         tone?: 'primary' | 'danger';
         confirmText: string;
         processing?: boolean;
+        /** Tasdiqlash tugmasini o'chirib qo'yish (masalan, hali tanlanmagan) */
+        disabled?: boolean;
         /** lg — keng forma (masalan, tarjimali maydonlar) */
         size?: 'md' | 'lg';
     }>(),
-    { description: undefined, tone: 'primary', processing: false, size: 'md' },
+    {
+        description: undefined,
+        tone: 'primary',
+        processing: false,
+        disabled: false,
+        size: 'md',
+    },
 );
 
 const open = defineModel<boolean>('open', { default: false });
@@ -92,7 +100,7 @@ const emit = defineEmits<{ confirm: [] }>();
                     </button>
                     <button
                         type="submit"
-                        :disabled="processing"
+                        :disabled="processing || disabled"
                         :class="
                             cn(
                                 props.tone === 'danger'

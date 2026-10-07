@@ -11,6 +11,8 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\Issues\IssueArticleController;
 use App\Http\Controllers\Admin\Issues\IssueController;
 use App\Http\Controllers\Admin\Payments\PaymentController;
+use App\Http\Controllers\Admin\People\AuthorController;
+use App\Http\Controllers\Admin\People\ReviewerController;
 use App\Http\Controllers\Admin\Production\ProductionController;
 use App\Http\Controllers\Admin\Reports\ReportController;
 use App\Http\Controllers\Admin\Reviews\ReviewController;
@@ -293,6 +295,30 @@ Route::middleware('permission:'.AdminSection::Settings->permission()->value)
         Route::post('partners', [PartnerController::class, 'store'])->name('partners.store');
         Route::put('partners/{partner}', [PartnerController::class, 'update'])->name('partners.update');
         Route::delete('partners/{partner}', [PartnerController::class, 'destroy'])->name('partners.destroy');
+    });
+
+/*
+| Mualliflar va taqrizchilar
+*/
+Route::middleware('permission:'.AdminSection::Authors->permission()->value)
+    ->prefix('authors')
+    ->name('authors.')
+    ->group(function () {
+        Route::get('/', [AuthorController::class, 'index'])->name('index');
+        Route::get('{user}', [AuthorController::class, 'show'])->name('show')->whereNumber('user');
+    });
+
+Route::middleware('permission:'.AdminSection::Reviewers->permission()->value)
+    ->prefix('reviewers')
+    ->name('reviewers.')
+    ->group(function () {
+        Route::get('/', [ReviewerController::class, 'index'])->name('index');
+        Route::get('candidates', [ReviewerController::class, 'candidates'])->name('candidates');
+        Route::post('/', [ReviewerController::class, 'store'])->name('store');
+        Route::get('{user}', [ReviewerController::class, 'show'])->name('show')->whereNumber('user');
+        Route::put('{user}/status', [ReviewerController::class, 'status'])->name('status');
+        Route::put('{user}/subjects', [ReviewerController::class, 'subjects'])->name('subjects');
+        Route::delete('{user}', [ReviewerController::class, 'destroy'])->name('destroy');
     });
 
 // Hali ishlab chiqilmagan bo'limlar — vaqtinchalik sahifa (admin/Section).

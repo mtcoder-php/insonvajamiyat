@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3';
-import { Check, Search, UsersRound } from '@lucide/vue';
+import { Check, Search, Sparkles, UsersRound } from '@lucide/vue';
 import { computed, ref, watch } from 'vue';
 import ActionDialog from '@/components/admin/ui/ActionDialog.vue';
 import FormField from '@/components/admin/ui/FormField.vue';
@@ -106,7 +106,7 @@ function submit(): void {
                 <input
                     v-model="search"
                     type="search"
-                    placeholder="Ism yoki tashkilot..."
+                    placeholder="Ism, tashkilot yoki yo'nalish..."
                     :class="cn(inputClass, 'h-9 pl-9 text-[13px]')"
                 />
             </label>
@@ -134,9 +134,18 @@ function submit(): void {
                         <UserAvatar :name="reviewer.name" size="sm" />
                         <span class="min-w-0 flex-1">
                             <span
-                                class="block truncate text-[13px] font-semibold text-navy-900"
+                                class="flex items-center gap-1.5 text-[13px] font-semibold text-navy-900"
                             >
-                                {{ reviewer.name }}
+                                <span class="truncate">{{
+                                    reviewer.name
+                                }}</span>
+                                <span
+                                    v-if="reviewer.matches"
+                                    class="inline-flex shrink-0 items-center gap-0.5 rounded bg-emerald-50 px-1.5 py-px text-[10px] font-semibold text-emerald-700"
+                                    :title="reviewer.subjects.join(', ')"
+                                >
+                                    <Sparkles class="size-3" /> Mos yo'nalish
+                                </span>
                             </span>
                             <span
                                 class="block truncate text-[11px] text-navy-500"
@@ -168,8 +177,8 @@ function submit(): void {
                     v-if="!filtered.length"
                     class="py-6 text-center text-xs text-navy-500"
                 >
-                    Taqrizchi topilmadi. Taqrizchilarni "Foydalanuvchilar"
-                    bo'limida "Taqrizchi" roli bilan qo'shing.
+                    Taqrizchi topilmadi. Taqrizchilarni «Taqrizchilar» bo'limida
+                    qo'shing (to'xtatilganlar bu yerda chiqmaydi).
                 </li>
             </ul>
             <p class="text-xs text-navy-500">

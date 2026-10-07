@@ -17,3 +17,4 @@ export * from './catalog';
 export * from './reports';
 export * from './ai';
 export * from './settings';
+export * from './people';

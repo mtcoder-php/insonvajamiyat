@@ -26,6 +26,11 @@ enum AuditEvent: string
     // Taqriz
     case ReviewInvited = 'review.invited';
     case ReviewCancelled = 'review.cancelled';
+    case ReviewerAdded = 'review.reviewer_added';
+    case ReviewerRemoved = 'review.reviewer_removed';
+    case ReviewerPaused = 'review.reviewer_paused';
+    case ReviewerResumed = 'review.reviewer_resumed';
+    case ReviewerSubjectsUpdated = 'review.reviewer_subjects';
 
     // Nashr jarayoni
     case FinalPdfUploaded = 'production.final_pdf';
@@ -78,6 +83,11 @@ enum AuditEvent: string
             self::ArticleEditorAssigned => "Mas'ul muharrir tayinlandi",
             self::ReviewInvited => 'Taqrizchi taklif qilindi',
             self::ReviewCancelled => 'Taqriz bekor qilindi',
+            self::ReviewerAdded => "Taqrizchilar bazasiga qo'shildi",
+            self::ReviewerRemoved => 'Taqrizchilar bazasidan chiqarildi',
+            self::ReviewerPaused => "Taqrizchi vaqtincha to'xtatildi",
+            self::ReviewerResumed => 'Taqrizchi qayta faollashtirildi',
+            self::ReviewerSubjectsUpdated => "Taqrizchi yo'nalishlari o'zgardi",
             self::FinalPdfUploaded => 'Yakuniy PDF yuklandi',
             self::ProductionApproved => "Bosh muharrir tasdig'i",
             self::ProductionApprovalRevoked => 'Tasdiq bekor qilindi',
@@ -120,7 +130,7 @@ enum AuditEvent: string
             self::PaymentConfirmed, self::PaymentWaived, self::UserPasswordChanged, self::PasswordReset,
             self::ProductionApprovalRevoked, self::ReportExported, self::UserUpdated, self::ProofApprovalWaived,
             self::AiSettingsUpdated, self::AiPromptUpdated, self::AiLimitUpdated,
-            self::PriceChanged, self::ContentDeleted => 'warning',
+            self::PriceChanged, self::ContentDeleted, self::ReviewerRemoved => 'warning',
             default => 'info',
         };
     }
