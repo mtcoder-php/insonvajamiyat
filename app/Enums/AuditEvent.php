@@ -68,6 +68,7 @@ enum AuditEvent: string
     case UserRestored = 'user.restored';
     case UserPasswordChanged = 'user.password';
     case RolePermissionsUpdated = 'user.role_permissions';
+    case BroadcastSent = 'user.broadcast';
 
     // Tizim sozlamalari
     case SettingsUpdated = 'settings.updated';
@@ -118,6 +119,7 @@ enum AuditEvent: string
             self::UserRestored => 'Foydalanuvchi tiklandi',
             self::UserPasswordChanged => "Foydalanuvchi paroli o'zgartirildi",
             self::RolePermissionsUpdated => "Rol ruxsatlari o'zgartirildi",
+            self::BroadcastSent => 'Ommaviy xabar yuborildi',
             self::SettingsUpdated => "Tizim sozlamalari o'zgartirildi",
             self::MailTestSent => 'Test xat yuborildi',
             self::ReportExported => 'Hisobot yuklab olindi',
@@ -139,7 +141,7 @@ enum AuditEvent: string
             self::ProductionApprovalRevoked, self::ReportExported, self::UserUpdated, self::ProofApprovalWaived,
             self::AiSettingsUpdated, self::AiPromptUpdated, self::AiLimitUpdated,
             self::PriceChanged, self::ContentDeleted, self::ReviewerRemoved,
-            self::RolePermissionsUpdated, self::SettingsUpdated => 'warning',
+            self::RolePermissionsUpdated, self::SettingsUpdated, self::BroadcastSent => 'warning',
             default => 'info',
         };
     }

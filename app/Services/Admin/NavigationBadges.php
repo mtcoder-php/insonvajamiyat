@@ -14,6 +14,7 @@ use App\Models\JournalIssue;
 use App\Models\Payment;
 use App\Models\Review;
 use App\Models\User;
+use App\Services\Messages\StaffInbox;
 
 /**
  * Admin sidebar'idagi raqamlar (badge'lar).
@@ -25,7 +26,7 @@ use App\Models\User;
  *   Taqrizchilar  — faol taqrizchilar
  *   To'lovlar     — to'lov kutilayotgan maqolalar + jarayondagi onlayn to'lovlar
  *   AI xizmatlari — bugungi so'rovlar
- *   Xabarlar      — o'qilmagan bildirishnomalar
+ *   Xabarlar      — mualliflardan kelgan ochilmagan xabarlar + o'qilmagan bildirishnomalar
  * Faqat foydalanuvchi ko'ra oladigan bo'limlar hisoblanadi; 0 bo'lsa badge chiqmaydi.
  */
 class NavigationBadges
@@ -63,7 +64,7 @@ class NavigationBadges
             AdminSection::Ai->value => fn (): int => AiRequest::query()
                 ->where('created_at', '>=', now()->startOfDay())
                 ->count(),
-            AdminSection::Messages->value => fn (): int => $user->unreadNotifications()->count(),
+            AdminSection::Messages->value => fn (): int => StaffInbox::unreadTotal() + $user->unreadNotifications()->count(),
         ];
 
         $badges = [];
