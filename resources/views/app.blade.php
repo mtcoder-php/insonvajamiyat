@@ -54,7 +54,8 @@
 
         <meta name="theme-color" content="#001e3c">
 
-        <meta name="description" content="{{ $seo['description'] }}">
+        {{-- data-inertia="description": sahifadagi <Head><meta head-key="description"> shu tegni almashtiradi (dublikat bo'lmaydi) --}}
+        <meta name="description" content="{{ $seo['description'] }}" data-inertia="description">
         @if ($seo['robots'])
             <meta name="robots" content="{{ $seo['robots'] }}">
         @else
@@ -81,9 +82,9 @@
         <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
         @vite(['resources/css/app.css', 'resources/js/app.ts', "resources/js/pages/{$page['component']}.vue"])
-        <x-inertia::head>
-            <title>{{ $seo['title'] }}</title>
-        </x-inertia::head>
+        {{-- Sahifa sarlavhasi: Inertia klientda <Head title> bilan almashtiradi (data-inertia'siz title o'chiriladi) --}}
+        <title>{{ $seo['title'] }}</title>
+        <x-inertia::head />
     </head>
     <body class="font-sans antialiased">
         <x-inertia::app />

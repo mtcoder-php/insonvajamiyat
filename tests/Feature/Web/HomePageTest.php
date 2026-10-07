@@ -137,11 +137,11 @@ class HomePageTest extends TestCase
     {
         JournalIssue::factory()->published()->create();
 
-        config(['journal.latest_issue_cover' => 'robots.txt', 'journal.default_issue_cover' => 'favicon.ico']);
+        config(['journal.latest_issue_cover' => 'apple-touch-icon.png', 'journal.default_issue_cover' => 'favicon.ico']);
 
         $this->get(route('home'))
             ->assertInertia(fn (Assert $page) => $page
-                ->where('latestIssue.coverUrl', asset('robots.txt'))
+                ->where('latestIssue.coverUrl', asset('apple-touch-icon.png'))
             );
 
         // Songa o'z muqovasi yuklangan bo'lsa — o'shasi
