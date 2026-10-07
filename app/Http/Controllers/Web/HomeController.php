@@ -24,6 +24,7 @@ class HomeController extends Controller
             'news' => fn () => $home->posts(PostType::News, 6),
             'events' => fn () => $home->upcomingEvents(4),
             'books' => fn () => $home->recommendedBooks(),
+            'partners' => fn () => $home->partners(),
         ]);
     }
 }

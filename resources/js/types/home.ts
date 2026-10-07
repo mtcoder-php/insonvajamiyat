@@ -68,6 +68,7 @@ export type EventItem = {
     startsAt: string;
     endsAt: string | null;
     registrationUrl: string | null;
+    imageUrl: string | null;
     url: string;
 };
 
@@ -104,4 +105,15 @@ export type HomePageProps = {
     news: PostItem[];
     events: EventItem[];
     books: RecommendedBook[];
+    partners: PartnerItem[];
+};
+
+/** Hamkor tashkilot yoki indekslash bazasi (bosh sahifa pastidagi qator) */
+export type PartnerItem = {
+    id: number;
+    type: 'partner' | 'indexing';
+    name: string;
+    subtitle: string | null;
+    url: string | null;
+    logoUrl: string | null;
 };

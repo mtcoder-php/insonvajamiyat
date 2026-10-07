@@ -83,6 +83,12 @@ const paragraphs = computed(() =>
             class="mx-auto grid w-full max-w-[1700px] gap-10 px-4 py-10 sm:px-6 lg:w-[90%] lg:grid-cols-[minmax(0,1fr)_22rem] lg:px-0 lg:py-12"
         >
             <article class="min-w-0">
+                <img
+                    v-if="event.imageUrl"
+                    :src="event.imageUrl"
+                    :alt="event.title"
+                    class="mb-8 aspect-[16/8] w-full rounded-xl object-cover shadow-md"
+                />
                 <div class="flex items-start gap-6">
                     <div
                         class="hidden w-24 shrink-0 flex-col items-center rounded-xl border-2 border-navy-800 bg-white py-3 text-navy-900 shadow-sm sm:flex"
