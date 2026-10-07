@@ -67,6 +67,11 @@ enum AuditEvent: string
     case UserDeleted = 'user.deleted';
     case UserRestored = 'user.restored';
     case UserPasswordChanged = 'user.password';
+    case RolePermissionsUpdated = 'user.role_permissions';
+
+    // Tizim sozlamalari
+    case SettingsUpdated = 'settings.updated';
+    case MailTestSent = 'settings.mail_test';
 
     // Hisobotlar
     case ReportExported = 'report.exported';
@@ -112,11 +117,14 @@ enum AuditEvent: string
             self::UserDeleted => "Foydalanuvchi o'chirildi",
             self::UserRestored => 'Foydalanuvchi tiklandi',
             self::UserPasswordChanged => "Foydalanuvchi paroli o'zgartirildi",
+            self::RolePermissionsUpdated => "Rol ruxsatlari o'zgartirildi",
+            self::SettingsUpdated => "Tizim sozlamalari o'zgartirildi",
+            self::MailTestSent => 'Test xat yuborildi',
             self::ReportExported => 'Hisobot yuklab olindi',
         };
     }
 
-    /** Kategoriya: auth, article, review, production, issue, payment, content, ai, user, report */
+    /** Kategoriya: auth, article, review, production, issue, payment, content, ai, user, report, settings */
     public function category(): string
     {
         return explode('.', $this->value, 2)[0];
@@ -130,7 +138,8 @@ enum AuditEvent: string
             self::PaymentConfirmed, self::PaymentWaived, self::UserPasswordChanged, self::PasswordReset,
             self::ProductionApprovalRevoked, self::ReportExported, self::UserUpdated, self::ProofApprovalWaived,
             self::AiSettingsUpdated, self::AiPromptUpdated, self::AiLimitUpdated,
-            self::PriceChanged, self::ContentDeleted, self::ReviewerRemoved => 'warning',
+            self::PriceChanged, self::ContentDeleted, self::ReviewerRemoved,
+            self::RolePermissionsUpdated, self::SettingsUpdated => 'warning',
             default => 'info',
         };
     }
@@ -151,6 +160,7 @@ enum AuditEvent: string
             'content' => 'Kontent',
             'user' => 'Foydalanuvchilar',
             'report' => 'Hisobotlar',
+            'settings' => 'Tizim sozlamalari',
         ];
     }
 

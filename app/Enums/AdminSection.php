@@ -49,7 +49,8 @@ enum AdminSection: string
     {
         return match ($this) {
             self::Users, self::Payments, self::Articles, self::Production, self::Issues,
-            self::Reports, self::Audit, self::Ai, self::Settings, self::Authors, self::Reviewers => true,
+            self::Reports, self::Audit, self::Ai, self::Settings, self::Authors, self::Reviewers,
+            self::Roles, self::System => true,
             default => false,
         };
     }

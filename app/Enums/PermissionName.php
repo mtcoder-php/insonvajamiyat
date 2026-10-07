@@ -132,4 +132,40 @@ enum PermissionName: string
             RoleName::Author => [self::AiUse],
         };
     }
+
+    /**
+     * Ruxsatlar matritsasidagi guruh (Admin → Rollar va ruxsatlar).
+     */
+    public function group(): string
+    {
+        return match ($this) {
+            self::AdminAccess, self::AiUse => 'general',
+            self::ArticlesViewAny, self::ArticlesAssignReviewer, self::ArticlesDecide, self::ArticlesMessageAuthor, self::ReviewsSubmit => 'editorial',
+            self::IssuesManage, self::IssuesPublish, self::ProductionManage => 'publishing',
+            self::ContentManage => 'content',
+            self::PaymentsView, self::PaymentsConfirmManually, self::PaymentsRefund, self::PricesManage => 'finance',
+            self::UsersManage, self::RolesManage, self::ReportsView, self::AuditLogView, self::SettingsManage, self::AiSettingsManage => 'system',
+        };
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function groups(): array
+    {
+        return [
+            'general' => 'Umumiy',
+            'editorial' => 'Tahririyat va taqriz',
+            'publishing' => 'Nashr',
+            'content' => 'Sayt kontenti',
+            'finance' => 'Moliya',
+            'system' => 'Boshqaruv va tizim',
+        ];
+    }
+
+    /** Muallif (admin panelga kirmaydigan) roliga berish mumkin bo'lgan ruxsatlar */
+    public function forAuthors(): bool
+    {
+        return $this === self::AiUse;
+    }
 }

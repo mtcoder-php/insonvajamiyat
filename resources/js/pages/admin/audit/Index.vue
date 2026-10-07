@@ -18,6 +18,9 @@ import {
     ShieldCheck,
     Users,
     UsersRound,
+    Newspaper,
+    Settings2,
+    Sparkles,
 } from '@lucide/vue';
 import type { Component } from 'vue';
 import { computed, reactive, ref, watch } from 'vue';
@@ -56,6 +59,9 @@ const categoryIcon: Record<string, Component> = {
     payment: CreditCard,
     user: Users,
     report: FileDown,
+    content: Newspaper,
+    ai: Sparkles,
+    settings: Settings2,
 };
 
 const severityStyle: Record<AuditSeverity, string> = {
