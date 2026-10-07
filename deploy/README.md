@@ -2,14 +2,14 @@
 
 Bu papkada saytni Ubuntu 24.04 serverga joylash uchun tayyor fayllar bor:
 
-| Fayl | Serverdagi joyi | Vazifasi |
-|---|---|---|
-| `nginx/insonvajamiyat.conf` | `/etc/nginx/sites-available/insonvajamiyat.conf` | HTTPS, gzip, statik fayllar keshi, yashirin fayllarni yopish |
-| `php/99-insonvajamiyat.ini` | `/etc/php/8.3/fpm/conf.d/` va `/etc/php/8.3/cli/conf.d/` | Yuklash hajmi, OPcache |
-| `supervisor/insonvajamiyat-worker.conf` | `/etc/supervisor/conf.d/` | Navbat ishchilari (email, AI, PDF, zaxira) |
-| `cron` | `crontab -u www-data` | Rejalashtiruvchi (`schedule:run` har daqiqa) |
-| `deploy.sh` | loyiha ichida qoladi | Har bir yangilanishda ishga tushiriladi |
-| `../.env.production.example` | `/var/www/insonvajamiyat/.env` | Production sozlamalari namunasi |
+| Fayl                                    | Serverdagi joyi                                          | Vazifasi                                                     |
+| --------------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------ |
+| `nginx/insonvajamiyat.conf`             | `/etc/nginx/sites-available/insonvajamiyat.conf`         | HTTPS, gzip, statik fayllar keshi, yashirin fayllarni yopish |
+| `php/99-insonvajamiyat.ini`             | `/etc/php/8.3/fpm/conf.d/` va `/etc/php/8.3/cli/conf.d/` | Yuklash hajmi, OPcache                                       |
+| `supervisor/insonvajamiyat-worker.conf` | `/etc/supervisor/conf.d/`                                | Navbat ishchilari (email, AI, PDF, zaxira)                   |
+| `cron`                                  | `crontab -u www-data`                                    | Rejalashtiruvchi (`schedule:run` har daqiqa)                 |
+| `deploy.sh`                             | loyiha ichida qoladi                                     | Har bir yangilanishda ishga tushiriladi                      |
+| `../.env.production.example`            | `/var/www/insonvajamiyat/.env`                           | Production sozlamalari namunasi                              |
 
 > Domen, yo'l (`/var/www/insonvajamiyat`) yoki PHP versiyasi boshqacha bo'lsa — fayllardagi
 > mos qatorlarni almashtiring.
@@ -158,10 +158,10 @@ Tiklash: arxivni oching → `gunzip -c database.sql.gz | mysql -u insonvajamiyat
 
 ## 9. Muammolar
 
-| Belgi | Sabab va yechim |
-|---|---|
-| 502 Bad Gateway | `systemctl status php8.3-fpm`, socket yo'li nginx'dagi bilan bir xilmi |
-| Xatlar ketmayapti | `supervisorctl status`, `storage/logs/worker.log`, Admin → Tizim → Holat |
-| CSS/JS eski | `npm run build` bajarilganmi, brauzerda Ctrl+F5 |
-| 500 xato | `storage/logs/laravel-YYYY-MM-DD.log` |
-| Fayl yuklanmayapti (413) | `client_max_body_size` (nginx) va `upload_max_filesize` (php.ini) |
+| Belgi                    | Sabab va yechim                                                          |
+| ------------------------ | ------------------------------------------------------------------------ |
+| 502 Bad Gateway          | `systemctl status php8.3-fpm`, socket yo'li nginx'dagi bilan bir xilmi   |
+| Xatlar ketmayapti        | `supervisorctl status`, `storage/logs/worker.log`, Admin → Tizim → Holat |
+| CSS/JS eski              | `npm run build` bajarilganmi, brauzerda Ctrl+F5                          |
+| 500 xato                 | `storage/logs/laravel-YYYY-MM-DD.log`                                    |
+| Fayl yuklanmayapti (413) | `client_max_body_size` (nginx) va `upload_max_filesize` (php.ini)        |
