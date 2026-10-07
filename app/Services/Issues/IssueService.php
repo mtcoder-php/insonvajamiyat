@@ -11,6 +11,7 @@ use App\Models\JournalIssue;
 use App\Models\User;
 use App\Services\Audit\AuditLogger;
 use App\Support\MediaUrl;
+use App\Support\PdfPageCounter;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -118,6 +119,18 @@ class IssueService
         }
 
         $issue->setAttribute($column, $path);
+
+        // Qo'lda yuklangan butun son PDF — avtomatik yig'ilgan emas
+        if ($type === 'pdf') {
+            $issue->forceFill([
+                'pdf_auto' => false,
+                'pdf_status' => null,
+                'pdf_error' => null,
+                'pdf_pages' => PdfPageCounter::count(Storage::disk(self::DISK)->path($path)),
+                'pdf_built_at' => null,
+            ]);
+        }
+
         $issue->save();
     }
 
@@ -131,6 +144,11 @@ class IssueService
         }
 
         $issue->setAttribute($column, null);
+
+        if ($type === 'pdf') {
+            $issue->forceFill(['pdf_auto' => false, 'pdf_status' => null, 'pdf_error' => null, 'pdf_pages' => null, 'pdf_built_at' => null]);
+        }
+
         $issue->save();
     }
 

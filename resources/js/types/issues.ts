@@ -95,6 +95,7 @@ export type IssueDetail = {
     coverUrl: string | null;
     hasOwnCover: boolean;
     files: { pdf: IssueFileInfo | null; toc: IssueFileInfo | null };
+    pdfBuild: IssuePdfBuild;
     articles: IssueArticleRow[];
     /** Chop etishga to'sqinlik qilayotgan sabablar (qoralama son uchun) */
     problems: string[];
@@ -135,4 +136,24 @@ export type AvailableArticle = {
 export type IssueShowProps = {
     issue: IssueDetail;
     available: AvailableArticle[];
+};
+
+/** Butun son PDF ni avtomatik yig'ish — App\\Services\\Issues\\IssueWorkspace::pdfBuild */
+export type IssuePdfBuild = {
+    status: 'queued' | 'processing' | 'done' | 'failed' | null;
+    error: string | null;
+    pages: number | null;
+    auto: boolean;
+    builtAt: string | null;
+    busy: boolean;
+    stale: boolean;
+    checks: {
+        key: string;
+        label: string;
+        ok: boolean;
+        required: boolean;
+        detail: string | null;
+    }[];
+    canBuild: boolean;
+    buildUrl: string;
 };

@@ -37,6 +37,7 @@ enum AuditEvent: string
     case IssueCreated = 'issue.created';
     case IssueDeleted = 'issue.deleted';
     case IssuePublished = 'issue.published';
+    case IssuePdfBuilt = 'issue.pdf_built';
 
     // To'lovlar
     case PaymentConfirmed = 'payment.confirmed';
@@ -79,6 +80,7 @@ enum AuditEvent: string
             self::IssueCreated => 'Jurnal soni yaratildi',
             self::IssueDeleted => "Jurnal soni o'chirildi",
             self::IssuePublished => 'Jurnal soni chop etildi',
+            self::IssuePdfBuilt => "Son PDF avtomatik yig'ildi",
             self::PaymentConfirmed => "To'lov qo'lda tasdiqlandi",
             self::PaymentWaived => "To'lovdan ozod qilindi",
             self::PaymentPaidOnline => "Onlayn to'lov qabul qilindi",

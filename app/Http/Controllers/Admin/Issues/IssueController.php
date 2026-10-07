@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Issues\IssueRequest;
 use App\Models\JournalIssue;
 use App\Models\User;
+use App\Services\Issues\IssuePdfBuilder;
 use App\Services\Issues\IssueService;
 use App\Services\Issues\IssueWorkspace;
 use App\Services\Publishing\PublishService;
@@ -112,6 +113,14 @@ class IssueController extends Controller
         $this->issues->uploadFile($issue, $type, $file);
 
         return $this->done(__('Fayl yuklandi.'));
+    }
+
+    /** To'liq son PDF ni avtomatik yig'ish (navbatda) */
+    public function buildPdf(Request $request, JournalIssue $issue, IssuePdfBuilder $builder): RedirectResponse
+    {
+        $builder->queue($issue, $this->user($request));
+
+        return $this->done(__("Son PDF ini yig'ish boshlandi. Tayyor bo'lgach shu yerda paydo bo'ladi."));
     }
 
     public function destroyFile(JournalIssue $issue, string $type): RedirectResponse
