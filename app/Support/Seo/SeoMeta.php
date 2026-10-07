@@ -41,8 +41,6 @@ class SeoMeta
 
     private string $type = 'website';
 
-    private ?string $canonical = null;
-
     private bool $noindex = false;
 
     /** @var array<int, array{0: string, 1: string}> citation_* va boshqa name="" teglar */
@@ -217,7 +215,7 @@ class SeoMeta
             'image' => $image,
             'type' => $this->type,
             'url' => $url,
-            'canonical' => $this->canonical ?? $url,
+            'canonical' => $url,
             'siteName' => $journal,
             'robots' => $this->noindex || ! $public || ! app()->environment('production') ? 'noindex, nofollow' : null,
             'meta' => $this->meta,
