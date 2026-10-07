@@ -15,6 +15,10 @@ use App\Http\Controllers\Admin\Production\ProductionController;
 use App\Http\Controllers\Admin\Reports\ReportController;
 use App\Http\Controllers\Admin\Reviews\ReviewController;
 use App\Http\Controllers\Admin\SectionController;
+use App\Http\Controllers\Admin\Settings\ArticleTypeController;
+use App\Http\Controllers\Admin\Settings\BannerController;
+use App\Http\Controllers\Admin\Settings\SettingsController;
+use App\Http\Controllers\Admin\Settings\SubjectController;
 use App\Http\Controllers\Admin\Users\UserAvatarController;
 use App\Http\Controllers\Admin\Users\UserController;
 use App\Http\Controllers\Admin\Users\UserPasswordController;
@@ -245,6 +249,30 @@ Route::middleware('permission:'.AdminSection::Ai->permission()->value)
             Route::post('prompts/{promptTemplate:key}/reset', [AiSettingsController::class, 'resetPrompt'])->name('prompts.reset');
             Route::put('limits/{user}', [AiSettingsController::class, 'updateLimit'])->name('limits.update');
         });
+    });
+
+/*
+| Sozlamalar (kontent): ilmiy yo'nalishlar, maqola turlari va narxlar, bosh sahifa bannerlari
+*/
+Route::middleware('permission:'.AdminSection::Settings->permission()->value)
+    ->prefix('settings')
+    ->name('settings.')
+    ->group(function () {
+        Route::get('/', [SettingsController::class, 'index'])->name('index');
+
+        Route::post('subjects', [SubjectController::class, 'store'])->name('subjects.store');
+        Route::put('subjects/{subject}', [SubjectController::class, 'update'])->name('subjects.update');
+        Route::delete('subjects/{subject}', [SubjectController::class, 'destroy'])->name('subjects.destroy');
+
+        Route::middleware('permission:'.PermissionName::PricesManage->value)->group(function () {
+            Route::post('types', [ArticleTypeController::class, 'store'])->name('types.store');
+            Route::put('types/{articleType}', [ArticleTypeController::class, 'update'])->name('types.update');
+            Route::delete('types/{articleType}', [ArticleTypeController::class, 'destroy'])->name('types.destroy');
+        });
+
+        Route::post('banners', [BannerController::class, 'store'])->name('banners.store');
+        Route::put('banners/{banner}', [BannerController::class, 'update'])->name('banners.update');
+        Route::delete('banners/{banner}', [BannerController::class, 'destroy'])->name('banners.destroy');
     });
 
 // Hali ishlab chiqilmagan bo'limlar — vaqtinchalik sahifa (admin/Section).
