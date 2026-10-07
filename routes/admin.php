@@ -10,6 +10,8 @@ use App\Http\Controllers\Admin\Audit\AuditLogController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\Issues\IssueArticleController;
 use App\Http\Controllers\Admin\Issues\IssueController;
+use App\Http\Controllers\Admin\Messages\BroadcastController;
+use App\Http\Controllers\Admin\Messages\MessageCenterController;
 use App\Http\Controllers\Admin\Payments\PaymentController;
 use App\Http\Controllers\Admin\People\AuthorController;
 use App\Http\Controllers\Admin\People\ReviewerController;
@@ -321,6 +323,19 @@ Route::middleware('permission:'.AdminSection::Reviewers->permission()->value)
         Route::put('{user}/status', [ReviewerController::class, 'status'])->name('status');
         Route::put('{user}/subjects', [ReviewerController::class, 'subjects'])->name('subjects');
         Route::delete('{user}', [ReviewerController::class, 'destroy'])->name('destroy');
+    });
+
+/*
+| Xabarlar: yozishmalar markazi, ommaviy xabar, bildirishnomalar
+*/
+Route::middleware('permission:'.AdminSection::Messages->permission()->value)
+    ->prefix('messages')
+    ->name('messages.')
+    ->group(function () {
+        Route::get('/', MessageCenterController::class)->name('index');
+        Route::post('broadcasts', [BroadcastController::class, 'store'])
+            ->middleware(['permission:'.PermissionName::UsersManage->value, 'throttle:5,10'])
+            ->name('broadcasts.store');
     });
 
 /*
