@@ -80,3 +80,46 @@ export type SystemPageProps = {
     status: SystemStatusRow[];
     urls: { index: string; journal: string; mail: string; mailTest: string };
 };
+
+/* ---------- Zaxira nusxa (BackupService) ---------- */
+
+export type BackupStatus = 'queued' | 'running' | 'done' | 'failed';
+
+export type BackupItem = {
+    uuid: string;
+    type: 'full' | 'database' | 'files';
+    typeLabel: string;
+    status: BackupStatus;
+    trigger: 'manual' | 'schedule';
+    size: number | null;
+    filesCount: number | null;
+    durationMs: number | null;
+    error: string | null;
+    creator: string | null;
+    createdAt: string | null;
+    fileName: string | null;
+    downloadUrl: string | null;
+    destroyUrl: string;
+};
+
+export type BackupSettings = {
+    enabled: boolean;
+    time: string;
+    type: 'full' | 'database' | 'files';
+    keep: number;
+};
+
+export type BackupsPageProps = {
+    backups: BackupItem[];
+    stats: {
+        count: number;
+        totalSize: number;
+        last: { createdAt: string | null; type: string } | null;
+        freeSpace: number | null;
+        nextRun: string | null;
+    };
+    settings: BackupSettings;
+    types: { value: BackupSettings['type']; label: string }[];
+    database: string;
+    urls: { store: string; settings: string };
+};

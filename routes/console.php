@@ -14,3 +14,6 @@ Schedule::command('model:prune', ['--model' => [AuditLog::class]])->dailyAt('03:
 
 // Korrektura muddati: muallifga eslatma va muddat o'tganda tahririyatga xabar
 Schedule::command('app:proof-reminders')->hourlyAt(7);
+
+// Zaxira nusxa: admin paneldagi jadval (Admin → Zaxira nusxa) bo'yicha — vaqti kelganini o'zi tekshiradi
+Schedule::command('backup:run --scheduled')->everyTenMinutes()->withoutOverlapping();

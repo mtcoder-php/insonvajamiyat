@@ -44,15 +44,11 @@ enum AdminSection: string
     /**
      * Bo'lim to'liq ishlab chiqilganmi (o'z controller'i bor).
      * Tayyor bo'lmaganlari vaqtinchalik admin/Section sahifasini ochadi.
+     * Hozir barcha bo'limlar tayyor; yangi bo'lim qo'shilsa — shu yerda false qaytaring.
      */
     public function isReady(): bool
     {
-        return match ($this) {
-            self::Users, self::Payments, self::Articles, self::Production, self::Issues,
-            self::Reports, self::Audit, self::Ai, self::Settings, self::Authors, self::Reviewers,
-            self::Roles, self::System, self::Messages => true,
-            default => false,
-        };
+        return true;
     }
 
     public function title(): string

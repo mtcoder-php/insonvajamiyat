@@ -27,6 +27,7 @@ use App\Http\Controllers\Admin\Settings\PostController;
 use App\Http\Controllers\Admin\Settings\RecommendedBookController;
 use App\Http\Controllers\Admin\Settings\SettingsController;
 use App\Http\Controllers\Admin\Settings\SubjectController;
+use App\Http\Controllers\Admin\System\BackupController;
 use App\Http\Controllers\Admin\System\RoleController;
 use App\Http\Controllers\Admin\System\SystemSettingsController;
 use App\Http\Controllers\Admin\Users\UserAvatarController;
@@ -358,6 +359,17 @@ Route::middleware('permission:'.AdminSection::System->permission()->value)
         Route::put('journal', [SystemSettingsController::class, 'journal'])->name('journal');
         Route::put('mail', [SystemSettingsController::class, 'mail'])->name('mail');
         Route::post('mail/test', [SystemSettingsController::class, 'mailTest'])->name('mail.test')->middleware('throttle:5,1');
+    });
+
+Route::middleware('permission:'.AdminSection::Backups->permission()->value)
+    ->prefix('backups')
+    ->name('backups.')
+    ->group(function () {
+        Route::get('/', [BackupController::class, 'index'])->name('index');
+        Route::post('/', [BackupController::class, 'store'])->name('store')->middleware('throttle:6,10');
+        Route::put('settings', [BackupController::class, 'settings'])->name('settings');
+        Route::get('{backup:uuid}/download', [BackupController::class, 'download'])->name('download');
+        Route::delete('{backup:uuid}', [BackupController::class, 'destroy'])->name('destroy');
     });
 
 // Hali ishlab chiqilmagan bo'limlar — vaqtinchalik sahifa (admin/Section).
