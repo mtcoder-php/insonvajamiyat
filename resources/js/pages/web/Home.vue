@@ -15,6 +15,7 @@ import PartnersStrip from '@/components/web/home/PartnersStrip.vue';
 import QuickLinksCard from '@/components/web/home/QuickLinksCard.vue';
 import SubjectsStrip from '@/components/web/home/SubjectsStrip.vue';
 import type { HomePageProps } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Bosh sahifa (home.png). Ma'lumotlar: App\Http\Controllers\Web\HomeController.
@@ -32,7 +33,7 @@ defineProps<HomePageProps>();
 </script>
 
 <template>
-    <Head title="Bosh sahifa" />
+    <Head :title="t('Bosh sahifa')" />
 
     <HeroSlider :slides="heroSlides" />
     <SubjectsStrip :subjects="subjects" />
@@ -54,7 +55,7 @@ defineProps<HomePageProps>();
 
             <aside
                 class="min-w-0 space-y-5"
-                aria-label="Qo'shimcha ma'lumotlar"
+                :aria-label="t('Qo\'shimcha ma\'lumotlar')"
             >
                 <AboutCard />
                 <JournalFactsCard />

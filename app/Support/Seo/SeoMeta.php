@@ -9,6 +9,7 @@ use App\Models\Event;
 use App\Models\JournalIssue;
 use App\Models\Post;
 use App\Support\MediaUrl;
+use App\Support\Translations;
 use Illuminate\Support\Str;
 
 /**
@@ -204,14 +205,14 @@ class SeoMeta
         $default = config('journal.description');
         $public = $component === '' || str_starts_with($component, 'web/');
         $url = request()->url();
-        $page = $this->title ?? (self::PAGE_TITLES[$component] ?? null);
+        $page = $this->title ?? Translations::line(self::PAGE_TITLES[$component] ?? null);
         $title = $page !== null && $page !== '' ? $page.' — '.$journal : $journal;
         $image = $this->image ?? MediaUrl::publicAsset('images/og-default.png') ?? asset('apple-touch-icon.png');
         $jsonLd = $this->jsonLd !== null ? json_encode($this->jsonLd, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) : null;
 
         return [
             'title' => $title,
-            'description' => Str::limit($this->description ?? (is_string($default) ? $default : ''), 300),
+            'description' => Str::limit($this->description ?? (Translations::line($default) ?? ''), 300),
             'image' => $image,
             'type' => $this->type,
             'url' => $url,

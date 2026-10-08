@@ -13,6 +13,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { register } from '@/routes';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
+import { t } from '@/lib/i18n';
 
 /**
  * Tizimga kirish (dizayn: register_login.png, "Tizimga kirish" kartasi).
@@ -33,7 +34,7 @@ defineProps<{
 </script>
 
 <template>
-    <Head title="Kirish" />
+    <Head :title="t('Kirish')" />
 
     <div
         v-if="status"
@@ -50,7 +51,7 @@ defineProps<{
     >
         <div class="grid gap-5">
             <div class="grid gap-2">
-                <Label for="email">Elektron pochta</Label>
+                <Label for="email">{{ t('Elektron pochta') }}</Label>
                 <InputIcon :icon="Mail">
                     <Input
                         id="email"
@@ -68,7 +69,7 @@ defineProps<{
             </div>
 
             <div class="grid gap-2">
-                <Label for="password">Parol</Label>
+                <Label for="password">{{ t('Parol') }}</Label>
                 <InputIcon :icon="Lock">
                     <PasswordInput
                         id="password"
@@ -76,7 +77,7 @@ defineProps<{
                         required
                         :tabindex="2"
                         autocomplete="current-password"
-                        placeholder="Parolingizni kiriting"
+                        :placeholder="t('Parolingizni kiriting')"
                         class="h-11 pl-10"
                     />
                 </InputIcon>
@@ -89,7 +90,7 @@ defineProps<{
                     class="flex items-center gap-2.5 font-normal"
                 >
                     <Checkbox id="remember" name="remember" :tabindex="3" />
-                    <span>Meni eslab qolish</span>
+                    <span>{{ t('Meni eslab qolish') }}</span>
                 </Label>
 
                 <TextLink
@@ -98,7 +99,7 @@ defineProps<{
                     class="text-sm"
                     :tabindex="5"
                 >
-                    Parolni unutdingizmi?
+                    {{ t('Parolni unutdingizmi?') }}
                 </TextLink>
             </div>
 
@@ -112,18 +113,18 @@ defineProps<{
             >
                 <Spinner v-if="processing" />
                 <LogIn v-else class="size-4" />
-                Tizimga kirish
+                {{ t('Tizimga kirish') }}
             </Button>
         </div>
 
         <p class="text-center text-sm text-muted-foreground">
-            Hali akkauntingiz yo'qmi?
+            {{ t("Hali akkauntingiz yo'qmi?") }}
             <TextLink
                 :href="register()"
                 :tabindex="6"
                 class="inline-flex items-center gap-1"
             >
-                Ro'yxatdan o'tish
+                {{ t("Ro'yxatdan o'tish") }}
                 <ArrowRight class="size-3.5" />
             </TextLink>
         </p>

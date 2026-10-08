@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { login } from '@/routes';
 import { email } from '@/routes/password';
+import { t } from '@/lib/i18n';
 
 defineOptions({
     layout: {
@@ -25,7 +26,7 @@ defineProps<{
 </script>
 
 <template>
-    <Head title="Parolni tiklash" />
+    <Head :title="t('Parolni tiklash')" />
 
     <div
         v-if="status"
@@ -37,7 +38,7 @@ defineProps<{
     <div class="space-y-6">
         <Form v-bind="email.form()" v-slot="{ errors, processing }">
             <div class="grid gap-2">
-                <Label for="email">Elektron pochta</Label>
+                <Label for="email">{{ t('Elektron pochta') }}</Label>
                 <InputIcon :icon="Mail">
                     <Input
                         id="email"
@@ -61,14 +62,14 @@ defineProps<{
                 >
                     <Spinner v-if="processing" />
                     <Send v-else class="size-4" />
-                    Tiklash havolasini yuborish
+                    {{ t('Tiklash havolasini yuborish') }}
                 </Button>
             </div>
         </Form>
 
         <div class="space-x-1 text-center text-sm text-muted-foreground">
-            <span>Yoki</span>
-            <TextLink :href="login()">tizimga kirish</TextLink>
+            <span>{{ t('Yoki') }}</span>
+            <TextLink :href="login()">{{ t('tizimga kirish') }}</TextLink>
         </div>
     </div>
 </template>

@@ -18,6 +18,7 @@ import { cn } from '@/lib/utils';
 import { mainNavigation } from '@/navigation/web';
 import { dashboard, login, register } from '@/routes';
 import type { NavItem } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Mobil menyu (lg dan kichik ekranlar): o'ngdan chiquvchi panel.
@@ -29,10 +30,10 @@ const props = withDefaults(defineProps<{ tone?: 'light' | 'dark' }>(), {
 const { auth, isStaff } = usePermissions();
 const { isCurrentUrl, isCurrentOrParentUrl } = useCurrentUrl();
 
-const navItems = mainNavigation();
+const navItems = computed(() => mainNavigation());
 const isDark = computed(() => props.tone === 'dark');
 const accountLabel = computed(() =>
-    isStaff.value ? 'Admin panel' : 'Muallif kabineti',
+    isStaff.value ? t('Admin panel') : t('Muallif kabineti'),
 );
 
 const isActive = (item: NavItem, index: number): boolean =>
@@ -52,14 +53,14 @@ const isActive = (item: NavItem, index: number): boolean =>
                             'text-white hover:bg-white/10 hover:text-white',
                     )
                 "
-                aria-label="Menyuni ochish"
+                :aria-label="t('Menyuni ochish')"
             >
                 <Menu class="size-5" />
             </Button>
         </SheetTrigger>
         <SheetContent side="right" class="w-80">
             <SheetHeader>
-                <SheetTitle class="sr-only">Menyu</SheetTitle>
+                <SheetTitle class="sr-only">{{ t('Menyu') }}</SheetTitle>
                 <div class="flex items-center justify-between gap-3 pr-10">
                     <BrandLogo size="sm" />
                     <LocaleSwitcher tone="light" />
@@ -68,7 +69,7 @@ const isActive = (item: NavItem, index: number): boolean =>
             <nav class="flex flex-col gap-1 px-4">
                 <Link
                     v-for="(item, index) in navItems"
-                    :key="item.title"
+                    :key="index"
                     :href="item.href"
                     :class="
                         cn(
@@ -84,10 +85,10 @@ const isActive = (item: NavItem, index: number): boolean =>
             </nav>
             <div v-if="!auth.user" class="mt-4 grid gap-2 px-4">
                 <Button as-child class="h-11">
-                    <Link :href="login()">Kirish</Link>
+                    <Link :href="login()">{{ t('Kirish') }}</Link>
                 </Button>
                 <Button as-child variant="outline" class="h-11">
-                    <Link :href="register()">Ro'yxatdan o'tish</Link>
+                    <Link :href="register()">{{ t("Ro'yxatdan o'tish") }}</Link>
                 </Button>
             </div>
             <div v-else class="mt-4 px-4">

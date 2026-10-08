@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { login } from '@/routes';
 import { store } from '@/routes/register';
+import { t } from '@/lib/i18n';
 
 /**
  * Ro'yxatdan o'tish (dizayn: register_login.png, "Ro'yxatdan o'tish" kartasi).
@@ -32,7 +33,7 @@ defineOptions({
 </script>
 
 <template>
-    <Head title="Ro'yxatdan o'tish" />
+    <Head :title="t('Ro\'yxatdan o\'tish')" />
 
     <Form
         v-bind="store.form()"
@@ -42,13 +43,13 @@ defineOptions({
     >
         <fieldset class="grid gap-5">
             <legend class="mb-4 font-serif text-lg font-semibold text-navy-950">
-                Shaxsiy ma'lumotlar
+                {{ t("Shaxsiy ma'lumotlar") }}
             </legend>
 
             <div class="grid gap-5 sm:grid-cols-2">
                 <div class="grid gap-2">
                     <Label for="first_name">
-                        Ism <span class="text-danger">*</span>
+                        {{ t('Ism') }} <span class="text-danger">*</span>
                     </Label>
                     <InputIcon :icon="User">
                         <Input
@@ -68,7 +69,7 @@ defineOptions({
 
                 <div class="grid gap-2">
                     <Label for="last_name">
-                        Familiya <span class="text-danger">*</span>
+                        {{ t('Familiya') }} <span class="text-danger">*</span>
                     </Label>
                     <InputIcon :icon="User">
                         <Input
@@ -89,7 +90,8 @@ defineOptions({
             <div class="grid gap-5 sm:grid-cols-2">
                 <div class="grid gap-2">
                     <Label for="email">
-                        Elektron pochta <span class="text-danger">*</span>
+                        {{ t('Elektron pochta') }}
+                        <span class="text-danger">*</span>
                     </Label>
                     <InputIcon :icon="Mail">
                         <Input
@@ -108,7 +110,8 @@ defineOptions({
 
                 <div class="grid gap-2">
                     <Label for="phone">
-                        Telefon raqam <span class="text-danger">*</span>
+                        {{ t('Telefon raqam') }}
+                        <span class="text-danger">*</span>
                     </Label>
                     <InputIcon :icon="Phone">
                         <Input
@@ -130,7 +133,7 @@ defineOptions({
             <div class="grid gap-5 sm:grid-cols-2">
                 <div class="grid gap-2">
                     <Label for="password">
-                        Parol <span class="text-danger">*</span>
+                        {{ t('Parol') }} <span class="text-danger">*</span>
                     </Label>
                     <InputIcon :icon="Lock">
                         <PasswordInput
@@ -139,7 +142,7 @@ defineOptions({
                             :tabindex="5"
                             autocomplete="new-password"
                             name="password"
-                            placeholder="Kamida 8 ta belgi"
+                            :placeholder="t('Kamida 8 ta belgi')"
                             :passwordrules="passwordRules"
                             class="h-11 pl-10"
                         />
@@ -149,7 +152,8 @@ defineOptions({
 
                 <div class="grid gap-2">
                     <Label for="password_confirmation">
-                        Parolni tasdiqlang <span class="text-danger">*</span>
+                        {{ t('Parolni tasdiqlang') }}
+                        <span class="text-danger">*</span>
                     </Label>
                     <InputIcon :icon="Lock">
                         <PasswordInput
@@ -158,7 +162,7 @@ defineOptions({
                             :tabindex="6"
                             autocomplete="new-password"
                             name="password_confirmation"
-                            placeholder="Parolni qayta kiriting"
+                            :placeholder="t('Parolni qayta kiriting')"
                             :passwordrules="passwordRules"
                             class="h-11 pl-10"
                         />
@@ -169,9 +173,11 @@ defineOptions({
         </fieldset>
 
         <p class="text-xs text-muted-foreground">
-            Ro'yxatdan o'tgach, elektron pochtangizga tasdiqlash havolasi
-            yuboriladi. Tashkilot va ilmiy daraja kabi ma'lumotlarni keyin
-            profilingizda to'ldirasiz.
+            {{
+                t(
+                    "Ro'yxatdan o'tgach, elektron pochtangizga tasdiqlash havolasi yuboriladi. Tashkilot va ilmiy daraja kabi ma'lumotlarni keyin profilingizda to'ldirasiz.",
+                )
+            }}
         </p>
 
         <Button
@@ -184,12 +190,14 @@ defineOptions({
         >
             <Spinner v-if="processing" />
             <UserPlus v-else class="size-4" />
-            Hisob yaratish
+            {{ t('Hisob yaratish') }}
         </Button>
 
         <p class="text-center text-sm text-muted-foreground">
-            Hisobingiz bormi?
-            <TextLink :href="login()" :tabindex="8">Tizimga kirish</TextLink>
+            {{ t('Hisobingiz bormi?') }}
+            <TextLink :href="login()" :tabindex="8">{{
+                t('Tizimga kirish')
+            }}</TextLink>
         </p>
     </Form>
 </template>

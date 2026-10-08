@@ -11,6 +11,21 @@ use App\Enums\Language;
 final class Translations
 {
     /**
+     * Interfeys matni (o'zbekcha kalit) — joriy tilga tarjima: lang/ru.json, lang/en.json.
+     * Konfiguratsiyadagi yoki admin kiritgan matn lug'atda bo'lmasa — o'zgarishsiz qaytadi.
+     */
+    public static function line(mixed $value): ?string
+    {
+        if (! is_string($value) || $value === '') {
+            return is_string($value) ? $value : null;
+        }
+
+        $translated = __($value);
+
+        return is_string($translated) ? $translated : $value;
+    }
+
+    /**
      * @return array<string, string>
      */
     public static function clean(mixed $value): array

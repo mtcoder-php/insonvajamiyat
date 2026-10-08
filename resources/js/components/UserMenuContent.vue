@@ -11,6 +11,7 @@ import UserInfo from '@/components/UserInfo.vue';
 import { home, logout } from '@/routes';
 import { edit } from '@/routes/profile';
 import type { User } from '@/types';
+import { t } from '@/lib/i18n';
 
 type Props = {
     user: User;
@@ -36,13 +37,13 @@ defineProps<Props>();
         <DropdownMenuItem :as-child="true">
             <Link class="block w-full cursor-pointer" :href="edit()" prefetch>
                 <Settings class="mr-2 h-4 w-4" />
-                Sozlamalar
+                {{ t('Sozlamalar') }}
             </Link>
         </DropdownMenuItem>
         <DropdownMenuItem v-if="showSiteLink" :as-child="true">
             <Link class="block w-full cursor-pointer" :href="home()">
                 <Globe class="mr-2 h-4 w-4" />
-                Saytga o'tish
+                {{ t("Saytga o'tish") }}
             </Link>
         </DropdownMenuItem>
     </DropdownMenuGroup>
@@ -56,7 +57,7 @@ defineProps<Props>();
             data-test="logout-button"
         >
             <LogOut class="mr-2 h-4 w-4" />
-            Chiqish
+            {{ t('Chiqish') }}
         </Link>
     </DropdownMenuItem>
 </template>

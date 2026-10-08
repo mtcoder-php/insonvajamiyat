@@ -4,6 +4,7 @@ import { ArrowRight } from '@lucide/vue';
 import type { InertiaLinkProps } from '@inertiajs/vue3';
 import type { HTMLAttributes } from 'vue';
 import { cn } from '@/lib/utils';
+import { t } from '@/lib/i18n';
 
 /**
  * Bosh sahifa kartasi (home.png): iliq oq fon, ingichka chegara,
@@ -26,7 +27,7 @@ const props = withDefaults(
     {
         title: undefined,
         href: undefined,
-        linkText: "Barchasini ko'rish",
+        linkText: undefined,
         tone: 'warm',
         as: 'section',
         size: 'md',
@@ -88,7 +89,7 @@ const titleTones = {
                     )
                 "
             >
-                {{ linkText }}
+                {{ linkText ?? t("Barchasini ko'rish") }}
                 <ArrowRight
                     class="size-3.5 transition-transform group-hover:translate-x-0.5"
                 />

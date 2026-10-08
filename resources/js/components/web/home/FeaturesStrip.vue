@@ -6,6 +6,7 @@ import type { Component } from 'vue';
 import { computed } from 'vue';
 import { usePermissions } from '@/composables/usePermissions';
 import { dashboard, guidelines, register } from '@/routes';
+import { t } from '@/lib/i18n';
 
 /**
  * Mualliflar uchun asosiy imkoniyatlar qatori (home.png).
@@ -21,26 +22,26 @@ const items = computed<
     }[]
 >(() => [
     {
-        title: 'Maqola yuborish',
-        text: 'Onlayn topshirish shakli',
+        title: t('Maqola yuborish'),
+        text: t('Onlayn topshirish shakli'),
         icon: FilePen,
         href: auth.value.user ? dashboard() : register(),
     },
     {
-        title: 'Taqriz jarayoni',
-        text: '2 bosqichli peer-review',
+        title: t('Taqriz jarayoni'),
+        text: t('2 bosqichli peer-review'),
         icon: ClipboardCheck,
         href: guidelines(),
     },
     {
-        title: 'DOI va ORCID',
-        text: 'Xalqaro standartlar',
+        title: t('DOI va ORCID'),
+        text: t('Xalqaro standartlar'),
         icon: Fingerprint,
         href: guidelines(),
     },
     {
-        title: 'Indekslash',
-        text: 'Xalqaro ilmiy bazalar',
+        title: t('Indekslash'),
+        text: t('Xalqaro ilmiy bazalar'),
         icon: Library,
         href: guidelines(),
     },
@@ -53,7 +54,7 @@ const items = computed<
     >
         <li
             v-for="(item, index) in items"
-            :key="item.title"
+            :key="index"
             :class="[
                 'border-[#e2ded5]',
                 index > 0 && 'max-sm:border-t',

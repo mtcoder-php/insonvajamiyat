@@ -24,6 +24,7 @@ import { about } from '@/routes';
 import { index as articlesIndex } from '@/routes/articles';
 import { index } from '@/routes/issues';
 import type { IssueArchiveProps } from '@/types';
+import { t, tc } from '@/lib/i18n';
 
 /**
  * Jurnal sonlari arxivi (web jurnal sonlari.png).
@@ -92,32 +93,44 @@ function openIssue(event: Event): void {
 </script>
 
 <template>
-    <Head title="Jurnal sonlari arxivi">
+    <Head :title="t('Jurnal sonlari arxivi')">
         <meta
             head-key="description"
             name="description"
-            content="Inson va Jamiyat ilmiy jurnalining barcha sonlari: maqolalar ro'yxati va elektron versiyalar."
+            :content="
+                t(
+                    '«:name» ilmiy jurnalining barcha sonlari: maqolalar ro\'yxati va elektron versiyalar.',
+                    { name: $page.props.journal.name },
+                )
+            "
         />
     </Head>
 
     <WebHero
-        title="Jurnal sonlari arxivi"
-        description="«Inson va Jamiyat» ilmiy jurnalining nashr etilgan barcha sonlari, maqolalar ro'yxati va elektron versiyalarini shu yerda topishingiz mumkin."
+        :title="t('Jurnal sonlari arxivi')"
+        :description="
+            t(
+                '«:name» ilmiy jurnalining nashr etilgan barcha sonlari, maqolalar ro\'yxati va elektron versiyalarini shu yerda topishingiz mumkin.',
+                { name: $page.props.journal.name },
+            )
+        "
         :image="hero"
-        :crumbs="[{ title: 'Jurnal sonlari arxivi' }]"
+        :crumbs="[{ title: t('Jurnal sonlari arxivi') }]"
     >
         <template #search>
             <div class="flex flex-col gap-2 lg:flex-row">
                 <form class="flex flex-1 gap-2" @submit.prevent="search">
                     <label class="relative flex-1">
-                        <span class="sr-only">Qidirish</span>
+                        <span class="sr-only">{{ t('Qidirish') }}</span>
                         <Search
                             class="pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-navy-400"
                         />
                         <input
                             v-model="query"
                             type="search"
-                            placeholder="Maqola nomi yoki muallifni qidiring..."
+                            :placeholder="
+                                t('Maqola nomi yoki muallifni qidiring...')
+                            "
                             class="h-12 w-full rounded-xl border border-line bg-white pr-4 pl-12 text-[15px] text-navy-900 outline-none placeholder:text-navy-400 focus:border-brand-400 focus:ring-4 focus:ring-brand-100"
                         />
                     </label>
@@ -125,27 +138,27 @@ function openIssue(event: Event): void {
                         type="submit"
                         class="h-12 rounded-xl bg-navy-900 px-6 text-sm font-semibold text-white transition-all hover:-translate-y-px hover:bg-brand-700"
                     >
-                        Qidirish
+                        {{ t('Qidirish') }}
                     </button>
                 </form>
                 <div class="grid grid-cols-2 gap-2 lg:w-96">
                     <SelectInput
                         :model-value="filters.year"
-                        aria-label="Yil"
+                        :aria-label="t('Yil')"
                         class="[&_select]:h-12"
                         @update:model-value="(v) => v && setYear(Number(v))"
                     >
                         <option v-for="y in tree" :key="y.year" :value="y.year">
-                            {{ y.year }}-yil
+                            {{ t(':year-yil', { year: y.year }) }}
                         </option>
                     </SelectInput>
                     <div class="relative">
                         <select
-                            aria-label="Son"
+                            :aria-label="t('Son')"
                             class="h-12 w-full cursor-pointer appearance-none rounded-lg border border-line bg-white px-3 pr-9 text-sm text-navy-900 outline-none hover:border-navy-200 focus:border-brand-400 focus:ring-4 focus:ring-brand-100"
                             @change="openIssue"
                         >
-                            <option value="">Sonni tanlang</option>
+                            <option value="">{{ t('Sonni tanlang') }}</option>
                             <optgroup
                                 v-for="y in tree"
                                 :key="y.year"
@@ -181,7 +194,7 @@ function openIssue(event: Event): void {
                     <h2
                         class="mb-3 font-serif text-base font-bold text-navy-950"
                     >
-                        Yillar bo'yicha arxiv
+                        {{ t("Yillar bo'yicha arxiv") }}
                     </h2>
                     <ul class="grid gap-1">
                         <li v-for="y in tree" :key="y.year">
@@ -203,7 +216,7 @@ function openIssue(event: Event): void {
                                 <span class="flex-1">{{ y.year }}</span>
                                 <span
                                     class="rounded-full bg-brand-50 px-2 text-[10px] font-semibold text-brand-700"
-                                    >{{ y.count }} son</span
+                                    >{{ tc(':count son', y.count) }}</span
                                 >
                             </button>
                             <ul
@@ -236,7 +249,7 @@ function openIssue(event: Event): void {
                     <h2
                         class="mb-3 font-serif text-base font-bold text-navy-950"
                     >
-                        Yo'nalishlar
+                        {{ t("Yo'nalishlar") }}
                     </h2>
                     <ul class="grid gap-0.5">
                         <li v-for="subject in subjects" :key="subject.slug">
@@ -256,7 +269,8 @@ function openIssue(event: Event): void {
                         :href="articlesIndex()"
                         class="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-brand-700 hover:underline"
                     >
-                        Barcha maqolalar <ArrowRight class="size-3.5" />
+                        {{ t('Barcha maqolalar') }}
+                        <ArrowRight class="size-3.5" />
                     </Link>
                 </section>
             </aside>
@@ -265,7 +279,7 @@ function openIssue(event: Event): void {
             <div class="grid min-w-0 content-start gap-8">
                 <section v-if="latest.length">
                     <h2 class="mb-4 font-serif text-xl font-bold text-navy-950">
-                        So'nggi nashrlar
+                        {{ t("So'nggi nashrlar") }}
                     </h2>
                     <div class="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
                         <article
@@ -297,13 +311,20 @@ function openIssue(event: Event): void {
                             >
                                 <span class="inline-flex items-center gap-1"
                                     ><FileText class="size-3.5 text-navy-400" />
-                                    {{ issue.articlesCount ?? 0 }} maqola</span
+                                    {{
+                                        tc(
+                                            ':count maqola',
+                                            issue.articlesCount ?? 0,
+                                        )
+                                    }}</span
                                 >
                                 <span class="inline-flex items-center gap-1"
                                     ><UsersRound
                                         class="size-3.5 text-navy-400"
                                     />
-                                    {{ issue.authorsCount }} muallif</span
+                                    {{
+                                        tc(':count muallif', issue.authorsCount)
+                                    }}</span
                                 >
                             </p>
                             <div class="mt-auto grid gap-2 pt-4">
@@ -313,15 +334,15 @@ function openIssue(event: Event): void {
                                     download
                                     class="flex h-9 items-center justify-center gap-1.5 rounded-lg bg-navy-900 text-xs font-semibold text-white transition-all hover:-translate-y-px hover:bg-brand-700"
                                 >
-                                    <Download class="size-3.5" /> Butun sonni
-                                    yuklab olish (PDF)
+                                    <Download class="size-3.5" />
+                                    {{ t('Butun sonni yuklab olish (PDF)') }}
                                 </a>
                                 <Link
                                     :href="issue.url"
                                     class="flex h-9 items-center justify-center gap-1.5 rounded-lg border border-line text-xs font-semibold text-navy-800 transition-all hover:-translate-y-px hover:border-brand-300 hover:text-brand-700"
                                 >
-                                    <ListOrdered class="size-3.5" /> Mundarija
-                                    va maqolalar
+                                    <ListOrdered class="size-3.5" />
+                                    {{ t('Mundarija va maqolalar') }}
                                 </Link>
                             </div>
                         </article>
@@ -336,7 +357,7 @@ function openIssue(event: Event): void {
                             <h2
                                 class="mr-2 font-serif text-xl font-bold text-navy-950"
                             >
-                                Yilma-yil arxiv
+                                {{ t('Yilma-yil arxiv') }}
                             </h2>
                             <button
                                 v-for="y in tree"
@@ -358,11 +379,15 @@ function openIssue(event: Event): void {
                         <SelectInput
                             v-model="sort"
                             class="w-48"
-                            aria-label="Saralash"
+                            :aria-label="t('Saralash')"
                             @change="setSort"
                         >
-                            <option value="newest">Eng so'nggi avval</option>
-                            <option value="oldest">Raqam bo'yicha</option>
+                            <option value="newest">
+                                {{ t("Eng so'nggi avval") }}
+                            </option>
+                            <option value="oldest">
+                                {{ t("Raqam bo'yicha") }}
+                            </option>
                         </SelectInput>
                     </div>
 
@@ -405,14 +430,23 @@ function openIssue(event: Event): void {
                                         ><FileText
                                             class="size-3.5 text-navy-400"
                                         />
-                                        {{ issue.articlesCount ?? 0 }}
-                                        maqola</span
+                                        {{
+                                            tc(
+                                                ':count maqola',
+                                                issue.articlesCount ?? 0,
+                                            )
+                                        }}</span
                                     >
                                     <span class="inline-flex items-center gap-1"
                                         ><UsersRound
                                             class="size-3.5 text-navy-400"
                                         />
-                                        {{ issue.authorsCount }} muallif</span
+                                        {{
+                                            tc(
+                                                ':count muallif',
+                                                issue.authorsCount,
+                                            )
+                                        }}</span
                                     >
                                 </p>
                                 <div class="mt-auto flex flex-wrap gap-2 pt-3">
@@ -428,7 +462,8 @@ function openIssue(event: Event): void {
                                         :href="issue.url"
                                         class="inline-flex items-center gap-1 rounded-lg border border-line px-2.5 py-1 text-xs font-semibold text-brand-700 transition-colors hover:border-brand-300 hover:bg-brand-50"
                                     >
-                                        <BookOpen class="size-3.5" /> Maqolalar
+                                        <BookOpen class="size-3.5" />
+                                        {{ t('Maqolalar') }}
                                     </Link>
                                 </div>
                             </div>
@@ -438,7 +473,7 @@ function openIssue(event: Event): void {
                         v-else
                         class="rounded-2xl border border-dashed border-navy-200 bg-white py-10 text-center text-sm text-navy-500"
                     >
-                        Bu yilda chop etilgan son yo'q.
+                        {{ t("Bu yilda chop etilgan son yo'q.") }}
                     </p>
                 </section>
             </div>
@@ -457,17 +492,21 @@ function openIssue(event: Event): void {
                     </span>
                     <div>
                         <p class="font-serif text-base font-bold text-navy-950">
-                            To'liq arxiv
+                            {{ t("To'liq arxiv") }}
                         </p>
                         <p class="mt-1 text-xs text-navy-600">
-                            Barcha nashr etilgan maqolalarni qidiruv va filtrlar
-                            bilan ko'ring.
+                            {{
+                                t(
+                                    "Barcha nashr etilgan maqolalarni qidiruv va filtrlar bilan ko'ring.",
+                                )
+                            }}
                         </p>
                         <Link
                             :href="articlesIndex()"
                             class="mt-3 inline-flex items-center gap-1 rounded-lg bg-navy-900 px-3 py-1.5 text-xs font-semibold text-white transition-all hover:-translate-y-px hover:bg-brand-700"
                         >
-                            Katalogga o'tish <ArrowRight class="size-3.5" />
+                            {{ t("Katalogga o'tish") }}
+                            <ArrowRight class="size-3.5" />
                         </Link>
                     </div>
                 </section>
@@ -481,7 +520,7 @@ function openIssue(event: Event): void {
                     />
                     <div class="relative">
                         <p class="font-serif text-lg font-bold">
-                            Jurnal haqida
+                            {{ t('Jurnal haqida') }}
                         </p>
                         <p class="mt-2 text-xs leading-relaxed text-white/80">
                             {{ $page.props.journal.description }}
@@ -490,7 +529,7 @@ function openIssue(event: Event): void {
                             :href="about()"
                             class="mt-4 inline-flex items-center gap-1 rounded-lg border border-white/30 px-3 py-1.5 text-xs font-semibold transition-colors hover:bg-white/10"
                         >
-                            Batafsil <ArrowRight class="size-3.5" />
+                            {{ t('Batafsil') }} <ArrowRight class="size-3.5" />
                         </Link>
                     </div>
                 </section>
@@ -502,7 +541,7 @@ function openIssue(event: Event): void {
                     <h2
                         class="mb-4 font-serif text-base font-bold text-navy-950"
                     >
-                        So'nggi maqolalar
+                        {{ t("So'nggi maqolalar") }}
                     </h2>
                     <ul class="grid gap-4">
                         <li v-for="article in latestArticles" :key="article.id">

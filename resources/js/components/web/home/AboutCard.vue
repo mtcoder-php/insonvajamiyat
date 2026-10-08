@@ -4,6 +4,7 @@ import { ArrowRight } from '@lucide/vue';
 import { computed } from 'vue';
 import HomeCard from '@/components/web/home/HomeCard.vue';
 import { about } from '@/routes';
+import { t } from '@/lib/i18n';
 
 /**
  * "Jurnal haqida" — to'q ko'k karta, o'ngda naqsh (home.png).
@@ -17,7 +18,7 @@ const petals = Array.from({ length: 8 }, (_, i) => i * 45);
 <template>
     <HomeCard
         tone="navy"
-        title="Jurnal haqida"
+        :title="t('Jurnal haqida')"
         class="group bg-gradient-to-br from-navy-900 via-navy-900 to-navy-700"
     >
         <svg
@@ -50,16 +51,18 @@ const petals = Array.from({ length: 8 }, (_, i) => i * 45);
         </svg>
 
         <p class="relative max-w-[16rem] text-sm leading-relaxed text-white/85">
-            «{{ journal.name }}» ilmiy jurnali tarix, etnologiya, etnografiya,
-            antropologiya va filologiya sohalaridagi yangi ilmiy natijalarni
-            e'lon qilish, fanlararo tadqiqotlarni rivojlantirish va xalqaro
-            ilmiy hamkorlikni mustahkamlashga qaratilgan.
+            {{
+                t(
+                    "«:name» ilmiy jurnali tarix, etnologiya, etnografiya, antropologiya va filologiya sohalaridagi yangi ilmiy natijalarni e'lon qilish, fanlararo tadqiqotlarni rivojlantirish va xalqaro ilmiy hamkorlikni mustahkamlashga qaratilgan.",
+                    { name: journal.name },
+                )
+            }}
         </p>
         <Link
             :href="about()"
             class="group/btn relative mt-5 inline-flex h-9 items-center gap-1.5 rounded-full border border-white/50 px-5 text-sm font-medium text-white transition-all hover:bg-white hover:text-navy-900"
         >
-            Batafsil
+            {{ t('Batafsil') }}
             <ArrowRight
                 class="size-4 transition-transform group-hover/btn:translate-x-0.5"
             />

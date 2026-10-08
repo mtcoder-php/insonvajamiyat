@@ -3,6 +3,7 @@ import { Link } from '@inertiajs/vue3';
 import { ChevronRight } from '@lucide/vue';
 import type { InertiaLinkProps } from '@inertiajs/vue3';
 import { home } from '@/routes';
+import { t } from '@/lib/i18n';
 
 /**
  * Ichki sahifalar sarlavhasi: non-yo'l (breadcrumbs), serif sarlavha,
@@ -28,12 +29,12 @@ defineProps<{
         >
             <nav
                 class="flex flex-wrap items-center gap-1 text-xs text-navy-500"
-                aria-label="Non-yo'l"
+                :aria-label="t('Non-yo\'l')"
             >
                 <Link
                     :href="home()"
                     class="transition-colors hover:text-brand-700"
-                    >Bosh sahifa</Link
+                    >{{ t('Bosh sahifa') }}</Link
                 >
                 <template v-for="crumb in crumbs ?? []" :key="crumb.title">
                     <ChevronRight class="size-3.5 text-navy-300" />

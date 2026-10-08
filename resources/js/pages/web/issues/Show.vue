@@ -19,6 +19,7 @@ import { cn } from '@/lib/utils';
 import { home } from '@/routes';
 import { index } from '@/routes/issues';
 import type { IssuePageProps } from '@/types';
+import { t, tc } from '@/lib/i18n';
 
 /**
  * Jurnal soni sahifasi: muqova, ma'lumotlar, to'liq PDF va ruknlar bo'yicha mundarija.
@@ -27,7 +28,7 @@ defineProps<IssuePageProps>();
 </script>
 
 <template>
-    <Head :title="`${issue.label} — jurnal soni`">
+    <Head :title="t(':label — jurnal soni', { label: issue.label })">
         <meta
             v-if="issue.description"
             head-key="description"
@@ -55,22 +56,27 @@ defineProps<IssuePageProps>();
             <div class="min-w-0 flex-1">
                 <nav
                     class="flex flex-wrap items-center gap-1 text-xs text-white/60"
-                    aria-label="Non-yo'l"
+                    :aria-label="t('Non-yo\'l')"
                 >
-                    <Link :href="home()" class="hover:text-white"
-                        >Bosh sahifa</Link
-                    >
+                    <Link :href="home()" class="hover:text-white">{{
+                        t('Bosh sahifa')
+                    }}</Link>
                     <ChevronRight class="size-3.5" />
-                    <Link :href="index()" class="hover:text-white"
-                        >Jurnal sonlari</Link
-                    >
+                    <Link :href="index()" class="hover:text-white">{{
+                        t('Jurnal sonlari')
+                    }}</Link>
                     <ChevronRight class="size-3.5" />
                     <span class="text-white/85">{{ issue.label }}</span>
                 </nav>
                 <h1
                     class="mt-3 font-serif text-3xl font-bold text-white sm:text-4xl"
                 >
-                    {{ issue.year }}-yil, {{ issue.number }}-son
+                    {{
+                        t(':year-yil, :number-son', {
+                            year: issue.year,
+                            number: issue.number,
+                        })
+                    }}
                 </h1>
                 <p v-if="issue.title" class="mt-2 text-lg text-white/85">
                     {{ issue.title }}
@@ -81,27 +87,29 @@ defineProps<IssuePageProps>();
                 >
                     <div class="flex items-center gap-1.5">
                         <CalendarDays class="size-4 text-gold-400" />
-                        <dt class="sr-only">Chop etilgan</dt>
+                        <dt class="sr-only">{{ t('Chop etilgan') }}</dt>
                         <dd>{{ formatDate(issue.publishedAt) }}</dd>
                     </div>
                     <div v-if="issue.volume" class="flex items-center gap-1.5">
-                        <dt class="text-white/60">Jild:</dt>
+                        <dt class="text-white/60">{{ t('Jild:') }}</dt>
                         <dd>{{ issue.volume }}</dd>
                     </div>
                     <div class="flex items-center gap-1.5">
                         <FileText class="size-4 text-gold-400" />
-                        <dd>{{ issue.articlesCount ?? 0 }} maqola</dd>
+                        <dd>
+                            {{ tc(':count maqola', issue.articlesCount ?? 0) }}
+                        </dd>
                     </div>
                     <div class="flex items-center gap-1.5">
                         <UsersRound class="size-4 text-gold-400" />
-                        <dd>{{ issue.authorsCount }} muallif</dd>
+                        <dd>{{ tc(':count muallif', issue.authorsCount) }}</dd>
                     </div>
                     <div
                         v-if="issue.pagesTotal"
                         class="flex items-center gap-1.5"
                     >
                         <ListOrdered class="size-4 text-gold-400" />
-                        <dd>{{ issue.pagesTotal }} bet</dd>
+                        <dd>{{ tc(':count bet', issue.pagesTotal) }}</dd>
                     </div>
                     <div v-if="issue.doi" class="flex items-center gap-1.5">
                         <Fingerprint class="size-4 text-gold-400" />
@@ -123,7 +131,8 @@ defineProps<IssuePageProps>();
                         download
                         class="inline-flex h-11 items-center gap-2 rounded-xl bg-white px-5 text-sm font-semibold text-navy-950 shadow-[0_12px_28px_-14px_rgba(0,0,0,0.8)] transition-all hover:-translate-y-px hover:bg-gold-100"
                     >
-                        <Download class="size-4" /> Butun sonni yuklab olish
+                        <Download class="size-4" />
+                        {{ t('Butun sonni yuklab olish') }}
                         <span
                             v-if="issue.pdfSize"
                             class="font-normal text-navy-500"
@@ -137,7 +146,8 @@ defineProps<IssuePageProps>();
                         rel="noopener"
                         class="inline-flex h-11 items-center gap-2 rounded-xl border border-white/30 px-5 text-sm font-semibold transition-all hover:-translate-y-px hover:bg-white/10"
                     >
-                        <ListOrdered class="size-4" /> Mundarija (PDF)
+                        <ListOrdered class="size-4" />
+                        {{ t('Mundarija (PDF)') }}
                     </a>
                 </div>
             </div>
@@ -159,7 +169,7 @@ defineProps<IssuePageProps>();
                 class="rounded-2xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(0,30,60,0.05)] sm:p-7"
             >
                 <h2 class="font-serif text-xl font-bold text-navy-950">
-                    Mundarija
+                    {{ t('Mundarija') }}
                 </h2>
                 <div class="mt-2 gold-rule w-16" />
 
@@ -246,14 +256,14 @@ defineProps<IssuePageProps>();
                 </template>
 
                 <p v-if="!sections.length" class="mt-4 text-sm text-navy-500">
-                    Bu sonda hozircha maqola e'lon qilinmagan.
+                    {{ t("Bu sonda hozircha maqola e'lon qilinmagan.") }}
                 </p>
             </section>
 
             <nav
                 v-if="neighbours.prev || neighbours.next"
                 class="flex flex-wrap justify-between gap-3"
-                aria-label="Boshqa sonlar"
+                :aria-label="t('Boshqa sonlar')"
             >
                 <Link
                     v-if="neighbours.prev"

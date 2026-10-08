@@ -62,6 +62,7 @@
             <link rel="canonical" href="{{ $seo['canonical'] }}">
         @endif
         <meta property="og:site_name" content="{{ $seo['siteName'] }}">
+        <meta property="og:locale" content="{{ ['uz' => 'uz_UZ', 'ru' => 'ru_RU', 'en' => 'en_US'][app()->getLocale()] ?? 'uz_UZ' }}">
         <meta property="og:type" content="{{ $seo['type'] }}">
         <meta property="og:title" content="{{ $seo['title'] }}">
         <meta property="og:description" content="{{ $seo['description'] }}">

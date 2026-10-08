@@ -1,6 +1,9 @@
+import { intlLocale, locale, SOURCE_LOCALE, t, tc } from '@/lib/i18n';
+
 /**
- * Sana, son va fayl hajmini o'zbekcha ko'rinishda formatlash.
- * (Intl'ning uz lokali brauzerlarda bir xil emas — shuning uchun qo'lda.)
+ * Sana, son va fayl hajmini joriy tilda formatlash.
+ * O'zbekcha — qo'lda (Intl'ning uz lokali brauzerlarda bir xil emas),
+ * rus va ingliz tillari — Intl.DateTimeFormat orqali.
  */
 export const MONTHS_SHORT = [
     'Yan',
@@ -32,6 +35,17 @@ export const MONTHS_LONG = [
     'dekabr',
 ] as const;
 
+/** Oy nomi joriy tilda: "sentabr" / "сентября" / "September" */
+function monthName(date: Date, style: 'long' | 'short'): string {
+    if (locale() === SOURCE_LOCALE) {
+        return (style === 'long' ? MONTHS_LONG : MONTHS_SHORT)[date.getMonth()];
+    }
+
+    return new Intl.DateTimeFormat(intlLocale(), { month: style })
+        .format(date)
+        .replace('.', '');
+}
+
 function toDate(value: string | Date): Date | null {
     // "2026-09-29" — mahalliy vaqt bo'yicha (UTC siljishisiz) o'qiladi
     const date =
@@ -56,15 +70,25 @@ export function formatDate(value: string | Date | null | undefined): string {
     return `${dd}.${mm}.${date.getFullYear()}`;
 }
 
-/** 29-sentabr, 2026 */
+/** 29-sentabr, 2026 · 29 сентября 2026 г. · 29 September 2026 */
 export function formatDateLong(
     value: string | Date | null | undefined,
 ): string {
     const date = value ? toDate(value) : null;
 
-    return date
-        ? `${date.getDate()}-${MONTHS_LONG[date.getMonth()]}, ${date.getFullYear()}`
-        : '';
+    if (!date) {
+        return '';
+    }
+
+    if (locale() !== SOURCE_LOCALE) {
+        return new Intl.DateTimeFormat(intlLocale(), {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+        }).format(date);
+    }
+
+    return `${date.getDate()}-${MONTHS_LONG[date.getMonth()]}, ${date.getFullYear()}`;
 }
 
 /** { day: '15', month: 'Okt', year: 2026 } — tadbirlar kalendari uchun */
@@ -77,7 +101,7 @@ export function dateParts(value: string): {
 
     return {
         day: String(date.getDate()).padStart(2, '0'),
-        month: MONTHS_SHORT[date.getMonth()],
+        month: monthName(date, 'short'),
         year: date.getFullYear(),
     };
 }
@@ -115,24 +139,24 @@ export function timeAgo(value: string | null | undefined): string {
     );
 
     if (seconds < 60) {
-        return 'hozirgina';
+        return t('hozirgina');
     }
 
     const minutes = Math.round(seconds / 60);
 
     if (minutes < 60) {
-        return `${minutes} daqiqa oldin`;
+        return tc(':count daqiqa oldin', minutes);
     }
 
     const hours = Math.round(minutes / 60);
 
     if (hours < 24) {
-        return `${hours} soat oldin`;
+        return tc(':count soat oldin', hours);
     }
 
     const days = Math.round(hours / 24);
 
-    return days < 30 ? `${days} kun oldin` : formatDate(value);
+    return days < 30 ? tc(':count kun oldin', days) : formatDate(value);
 }
 
 /** 28.06.2026 10:15 */
@@ -197,7 +221,12 @@ export function eventDateParts(value: string): {
     year: number;
 } {
     const date = new Date(value);
-    const month = MONTHS_LONG[date.getMonth()];
+    const month =
+        locale() === SOURCE_LOCALE
+            ? MONTHS_LONG[date.getMonth()]
+            : new Intl.DateTimeFormat(intlLocale(), {
+                  month: 'long',
+              }).format(date);
 
     return {
         day: date.getDate(),

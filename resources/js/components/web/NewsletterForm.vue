@@ -2,6 +2,7 @@
 import { Form } from '@inertiajs/vue3';
 import { Spinner } from '@/components/ui/spinner';
 import { subscribe } from '@/routes/newsletter';
+import { t } from '@/lib/i18n';
 
 /**
  * Yangiliklarga obuna formasi (to'q ko'k fon uchun).
@@ -27,14 +28,16 @@ withDefaults(
         <div
             class="flex overflow-hidden rounded-lg border border-white/20 bg-white/5 focus-within:border-brand-400"
         >
-            <label :for="id" class="sr-only">Elektron pochta manzilingiz</label>
+            <label :for="id" class="sr-only">{{
+                t('Elektron pochta manzilingiz')
+            }}</label>
             <input
                 :id="id"
                 name="email"
                 type="email"
                 required
                 autocomplete="email"
-                placeholder="Email manzilingiz"
+                :placeholder="t('Email manzilingiz')"
                 :class="[
                     'min-w-0 flex-1 bg-transparent px-4 text-sm text-white placeholder:text-white/45 focus:outline-none',
                     compact ? 'h-10' : 'h-11',
@@ -49,7 +52,7 @@ withDefaults(
                 ]"
             >
                 <Spinner v-if="processing" />
-                Obuna bo'lish
+                {{ t("Obuna bo'lish") }}
             </button>
         </div>
         <p v-if="errors.email" class="text-sm text-red-300">

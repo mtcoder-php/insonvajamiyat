@@ -3,6 +3,7 @@ import { Link, usePage } from '@inertiajs/vue3';
 import { ArrowRight, ChevronLeft, ChevronRight } from '@lucide/vue';
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import type { HeroSlide } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Bosh sahifa slayderi (home.png): slaydlar avtomatik almashadi,
@@ -108,7 +109,7 @@ onBeforeUnmount(() => clearTimeout(timer));
         v-if="count"
         class="relative isolate h-[32rem] overflow-hidden bg-navy-950 text-white outline-none select-none sm:h-[34rem] lg:h-[38rem]"
         aria-roledescription="carousel"
-        aria-label="Asosiy slayder"
+        :aria-label="t('Asosiy slayder')"
         tabindex="0"
         @mouseenter="paused = true"
         @mouseleave="paused = false"
@@ -176,9 +177,8 @@ onBeforeUnmount(() => clearTimeout(timer));
                 >
                     <span class="h-px w-8 bg-gold-400" aria-hidden="true" />
                     <span
-                        >Ilmiy-nazariy jurnal<span
-                            v-if="issn"
-                            class="hidden sm:inline"
+                        >{{ t('Ilmiy-nazariy jurnal')
+                        }}<span v-if="issn" class="hidden sm:inline"
                             >&nbsp;·&nbsp;{{ issn }}</span
                         ></span
                     >
@@ -234,7 +234,7 @@ onBeforeUnmount(() => clearTimeout(timer));
             <button
                 type="button"
                 class="absolute bottom-5 left-4 z-20 flex size-10 items-center justify-center rounded-lg border-2 border-white/80 bg-black/10 text-white backdrop-blur-sm transition-colors hover:bg-white hover:text-navy-900 sm:bottom-8 sm:left-8 sm:size-12"
-                aria-label="Oldingi slayd"
+                :aria-label="t('Oldingi slayd')"
                 @click="prev"
             >
                 <ChevronLeft class="size-5" />
@@ -242,7 +242,7 @@ onBeforeUnmount(() => clearTimeout(timer));
             <button
                 type="button"
                 class="absolute right-4 bottom-5 z-20 flex size-10 items-center justify-center rounded-lg border-2 border-white/80 bg-black/10 text-white backdrop-blur-sm transition-colors hover:bg-white hover:text-navy-900 sm:right-8 sm:bottom-8 sm:size-12"
-                aria-label="Keyingi slayd"
+                :aria-label="t('Keyingi slayd')"
                 @click="next"
             >
                 <ChevronRight class="size-5" />
@@ -251,7 +251,7 @@ onBeforeUnmount(() => clearTimeout(timer));
             <div
                 class="absolute bottom-7 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1 sm:bottom-11"
                 role="tablist"
-                aria-label="Slaydlar"
+                :aria-label="t('Slaydlar')"
             >
                 <button
                     v-for="(item, index) in items"
@@ -259,7 +259,7 @@ onBeforeUnmount(() => clearTimeout(timer));
                     type="button"
                     role="tab"
                     class="group flex size-6 cursor-pointer items-center justify-center"
-                    :aria-label="`${index + 1}-slayd`"
+                    :aria-label="t(':number-slayd', { number: index + 1 })"
                     :aria-selected="index === active"
                     :aria-current="index === active ? 'true' : undefined"
                     @click="go(index)"

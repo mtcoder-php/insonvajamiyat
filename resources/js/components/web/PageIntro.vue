@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { t } from '@/lib/i18n';
+
 /**
  * Web qism sahifalarining sarlavha bloki (vaqtinchalik, funksional).
  * Dizayn bosqichida rasmli "hero" bilan almashtiriladi.
@@ -20,7 +22,9 @@ defineProps<{
     </section>
     <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <slot>
-            <p class="text-muted-foreground">Bu bo'lim ishlab chiqilmoqda.</p>
+            <p class="text-muted-foreground">
+                {{ t("Bu bo'lim ishlab chiqilmoqda.") }}
+            </p>
         </slot>
     </div>
 </template>

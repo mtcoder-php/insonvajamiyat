@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
+import { computed } from 'vue';
 import {
     ArrowRight,
     CalendarDays,
@@ -13,6 +14,7 @@ import { formatDateLong } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import { index } from '@/routes/news';
 import type { Paginated, PostItem } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Yangiliklar va e'lonlar ro'yxati (/news), tur bo'yicha filtr.
@@ -22,25 +24,32 @@ defineProps<{
     type: 'news' | 'announcement' | null;
 }>();
 
-const tabs = [
-    { value: null, label: 'Barchasi' },
-    { value: 'news', label: 'Yangiliklar' },
-    { value: 'announcement', label: "E'lonlar" },
-] as const;
+const tabs = computed(
+    () =>
+        [
+            { value: null, label: t('Barchasi') },
+            { value: 'news', label: t('Yangiliklar') },
+            { value: 'announcement', label: t("E'lonlar") },
+        ] as const,
+);
 </script>
 
 <template>
-    <Head title="Yangiliklar" />
+    <Head :title="t('Yangiliklar')" />
 
     <WebPageHeader
-        title="Yangiliklar va e'lonlar"
-        description="Jurnal hayoti, tahririyat qarorlari, konferensiyalar va mualliflar uchun muhim e'lonlar."
-        :crumbs="[{ title: 'Yangiliklar' }]"
+        :title="t('Yangiliklar va e\'lonlar')"
+        :description="
+            t(
+                'Jurnal hayoti, tahririyat qarorlari, konferensiyalar va mualliflar uchun muhim e\'lonlar.',
+            )
+        "
+        :crumbs="[{ title: t('Yangiliklar') }]"
     >
-        <nav class="mt-6 flex flex-wrap gap-2" aria-label="Turi">
+        <nav class="mt-6 flex flex-wrap gap-2" :aria-label="t('Turi')">
             <Link
                 v-for="tab in tabs"
-                :key="tab.label"
+                :key="tab.value ?? 'all'"
                 :href="index({ query: tab.value ? { type: tab.value } : {} })"
                 preserve-scroll
                 :class="
@@ -89,8 +98,8 @@ const tabs = [
                             <Newspaper v-else class="size-3.5" />
                             {{
                                 post.type === 'announcement'
-                                    ? "E'lon"
-                                    : 'Yangilik'
+                                    ? t("E'lon")
+                                    : t('Yangilik')
                             }}
                         </span>
                         <span
@@ -98,7 +107,7 @@ const tabs = [
                             class="inline-flex items-center gap-1 font-semibold text-red-600"
                         >
                             <Pin class="size-3.5" />
-                            Muhim
+                            {{ t('Muhim') }}
                         </span>
                         <span
                             v-if="post.publishedAt"
@@ -122,7 +131,7 @@ const tabs = [
                     <span
                         class="mt-auto inline-flex items-center gap-1.5 pt-5 text-sm font-semibold text-brand-700"
                     >
-                        Batafsil
+                        {{ t('Batafsil') }}
                         <ArrowRight
                             class="size-4 transition-transform group-hover:translate-x-1"
                         />
@@ -135,7 +144,7 @@ const tabs = [
                 class="flex flex-col items-center gap-2 py-16 text-center text-navy-500"
             >
                 <Newspaper class="size-10 text-navy-300" />
-                Hozircha bu bo'limda xabarlar yo'q.
+                {{ t("Hozircha bu bo'limda xabarlar yo'q.") }}
             </div>
 
             <div class="mt-10">

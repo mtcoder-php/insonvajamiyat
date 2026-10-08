@@ -4,6 +4,7 @@ import { ref, useTemplateRef } from 'vue';
 import type { HTMLAttributes } from 'vue';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import { t } from '@/lib/i18n';
 
 defineOptions({ inheritAttrs: false });
 
@@ -39,7 +40,7 @@ defineExpose({
                 )
             "
             :aria-label="
-                showPassword ? 'Parolni yashirish' : 'Parolni ko‘rsatish'
+                showPassword ? t('Parolni yashirish') : t('Parolni ko\'rsatish')
             "
             :tabindex="-1"
         >

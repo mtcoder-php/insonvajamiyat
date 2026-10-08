@@ -4,6 +4,7 @@ import { ArrowRight, CalendarDays, Clock, History, MapPin } from '@lucide/vue';
 import WebPageHeader from '@/components/web/WebPageHeader.vue';
 import { eventDateParts, formatDate } from '@/lib/format';
 import type { EventItem } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Tadbirlar (/events): yaqinlashayotganlar va o'tgan tadbirlar.
@@ -21,12 +22,16 @@ function time(value: string): string {
 </script>
 
 <template>
-    <Head title="Tadbirlar" />
+    <Head :title="t('Tadbirlar')" />
 
     <WebPageHeader
-        title="Tadbirlar"
-        description="Konferensiyalar, ilmiy seminarlar, forumlar va mualliflar uchun master-klasslar."
-        :crumbs="[{ title: 'Tadbirlar' }]"
+        :title="t('Tadbirlar')"
+        :description="
+            t(
+                'Konferensiyalar, ilmiy seminarlar, forumlar va mualliflar uchun master-klasslar.',
+            )
+        "
+        :crumbs="[{ title: t('Tadbirlar') }]"
     />
 
     <div class="bg-white">
@@ -35,7 +40,7 @@ function time(value: string): string {
         >
             <section>
                 <h2 class="font-serif text-2xl font-bold text-navy-950">
-                    Yaqinlashayotgan tadbirlar
+                    {{ t('Yaqinlashayotgan tadbirlar') }}
                 </h2>
 
                 <div
@@ -93,7 +98,7 @@ function time(value: string): string {
                             <span
                                 class="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700"
                             >
-                                Batafsil
+                                {{ t('Batafsil') }}
                                 <ArrowRight
                                     class="size-4 transition-transform group-hover:translate-x-1"
                                 />
@@ -103,7 +108,7 @@ function time(value: string): string {
                 </div>
                 <p v-else class="mt-6 flex items-center gap-2 text-navy-500">
                     <CalendarDays class="size-5 text-navy-300" />
-                    Yaqin kunlarda tadbirlar rejalashtirilmagan.
+                    {{ t('Yaqin kunlarda tadbirlar rejalashtirilmagan.') }}
                 </p>
             </section>
 
@@ -112,7 +117,7 @@ function time(value: string): string {
                     class="flex items-center gap-2 font-serif text-2xl font-bold text-navy-950"
                 >
                     <History class="size-6 text-navy-400" />
-                    O'tgan tadbirlar
+                    {{ t("O'tgan tadbirlar") }}
                 </h2>
                 <ul
                     class="mt-5 divide-y divide-[#ece8df] rounded-xl border border-[#ebe8e1]"
