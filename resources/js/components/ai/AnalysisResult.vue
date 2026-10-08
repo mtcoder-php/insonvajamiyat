@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import type { AiRequestDetail, AnalysisMetricKey } from '@/types';
 import ScoreRing from './ScoreRing.vue';
 import { metricLabels, qualityLabel } from './aiMeta';
+import { t } from '@/lib/i18n';
 
 /**
  * Analytics natijasi: umumiy baho, 5 mezon, kuchli/kuchsiz tomonlar va tavsiyalar.
@@ -18,7 +19,7 @@ const analysis = computed(() => props.request.analysis ?? null);
 const metrics = computed(() =>
     (Object.keys(metricLabels) as AnalysisMetricKey[]).map((key) => ({
         key,
-        label: metricLabels[key],
+        label: t(metricLabels[key]),
         value: analysis.value?.metrics[key] ?? null,
     })),
 );
@@ -46,21 +47,21 @@ const lists = computed<
 >(() => [
     {
         key: 'strengths',
-        title: 'Kuchli tomonlar',
+        title: t('Kuchli tomonlar'),
         icon: ThumbsUp,
         tone: 'text-emerald-600 bg-emerald-50',
         items: analysis.value?.strengths ?? [],
     },
     {
         key: 'weaknesses',
-        title: 'Kamchiliklar',
+        title: t('Kamchiliklar'),
         icon: TriangleAlert,
         tone: 'text-amber-600 bg-amber-50',
         items: analysis.value?.weaknesses ?? [],
     },
     {
         key: 'recommendations',
-        title: 'Tavsiyalar',
+        title: t('Tavsiyalar'),
         icon: Lightbulb,
         tone: 'text-brand-600 bg-brand-50',
         items: analysis.value?.recommendations ?? [],
@@ -78,7 +79,7 @@ const lists = computed<
                 <p class="font-sans text-[15px] font-bold text-navy-950">
                     {{ qualityLabel(analysis.score) }}
                 </p>
-                <p class="text-[11px] text-navy-400">Umumiy baho</p>
+                <p class="text-[11px] text-navy-400">{{ t('Umumiy baho') }}</p>
             </div>
             <div class="grid content-center gap-3">
                 <div v-for="metric in metrics" :key="metric.key">
@@ -154,8 +155,11 @@ const lists = computed<
         </div>
 
         <p class="text-[11px] text-navy-400">
-            Tahlil qilingan qism:
-            {{ formatNumber(analysis.analysed_chars) }} belgi (matn boshidan).
+            {{
+                t('Tahlil qilingan qism: :count belgi (matn boshidan).', {
+                    count: formatNumber(analysis.analysed_chars),
+                })
+            }}
         </p>
     </div>
 </template>

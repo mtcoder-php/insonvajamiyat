@@ -17,6 +17,7 @@ import TranslationResult from '@/components/ai/TranslationResult.vue';
 import { studios } from '@/components/ai/aiMeta';
 import { cn } from '@/lib/utils';
 import type { AiRequestTypeValue, AiStudioPageProps, AiTab } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * AI Studio ish maydoni (super admin ai page.png) — admin panel va muallif kabinetida bir xil:
@@ -43,12 +44,12 @@ const serviceTabs: { tab: AiTab; type: AiRequestTypeValue }[] = [
 
 const extraTabs = computed<{ tab: AiTab; label: string; icon: Component }[]>(
     () => [
-        { tab: 'history', label: 'Tarix', icon: History },
+        { tab: 'history', label: t('Tarix'), icon: History },
         ...(props.canManage
             ? [
                   {
                       tab: 'settings' as AiTab,
-                      label: 'Sozlamalar',
+                      label: t('Sozlamalar'),
                       icon: Settings2,
                   },
               ]
@@ -153,17 +154,22 @@ function retryCurrent(): void {
         >
             <TriangleAlert class="mt-0.5 size-4 shrink-0 text-amber-600" />
             <span>
-                AI xizmati hali ishga tushirilmagan: API kaliti yoki model
-                kiritilmagan yoki xizmat o'chirilgan.
+                {{
+                    t(
+                        "AI xizmati hali ishga tushirilmagan: API kaliti yoki model kiritilmagan yoki xizmat o'chirilgan.",
+                    )
+                }}
                 <button
                     v-if="canManage"
                     type="button"
                     class="font-semibold text-brand-700 underline underline-offset-2"
                     @click="go('settings')"
                 >
-                    Sozlamalarni ochish
+                    {{ t('Sozlamalarni ochish') }}
                 </button>
-                <template v-else>Administratorga murojaat qiling.</template>
+                <template v-else>{{
+                    t('Administratorga murojaat qiling.')
+                }}</template>
             </span>
         </p>
 
@@ -203,7 +209,7 @@ function retryCurrent(): void {
                     >
                     <span
                         class="mt-0.5 block text-xs leading-relaxed text-navy-500"
-                        >{{ studios[service.type].description }}</span
+                        >{{ t(studios[service.type].description) }}</span
                     >
                 </span>
             </button>
@@ -228,7 +234,7 @@ function retryCurrent(): void {
                 @click="go(service.tab)"
             >
                 <component :is="studios[service.type].icon" class="size-4" />
-                {{ studios[service.type].short }}
+                {{ t(studios[service.type].short) }}
             </button>
             <button
                 v-for="extra in extraTabs"
@@ -278,7 +284,7 @@ function retryCurrent(): void {
                                     {{ studios[activeType].name }}
                                 </h2>
                                 <p class="text-xs text-navy-500">
-                                    Matnni joylashtiring
+                                    {{ t('Matnni joylashtiring') }}
                                 </p>
                             </div>
                         </header>
@@ -330,8 +336,8 @@ function retryCurrent(): void {
                     v-if="tab !== 'settings'"
                     :title="
                         tab === 'history'
-                            ? 'So\'rovlar tarixi'
-                            : 'Mening so\'rovlarim'
+                            ? t('So\'rovlar tarixi')
+                            : t('Mening so\'rovlarim')
                     "
                     :items="history.data"
                     :meta="history.meta"

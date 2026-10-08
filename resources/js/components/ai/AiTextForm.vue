@@ -7,6 +7,7 @@ import { textareaClass, primaryButtonClass } from '@/lib/formStyles';
 import { formatNumber } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { AiOption, AiRequestTypeValue } from '@/types';
+import { t, tk } from '@/lib/i18n';
 
 /**
  * AI so'rovi formasi: matn, til(lar), Proofreader uchun tekshiruv turlari.
@@ -54,16 +55,16 @@ const labels: Record<
     { button: string; placeholder: string }
 > = {
     spell_check: {
-        button: 'Tahlilni boshlash',
-        placeholder: 'Tekshiriladigan matnni shu yerga joylashtiring…',
+        button: tk('Tahlilni boshlash'),
+        placeholder: tk('Tekshiriladigan matnni shu yerga joylashtiring…'),
     },
     translation: {
-        button: 'Tarjima qilish',
-        placeholder: 'Tarjima qilinadigan matnni kiriting…',
+        button: tk('Tarjima qilish'),
+        placeholder: tk('Tarjima qilinadigan matnni kiriting…'),
     },
     analysis: {
-        button: 'Tahlil qilish',
-        placeholder: 'Baholanadigan ilmiy matnni joylashtiring…',
+        button: tk('Tahlil qilish'),
+        placeholder: tk('Baholanadigan ilmiy matnni joylashtiring…'),
     },
 };
 
@@ -90,8 +91,9 @@ function submit(): void {
         <!-- Til(lar) -->
         <div v-if="type === 'translation'" class="flex items-end gap-2">
             <label class="min-w-0 flex-1">
-                <span class="mb-1.5 block text-xs font-semibold text-navy-600"
-                    >Manba til</span
+                <span
+                    class="mb-1.5 block text-xs font-semibold text-navy-600"
+                    >{{ t('Manba til') }}</span
                 >
                 <SelectInput v-model="form.source_language">
                     <option
@@ -106,14 +108,15 @@ function submit(): void {
             <button
                 type="button"
                 class="mb-0.5 inline-flex size-9 shrink-0 items-center justify-center rounded-lg border border-line bg-white text-navy-500 transition-all hover:rotate-180 hover:border-brand-300 hover:text-brand-600"
-                aria-label="Tillarni almashtirish"
+                :aria-label="t('Tillarni almashtirish')"
                 @click="swap"
             >
                 <ArrowLeftRight class="size-4" />
             </button>
             <label class="min-w-0 flex-1">
-                <span class="mb-1.5 block text-xs font-semibold text-navy-600"
-                    >Tarjima tili</span
+                <span
+                    class="mb-1.5 block text-xs font-semibold text-navy-600"
+                    >{{ t('Tarjima tili') }}</span
                 >
                 <SelectInput v-model="form.target_language">
                     <option
@@ -128,9 +131,9 @@ function submit(): void {
             </label>
         </div>
         <label v-else>
-            <span class="mb-1.5 block text-xs font-semibold text-navy-600"
-                >Matn tili</span
-            >
+            <span class="mb-1.5 block text-xs font-semibold text-navy-600">{{
+                t('Matn tili')
+            }}</span>
             <SelectInput v-model="form.source_language">
                 <option
                     v-for="lang in languages"
@@ -150,11 +153,11 @@ function submit(): void {
 
         <!-- Maqola (kabinet) -->
         <label v-if="articles && articles.length">
-            <span class="mb-1.5 block text-xs font-semibold text-navy-600"
-                >Maqolaga biriktirish (ixtiyoriy)</span
-            >
+            <span class="mb-1.5 block text-xs font-semibold text-navy-600">{{
+                t('Maqolaga biriktirish (ixtiyoriy)')
+            }}</span>
             <SelectInput v-model="form.article">
-                <option value="">— Maqolasiz —</option>
+                <option value="">{{ t('— Maqolasiz —') }}</option>
                 <option
                     v-for="item in articles"
                     :key="item.value"
@@ -181,7 +184,7 @@ function submit(): void {
                             'min-h-64 resize-y pb-8 font-[inherit] text-[13px]',
                         )
                     "
-                    :placeholder="labels[type].placeholder"
+                    :placeholder="t(labels[type].placeholder)"
                     :aria-invalid="!!form.errors.text || tooLong"
                 />
                 <div
@@ -193,7 +196,7 @@ function submit(): void {
                         class="pointer-events-auto inline-flex items-center gap-1 text-navy-400 transition-colors hover:text-red-600"
                         @click="form.text = ''"
                     >
-                        <Eraser class="size-3.5" /> Tozalash
+                        <Eraser class="size-3.5" /> {{ t('Tozalash') }}
                     </button>
                     <span v-else />
                     <span
@@ -218,7 +221,7 @@ function submit(): void {
         <!-- Tekshirish turlari -->
         <fieldset v-if="type === 'spell_check'" class="grid grid-cols-1 gap-2">
             <legend class="mb-2 text-xs font-semibold text-navy-600">
-                Tekshirish turlari
+                {{ t('Tekshirish turlari') }}
             </legend>
             <label
                 v-for="check in checks"
@@ -244,7 +247,7 @@ function submit(): void {
         >
             <LoaderCircle v-if="form.processing" class="size-4 animate-spin" />
             <Sparkles v-else class="size-4" />
-            {{ labels[type].button }}
+            {{ t(labels[type].button) }}
         </button>
     </form>
 </template>

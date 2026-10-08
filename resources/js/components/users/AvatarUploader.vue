@@ -5,6 +5,7 @@ import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import UserAvatar from '@/components/users/UserAvatar.vue';
 import { AvatarError, prepareAvatar } from '@/lib/image';
 import { cn } from '@/lib/utils';
+import { t } from '@/lib/i18n';
 
 /**
  * Profil rasmini yuklash.
@@ -102,7 +103,8 @@ async function handle(selected: File | undefined): Promise<void> {
                     forceFormData: true,
                     preserveScroll: true,
                     onError: (errors) => {
-                        localError.value = errors.avatar ?? 'Rasm yuklanmadi.';
+                        localError.value =
+                            errors.avatar ?? t('Rasm yuklanmadi.');
                         setPreview(null);
                     },
                     onSuccess: () => setPreview(null),
@@ -112,7 +114,9 @@ async function handle(selected: File | undefined): Promise<void> {
         });
     } catch (error) {
         localError.value =
-            error instanceof AvatarError ? error.message : 'Rasm yuklanmadi.';
+            error instanceof AvatarError
+                ? error.message
+                : t('Rasm yuklanmadi.');
     } finally {
         busy.value = false;
 
@@ -163,7 +167,7 @@ function remove(): void {
                     dragging && 'ring-4 ring-brand-300',
                 )
             "
-            aria-label="Rasmni almashtirish"
+            :aria-label="t('Rasmni almashtirish')"
             @click="input?.click()"
             @dragover.prevent="dragging = true"
             @dragleave.prevent="dragging = false"
@@ -188,7 +192,7 @@ function remove(): void {
                 <LoaderCircle v-if="busy" class="size-6 animate-spin" />
                 <template v-else>
                     <Camera class="size-6" />
-                    Almashtirish
+                    {{ t('Almashtirish') }}
                 </template>
             </span>
             <span
@@ -219,7 +223,7 @@ function remove(): void {
                 @click="input?.click()"
             >
                 <Upload class="size-3.5" />
-                Rasm yuklash
+                {{ t('Rasm yuklash') }}
             </button>
             <button
                 v-if="canRemove"
@@ -229,12 +233,12 @@ function remove(): void {
                 @click="remove"
             >
                 <Trash2 class="size-3.5" />
-                O'chirish
+                {{ t("O'chirish") }}
             </button>
         </div>
         <p class="text-[11px] leading-snug text-navy-400">
-            JPG, PNG yoki WEBP · kamida 96×96 px<br />
-            Rasm avtomatik kvadrat qilib kesiladi
+            {{ t('JPG, PNG yoki WEBP · kamida 96×96 px') }}<br />
+            {{ t('Rasm avtomatik kvadrat qilib kesiladi') }}
         </p>
         <p v-if="message" class="text-xs font-medium text-red-600">
             {{ message }}

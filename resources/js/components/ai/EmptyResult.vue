@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { cn } from '@/lib/utils';
 import type { AiRequestTypeValue } from '@/types';
 import { studios } from './aiMeta';
+import { t, tk } from '@/lib/i18n';
 
 /** Natija hali yo'q: xizmat haqida qisqa ma'lumot */
 const props = defineProps<{ type: AiRequestTypeValue; ready: boolean }>();
@@ -11,19 +12,21 @@ const studio = computed(() => studios[props.type]);
 
 const hints: Record<AiRequestTypeValue, string[]> = {
     spell_check: [
-        "Xatolar asl matnda belgilanadi, tuzatilgani yonida ko'rinadi",
-        'Har bir taklifni alohida qabul yoki rad etasiz',
-        'Yakuniy matnni nusxalab yoki saqlab olasiz',
+        tk("Xatolar asl matnda belgilanadi, tuzatilgani yonida ko'rinadi"),
+        tk('Har bir taklifni alohida qabul yoki rad etasiz'),
+        tk('Yakuniy matnni nusxalab yoki saqlab olasiz'),
     ],
     translation: [
-        "So'zma-so'z emas — ilmiy uslub va terminologiya saqlanadi",
-        'Tarjimani shu yerda tahrirlab, versiya sifatida saqlaysiz',
-        'Istalgan versiyani Word (.docx) formatida yuklab olasiz',
+        tk("So'zma-so'z emas — ilmiy uslub va terminologiya saqlanadi"),
+        tk('Tarjimani shu yerda tahrirlab, versiya sifatida saqlaysiz'),
+        tk('Istalgan versiyani Word (.docx) formatida yuklab olasiz'),
     ],
     analysis: [
-        "Ilmiy uslub, aniqlik, tuzilish, terminologiya va bog'liqlik bahosi",
-        'Kuchli tomonlar va kamchiliklar',
-        "Matnni yaxshilash bo'yicha aniq tavsiyalar",
+        tk(
+            "Ilmiy uslub, aniqlik, tuzilish, terminologiya va bog'liqlik bahosi",
+        ),
+        tk('Kuchli tomonlar va kamchiliklar'),
+        tk("Matnni yaxshilash bo'yicha aniq tavsiyalar"),
     ],
 };
 </script>
@@ -53,7 +56,9 @@ const hints: Record<AiRequestTypeValue, string[]> = {
             <p class="mt-1 max-w-sm text-xs text-navy-500">
                 {{
                     ready
-                        ? 'Chapdagi formaga matnni joylashtiring va boshlang.'
+                        ? t(
+                              'Chapdagi formaga matnni joylashtiring va boshlang.',
+                          )
                         : "API kaliti va model Sozlamalar bo'limida kiritilgach ishga tushadi."
                 }}
             </p>
@@ -67,7 +72,7 @@ const hints: Record<AiRequestTypeValue, string[]> = {
                 <span
                     class="mt-1.5 size-1.5 shrink-0 rounded-full bg-brand-500"
                 />
-                {{ hint }}
+                {{ t(hint) }}
             </li>
         </ul>
     </div>

@@ -58,7 +58,7 @@ class ArticleMessageService
         $recipient = $fromAuthor ? $article->handlingEditor : $article->submitter;
 
         if ($recipient !== null && $recipient->id !== $sender->id) {
-            $recipient->notify(new ArticleUpdateNotification(
+            $recipient->notifyInLocale(fn (): ArticleUpdateNotification => new ArticleUpdateNotification(
                 $article,
                 ArticleUpdateNotification::MESSAGE,
                 $fromAuthor ? __('Muallifdan yangi xabar') : __('Tahririyatdan yangi xabar'),

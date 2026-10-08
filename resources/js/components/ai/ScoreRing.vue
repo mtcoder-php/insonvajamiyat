@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { t } from '@/lib/i18n';
 
 /**
  * Doiraviy ko'rsatkich (0–100): rang bahoga qarab — yashil / ko'k / sariq / qizil.
@@ -45,7 +46,7 @@ const color = computed(() => {
             :height="size"
             class="-rotate-90"
             role="img"
-            :aria-label="value === null ? 'Baho yo\'q' : `${value} / 100`"
+            :aria-label="value === null ? t('Baho yo\'q') : `${value} / 100`"
         >
             <circle
                 :cx="size / 2"

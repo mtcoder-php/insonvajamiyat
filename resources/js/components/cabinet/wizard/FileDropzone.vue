@@ -3,6 +3,7 @@ import { CloudUpload, LoaderCircle } from '@lucide/vue';
 import { ref } from 'vue';
 import { cn } from '@/lib/utils';
 import type { FileLimit } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Faylni tanlash yoki sudrab tashlash maydoni (yuklash jarayoni foizi bilan).
@@ -67,18 +68,22 @@ function onDrop(event: DragEvent): void {
                 <CloudUpload v-else class="size-5" />
             </span>
             <span class="text-sm font-semibold text-navy-900">
-                {{ uploading ? 'Yuklanmoqda...' : title }}
+                {{ uploading ? t('Yuklanmoqda...') : title }}
             </span>
             <span class="text-xs text-navy-500">
-                Faylni shu yerga tashlang yoki
+                {{ t('Faylni shu yerga tashlang yoki') }}
                 <span
                     class="font-semibold text-brand-700 underline-offset-2 group-hover:underline"
-                    >kompyuterdan tanlang</span
+                    >{{ t('kompyuterdan tanlang') }}</span
                 >
             </span>
             <span class="text-[11px] text-navy-400 uppercase">
                 {{ limit.extensions.join(', ') }} ·
-                {{ Math.round(limit.maxKb / 1024) }} MB gacha
+                {{
+                    t(':size MB gacha', {
+                        size: Math.round(limit.maxKb / 1024),
+                    })
+                }}
             </span>
             <span
                 v-if="uploading && progress != null"

@@ -21,7 +21,7 @@
 {{-- Footer --}}
 <x-slot:footer>
 <x-mail::footer>
-© {{ date('Y') }} «Inson va Jamiyat» {{ __('ilmiy jurnali. Barcha huquqlar himoyalangan.') }}
+© {{ __(':year «:name» ilmiy jurnali. Barcha huquqlar himoyalangan.', ['year' => date('Y'), 'name' => config('journal.name')]) }}
 @if (config('journal.contact.email'))
 
 [{{ config('journal.contact.email') }}](mailto:{{ config('journal.contact.email') }}) · [{{ parse_url((string) config('app.url'), PHP_URL_HOST) }}]({{ config('app.url') }})

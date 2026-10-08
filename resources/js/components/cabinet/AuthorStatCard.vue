@@ -14,6 +14,7 @@ import { formatNumber } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import { index as articlesIndex } from '@/routes/cabinet/articles';
 import type { AuthorStatCard } from '@/types';
+import { t, tk } from '@/lib/i18n';
 
 /**
  * Muallif statistikasi kartasi: ikonka, nom, qiymat va izoh ("+2 so'nggi 3 oyda").
@@ -32,35 +33,35 @@ const meta: Record<
     }
 > = {
     total: {
-        label: 'Jami maqolalar',
+        label: tk('Jami maqolalar'),
         icon: FileText,
         tint: 'bg-brand-50 text-brand-600 ring-brand-100',
         delta: 'text-emerald-600',
         filter: null,
     },
     reviewing: {
-        label: "Ko'rib chiqilayotganlar",
+        label: tk("Ko'rib chiqilayotganlar"),
         icon: Hourglass,
         tint: 'bg-amber-50 text-amber-600 ring-amber-100',
         delta: 'text-amber-600',
         filter: 'reviewing',
     },
     revision: {
-        label: 'Tuzatish talab qilinganlar',
+        label: tk('Tuzatish talab qilinganlar'),
         icon: FilePenLine,
         tint: 'bg-red-50 text-red-600 ring-red-100',
         delta: 'text-red-600',
         filter: 'revision',
     },
     accepted: {
-        label: 'Qabul qilinganlar',
+        label: tk('Qabul qilinganlar'),
         icon: CircleCheck,
         tint: 'bg-emerald-50 text-emerald-600 ring-emerald-100',
         delta: 'text-emerald-600',
         filter: 'accepted',
     },
     published: {
-        label: 'Nashr etilganlar',
+        label: tk('Nashr etilganlar'),
         icon: BookOpenCheck,
         tint: 'bg-violet-50 text-violet-600 ring-violet-100',
         delta: 'text-violet-600',
@@ -98,9 +99,9 @@ const href = computed<NonNullable<InertiaLinkProps['href']>>(() =>
             <div class="min-w-0">
                 <p
                     class="line-clamp-2 text-[13px] leading-4 font-semibold text-navy-900"
-                    :title="info.label"
+                    :title="t(info.label)"
                 >
-                    {{ info.label }}
+                    {{ t(info.label) }}
                 </p>
                 <p
                     class="mt-1.5 font-sans text-[28px] leading-none font-bold text-navy-950 tabular-nums"

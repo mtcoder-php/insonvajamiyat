@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils';
 import type { AiRequestDetail, ProofDecision, ProofIssue } from '@/types';
 import ScoreRing from './ScoreRing.vue';
 import { copyText, issueMeta, qualityLabel } from './aiMeta';
+import { t } from '@/lib/i18n';
 
 /**
  * Proofreader natijasi: asl matn (xatolar belgilangan) ↔ tuzatilgan matn,
@@ -145,7 +146,7 @@ function markClass(issueId: string): string {
             <div class="flex items-center gap-3">
                 <ScoreRing :value="result.score" :size="68" />
                 <div>
-                    <p class="text-xs text-navy-500">Matn sifati</p>
+                    <p class="text-xs text-navy-500">{{ t('Matn sifati') }}</p>
                     <p class="font-sans text-[15px] font-bold text-navy-950">
                         {{ qualityLabel(result.score) }}
                     </p>
@@ -154,21 +155,21 @@ function markClass(issueId: string): string {
             <dl class="flex flex-wrap gap-x-5 gap-y-2 text-[13px]">
                 <div class="flex items-center gap-2">
                     <span class="size-2 rounded-full bg-red-500" />
-                    <dt class="text-navy-600">Xatolar</dt>
+                    <dt class="text-navy-600">{{ t('Xatolar') }}</dt>
                     <dd class="font-semibold tabular-nums">
                         {{ result.counts.errors }}
                     </dd>
                 </div>
                 <div class="flex items-center gap-2">
                     <span class="size-2 rounded-full bg-amber-500" />
-                    <dt class="text-navy-600">Takliflar</dt>
+                    <dt class="text-navy-600">{{ t('Takliflar') }}</dt>
                     <dd class="font-semibold tabular-nums">
                         {{ result.counts.suggestions }}
                     </dd>
                 </div>
                 <div class="flex items-center gap-2">
                     <span class="size-2 rounded-full bg-emerald-500" />
-                    <dt class="text-navy-600">Qabul qilingan</dt>
+                    <dt class="text-navy-600">{{ t('Qabul qilingan') }}</dt>
                     <dd class="font-semibold tabular-nums">
                         {{ counts.accepted }}
                     </dd>
@@ -182,14 +183,14 @@ function markClass(issueId: string): string {
                 >
                     <Check v-if="copied" class="size-4 text-emerald-600" />
                     <Copy v-else class="size-4" />
-                    {{ copied ? 'Nusxalandi' : 'Nusxalash' }}
+                    {{ copied ? t('Nusxalandi') : t('Nusxalash') }}
                 </button>
                 <a
                     :href="result.downloadUrl"
                     class="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-line bg-white px-3.5 text-[13px] font-semibold text-navy-700 transition-all hover:-translate-y-px hover:border-brand-300 hover:text-brand-700"
-                    title="Qabul qilingan takliflar bilan"
+                    :title="t('Qabul qilingan takliflar bilan')"
                 >
-                    <FileDown class="size-4" /> Word
+                    <FileDown class="size-4" /> {{ t('Word') }}
                 </a>
                 <button
                     v-if="request.own"
@@ -200,7 +201,7 @@ function markClass(issueId: string): string {
                 >
                     <LoaderCircle v-if="saving" class="size-4 animate-spin" />
                     <Save v-else class="size-4" />
-                    Yangi versiyani saqlash
+                    {{ t('Yangi versiyani saqlash') }}
                 </button>
             </div>
             <p
@@ -209,7 +210,12 @@ function markClass(issueId: string): string {
             >
                 {{ result.summary }}
                 <span v-if="result.savedAt" class="text-navy-400">
-                    · Saqlangan: {{ formatDateTime(result.savedAt) }}</span
+                    ·
+                    {{
+                        t('Saqlangan: :date', {
+                            date: formatDateTime(result.savedAt),
+                        })
+                    }}</span
                 >
             </p>
         </section>
@@ -226,9 +232,9 @@ function markClass(issueId: string): string {
                 >
                     <button
                         v-for="option in [
-                            { key: 'split', label: 'Yonma-yon' },
-                            { key: 'original', label: 'Asl matn' },
-                            { key: 'corrected', label: 'Tahrirlangan matn' },
+                            { key: 'split', label: t('Yonma-yon') },
+                            { key: 'original', label: t('Asl matn') },
+                            { key: 'corrected', label: t('Tahrirlangan matn') },
                         ] as const"
                         :key="option.key"
                         type="button"
@@ -246,9 +252,9 @@ function markClass(issueId: string): string {
                     </button>
                 </div>
                 <p class="text-xs text-navy-500">
-                    Xatolar:
+                    {{ t('Xatolar:') }}
                     <b class="text-navy-900">{{ result.counts.errors }}</b>
-                    · Takliflar:
+                    {{ t('· Takliflar:') }}
                     <b class="text-navy-900">{{ result.counts.suggestions }}</b>
                 </p>
             </div>
@@ -270,7 +276,7 @@ function markClass(issueId: string): string {
                         v-if="view === 'split'"
                         class="mb-2 text-[11px] font-semibold tracking-wide text-navy-400 uppercase"
                     >
-                        Asl matn
+                        {{ t('Asl matn') }}
                     </p>
                     <template
                         v-for="(segment, index) in result.segments"
@@ -294,7 +300,7 @@ function markClass(issueId: string): string {
                         v-if="view === 'split'"
                         class="mb-2 text-[11px] font-semibold tracking-wide text-navy-400 uppercase"
                     >
-                        Tahrirlangan matn
+                        {{ t('Tahrirlangan matn') }}
                     </p>
                     <template
                         v-for="(segment, index) in result.segments"
@@ -331,7 +337,7 @@ function markClass(issueId: string): string {
                 class="mb-3 flex flex-wrap items-center justify-between gap-2"
             >
                 <h3 class="font-sans text-[14px] font-bold text-navy-950">
-                    Sun'iy intellekt takliflari
+                    {{ t("Sun'iy intellekt takliflari") }}
                     <span class="ml-1 text-xs font-medium text-navy-400"
                         >({{ result.issues.length }})</span
                     >
@@ -345,14 +351,15 @@ function markClass(issueId: string): string {
                         class="inline-flex h-8 items-center gap-1.5 rounded-lg bg-emerald-50 px-2.5 text-xs font-semibold whitespace-nowrap text-emerald-700 transition-colors hover:bg-emerald-100"
                         @click="decideAll('accepted')"
                     >
-                        <CheckCheck class="size-3.5" /> Hammasini qabul qilish
+                        <CheckCheck class="size-3.5" />
+                        {{ t('Hammasini qabul qilish') }}
                     </button>
                     <button
                         type="button"
                         class="inline-flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold whitespace-nowrap text-navy-500 transition-colors hover:bg-navy-50 hover:text-navy-800"
                         @click="decideAll('pending')"
                     >
-                        <Undo2 class="size-3.5" /> Tozalash
+                        <Undo2 class="size-3.5" /> {{ t('Tozalash') }}
                     </button>
                 </div>
             </header>
@@ -361,7 +368,7 @@ function markClass(issueId: string): string {
                 v-if="!result.issues.length"
                 class="rounded-lg bg-emerald-50 px-4 py-6 text-center text-sm text-emerald-700"
             >
-                Xato topilmadi — matn toza.
+                {{ t('Xato topilmadi — matn toza.') }}
             </p>
 
             <ul v-else class="grid max-h-[24rem] gap-2 overflow-y-auto pr-1">
@@ -425,7 +432,7 @@ function markClass(issueId: string): string {
                             :aria-pressed="decisions[issue.id] === 'accepted'"
                             @click="decide(issue, 'accepted')"
                         >
-                            <Check class="size-3.5" /> Qabul
+                            <Check class="size-3.5" /> {{ t('Qabul') }}
                         </button>
                         <button
                             type="button"
@@ -440,7 +447,7 @@ function markClass(issueId: string): string {
                             :aria-pressed="decisions[issue.id] === 'rejected'"
                             @click="decide(issue, 'rejected')"
                         >
-                            <X class="size-3.5" /> Rad
+                            <X class="size-3.5" /> {{ t('Rad') }}
                         </button>
                     </div>
                 </li>

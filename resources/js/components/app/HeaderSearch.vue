@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Search } from '@lucide/vue';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { t } from '@/lib/i18n';
 
 /**
  * Admin header qidiruvi. Ctrl+K (macOS'da ⌘K) — maydonga fokus, Esc — chiqish.
@@ -36,7 +37,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown));
 
 <template>
     <form role="search" class="group relative w-full" @submit.prevent="submit">
-        <label for="admin-search" class="sr-only">Qidirish</label>
+        <label for="admin-search" class="sr-only">{{ t('Qidirish') }}</label>
         <Search
             class="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-navy-400 transition-colors group-focus-within:text-brand-600"
         />
@@ -46,7 +47,11 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown));
             v-model="query"
             type="search"
             autocomplete="off"
-            placeholder="Maqola, muallif, ISSN yoki boshqa kalit so'z bo'yicha qidirish..."
+            :placeholder="
+                t(
+                    'Maqola, muallif, ISSN yoki boshqa kalit so\'z bo\'yicha qidirish...',
+                )
+            "
             class="h-10 w-full rounded-lg border border-white/60 bg-white pr-20 pl-10 text-sm text-navy-900 shadow-sm transition-all duration-300 placeholder:text-navy-400 hover:shadow-md focus:border-brand-300 focus:shadow-[0_8px_24px_-8px_rgba(0,0,0,0.45)] focus:ring-4 focus:ring-brand-400/25 focus:outline-none [&::-webkit-search-cancel-button]:hidden"
             @keydown.esc="input?.blur()"
         />

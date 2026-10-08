@@ -21,7 +21,7 @@ INSON VA JAMIYAT — {{ __('Ilmiy-nazariy jurnal') }}
 {{-- Footer --}}
 <x-slot:footer>
 <x-mail::footer>
-© {{ date('Y') }} «Inson va Jamiyat» {{ __('ilmiy jurnali. Barcha huquqlar himoyalangan.') }}
+© {{ __(':year «:name» ilmiy jurnali. Barcha huquqlar himoyalangan.', ['year' => date('Y'), 'name' => config('journal.name')]) }}
 </x-mail::footer>
 </x-slot:footer>
 </x-mail::layout>

@@ -170,7 +170,7 @@ class PaymentSettlement
         }
 
         try {
-            $article->submitter->notify(new ArticleUpdateNotification(
+            $article->submitter->notifyInLocale(fn (): ArticleUpdateNotification => new ArticleUpdateNotification(
                 $article,
                 ArticleUpdateNotification::PAYMENT,
                 __("Nashr to'lovi qabul qilindi"),

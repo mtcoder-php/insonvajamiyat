@@ -10,6 +10,7 @@ import { edit as editAppearance } from '@/routes/appearance';
 import { edit as editProfile } from '@/routes/profile';
 import { edit as editSecurity } from '@/routes/security';
 import type { NavItem, User } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Shaxsiy sozlamalar: profil, xavfsizlik, ko'rinish.
@@ -20,10 +21,16 @@ const page = usePage();
 
 // "Ko'rinish" (yorug'/qorong'i mavzu) — faqat admin panel uchun; muallif kabineti yorug'
 const tabs = computed<NavItem[]>(() => [
-    { title: 'Profil', href: editProfile(), icon: UserRound },
-    { title: 'Xavfsizlik', href: editSecurity(), icon: ShieldCheck },
+    { title: t('Profil'), href: editProfile(), icon: UserRound },
+    { title: t('Xavfsizlik'), href: editSecurity(), icon: ShieldCheck },
     ...(page.props.auth.isStaff
-        ? [{ title: "Ko'rinish", href: editAppearance(), icon: Palette }]
+        ? [
+              {
+                  title: t("Ko'rinish"),
+                  href: editAppearance(),
+                  icon: Palette,
+              },
+          ]
         : []),
 ]);
 
@@ -64,7 +71,7 @@ const role = computed(() => primaryRoleLabel(page.props.auth.roles));
                     <p
                         class="text-xs font-medium tracking-wider text-gold-300 uppercase"
                     >
-                        Shaxsiy sozlamalar
+                        {{ t('Shaxsiy sozlamalar') }}
                     </p>
                     <h1
                         class="mt-0.5 truncate font-sans text-xl font-bold text-white sm:text-2xl"
@@ -79,7 +86,7 @@ const role = computed(() => primaryRoleLabel(page.props.auth.roles));
 
             <nav
                 class="mt-5 -mb-1 flex gap-1 overflow-x-auto"
-                aria-label="Sozlamalar bo'limlari"
+                :aria-label="t('Sozlamalar bo\'limlari')"
             >
                 <Link
                     v-for="tab in tabs"

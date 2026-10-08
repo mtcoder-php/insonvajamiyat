@@ -19,6 +19,7 @@ import type {
     WizardLimits,
     WizardProps,
 } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * 2-bosqich: mualliflar (tartib — maqoladagi tartib), aloqa uchun mas'ul muallif.
@@ -150,12 +151,12 @@ function save(stay: boolean): void {
                             {{
                                 [author.last_name, author.first_name]
                                     .filter(Boolean)
-                                    .join(' ') || 'Yangi muallif'
+                                    .join(' ') || t('Yangi muallif')
                             }}
                             <span
                                 v-if="author.is_me"
                                 class="ml-1.5 rounded bg-brand-50 px-1.5 py-0.5 align-middle text-[10px] font-semibold text-brand-700"
-                                >Men</span
+                                >{{ t('Men') }}</span
                             >
                         </p>
                         <label
@@ -169,7 +170,7 @@ function save(stay: boolean): void {
                                 class="size-3.5 accent-brand-600"
                             />
                             <Mail class="size-3.5" />
-                            Aloqa uchun mas'ul muallif
+                            {{ t("Aloqa uchun mas'ul muallif") }}
                         </label>
                     </div>
                     <div class="flex items-center gap-1">
@@ -177,7 +178,7 @@ function save(stay: boolean): void {
                             type="button"
                             class="flex size-8 items-center justify-center rounded-lg border border-line text-navy-500 transition-colors hover:border-brand-200 hover:text-brand-700 disabled:opacity-30"
                             :disabled="index === 0"
-                            aria-label="Yuqoriga"
+                            :aria-label="t('Yuqoriga')"
                             @click="move(index, -1)"
                         >
                             <ArrowUp class="size-4" />
@@ -186,7 +187,7 @@ function save(stay: boolean): void {
                             type="button"
                             class="flex size-8 items-center justify-center rounded-lg border border-line text-navy-500 transition-colors hover:border-brand-200 hover:text-brand-700 disabled:opacity-30"
                             :disabled="index === form.authors.length - 1"
-                            aria-label="Pastga"
+                            :aria-label="t('Pastga')"
                             @click="move(index, 1)"
                         >
                             <ArrowDown class="size-4" />
@@ -195,7 +196,7 @@ function save(stay: boolean): void {
                             type="button"
                             class="flex size-8 items-center justify-center rounded-lg border border-line text-navy-500 transition-colors hover:border-red-200 hover:bg-red-50 hover:text-red-600 disabled:opacity-30"
                             :disabled="form.authors.length === 1"
-                            aria-label="Muallifni olib tashlash"
+                            :aria-label="t('Muallifni olib tashlash')"
                             @click="remove(index)"
                         >
                             <Trash2 class="size-4" />
@@ -205,7 +206,7 @@ function save(stay: boolean): void {
 
                 <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                     <FormField
-                        label="Familiya"
+                        :label="t('Familiya')"
                         required
                         :error="error(index, 'last_name')"
                     >
@@ -218,7 +219,7 @@ function save(stay: boolean): void {
                         />
                     </FormField>
                     <FormField
-                        label="Ism"
+                        :label="t('Ism')"
                         required
                         :error="error(index, 'first_name')"
                     >
@@ -231,7 +232,7 @@ function save(stay: boolean): void {
                         />
                     </FormField>
                     <FormField
-                        label="Otasining ismi"
+                        :label="t('Otasining ismi')"
                         :error="error(index, 'middle_name')"
                     >
                         <input
@@ -242,7 +243,7 @@ function save(stay: boolean): void {
                         />
                     </FormField>
                     <FormField
-                        label="Elektron pochta"
+                        :label="t('Elektron pochta')"
                         :required="form.corresponding === index"
                         :error="error(index, 'email')"
                     >
@@ -255,7 +256,7 @@ function save(stay: boolean): void {
                         />
                     </FormField>
                     <FormField
-                        label="Tashkilot"
+                        :label="t('Tashkilot')"
                         required
                         :error="error(index, 'organization')"
                         class="xl:col-span-2"
@@ -264,13 +265,15 @@ function save(stay: boolean): void {
                             v-model="author.organization"
                             type="text"
                             maxlength="255"
-                            placeholder="Masalan: O'zbekiston Milliy universiteti"
+                            :placeholder="
+                                t('Masalan: O\'zbekiston Milliy universiteti')
+                            "
                             :aria-invalid="!!error(index, 'organization')"
                             :class="inputClass"
                         />
                     </FormField>
                     <FormField
-                        label="Lavozim"
+                        :label="t('Lavozim')"
                         :error="error(index, 'position')"
                     >
                         <input
@@ -281,14 +284,14 @@ function save(stay: boolean): void {
                         />
                     </FormField>
                     <FormField
-                        label="Ilmiy daraja"
+                        :label="t('Ilmiy daraja')"
                         :error="error(index, 'academic_degree')"
                     >
                         <input
                             v-model="author.academic_degree"
                             type="text"
                             maxlength="100"
-                            placeholder="PhD, DSc..."
+                            :placeholder="t('PhD, DSc...')"
                             :class="inputClass"
                         />
                     </FormField>
@@ -316,7 +319,7 @@ function save(stay: boolean): void {
                 <UserPlus
                     class="size-4 transition-transform group-hover:scale-110"
                 />
-                Hammuallif qo'shish
+                {{ t("Hammuallif qo'shish") }}
             </button>
             <button
                 v-if="!hasMe"
@@ -326,7 +329,7 @@ function save(stay: boolean): void {
                 @click="add({ ...me, is_me: true })"
             >
                 <UserRound class="size-4" />
-                O'zimni qo'shish
+                {{ t("O'zimni qo'shish") }}
             </button>
             <span class="self-center text-xs text-navy-400">
                 {{ form.authors.length }} / {{ limits.maxAuthors }}

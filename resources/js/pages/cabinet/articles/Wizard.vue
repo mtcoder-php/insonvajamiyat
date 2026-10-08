@@ -15,6 +15,7 @@ import WizardAside from '@/components/cabinet/wizard/WizardAside.vue';
 import WizardStepper from '@/components/cabinet/wizard/WizardStepper.vue';
 import { create, index } from '@/routes/cabinet/articles';
 import type { WizardProps } from '@/types';
+import { t, tk } from '@/lib/i18n';
 
 /**
  * Yangi maqola yuborish — 7 bosqichli forma
@@ -30,13 +31,15 @@ defineOptions({
 });
 
 const descriptions: Record<number, string> = {
-    1: "Maqola turi, ilmiy yo'nalishi, tili va sarlavhasini kiriting.",
-    2: "Barcha mualliflarni maqoladagi tartibda kiriting va aloqa uchun mas'ul muallifni belgilang.",
-    3: 'Annotatsiyani maqola tilida kiriting; boshqa tillarda — ixtiyoriy.',
-    4: "Maqola mavzusini ochib beruvchi kalit so'zlarni kiriting.",
-    5: "Maqola faylini va kerak bo'lsa qo'shimcha materiallarni yuklang.",
-    6: "Kiritilgan ma'lumotlarni tekshiring.",
-    7: 'Shartlarga rozilik bildiring va maqolani tahririyatga yuboring.',
+    1: tk("Maqola turi, ilmiy yo'nalishi, tili va sarlavhasini kiriting."),
+    2: tk(
+        "Barcha mualliflarni maqoladagi tartibda kiriting va aloqa uchun mas'ul muallifni belgilang.",
+    ),
+    3: tk('Annotatsiyani maqola tilida kiriting; boshqa tillarda — ixtiyoriy.'),
+    4: tk("Maqola mavzusini ochib beruvchi kalit so'zlarni kiriting."),
+    5: tk("Maqola faylini va kerak bo'lsa qo'shimcha materiallarni yuklang."),
+    6: tk("Kiritilgan ma'lumotlarni tekshiring."),
+    7: tk('Shartlarga rozilik bildiring va maqolani tahririyatga yuboring.'),
 };
 
 const current = computed(
@@ -80,17 +83,21 @@ const done = computed<Record<number, boolean>>(() => {
 </script>
 
 <template>
-    <Head title="Yangi maqola yuborish" />
+    <Head :title="t('Yangi maqola yuborish')" />
 
     <div class="flex flex-col gap-5">
         <CabinetPageHeader
-            title="Yangi maqola yuborish"
-            description="Maqolangizni 7 bosqichda to'ldiring. Ma'lumotlar har bir bosqichda qoralama sifatida saqlanadi."
+            :title="t('Yangi maqola yuborish')"
+            :description="
+                t(
+                    'Maqolangizni 7 bosqichda to\'ldiring. Ma\'lumotlar har bir bosqichda qoralama sifatida saqlanadi.',
+                )
+            "
             :icon="Send"
             :quote="false"
             :breadcrumbs="[
-                { title: 'Mening maqolalarim', href: index() },
-                { title: 'Yangi maqola', href: create() },
+                { title: t('Mening maqolalarim'), href: index() },
+                { title: t('Yangi maqola'), href: create() },
             ]"
         />
 
@@ -114,7 +121,7 @@ const done = computed<Record<number, boolean>>(() => {
                             {{ current.label }}
                         </h2>
                         <p class="text-[13px] text-navy-600">
-                            {{ descriptions[current.number] }}
+                            {{ t(descriptions[current.number] ?? '') }}
                         </p>
                     </div>
                 </header>

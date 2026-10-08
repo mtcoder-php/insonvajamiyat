@@ -146,7 +146,7 @@ class ProductionService
             $this->issues->repaginateIfComplete($issue);
         }
 
-        $article->submitter->notify(new ArticleUpdateNotification(
+        $article->submitter->notifyInLocale(fn (): ArticleUpdateNotification => new ArticleUpdateNotification(
             $article,
             ArticleUpdateNotification::PROOF,
             __('Korrektura tayyor: yakuniy PDF ni tekshiring'),
@@ -238,7 +238,7 @@ class ProductionService
 
         $this->audit->log(AuditEvent::ProductionApproved, $article, actor: $chief);
 
-        $article->submitter->notify(new ArticleUpdateNotification(
+        $article->submitter->notifyInLocale(fn (): ArticleUpdateNotification => new ArticleUpdateNotification(
             $article,
             ArticleUpdateNotification::DECISION,
             __('Maqolangiz nashrga tayyor'),
@@ -451,7 +451,7 @@ class ProductionService
             ], actor: $chief);
         });
 
-        $article->submitter->notify(new ArticleUpdateNotification(
+        $article->submitter->notifyInLocale(fn (): ArticleUpdateNotification => new ArticleUpdateNotification(
             $article,
             ArticleUpdateNotification::PROOF,
             __('Korrektura tahririyat qarori bilan tasdiqlandi'),
@@ -488,7 +488,7 @@ class ProductionService
             if ($state['state'] === 'pending'
                 && empty($checklist['proof_reminded_at'])
                 && $now->greaterThanOrEqualTo($due->subHours(self::proofReminderHours()))) {
-                $article->submitter->notify(new ArticleUpdateNotification(
+                $article->submitter->notifyInLocale(fn (): ArticleUpdateNotification => new ArticleUpdateNotification(
                     $article,
                     ArticleUpdateNotification::PROOF,
                     __('Eslatma: korrektura muddati tugayapti'),

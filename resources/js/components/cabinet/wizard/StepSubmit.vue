@@ -15,6 +15,7 @@ import { primaryButtonClass, secondaryButtonClass } from '@/lib/formStyles';
 import { formatSum } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { ArticleDraft, CabinetLinks, WizardOptions } from '@/types';
+import { t, tk } from '@/lib/i18n';
 
 /**
  * 7-bosqich: narx va keyingi qadamlar, muallif roziliklari, yuborish.
@@ -31,11 +32,15 @@ const props = defineProps<{
 }>();
 
 const labels: Record<string, string> = {
-    originality:
+    originality: tk(
         "Maqola mualliflarning o'z ishi ekanini, unda plagiat va boshqalarning ma'lumotlaridan ruxsatsiz foydalanish yo'qligini tasdiqlayman.",
-    exclusivity:
+    ),
+    exclusivity: tk(
         'Maqola boshqa nashrda chop etilmagan va hozirda boshqa jurnalga yuborilmagan.',
-    rules: "Jurnalning mualliflar uchun yo'riqnomasi va nashr shartlari bilan tanishdim hamda ularga roziman.",
+    ),
+    rules: tk(
+        "Jurnalning mualliflar uchun yo'riqnomasi va nashr shartlari bilan tanishdim hamda ularga roziman.",
+    ),
 };
 
 const form = useForm({
@@ -59,22 +64,31 @@ const consentError = computed(() =>
 const nextSteps = computed(() => [
     {
         icon: isPaid.value ? CreditCard : BadgeCheck,
-        title: isPaid.value ? "Nashr to'lovi" : "To'lov talab qilinmaydi",
+        title: isPaid.value ? t("Nashr to'lovi") : t("To'lov talab qilinmaydi"),
         text: isPaid.value
-            ? "Maqola \"To'lov kutilmoqda\" holatiga o'tadi. To'lov tasdiqlangach, tahririyat navbatiga qo'shiladi."
-            : "Tanlangan maqola turi bepul — maqola darhol tahririyat navbatiga qo'shiladi.",
+            ? t(
+                  "Maqola «To'lov kutilmoqda» holatiga o'tadi. To'lov tasdiqlangach, tahririyat navbatiga qo'shiladi.",
+              )
+            : t(
+                  "Tanlangan maqola turi bepul — maqola darhol tahririyat navbatiga qo'shiladi.",
+              ),
     },
     {
         icon: UsersRound,
-        title: "Muharrir ko'rigi va taqriz",
-        text: "Muharrir maqolani dastlabki tekshiruvdan o'tkazadi va mustaqil taqrizchilarga yuboradi.",
+        title: t("Muharrir ko'rigi va taqriz"),
+        text: t(
+            "Muharrir maqolani dastlabki tekshiruvdan o'tkazadi va mustaqil taqrizchilarga yuboradi.",
+        ),
     },
     {
         icon: Hourglass,
-        title: 'Natija',
+        title: t('Natija'),
         text: type.value?.reviewDays
-            ? `Ko'rib chiqish taxminan ${type.value.reviewDays} kun davom etadi. Har bir bosqich haqida kabinetingizda xabar olasiz.`
-            : 'Har bir bosqich haqida kabinetingizda xabar olasiz.',
+            ? t(
+                  "Ko'rib chiqish taxminan :days kun davom etadi. Har bir bosqich haqida kabinetingizda xabar olasiz.",
+                  { days: type.value.reviewDays },
+              )
+            : t('Har bir bosqich haqida kabinetingizda xabar olasiz.'),
     },
 ]);
 
@@ -99,14 +113,14 @@ function submit(): void {
             <p
                 class="text-xs font-medium tracking-wider text-gold-300 uppercase"
             >
-                Tanlangan maqola turi
+                {{ t('Tanlangan maqola turi') }}
             </p>
             <div class="mt-1 flex flex-wrap items-end justify-between gap-3">
                 <h3 class="font-sans text-xl font-bold text-white">
                     {{ type?.name ?? '—' }}
                 </h3>
                 <p class="font-sans text-2xl font-bold tabular-nums">
-                    {{ isPaid && type ? formatSum(type.price) : 'Bepul' }}
+                    {{ isPaid && type ? formatSum(type.price) : t('Bepul') }}
                 </p>
             </div>
             <p v-if="type?.description" class="mt-1 text-sm text-white/70">
@@ -116,7 +130,7 @@ function submit(): void {
 
         <section>
             <h3 class="mb-3 text-sm font-bold text-navy-950">
-                Yuborilgandan keyin
+                {{ t('Yuborilgandan keyin') }}
             </h3>
             <ol class="grid gap-3 md:grid-cols-3">
                 <li
@@ -130,9 +144,9 @@ function submit(): void {
                         >
                             <component :is="item.icon" class="size-4" />
                         </span>
-                        <span class="text-[11px] font-semibold text-navy-400"
-                            >{{ index + 1 }}-qadam</span
-                        >
+                        <span class="text-[11px] font-semibold text-navy-400">{{
+                            t(':number-qadam', { number: index + 1 })
+                        }}</span>
                     </span>
                     <p class="mt-2 text-[13px] font-bold text-navy-900">
                         {{ item.title }}
@@ -150,20 +164,20 @@ function submit(): void {
         >
             <CircleAlert class="mt-0.5 size-5 shrink-0 text-amber-600" />
             <p>
-                Formaning ayrim bosqichlari to'ldirilmagan.
+                {{ t("Formaning ayrim bosqichlari to'ldirilmagan.") }}
                 <Link
                     v-if="reviewHref"
                     :href="reviewHref"
                     class="font-semibold underline underline-offset-2"
-                    >Tekshirish bosqichida</Link
+                    >{{ t('Tekshirish bosqichida') }}</Link
                 >
-                kamchiliklarni ko'ring.
+                {{ t("kamchiliklarni ko'ring.") }}
             </p>
         </div>
 
         <fieldset class="grid gap-2.5">
             <legend class="mb-2 text-sm font-bold text-navy-950">
-                Muallif roziligi
+                {{ t('Muallif roziligi') }}
             </legend>
             <label
                 v-for="key in consents"
@@ -182,7 +196,7 @@ function submit(): void {
                     type="checkbox"
                     class="mt-0.5 size-4 shrink-0 accent-brand-600"
                 />
-                <span>{{ labels[key] ?? key }}</span>
+                <span>{{ t(labels[key] ?? key) }}</span>
             </label>
             <p v-if="consentError" class="text-xs font-medium text-red-600">
                 {{ consentError }}
@@ -206,7 +220,7 @@ function submit(): void {
                 <ArrowLeft
                     class="size-4 transition-transform group-hover:-translate-x-0.5"
                 />
-                Orqaga
+                {{ t('Orqaga') }}
             </Link>
             <span v-else />
             <button
@@ -223,7 +237,7 @@ function submit(): void {
                     v-else
                     class="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                 />
-                Maqolani yuborish
+                {{ t('Maqolani yuborish') }}
             </button>
         </div>
     </div>

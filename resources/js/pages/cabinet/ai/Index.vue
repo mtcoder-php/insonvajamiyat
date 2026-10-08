@@ -5,6 +5,7 @@ import AiStudio from '@/components/ai/AiStudio.vue';
 import CabinetPageHeader from '@/components/cabinet/CabinetPageHeader.vue';
 import { index } from '@/routes/cabinet/ai';
 import type { AiStudioPageProps } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Muallif kabineti → AI Studio (TZ 4.1.5, 4.1.6): imlo va uslub tekshiruvi, ilmiy tarjima, tahlil.
@@ -26,7 +27,11 @@ defineOptions({
         <template #header>
             <CabinetPageHeader
                 title="AI Studio"
-                description="Maqolangizni sun'iy intellekt yordamida tekshiring, ilmiy uslubda tarjima qiling va baholang. Natija faqat siz tasdiqlagandan keyin qo'llanadi."
+                :description="
+                    t(
+                        'Maqolangizni sun\'iy intellekt yordamida tekshiring, ilmiy uslubda tarjima qiling va baholang. Natija faqat siz tasdiqlagandan keyin qo\'llanadi.',
+                    )
+                "
                 :icon="BrainCircuit"
                 :breadcrumbs="[{ title: 'AI Studio', href: index() }]"
             />

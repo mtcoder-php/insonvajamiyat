@@ -30,11 +30,11 @@ class MailTestNotification extends Notification
         $journal = is_string($name) ? $name : 'Inson va Jamiyat';
 
         return (new MailMessage)
-            ->subject($journal.' — test xat')
-            ->greeting('Assalomu alaykum!')
-            ->line('Bu — tizim sozlamalaridagi pochta (SMTP) ulanishini tekshirish uchun yuborilgan test xat.')
-            ->line('Agar uni olgan bo\'lsangiz, saytdan yuboriladigan barcha xatlar (ro\'yxatdan o\'tish, parolni tiklash, maqola holati) to\'g\'ri yetib boradi.')
-            ->line('Yuborgan: '.$this->sentBy.' · '.now()->format('d.m.Y H:i'))
-            ->action('Saytni ochish', url('/'));
+            ->subject(__(':journal — test xat', ['journal' => $journal]))
+            ->greeting(__('Assalomu alaykum!'))
+            ->line(__('Bu — tizim sozlamalaridagi pochta (SMTP) ulanishini tekshirish uchun yuborilgan test xat.'))
+            ->line(__("Agar uni olgan bo'lsangiz, saytdan yuboriladigan barcha xatlar (ro'yxatdan o'tish, parolni tiklash, maqola holati) to'g'ri yetib boradi."))
+            ->line(__('Yuborgan: :name · :date', ['name' => $this->sentBy, 'date' => now()->format('d.m.Y H:i')]))
+            ->action(__('Saytni ochish'), url('/'));
     }
 }

@@ -6,6 +6,7 @@ import FileDropzone from '@/components/cabinet/wizard/FileDropzone.vue';
 import WizardFooter from '@/components/cabinet/wizard/WizardFooter.vue';
 import { formatFileSize } from '@/lib/format';
 import type { ArticleDraft, DraftFile, WizardLimits } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * 5-bosqich: asosiy fayl (bitta, yangisi eskisini almashtiradi) va qo'shimcha fayllar.
@@ -71,12 +72,15 @@ function next(): void {
                     class="flex items-center gap-2 text-sm font-bold text-navy-950"
                 >
                     <FileText class="size-4 text-brand-600" />
-                    Maqolaning asosiy fayli
+                    {{ t('Maqolaning asosiy fayli') }}
                     <span class="text-red-500">*</span>
                 </h3>
                 <p class="mt-0.5 text-xs text-navy-500">
-                    Jurnal shabloni asosida tayyorlangan to'liq matn. Yangi fayl
-                    yuklasangiz, avvalgisi almashtiriladi.
+                    {{
+                        t(
+                            "Jurnal shabloni asosida tayyorlangan to'liq matn. Yangi fayl yuklasangiz, avvalgisi almashtiriladi.",
+                        )
+                    }}
                 </p>
             </header>
 
@@ -100,7 +104,7 @@ function next(): void {
                 <a
                     :href="manuscript.url"
                     class="flex size-9 items-center justify-center rounded-lg text-navy-500 transition-colors hover:bg-white hover:text-brand-700"
-                    aria-label="Yuklab olish"
+                    :aria-label="t('Yuklab olish')"
                 >
                     <Download class="size-4" />
                 </a>
@@ -110,8 +114,8 @@ function next(): void {
                 :limit="limits.files.manuscript"
                 :title="
                     manuscript
-                        ? 'Boshqa fayl bilan almashtirish'
-                        : 'Asosiy faylni yuklang'
+                        ? t('Boshqa fayl bilan almashtirish')
+                        : t('Asosiy faylni yuklang')
                 "
                 :uploading="uploadingType === 'manuscript'"
                 :progress="form.progress?.percentage ?? null"
@@ -128,10 +132,10 @@ function next(): void {
                         class="flex items-center gap-2 text-sm font-bold text-navy-950"
                     >
                         <Paperclip class="size-4 text-brand-600" />
-                        Qo'shimcha fayllar
+                        {{ t("Qo'shimcha fayllar") }}
                     </h3>
                     <p class="mt-0.5 text-xs text-navy-500">
-                        Ixtiyoriy: rasmlar, jadvallar, ilovalar.
+                        {{ t('Ixtiyoriy: rasmlar, jadvallar, ilovalar.') }}
                     </p>
                 </div>
                 <span class="text-xs text-navy-400 tabular-nums">
@@ -165,7 +169,9 @@ function next(): void {
                         type="button"
                         class="flex size-8 items-center justify-center rounded-lg text-navy-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-40"
                         :disabled="deleting === file.uuid"
-                        :aria-label="`${file.name} — o'chirish`"
+                        :aria-label="
+                            t(':name — o\'chirish', { name: file.name })
+                        "
                         @click="remove(file)"
                     >
                         <Trash2 class="size-4" />
@@ -176,7 +182,7 @@ function next(): void {
             <FileDropzone
                 v-if="supplementary.length < limits.supplementaryMax"
                 :limit="limits.files.supplementary"
-                title="Qo'shimcha fayl qo'shish"
+                :title="t('Qo\'shimcha fayl qo\'shish')"
                 :uploading="uploadingType === 'supplementary'"
                 :progress="form.progress?.percentage ?? null"
                 :disabled="form.processing"

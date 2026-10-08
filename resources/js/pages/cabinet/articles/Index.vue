@@ -9,6 +9,7 @@ import CabinetPageHeader from '@/components/cabinet/CabinetPageHeader.vue';
 import { cn } from '@/lib/utils';
 import { create, index } from '@/routes/cabinet/articles';
 import type { ArticleFilterKey, AuthorArticle, Paginated } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * "Mening maqolalarim" — holat bo'yicha tablar, nom bo'yicha qidiruv, sahifalash.
@@ -25,15 +26,15 @@ defineOptions({
     },
 });
 
-const tabs: { key: ArticleFilterKey | null; label: string }[] = [
-    { key: null, label: 'Barchasi' },
-    { key: 'reviewing', label: "Ko'rib chiqilmoqda" },
-    { key: 'revision', label: 'Tuzatish talab qilingan' },
-    { key: 'accepted', label: 'Qabul qilingan' },
-    { key: 'published', label: 'Nashr etilgan' },
-    { key: 'draft', label: 'Qoralamalar' },
-    { key: 'closed', label: 'Rad etilgan / qaytarilgan' },
-];
+const tabs = computed<{ key: ArticleFilterKey | null; label: string }[]>(() => [
+    { key: null, label: t('Barchasi') },
+    { key: 'reviewing', label: t("Ko'rib chiqilmoqda") },
+    { key: 'revision', label: t('Tuzatish talab qilingan') },
+    { key: 'accepted', label: t('Qabul qilingan') },
+    { key: 'published', label: t('Nashr etilgan') },
+    { key: 'draft', label: t('Qoralamalar') },
+    { key: 'closed', label: t('Rad etilgan / qaytarilgan') },
+]);
 
 const form = reactive({
     status: props.filters.status,
@@ -74,14 +75,18 @@ watch(() => form.status, apply);
 </script>
 
 <template>
-    <Head title="Mening maqolalarim" />
+    <Head :title="t('Mening maqolalarim')" />
 
     <div class="flex flex-col gap-5">
         <CabinetPageHeader
-            title="Mening maqolalarim"
-            description="Yuborgan maqolalaringiz, ularning holati va tahririyat izohlari."
+            :title="t('Mening maqolalarim')"
+            :description="
+                t(
+                    'Yuborgan maqolalaringiz, ularning holati va tahririyat izohlari.',
+                )
+            "
             :icon="Files"
-            :breadcrumbs="[{ title: 'Mening maqolalarim', href: index() }]"
+            :breadcrumbs="[{ title: t('Mening maqolalarim'), href: index() }]"
         />
 
         <DashCard>
@@ -91,7 +96,7 @@ watch(() => form.status, apply);
                 <div
                     class="-mx-1 flex gap-1 overflow-x-auto px-1 pb-1"
                     role="tablist"
-                    aria-label="Holat bo'yicha filtr"
+                    :aria-label="t('Holat bo\'yicha filtr')"
                 >
                     <button
                         v-for="tab in tabs"
@@ -129,23 +134,23 @@ watch(() => form.status, apply);
                     class="flex items-center gap-2 sm:justify-between 2xl:justify-end"
                 >
                     <label class="relative block flex-1 sm:max-w-sm 2xl:w-64">
-                        <span class="sr-only"
-                            >Maqola nomi bo'yicha qidirish</span
-                        >
+                        <span class="sr-only">{{
+                            t("Maqola nomi bo'yicha qidirish")
+                        }}</span>
                         <Search
                             class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-navy-400"
                         />
                         <input
                             v-model="form.search"
                             type="search"
-                            placeholder="Maqola nomi bo'yicha qidirish"
+                            :placeholder="t('Maqola nomi bo\'yicha qidirish')"
                             class="h-9 w-full rounded-lg border border-line bg-white pr-8 pl-9 text-[13px] text-navy-900 transition-colors outline-none placeholder:text-navy-400 hover:border-brand-200 focus:border-brand-400 focus:ring-2 focus:ring-brand-100"
                         />
                         <button
                             v-if="form.search"
                             type="button"
                             class="absolute top-1/2 right-2 -translate-y-1/2 rounded p-0.5 text-navy-400 hover:text-navy-700"
-                            aria-label="Qidiruvni tozalash"
+                            :aria-label="t('Qidiruvni tozalash')"
                             @click="form.search = ''"
                         >
                             <X class="size-3.5" />
@@ -158,7 +163,9 @@ watch(() => form.status, apply);
                         <Plus
                             class="size-4 transition-transform duration-300 group-hover:rotate-90"
                         />
-                        <span class="hidden sm:inline">Yangi maqola</span>
+                        <span class="hidden sm:inline">{{
+                            t('Yangi maqola')
+                        }}</span>
                     </Link>
                 </div>
             </div>

@@ -10,6 +10,7 @@ import DashCard from '@/components/admin/dashboard/DashCard.vue';
 import { contact } from '@/routes';
 import { create } from '@/routes/cabinet/articles';
 import type { CabinetLinks } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * "Tezkor amallar": yangi maqola, shablon, yo'riqnoma, savol berish.
@@ -23,7 +24,7 @@ const icon =
 </script>
 
 <template>
-    <DashCard title="Tezkor amallar">
+    <DashCard :title="t('Tezkor amallar')">
         <div class="flex flex-col gap-2">
             <Link
                 :href="create()"
@@ -32,7 +33,7 @@ const icon =
                 <Send
                     class="size-[18px] transition-transform duration-300 group-hover/action:translate-x-0.5 group-hover/action:-translate-y-0.5"
                 />
-                Yangi maqola yuborish
+                {{ t('Yangi maqola yuborish') }}
             </Link>
             <a
                 v-if="links.template"
@@ -41,15 +42,15 @@ const icon =
                 :class="item"
             >
                 <Download :class="icon" />
-                Maqola shablonini yuklab olish
+                {{ t('Maqola shablonini yuklab olish') }}
             </a>
             <Link :href="links.guidelines" :class="item">
                 <BookOpenText :class="icon" />
-                Yo'riqnoma (PDF)
+                {{ t("Yo'riqnoma (PDF)") }}
             </Link>
             <Link :href="contact()" :class="item">
                 <MessageCircleQuestion :class="icon" />
-                Savol berish
+                {{ t('Savol berish') }}
             </Link>
         </div>
     </DashCard>

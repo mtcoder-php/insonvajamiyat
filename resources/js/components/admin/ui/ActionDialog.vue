@@ -13,6 +13,7 @@ import {
     secondaryButtonClass,
 } from '@/lib/formStyles';
 import { cn } from '@/lib/utils';
+import { t } from '@/lib/i18n';
 
 /**
  * Tasdiqlash oynasi: ikonka, sarlavha, izoh, qo'shimcha maydonlar (slot)
@@ -96,7 +97,7 @@ const emit = defineEmits<{ confirm: [] }>();
                         :class="cn(secondaryButtonClass, 'h-9')"
                         @click="open = false"
                     >
-                        Bekor qilish
+                        {{ t('Bekor qilish') }}
                     </button>
                     <button
                         type="submit"

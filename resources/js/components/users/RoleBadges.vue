@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { cn } from '@/lib/utils';
 import type { RoleName, UserRole } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Rollar — har bir rol o'z rangida.
@@ -33,5 +34,5 @@ const tones: Record<RoleName, string> = {
             {{ role.label }}
         </span>
     </span>
-    <span v-else class="text-xs text-navy-400">Rol yo'q</span>
+    <span v-else class="text-xs text-navy-400">{{ t("Rol yo'q") }}</span>
 </template>

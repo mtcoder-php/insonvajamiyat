@@ -15,6 +15,7 @@ import type {
     WizardLimits,
     WizardOptions,
 } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * 1-bosqich: maqola turi (narxi bilan), ilmiy yo'nalish, til, sarlavha, UDK.
@@ -54,7 +55,7 @@ function save(stay: boolean): void {
     <form class="grid gap-6" @submit.prevent="save(false)">
         <fieldset class="grid gap-2">
             <legend class="mb-2 text-[13px] font-semibold text-navy-800">
-                Maqola turi <span class="text-red-500">*</span>
+                {{ t('Maqola turi') }} <span class="text-red-500">*</span>
             </legend>
             <div class="grid gap-3 sm:grid-cols-2">
                 <label
@@ -117,7 +118,9 @@ function save(stay: boolean): void {
                             "
                         >
                             {{
-                                type.price > 0 ? formatSum(type.price) : 'Bepul'
+                                type.price > 0
+                                    ? formatSum(type.price)
+                                    : t('Bepul')
                             }}
                         </span>
                         <span
@@ -125,7 +128,11 @@ function save(stay: boolean): void {
                             class="inline-flex items-center gap-1 text-navy-500"
                         >
                             <CalendarClock class="size-3.5" />
-                            ~{{ type.reviewDays }} kunda ko'rib chiqiladi
+                            {{
+                                t("~:days kunda ko'rib chiqiladi", {
+                                    days: type.reviewDays,
+                                })
+                            }}
                         </span>
                     </span>
                 </label>
@@ -137,13 +144,17 @@ function save(stay: boolean): void {
                 {{ form.errors.article_type_id }}
             </p>
             <p v-if="!options.types.length" class="text-sm text-amber-700">
-                Maqola turlari hali sozlanmagan. Tahririyat bilan bog'laning.
+                {{
+                    t(
+                        "Maqola turlari hali sozlanmagan. Tahririyat bilan bog'laning.",
+                    )
+                }}
             </p>
         </fieldset>
 
         <div class="grid gap-5 md:grid-cols-2">
             <FormField
-                label="Ilmiy yo'nalish"
+                :label="t('Ilmiy yo\'nalish')"
                 for="subject_id"
                 required
                 :error="form.errors.subject_id"
@@ -153,7 +164,9 @@ function save(stay: boolean): void {
                     v-model="form.subject_id"
                     :aria-invalid="!!form.errors.subject_id"
                 >
-                    <option :value="null" disabled>Yo'nalishni tanlang</option>
+                    <option :value="null" disabled>
+                        {{ t("Yo'nalishni tanlang") }}
+                    </option>
                     <option
                         v-for="subject in options.subjects"
                         :key="subject.id"
@@ -165,10 +178,14 @@ function save(stay: boolean): void {
             </FormField>
 
             <FormField
-                label="Maqola tili"
+                :label="t('Maqola tili')"
                 required
                 :error="form.errors.language"
-                hint="Maqola matni yozilgan til — annotatsiya va kalit so'zlar shu tilda majburiy."
+                :hint="
+                    t(
+                        'Maqola matni yozilgan til — annotatsiya va kalit so\'zlar shu tilda majburiy.',
+                    )
+                "
             >
                 <div
                     class="grid grid-cols-3 gap-1 rounded-lg border border-line bg-[#f5f8fc] p-1"
@@ -197,7 +214,7 @@ function save(stay: boolean): void {
         </div>
 
         <FormField
-            label="Maqola sarlavhasi"
+            :label="t('Maqola sarlavhasi')"
             for="title"
             required
             :error="form.errors.title"
@@ -207,7 +224,11 @@ function save(stay: boolean): void {
                 v-model="form.title"
                 rows="2"
                 :maxlength="limits.titleMax"
-                placeholder="Masalan: O'rta asrlarda Movarounnahr shaharlarining ijtimoiy tuzilishi"
+                :placeholder="
+                    t(
+                        'Masalan: O\'rta asrlarda Movarounnahr shaharlarining ijtimoiy tuzilishi',
+                    )
+                "
                 :aria-invalid="!!form.errors.title"
                 :class="cn(textareaClass, 'min-h-20 font-medium')"
             />
@@ -220,7 +241,11 @@ function save(stay: boolean): void {
             label="UDK"
             for="udc"
             :error="form.errors.udc"
-            hint="Universal o'nlik klassifikatsiya indeksi (ixtiyoriy), masalan: 94(575.1)"
+            :hint="
+                t(
+                    'Universal o\'nlik klassifikatsiya indeksi (ixtiyoriy), masalan: 94(575.1)',
+                )
+            "
             class="md:max-w-xs"
         >
             <input
@@ -237,8 +262,8 @@ function save(stay: boolean): void {
             :show-draft="!!article"
             :next-label="
                 article
-                    ? 'Saqlash va davom etish'
-                    : 'Qoralamani yaratish va davom etish'
+                    ? t('Saqlash va davom etish')
+                    : t('Qoralamani yaratish va davom etish')
             "
             @next="save(false)"
             @draft="save(true)"

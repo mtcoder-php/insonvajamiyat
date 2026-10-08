@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { formatDate, formatTime } from '@/lib/format';
 import type { AuthorArticle } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * "Mening maqolalarim" jadvali (dashboard va ro'yxat sahifasi uchun umumiy).
@@ -37,11 +38,11 @@ const { offset = 0 } = defineProps<{
                     class="bg-[#f5f8fc] text-xs font-semibold text-navy-600 [&>th]:py-2.5 [&>th:first-child]:rounded-l-lg [&>th:last-child]:rounded-r-lg"
                 >
                     <th class="w-12 pr-2 pl-4">№</th>
-                    <th class="pr-4">Maqola nomi</th>
-                    <th class="pr-4">Jurnal soni</th>
-                    <th class="pr-4">Status</th>
-                    <th class="pr-4">Oxirgi yangilanish</th>
-                    <th class="pr-4 text-right">Amallar</th>
+                    <th class="pr-4">{{ t('Maqola nomi') }}</th>
+                    <th class="pr-4">{{ t('Jurnal soni') }}</th>
+                    <th class="pr-4">{{ t('Status') }}</th>
+                    <th class="pr-4">{{ t('Oxirgi yangilanish') }}</th>
+                    <th class="pr-4 text-right">{{ t('Amallar') }}</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-line">
@@ -110,14 +111,18 @@ const { offset = 0 } = defineProps<{
                             >
                                 {{
                                     article.editUrl
-                                        ? 'Davom ettirish'
-                                        : 'Tafsilotlar'
+                                        ? t('Davom ettirish')
+                                        : t('Tafsilotlar')
                                 }}
                             </Link>
                             <DropdownMenu>
                                 <DropdownMenuTrigger
                                     class="flex items-center border-l border-line px-2 text-navy-500 transition-colors outline-none hover:bg-brand-50 hover:text-brand-700 focus-visible:bg-brand-50 data-[state=open]:bg-brand-50 data-[state=open]:text-brand-700"
-                                    :aria-label="`${article.title} — amallar`"
+                                    :aria-label="
+                                        t(':title — amallar', {
+                                            title: article.title,
+                                        })
+                                    "
                                 >
                                     <ChevronDown class="size-4" />
                                 </DropdownMenuTrigger>
@@ -125,13 +130,13 @@ const { offset = 0 } = defineProps<{
                                     <DropdownMenuItem as-child>
                                         <Link :href="article.url">
                                             <Eye class="size-4" />
-                                            Batafsil ko'rish
+                                            {{ t("Batafsil ko'rish") }}
                                         </Link>
                                     </DropdownMenuItem>
                                     <DropdownMenuItem as-child>
                                         <Link :href="`${article.url}#tarix`">
                                             <History class="size-4" />
-                                            Holat tarixi
+                                            {{ t('Holat tarixi') }}
                                         </Link>
                                     </DropdownMenuItem>
                                     <DropdownMenuItem
@@ -144,7 +149,7 @@ const { offset = 0 } = defineProps<{
                                             rel="noopener"
                                         >
                                             <ExternalLink class="size-4" />
-                                            Saytda ko'rish
+                                            {{ t("Saytda ko'rish") }}
                                         </a>
                                     </DropdownMenuItem>
                                     <template v-if="article.editUrl">
@@ -152,7 +157,9 @@ const { offset = 0 } = defineProps<{
                                         <DropdownMenuItem as-child>
                                             <Link :href="article.editUrl">
                                                 <PenLine class="size-4" />
-                                                Formani davom ettirish
+                                                {{
+                                                    t('Formani davom ettirish')
+                                                }}
                                             </Link>
                                         </DropdownMenuItem>
                                     </template>
@@ -164,10 +171,14 @@ const { offset = 0 } = defineProps<{
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem
                                             disabled
-                                            title="Tez orada"
+                                            :title="t('Tez orada')"
                                         >
                                             <PenLine class="size-4" />
-                                            Tuzatilgan variantni yuborish
+                                            {{
+                                                t(
+                                                    'Tuzatilgan variantni yuborish',
+                                                )
+                                            }}
                                         </DropdownMenuItem>
                                     </template>
                                 </DropdownMenuContent>
@@ -188,7 +199,9 @@ const { offset = 0 } = defineProps<{
                 <FileText class="size-5" />
             </span>
             <slot name="empty">
-                <p class="text-sm text-navy-500">Hozircha maqolalar yo'q</p>
+                <p class="text-sm text-navy-500">
+                    {{ t("Hozircha maqolalar yo'q") }}
+                </p>
             </slot>
         </div>
     </div>

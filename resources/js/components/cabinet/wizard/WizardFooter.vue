@@ -3,11 +3,12 @@ import { Link } from '@inertiajs/vue3';
 import { ArrowLeft, ArrowRight, LoaderCircle, Save } from '@lucide/vue';
 import { primaryButtonClass, secondaryButtonClass } from '@/lib/formStyles';
 import { cn } from '@/lib/utils';
+import { t } from '@/lib/i18n';
 
 /**
  * Bosqich pastidagi tugmalar: "Orqaga", "Qoralama sifatida saqlash", "Saqlash va davom etish".
  */
-const { nextLabel = 'Saqlash va davom etish', showDraft = true } = defineProps<{
+const { nextLabel, showDraft = true } = defineProps<{
     prevHref?: string | null;
     processing?: boolean;
     nextLabel?: string;
@@ -31,7 +32,7 @@ const emit = defineEmits<{ next: []; draft: [] }>();
             <ArrowLeft
                 class="size-4 transition-transform group-hover:-translate-x-0.5"
             />
-            Orqaga
+            {{ t('Orqaga') }}
         </Link>
         <span v-else />
 
@@ -44,7 +45,7 @@ const emit = defineEmits<{ next: []; draft: [] }>();
                 @click="emit('draft')"
             >
                 <Save class="size-4" />
-                Qoralama sifatida saqlash
+                {{ t('Qoralama sifatida saqlash') }}
             </button>
             <button
                 type="button"
@@ -53,7 +54,7 @@ const emit = defineEmits<{ next: []; draft: [] }>();
                 @click="emit('next')"
             >
                 <LoaderCircle v-if="processing" class="size-4 animate-spin" />
-                {{ nextLabel }}
+                {{ nextLabel ?? t('Saqlash va davom etish') }}
                 <ArrowRight
                     v-if="!processing"
                     class="size-4 transition-transform group-hover:translate-x-0.5"

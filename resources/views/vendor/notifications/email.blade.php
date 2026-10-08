@@ -37,7 +37,7 @@
 {!! nl2br(e($salutation)) !!}
 @else
 {{ __('Hurmat bilan,') }}<br>
-«Inson va Jamiyat» {{ __('tahririyati') }}
+{{ __('«:name» tahririyati', ['name' => config('journal.name')]) }}
 @endif
 
 {{-- Subcopy --}}

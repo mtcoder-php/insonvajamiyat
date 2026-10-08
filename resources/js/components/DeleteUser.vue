@@ -19,6 +19,7 @@ import {
     secondaryButtonClass,
 } from '@/lib/formStyles';
 import { cn } from '@/lib/utils';
+import { t } from '@/lib/i18n';
 
 /**
  * Akkauntni o'chirish (parol bilan tasdiqlanadi). Akkaunt yumshoq o'chiriladi —
@@ -39,11 +40,14 @@ const passwordInput = useTemplateRef('passwordInput');
             </span>
             <div class="min-w-0 flex-1">
                 <h2 class="font-sans text-[15px] font-bold text-navy-950">
-                    Akkauntni o'chirish
+                    {{ t("Akkauntni o'chirish") }}
                 </h2>
                 <p class="mt-0.5 text-xs text-navy-500">
-                    Akkauntingiz o'chiriladi va tizimga kira olmaysiz. Ehtiyot
-                    bo'ling.
+                    {{
+                        t(
+                            "Akkauntingiz o'chiriladi va tizimga kira olmaysiz. Ehtiyot bo'ling.",
+                        )
+                    }}
                 </p>
             </div>
             <Dialog>
@@ -54,7 +58,7 @@ const passwordInput = useTemplateRef('passwordInput');
                         data-test="delete-user-button"
                     >
                         <Trash2 class="size-4" />
-                        Akkauntni o'chirish
+                        {{ t("Akkauntni o'chirish") }}
                     </button>
                 </DialogTrigger>
                 <DialogContent
@@ -77,23 +81,29 @@ const passwordInput = useTemplateRef('passwordInput');
                                 <DialogTitle
                                     class="font-sans text-base font-bold text-navy-950"
                                 >
-                                    Akkauntni o'chirmoqchimisiz?
+                                    {{ t("Akkauntni o'chirmoqchimisiz?") }}
                                 </DialogTitle>
                                 <DialogDescription
                                     class="mt-1 text-sm leading-relaxed text-navy-600"
                                 >
-                                    Tasdiqlash uchun parolingizni kiriting.
+                                    {{
+                                        t(
+                                            'Tasdiqlash uchun parolingizni kiriting.',
+                                        )
+                                    }}
                                 </DialogDescription>
                                 <div class="mt-4 grid gap-1.5">
-                                    <label for="delete-password" class="sr-only"
-                                        >Parol</label
+                                    <label
+                                        for="delete-password"
+                                        class="sr-only"
+                                        >{{ t('Parol') }}</label
                                     >
                                     <PasswordInput
                                         id="delete-password"
                                         name="password"
                                         ref="passwordInput"
                                         :class="inputClass"
-                                        placeholder="Parol"
+                                        :placeholder="t('Parol')"
                                     />
                                     <InputError :message="errors.password" />
                                 </div>
@@ -113,7 +123,7 @@ const passwordInput = useTemplateRef('passwordInput');
                                         }
                                     "
                                 >
-                                    Bekor qilish
+                                    {{ t('Bekor qilish') }}
                                 </button>
                             </DialogClose>
                             <button
@@ -122,7 +132,7 @@ const passwordInput = useTemplateRef('passwordInput');
                                 :disabled="processing"
                                 data-test="confirm-delete-user-button"
                             >
-                                O'chirish
+                                {{ t("O'chirish") }}
                             </button>
                         </div>
                     </Form>

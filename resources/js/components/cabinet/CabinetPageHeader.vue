@@ -5,6 +5,7 @@ import type { Component } from 'vue';
 import { cn } from '@/lib/utils';
 import { dashboard } from '@/routes/cabinet';
 import type { BreadcrumbItem } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Kabinet sahifasi banneri (dizayn: "Muallif kabineti", "To'lovlar").
@@ -63,14 +64,14 @@ const bannerUrl = '/images/admin/banner.png';
                 <nav
                     v-if="breadcrumbs.length"
                     class="mb-2 flex flex-wrap items-center gap-1.5 text-xs"
-                    aria-label="Yo'l ko'rsatkich"
+                    :aria-label="t('Yo\'l ko\'rsatkich')"
                 >
                     <Link
                         :href="dashboard()"
                         class="flex items-center gap-1.5 text-navy-500 transition-colors hover:text-brand-700"
                     >
                         <House class="size-3.5" />
-                        Asosiy sahifa
+                        {{ t('Asosiy sahifa') }}
                     </Link>
                     <template v-for="(crumb, i) in breadcrumbs" :key="i">
                         <ChevronRight class="size-3 text-navy-300" />
@@ -129,7 +130,9 @@ const bannerUrl = '/images/admin/banner.png';
                 v-if="quote"
                 class="hidden max-w-72 shrink-0 text-right font-serif text-lg leading-snug text-white italic drop-shadow-[0_2px_6px_rgba(0,20,40,0.6)] md:block"
             >
-                “Ilm — insonni yuksaltiradi, jamiyatni rivojlantiradi.”
+                {{
+                    t('“Ilm — insonni yuksaltiradi, jamiyatni rivojlantiradi.”')
+                }}
             </blockquote>
         </div>
     </section>

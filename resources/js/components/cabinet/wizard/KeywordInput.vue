@@ -2,6 +2,7 @@
 import { X } from '@lucide/vue';
 import { ref } from 'vue';
 import { cn } from '@/lib/utils';
+import { t } from '@/lib/i18n';
 
 /**
  * Kalit so'zlar kiritish: Enter, vergul yoki nuqtali vergul — yangi teg;
@@ -85,7 +86,7 @@ function remove(index: number): void {
                 <button
                     type="button"
                     class="flex size-5 items-center justify-center rounded text-brand-400 transition-colors hover:bg-brand-100 hover:text-brand-700"
-                    :aria-label="`${word} — o'chirish`"
+                    :aria-label="t(':name — o\'chirish', { name: word })"
                     @click="remove(index)"
                 >
                     <X class="size-3.5" />
@@ -100,8 +101,8 @@ function remove(index: number): void {
             :disabled="model.length >= max"
             :placeholder="
                 model.length >= max
-                    ? `Ko'pi bilan ${max} ta`
-                    : (placeholder ?? 'So\'z kiriting va Enter bosing')
+                    ? t('Ko\'pi bilan :max ta', { max })
+                    : (placeholder ?? t('So\'z kiriting va Enter bosing'))
             "
             class="h-8 min-w-40 flex-1 bg-transparent px-1 text-sm text-navy-900 outline-none placeholder:text-navy-300 disabled:cursor-not-allowed"
             @keydown="onKeydown"

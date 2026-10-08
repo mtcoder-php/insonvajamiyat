@@ -7,6 +7,7 @@ import SiteHeader from '@/components/web/SiteHeader.vue';
 import { useCabinetNav } from '@/composables/useCabinetNav';
 import { cn } from '@/lib/utils';
 import type { BreadcrumbItem } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Muallif kabineti layouti (dizayn: "Muallif kabineti") — resources/js/pages/cabinet/*
@@ -35,7 +36,7 @@ const { items, isActive } = useCabinetNav();
             <!-- Mobil menyu -->
             <nav
                 class="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:-mx-6 sm:px-6 lg:hidden"
-                aria-label="Muallif kabineti menyusi"
+                :aria-label="t('Muallif kabineti menyusi')"
             >
                 <template v-for="item in items" :key="item.title">
                     <Link
@@ -52,7 +53,7 @@ const { items, isActive } = useCabinetNav();
                         "
                     >
                         <component :is="item.icon" class="size-4" />
-                        {{ item.title }}
+                        {{ t(item.title) }}
                     </Link>
                 </template>
             </nav>

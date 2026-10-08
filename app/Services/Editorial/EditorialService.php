@@ -138,7 +138,7 @@ class EditorialService
         });
 
         // Muallifga: qaror va izoh (baza + email)
-        $article->submitter->notify(new ArticleUpdateNotification(
+        $article->submitter->notifyInLocale(fn (): ArticleUpdateNotification => new ArticleUpdateNotification(
             $article,
             ArticleUpdateNotification::DECISION,
             __('Tahririyat qarori: :decision', ['decision' => $decision->label()]),

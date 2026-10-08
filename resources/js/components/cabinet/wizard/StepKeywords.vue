@@ -5,6 +5,7 @@ import FormField from '@/components/admin/ui/FormField.vue';
 import KeywordInput from '@/components/cabinet/wizard/KeywordInput.vue';
 import WizardFooter from '@/components/cabinet/wizard/WizardFooter.vue';
 import type { ArticleDraft, WizardLimits, WizardOptions } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * 4-bosqich: kalit so'zlar — maqola tilida 3–10 ta majburiy, boshqa tillarda ixtiyoriy.
@@ -55,7 +56,9 @@ function save(stay: boolean): void {
         <FormField
             v-for="language in languages"
             :key="language.code"
-            :label="`Kalit so'zlar (${language.label})`"
+            :label="
+                t('Kalit so\'zlar (:language)', { language: language.label })
+            "
             :for="`keywords-${language.code}`"
             :required="language.code === main"
             :error="firstError(language.code)"
@@ -71,8 +74,11 @@ function save(stay: boolean): void {
                 <span>
                     {{
                         language.code === main
-                            ? `Kamida ${limits.keywordsMin} ta, ko'pi bilan ${limits.keywordsMax} ta`
-                            : 'Ixtiyoriy'
+                            ? t("Kamida :min ta, ko'pi bilan :max ta", {
+                                  min: limits.keywordsMin,
+                                  max: limits.keywordsMax,
+                              })
+                            : t('Ixtiyoriy')
                     }}
                 </span>
                 <span class="tabular-nums">

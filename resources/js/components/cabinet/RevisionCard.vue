@@ -14,6 +14,7 @@ import { primaryButtonClass, textareaClass } from '@/lib/formStyles';
 import { formatDate, formatFileSize } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { RevisionRequest } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * "Tuzatish talab etiladi": muharrir izohi va tuzatilgan versiyani yuborish formasi.
@@ -103,16 +104,24 @@ function submit(): void {
             </span>
             <div class="min-w-0">
                 <h2 class="font-sans text-[15px] font-bold text-navy-950">
-                    Maqolani tuzatish talab etiladi
+                    {{ t('Maqolani tuzatish talab etiladi') }}
                 </h2>
                 <p class="mt-0.5 text-xs text-navy-600">
                     <template v-if="revision.requestedAt">
                         {{ formatDate(revision.requestedAt) }} ·
                     </template>
                     <template v-if="revision.round > 0">
-                        {{ revision.round }}-taqriz raundi natijasi.
+                        {{
+                            t(':number-taqriz raundi natijasi.', {
+                                number: revision.round,
+                            })
+                        }}
                     </template>
-                    Izohlarni inobatga olib, tuzatilgan faylni yuboring.
+                    {{
+                        t(
+                            'Izohlarni inobatga olib, tuzatilgan faylni yuboring.',
+                        )
+                    }}
                 </p>
             </div>
         </header>
@@ -122,7 +131,7 @@ function submit(): void {
                 <p
                     class="mb-1.5 text-[11px] font-semibold tracking-wide text-orange-700 uppercase"
                 >
-                    Muharrir izohi
+                    {{ t('Muharrir izohi') }}
                 </p>
                 <p
                     class="rounded-lg border-l-4 border-orange-400 bg-orange-50/60 px-4 py-3 text-[13px] leading-relaxed whitespace-pre-line text-navy-800"
@@ -134,14 +143,15 @@ function submit(): void {
                     href="#reviews"
                     class="mt-2 inline-block text-xs font-semibold text-brand-700 hover:underline"
                 >
-                    Taqrizchilar izohlarini ko'rish ↓
+                    {{ t("Taqrizchilar izohlarini ko'rish ↓") }}
                 </a>
             </div>
 
             <form class="grid gap-4" @submit.prevent="confirmOpen = true">
                 <div>
                     <p class="mb-1.5 text-xs font-semibold text-navy-800">
-                        Tuzatilgan fayl <span class="text-red-500">*</span>
+                        {{ t('Tuzatilgan fayl') }}
+                        <span class="text-red-500">*</span>
                     </p>
                     <button
                         type="button"
@@ -181,11 +191,13 @@ function submit(): void {
                             </span>
                         </span>
                         <span v-else class="text-[13px] text-navy-700">
-                            <b class="text-brand-700">Faylni tanlang</b> yoki
-                            shu yerga tashlang
+                            <b class="text-brand-700">{{
+                                t('Faylni tanlang')
+                            }}</b>
+                            {{ t('yoki shu yerga tashlang') }}
                         </span>
                         <span class="text-[11px] text-navy-500">
-                            .docx yoki .pdf, 10 MB gacha
+                            {{ t('.docx yoki .pdf, 10 MB gacha') }}
                         </span>
                     </button>
                     <input
@@ -211,14 +223,18 @@ function submit(): void {
                     <span
                         class="mb-1.5 block text-xs font-semibold text-navy-800"
                     >
-                        Taqrizchi va muharrirga javob
+                        {{ t('Taqrizchi va muharrirga javob') }}
                         <span class="text-red-500">*</span>
                     </span>
                     <textarea
                         v-model="form.response"
                         rows="5"
                         maxlength="5000"
-                        placeholder="Har bir izoh bo'yicha nimalar o'zgartirilganini qisqacha yozing (masalan: «1-izoh: metodologiya bo'limi kengaytirildi, 4-bet»)."
+                        :placeholder="
+                            t(
+                                'Har bir izoh bo\'yicha nimalar o\'zgartirilganini qisqacha yozing (masalan: «1-izoh: metodologiya bo\'limi kengaytirildi, 4-bet»).',
+                            )
+                        "
                         :aria-invalid="!!errors.response"
                         :class="textareaClass"
                     />
@@ -246,9 +262,13 @@ function submit(): void {
                             class="inline-flex h-9 items-center gap-1.5 rounded-lg border border-line px-3 text-xs font-semibold text-navy-700 transition-all hover:-translate-y-px hover:border-brand-300 hover:text-brand-700 disabled:opacity-50"
                             @click="supplementaryInput?.click()"
                         >
-                            <Paperclip class="size-4" /> Ilova qo'shish ({{
-                                form.supplementary.length
-                            }}/{{ MAX_SUPPLEMENTARY }})
+                            <Paperclip class="size-4" />
+                            {{
+                                t("Ilova qo'shish (:count/:max)", {
+                                    count: form.supplementary.length,
+                                    max: MAX_SUPPLEMENTARY,
+                                })
+                            }}
                         </button>
                         <span
                             v-for="(file, i) in form.supplementary"
@@ -259,7 +279,7 @@ function submit(): void {
                             <button
                                 type="button"
                                 class="rounded p-0.5 hover:bg-brand-100"
-                                aria-label="Olib tashlash"
+                                :aria-label="t('Olib tashlash')"
                                 @click="removeSupplementary(i)"
                             >
                                 <X class="size-3.5" />
@@ -284,7 +304,11 @@ function submit(): void {
 
                 <div class="flex flex-wrap items-center justify-end gap-3">
                     <p v-if="!ready" class="text-[11px] text-navy-500">
-                        Fayl va kamida {{ MIN_RESPONSE }} belgili javob kerak.
+                        {{
+                            t('Fayl va kamida :min belgili javob kerak.', {
+                                min: MIN_RESPONSE,
+                            })
+                        }}
                     </p>
                     <button
                         type="submit"
@@ -292,7 +316,7 @@ function submit(): void {
                         :disabled="!ready || form.processing"
                     >
                         <Send class="size-4" />
-                        Tuzatilgan versiyani yuborish
+                        {{ t('Tuzatilgan versiyani yuborish') }}
                     </button>
                 </div>
             </form>
@@ -300,10 +324,14 @@ function submit(): void {
 
         <ActionDialog
             v-model:open="confirmOpen"
-            title="Tuzatilgan versiyani yuborasizmi?"
-            description="Yuborilgandan so'ng maqola tahririyatda qayta ko'rib chiqiladi va uni o'zgartirib bo'lmaydi."
+            :title="t('Tuzatilgan versiyani yuborasizmi?')"
+            :description="
+                t(
+                    'Yuborilgandan so\'ng maqola tahririyatda qayta ko\'rib chiqiladi va uni o\'zgartirib bo\'lmaydi.',
+                )
+            "
             :icon="form.processing ? LoaderCircle : Send"
-            confirm-text="Ha, yuborish"
+            :confirm-text="t('Ha, yuborish')"
             :processing="form.processing"
             @confirm="submit"
         />

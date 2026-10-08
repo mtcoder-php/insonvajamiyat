@@ -15,6 +15,7 @@ import { textareaClass } from '@/lib/formStyles';
 import { formatDate, formatTime } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { ThreadMessage } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Muallif ↔ tahririyat yozishmasi (kabinet va admin panel uchun umumiy).
@@ -28,8 +29,8 @@ const props = withDefaults(
         placeholder?: string;
     }>(),
     {
-        emptyText: "Hozircha xabarlar yo'q.",
-        placeholder: 'Xabaringizni yozing...',
+        emptyText: undefined,
+        placeholder: undefined,
     },
 );
 
@@ -149,7 +150,7 @@ const showDay = (index: number): boolean =>
                                 )
                             "
                         >
-                            {{ message.mine ? 'Siz' : message.sender }}
+                            {{ message.mine ? t('Siz') : message.sender }}
                         </p>
                         <p
                             class="text-[13px] leading-relaxed whitespace-pre-line"
@@ -187,7 +188,7 @@ const showDay = (index: number): boolean =>
                             <CheckCheck
                                 v-if="message.mine && message.readAt"
                                 class="size-3.5"
-                                aria-label="O'qilgan"
+                                :aria-label="t('O\'qilgan')"
                             />
                         </p>
                     </div>
@@ -199,7 +200,7 @@ const showDay = (index: number): boolean =>
                 class="flex flex-1 flex-col items-center justify-center gap-2 py-6 text-center text-xs text-navy-500"
             >
                 <MessagesSquare class="size-8 text-navy-300" />
-                {{ emptyText }}
+                {{ emptyText ?? t("Hozircha xabarlar yo'q.") }}
             </div>
         </div>
 
@@ -208,7 +209,7 @@ const showDay = (index: number): boolean =>
                 v-model="form.body"
                 rows="3"
                 :maxlength="MAX"
-                :placeholder="placeholder"
+                :placeholder="placeholder ?? t('Xabaringizni yozing...')"
                 :aria-invalid="!!errors.body"
                 :class="cn(textareaClass, 'min-h-20')"
                 @keydown.ctrl.enter.prevent="send"
@@ -226,7 +227,7 @@ const showDay = (index: number): boolean =>
                     class="inline-flex h-9 items-center gap-1.5 rounded-lg border border-line px-3 text-xs font-semibold text-navy-700 transition-all hover:-translate-y-px hover:border-brand-300 hover:text-brand-700"
                     @click="fileInput?.click()"
                 >
-                    <Paperclip class="size-4" /> Fayl
+                    <Paperclip class="size-4" /> {{ t('Fayl') }}
                 </button>
                 <span
                     v-if="form.attachment"
@@ -236,7 +237,7 @@ const showDay = (index: number): boolean =>
                     <button
                         type="button"
                         class="rounded p-0.5 hover:bg-brand-100"
-                        aria-label="Faylni olib tashlash"
+                        :aria-label="t('Faylni olib tashlash')"
                         @click="clearFile"
                     >
                         <X class="size-3.5" />
@@ -252,7 +253,7 @@ const showDay = (index: number): boolean =>
                 <span
                     class="ml-auto hidden text-[11px] text-navy-400 sm:inline"
                 >
-                    Ctrl + Enter
+                    {{ t('Ctrl + Enter') }}
                 </span>
                 <button
                     type="submit"
@@ -264,7 +265,7 @@ const showDay = (index: number): boolean =>
                         class="size-4 animate-spin"
                     />
                     <Send v-else class="size-4" />
-                    Yuborish
+                    {{ t('Yuborish') }}
                 </button>
             </div>
         </form>

@@ -46,6 +46,13 @@ function monthName(date: Date, style: 'long' | 'short'): string {
         .replace('.', '');
 }
 
+/** Oyning qisqa nomi (0 — yanvar) joriy tilda: "Sen" / "Сен" / "Sep" — grafiklar uchun */
+export function monthShort(index: number): string {
+    const name = monthName(new Date(2000, index, 1), 'short');
+
+    return name.charAt(0).toUpperCase() + name.slice(1);
+}
+
 function toDate(value: string | Date): Date | null {
     // "2026-09-29" — mahalliy vaqt bo'yicha (UTC siljishisiz) o'qiladi
     const date =
@@ -198,7 +205,7 @@ export function formatCompact(value: number): string {
 
 /** 150000 → "150 000 so'm" */
 export function formatSum(value: number): string {
-    return `${formatNumber(value)} so'm`;
+    return `${formatNumber(value)} ${t("so'm")}`;
 }
 
 /** +998901234567 → "+998 90 123 45 67" (boshqa formatlar o'zgarishsiz) */
