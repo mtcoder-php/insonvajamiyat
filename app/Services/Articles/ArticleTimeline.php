@@ -5,6 +5,7 @@ namespace App\Services\Articles;
 use App\Enums\ArticleStatus;
 use App\Models\Article;
 use App\Models\ArticleStatusHistory;
+use App\Support\Translations;
 
 /**
  * Muallifga ko'rsatiladigan soddalashtirilgan jarayon (timeline):
@@ -52,7 +53,7 @@ class ArticleTimeline
 
             $steps[] = [
                 'key' => $key,
-                'label' => self::STEPS[$key]['label'],
+                'label' => Translations::line(self::STEPS[$key]['label']) ?? self::STEPS[$key]['label'],
                 'state' => $state,
                 'date' => $first?->created_at->toIso8601String()
                     ?? ($key === 'submitted' ? $article->submitted_at?->toIso8601String() : null),

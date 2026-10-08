@@ -6,6 +6,7 @@ import WizardFooter from '@/components/cabinet/wizard/WizardFooter.vue';
 import { formatFileSize, formatSum } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { ArticleDraft, WizardOptions, WizardStepInfo } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * 6-bosqich: kiritilgan ma'lumotlarni ko'rib chiqish; to'ldirilmagan bosqichlar
@@ -73,7 +74,7 @@ const otherLanguages = computed(() =>
                     <PenLine
                         class="size-3.5 transition-transform group-hover:-rotate-12"
                     />
-                    Tahrirlash
+                    {{ t('Tahrirlash') }}
                 </Link>
             </header>
 
@@ -96,31 +97,41 @@ const otherLanguages = computed(() =>
                 class="grid gap-x-6 gap-y-2 text-[13px] sm:grid-cols-2"
             >
                 <div class="sm:col-span-2">
-                    <dt class="text-[11px] text-navy-500">Sarlavha</dt>
+                    <dt class="text-[11px] text-navy-500">
+                        {{ t('Sarlavha') }}
+                    </dt>
                     <dd class="font-semibold text-navy-900">
                         {{ article.title[main] }}
                     </dd>
                 </div>
                 <div>
-                    <dt class="text-[11px] text-navy-500">Maqola turi</dt>
+                    <dt class="text-[11px] text-navy-500">
+                        {{ t('Maqola turi') }}
+                    </dt>
                     <dd class="font-medium text-navy-900">
                         {{ type?.name ?? '—' }}
                         <span v-if="type" class="text-navy-500">
                             ·
                             {{
-                                type.price > 0 ? formatSum(type.price) : 'Bepul'
+                                type.price > 0
+                                    ? formatSum(type.price)
+                                    : t('Bepul')
                             }}
                         </span>
                     </dd>
                 </div>
                 <div>
-                    <dt class="text-[11px] text-navy-500">Ilmiy yo'nalish</dt>
+                    <dt class="text-[11px] text-navy-500">
+                        {{ t("Ilmiy yo'nalish") }}
+                    </dt>
                     <dd class="font-medium text-navy-900">
                         {{ subject ?? '—' }}
                     </dd>
                 </div>
                 <div>
-                    <dt class="text-[11px] text-navy-500">Maqola tili</dt>
+                    <dt class="text-[11px] text-navy-500">
+                        {{ t('Maqola tili') }}
+                    </dt>
                     <dd class="font-medium text-navy-900">
                         {{ languageLabel(main) }}
                     </dd>
@@ -148,7 +159,7 @@ const otherLanguages = computed(() =>
                     <Star
                         v-if="author.is_corresponding"
                         class="size-3.5 self-center fill-gold-400 text-gold-500"
-                        aria-label="Aloqa uchun mas'ul"
+                        :aria-label="t('Aloqa uchun mas\'ul')"
                     />
                     <span class="text-navy-500">
                         {{

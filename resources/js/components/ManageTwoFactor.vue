@@ -8,6 +8,7 @@ import { useTwoFactorAuth } from '@/composables/useTwoFactorAuth';
 import { dangerButtonClass, primaryButtonClass } from '@/lib/formStyles';
 import { cn } from '@/lib/utils';
 import { disable, enable } from '@/routes/two-factor';
+import { t } from '@/lib/i18n';
 
 export type Props = {
     canManageTwoFactor?: boolean;
@@ -56,7 +57,7 @@ onUnmounted(() => clearTwoFactorAuthData());
                 <p class="text-sm font-bold text-navy-950">
                     {{
                         twoFactorEnabled
-                            ? 'Himoya yoqilgan'
+                            ? t('Himoya yoqilgan')
                             : "Himoya o'chirilgan"
                     }}
                 </p>
@@ -77,7 +78,7 @@ onUnmounted(() => clearTwoFactorAuthData());
                     @click="showSetupModal = true"
                 >
                     <ShieldCheck class="size-4" />
-                    Sozlashni davom ettirish
+                    {{ t('Sozlashni davom ettirish') }}
                 </button>
                 <Form
                     v-else
@@ -91,7 +92,7 @@ onUnmounted(() => clearTwoFactorAuthData());
                         :disabled="processing"
                     >
                         <ShieldCheck class="size-4" />
-                        Yoqish
+                        {{ t('Yoqish') }}
                     </button>
                 </Form>
             </template>
@@ -101,7 +102,7 @@ onUnmounted(() => clearTwoFactorAuthData());
                     :class="cn(dangerButtonClass, 'h-9')"
                     :disabled="processing"
                 >
-                    O'chirish
+                    {{ t("O'chirish") }}
                 </button>
             </Form>
         </div>

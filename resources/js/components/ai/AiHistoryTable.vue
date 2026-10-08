@@ -6,6 +6,7 @@ import { formatDateTime, formatNumber } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { AiRequestItem, AiRequestTypeValue, SimpleMeta } from '@/types';
 import { statusTone, studios } from './aiMeta';
+import { t, tk } from '@/lib/i18n';
 
 /**
  * "Mening so'rovlarim" / Tarix jadvali. Filtrlar (tur, hammasi/mening) — `filter` hodisasi orqali.
@@ -32,7 +33,7 @@ const emit = defineEmits<{
 }>();
 
 const typeTabs: { value: AiRequestTypeValue | null; label: string }[] = [
-    { value: null, label: 'Barchasi' },
+    { value: null, label: tk('Barchasi') },
     { value: 'spell_check', label: 'Proofreader' },
     { value: 'translation', label: 'Translator' },
     { value: 'analysis', label: 'Analytics' },
@@ -65,7 +66,7 @@ const typeTabs: { value: AiRequestTypeValue | null; label: string }[] = [
                         "
                         @click="emit('filter', { type: tab.value, page: 1 })"
                     >
-                        {{ tab.label }}
+                        {{ t(tab.label) }}
                     </button>
                 </nav>
             </div>
@@ -75,8 +76,8 @@ const typeTabs: { value: AiRequestTypeValue | null; label: string }[] = [
             >
                 <button
                     v-for="option in [
-                        { value: 'own', label: 'Mening' },
-                        { value: 'all', label: 'Hammasi' },
+                        { value: 'own', label: t('Mening') },
+                        { value: 'all', label: t('Hammasi') },
                     ] as const"
                     :key="option.value"
                     type="button"
@@ -101,13 +102,17 @@ const typeTabs: { value: AiRequestTypeValue | null; label: string }[] = [
                     class="bg-[#fafcff] text-[11px] font-semibold tracking-wide text-navy-500 uppercase"
                 >
                     <tr>
-                        <th class="px-3 py-2.5">Tur</th>
-                        <th class="px-3 py-2.5">Matn</th>
-                        <th class="px-3 py-2.5">Til</th>
-                        <th class="px-3 py-2.5">Holat</th>
-                        <th class="px-3 py-2.5 text-right">Tokenlar</th>
-                        <th class="px-3 py-2.5">Vaqt</th>
-                        <th class="px-3 py-2.5 text-right">Amallar</th>
+                        <th class="px-3 py-2.5">{{ t('Tur') }}</th>
+                        <th class="px-3 py-2.5">{{ t('Matn') }}</th>
+                        <th class="px-3 py-2.5">{{ t('Til') }}</th>
+                        <th class="px-3 py-2.5">{{ t('Holat') }}</th>
+                        <th class="px-3 py-2.5 text-right">
+                            {{ t('Tokenlar') }}
+                        </th>
+                        <th class="px-3 py-2.5">{{ t('Vaqt') }}</th>
+                        <th class="px-3 py-2.5 text-right">
+                            {{ t('Amallar') }}
+                        </th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-line">
@@ -156,7 +161,11 @@ const typeTabs: { value: AiRequestTypeValue | null; label: string }[] = [
                                 v-else-if="item.article"
                                 class="block max-w-[15rem] truncate text-[11px] text-brand-700/80"
                                 :title="item.article.title"
-                                >Maqola: {{ item.article.title }}</span
+                                >{{
+                                    t('Maqola: :title', {
+                                        title: item.article.title,
+                                    })
+                                }}</span
                             >
                         </td>
                         <td class="px-3 py-2.5 whitespace-nowrap text-navy-600">
@@ -188,7 +197,7 @@ const typeTabs: { value: AiRequestTypeValue | null; label: string }[] = [
                                 preserve-scroll
                                 class="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold text-brand-700 transition-colors hover:bg-brand-50"
                             >
-                                <Eye class="size-3.5" /> Ko'rish
+                                <Eye class="size-3.5" /> {{ t("Ko'rish") }}
                             </Link>
                         </td>
                     </tr>
@@ -197,7 +206,7 @@ const typeTabs: { value: AiRequestTypeValue | null; label: string }[] = [
                             colspan="7"
                             class="px-4 py-8 text-center text-sm text-navy-400"
                         >
-                            So'rovlar yo'q
+                            {{ t("So'rovlar yo'q") }}
                         </td>
                     </tr>
                 </tbody>

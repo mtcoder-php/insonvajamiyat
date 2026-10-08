@@ -4,6 +4,7 @@ import { computed } from 'vue';
 import { formatDate, formatNumber } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { AiBudget } from '@/types';
+import { t } from '@/lib/i18n';
 
 /** Oylik token balansi: qolgan, sarflangan va limit */
 const props = defineProps<{ budget: AiBudget }>();
@@ -24,12 +25,15 @@ const percent = computed(() =>
     >
         <div class="flex items-start justify-between gap-3">
             <div>
-                <p class="text-xs font-medium text-navy-500">Qolgan tokenlar</p>
+                <p class="text-xs font-medium text-navy-500">
+                    {{ t('Qolgan tokenlar') }}
+                </p>
                 <p
                     class="mt-1 font-sans text-2xl font-bold text-navy-950 tabular-nums"
                 >
                     <template v-if="budget.remaining === null">
-                        <InfinityIcon class="inline size-6" /> Cheklanmagan
+                        <InfinityIcon class="inline size-6" />
+                        {{ t('Cheklanmagan') }}
                     </template>
                     <template v-else>{{
                         formatNumber(budget.remaining)
@@ -59,16 +63,26 @@ const percent = computed(() =>
                 />
             </div>
             <p class="mt-2 flex justify-between text-[11px] text-navy-500">
-                <span>Sarflandi: {{ formatNumber(budget.used) }}</span>
-                <span>Limit: {{ formatNumber(budget.limit) }}</span>
+                <span>{{
+                    t('Sarflandi: :count', { count: formatNumber(budget.used) })
+                }}</span>
+                <span>{{
+                    t('Limit: :count', { count: formatNumber(budget.limit) })
+                }}</span>
             </p>
         </template>
         <p v-else class="mt-2 text-[11px] text-navy-500">
-            Bu oy sarflandi: {{ formatNumber(budget.used) }} token
+            {{
+                t('Bu oy sarflandi: :count token', {
+                    count: formatNumber(budget.used),
+                })
+            }}
         </p>
         <p class="mt-1 text-[11px] text-navy-400">
-            {{ budget.personal ? 'Shaxsiy limit · ' : '' }}Yangilanadi:
-            {{ formatDate(budget.resetsAt) }}
+            {{ budget.personal ? `${t('Shaxsiy limit')} · ` : ''
+            }}{{
+                t('Yangilanadi: :date', { date: formatDate(budget.resetsAt) })
+            }}
         </p>
     </section>
 </template>

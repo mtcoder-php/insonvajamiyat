@@ -4,6 +4,7 @@ import { ChevronRight, Inbox, UserRoundPen, Building2 } from '@lucide/vue';
 import DashCard from '@/components/admin/dashboard/DashCard.vue';
 import { formatDate, formatTime } from '@/lib/format';
 import type { AuthorMessage } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * "So'nggi xabarlar" — tahririyat / taqrizchidan kelgan izohlar.
@@ -12,7 +13,7 @@ defineProps<{ items: AuthorMessage[] }>();
 </script>
 
 <template>
-    <DashCard title="So'nggi xabarlar">
+    <DashCard :title="t('So\'nggi xabarlar')">
         <ul v-if="items.length" class="-mx-2 flex flex-col">
             <li v-for="item in items" :key="item.id">
                 <Link
@@ -23,7 +24,7 @@ defineProps<{ items: AuthorMessage[] }>();
                         class="flex size-9 shrink-0 items-center justify-center rounded-full bg-navy-950 text-white transition-transform duration-300 group-hover:scale-105"
                     >
                         <UserRoundPen
-                            v-if="item.sender === 'Taqrizchi'"
+                            v-if="item.sender === t('Taqrizchi')"
                             class="size-4"
                         />
                         <Building2 v-else class="size-4" />
@@ -37,7 +38,7 @@ defineProps<{ items: AuthorMessage[] }>();
                                 <span
                                     v-if="item.unread"
                                     class="ml-1 inline-block size-2 rounded-full bg-brand-500 align-middle"
-                                    aria-label="O'qilmagan"
+                                    :aria-label="t('O\'qilmagan')"
                                 />
                             </span>
                             <span
@@ -67,7 +68,7 @@ defineProps<{ items: AuthorMessage[] }>();
             class="flex flex-col items-center gap-2 py-8 text-center text-sm text-navy-500"
         >
             <Inbox class="size-6 text-navy-300" />
-            Hozircha xabarlar yo'q
+            {{ t("Hozircha xabarlar yo'q") }}
         </div>
     </DashCard>
 </template>

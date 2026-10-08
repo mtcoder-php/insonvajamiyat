@@ -29,6 +29,7 @@ import {
 } from '@/routes/profile/avatar';
 import { send } from '@/routes/verification';
 import type { UserDetail } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Shaxsiy profil: rasm, shaxsiy va ilmiy ma'lumotlar, akkauntni o'chirish.
@@ -73,11 +74,11 @@ const fieldClass = (error?: string) =>
 </script>
 
 <template>
-    <Head title="Profil sozlamalari" />
+    <Head :title="t('Profil sozlamalari')" />
 
     <div class="grid items-start gap-5 xl:grid-cols-[20rem_minmax(0,1fr)]">
         <aside class="flex flex-col gap-5 xl:sticky xl:top-5">
-            <SectionCard title="Profil rasmi">
+            <SectionCard :title="t('Profil rasmi')">
                 <AvatarUploader
                     :name="profile.name"
                     :url="profile.avatarUrl"
@@ -86,16 +87,18 @@ const fieldClass = (error?: string) =>
                 />
             </SectionCard>
 
-            <SectionCard title="Akkaunt">
+            <SectionCard :title="t('Akkaunt')">
                 <dl class="space-y-3 text-sm">
                     <div>
-                        <dt class="mb-1 text-xs text-navy-500">Rollar</dt>
+                        <dt class="mb-1 text-xs text-navy-500">
+                            {{ t('Rollar') }}
+                        </dt>
                         <dd><RoleBadges :roles="profile.roles" /></dd>
                     </div>
                     <div class="flex items-center gap-2 text-navy-600">
                         <CalendarDays class="size-4 text-navy-400" />
                         <span
-                            >Ro'yxatdan o'tgan:
+                            >{{ t("Ro'yxatdan o'tgan:") }}
                             <strong class="font-semibold text-navy-900">{{
                                 formatDate(profile.createdAt)
                             }}</strong></span
@@ -117,12 +120,12 @@ const fieldClass = (error?: string) =>
                 >
                     <MailWarning class="size-5 shrink-0 text-amber-600" />
                     <p class="min-w-0 flex-1">
-                        Elektron pochtangiz tasdiqlanmagan.
+                        {{ t('Elektron pochtangiz tasdiqlanmagan.') }}
                         <span
                             v-if="status === 'verification-link-sent'"
                             class="font-semibold text-emerald-700"
                         >
-                            Yangi tasdiqlash havolasi yuborildi.
+                            {{ t('Yangi tasdiqlash havolasi yuborildi.') }}
                         </span>
                     </p>
                     <Link
@@ -130,18 +133,22 @@ const fieldClass = (error?: string) =>
                         as="button"
                         class="rounded-lg bg-white px-3 py-1.5 text-xs font-semibold text-amber-800 shadow-sm ring-1 ring-amber-200 transition hover:bg-amber-100"
                     >
-                        Havolani qayta yuborish
+                        {{ t('Havolani qayta yuborish') }}
                     </Link>
                 </div>
 
                 <SectionCard
-                    title="Shaxsiy ma'lumotlar"
-                    description="Ism-familiyangiz maqolalarda ilmiy uslubda ko'rsatiladi"
+                    :title="t('Shaxsiy ma\'lumotlar')"
+                    :description="
+                        t(
+                            'Ism-familiyangiz maqolalarda ilmiy uslubda ko\'rsatiladi',
+                        )
+                    "
                     :icon="UserRound"
                 >
                     <div class="grid gap-4 sm:grid-cols-3">
                         <FormField
-                            label="Familiya"
+                            :label="t('Familiya')"
                             for="last_name"
                             required
                             :error="form.errors.last_name"
@@ -154,7 +161,7 @@ const fieldClass = (error?: string) =>
                             />
                         </FormField>
                         <FormField
-                            label="Ism"
+                            :label="t('Ism')"
                             for="first_name"
                             required
                             :error="form.errors.first_name"
@@ -167,7 +174,7 @@ const fieldClass = (error?: string) =>
                             />
                         </FormField>
                         <FormField
-                            label="Otasining ismi"
+                            :label="t('Otasining ismi')"
                             for="middle_name"
                             :error="form.errors.middle_name"
                         >
@@ -179,11 +186,15 @@ const fieldClass = (error?: string) =>
                             />
                         </FormField>
                         <FormField
-                            label="Elektron pochta"
+                            :label="t('Elektron pochta')"
                             for="email"
                             required
                             :error="form.errors.email"
-                            hint="O'zgartirsangiz, yangi manzilni tasdiqlashingiz kerak bo'ladi"
+                            :hint="
+                                t(
+                                    'O\'zgartirsangiz, yangi manzilni tasdiqlashingiz kerak bo\'ladi',
+                                )
+                            "
                             class="sm:col-span-2"
                         >
                             <input
@@ -195,7 +206,7 @@ const fieldClass = (error?: string) =>
                             />
                         </FormField>
                         <FormField
-                            label="Telefon"
+                            :label="t('Telefon')"
                             for="phone"
                             :error="form.errors.phone"
                         >
@@ -209,7 +220,7 @@ const fieldClass = (error?: string) =>
                             />
                         </FormField>
                         <FormField
-                            label="Interfeys tili"
+                            :label="t('Interfeys tili')"
                             for="locale"
                             :error="form.errors.locale"
                         >
@@ -227,13 +238,17 @@ const fieldClass = (error?: string) =>
                 </SectionCard>
 
                 <SectionCard
-                    title="Ilmiy ma'lumotlar"
-                    description="Maqola yuborishda va mualliflar sahifasida ishlatiladi"
+                    :title="t('Ilmiy ma\'lumotlar')"
+                    :description="
+                        t(
+                            'Maqola yuborishda va mualliflar sahifasida ishlatiladi',
+                        )
+                    "
                     :icon="GraduationCap"
                 >
                     <div class="grid gap-4 sm:grid-cols-2">
                         <FormField
-                            label="Tashkilot"
+                            :label="t('Tashkilot')"
                             for="organization"
                             :error="form.errors.organization"
                             class="sm:col-span-2"
@@ -246,7 +261,7 @@ const fieldClass = (error?: string) =>
                             />
                         </FormField>
                         <FormField
-                            label="Kafedra / bo'lim"
+                            :label="t('Kafedra / bo\'lim')"
                             for="department"
                             :error="form.errors.department"
                         >
@@ -257,7 +272,7 @@ const fieldClass = (error?: string) =>
                             />
                         </FormField>
                         <FormField
-                            label="Lavozim"
+                            :label="t('Lavozim')"
                             for="position"
                             :error="form.errors.position"
                         >
@@ -269,7 +284,7 @@ const fieldClass = (error?: string) =>
                             />
                         </FormField>
                         <FormField
-                            label="Ilmiy daraja"
+                            :label="t('Ilmiy daraja')"
                             for="academic_degree"
                             :error="form.errors.academic_degree"
                         >
@@ -277,11 +292,11 @@ const fieldClass = (error?: string) =>
                                 id="academic_degree"
                                 v-model="form.academic_degree"
                                 :class="fieldClass(form.errors.academic_degree)"
-                                placeholder="PhD, DSc"
+                                :placeholder="t('PhD, DSc')"
                             />
                         </FormField>
                         <FormField
-                            label="Ilmiy unvon"
+                            :label="t('Ilmiy unvon')"
                             for="academic_title"
                             :error="form.errors.academic_title"
                         >
@@ -289,7 +304,7 @@ const fieldClass = (error?: string) =>
                                 id="academic_title"
                                 v-model="form.academic_title"
                                 :class="fieldClass(form.errors.academic_title)"
-                                placeholder="Dotsent, professor"
+                                :placeholder="t('Dotsent, professor')"
                             />
                         </FormField>
                         <FormField
@@ -306,7 +321,7 @@ const fieldClass = (error?: string) =>
                             />
                         </FormField>
                         <FormField
-                            label="Shahar"
+                            :label="t('Shahar')"
                             for="city"
                             :error="form.errors.city"
                         >
@@ -318,7 +333,7 @@ const fieldClass = (error?: string) =>
                             />
                         </FormField>
                         <FormField
-                            label="Qisqacha ma'lumot"
+                            :label="t('Qisqacha ma\'lumot')"
                             for="bio"
                             :error="form.errors.bio"
                             class="sm:col-span-2"
@@ -339,7 +354,7 @@ const fieldClass = (error?: string) =>
                         v-if="form.recentlySuccessful"
                         class="text-sm font-medium text-emerald-600"
                     >
-                        Saqlandi
+                        {{ t('Saqlandi') }}
                     </p>
                     <button
                         type="submit"
@@ -352,7 +367,7 @@ const fieldClass = (error?: string) =>
                             class="size-4 animate-spin"
                         />
                         <Save v-else class="size-4" />
-                        Saqlash
+                        {{ t('Saqlash') }}
                     </button>
                 </div>
             </form>

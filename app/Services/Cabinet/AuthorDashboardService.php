@@ -10,6 +10,7 @@ use App\Models\ArticleStatusHistory;
 use App\Models\Message;
 use App\Models\User;
 use App\Services\Articles\ArticleTimeline;
+use App\Support\Translations;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
@@ -51,7 +52,7 @@ class AuthorDashboardService
                 'key' => 'total',
                 'value' => $this->articles($user)->where('status', '!=', ArticleStatus::Draft->value)->count(),
                 'delta' => $since('submitted_at', 90),
-                'hint' => "so'nggi 3 oyda",
+                'hint' => self::hint("so'nggi 3 oyda"),
             ],
             [
                 'key' => 'reviewing',
@@ -60,13 +61,13 @@ class AuthorDashboardService
                     ->whereIn('status', array_map(fn (ArticleStatus $s): string => $s->value, self::REVIEWING))
                     ->where('submitted_at', '>=', now()->subDays(30))
                     ->count(),
-                'hint' => 'yangi',
+                'hint' => self::hint('yangi'),
             ],
             [
                 'key' => 'revision',
                 'value' => $count([ArticleStatus::RevisionRequired]),
                 'delta' => null,
-                'hint' => 'javobingiz kutilmoqda',
+                'hint' => self::hint('javobingiz kutilmoqda'),
             ],
             [
                 'key' => 'accepted',
@@ -75,13 +76,13 @@ class AuthorDashboardService
                     ->whereIn('status', [ArticleStatus::Accepted->value, ArticleStatus::InProduction->value])
                     ->where('accepted_at', '>=', now()->subDays(90))
                     ->count(),
-                'hint' => "so'nggi 3 oyda",
+                'hint' => self::hint("so'nggi 3 oyda"),
             ],
             [
                 'key' => 'published',
                 'value' => $count([ArticleStatus::Published]),
                 'delta' => null,
-                'hint' => 'jami nashr',
+                'hint' => self::hint('jami nashr'),
             ],
         ];
     }
@@ -228,5 +229,11 @@ class AuthorDashboardService
             'inProgress' => $inProgress,
             'published' => $published,
         ];
+    }
+
+    /** Karta izohi joriy tilda */
+    private static function hint(string $key): string
+    {
+        return Translations::line($key) ?? $key;
     }
 }

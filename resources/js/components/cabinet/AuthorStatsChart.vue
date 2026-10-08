@@ -2,8 +2,9 @@
 import { computed, ref } from 'vue';
 import DashCard from '@/components/admin/dashboard/DashCard.vue';
 import { roundedBar } from '@/lib/chart';
-import { MONTHS_SHORT } from '@/lib/format';
+import { monthShort } from '@/lib/format';
 import type { AuthorChart } from '@/types';
+import { t, tk } from '@/lib/i18n';
 
 /**
  * "Maqolalar statistikasi" — oxirgi 6 oy: yuborilgan, hali jarayondagi va nashr
@@ -13,9 +14,9 @@ import type { AuthorChart } from '@/types';
 const props = defineProps<{ data: AuthorChart }>();
 
 const series = [
-    { key: 'submitted', label: 'Yuborilgan', color: '#1a82f7' },
-    { key: 'inProgress', label: 'Jarayonda', color: '#f59e0b' },
-    { key: 'published', label: 'Nashr etilgan', color: '#0fa37f' },
+    { key: 'submitted', label: tk('Yuborilgan'), color: '#1a82f7' },
+    { key: 'inProgress', label: tk('Jarayonda'), color: '#f59e0b' },
+    { key: 'published', label: tk('Nashr etilgan'), color: '#0fa37f' },
 ] as const;
 
 const W = 460;
@@ -68,19 +69,19 @@ const bars = computed(() =>
 const monthLabel = (ym: string): string => {
     const [year, month] = ym.split('-').map(Number);
 
-    return `${MONTHS_SHORT[(month ?? 1) - 1]}${year && year !== new Date().getFullYear() ? ` ${String(year).slice(2)}` : ''}`;
+    return `${monthShort((month ?? 1) - 1)}${year && year !== new Date().getFullYear() ? ` ${String(year).slice(2)}` : ''}`;
 };
 
 const hovered = ref<number | null>(null);
 </script>
 
 <template>
-    <DashCard title="Maqolalar statistikasi" class="flex flex-col">
+    <DashCard :title="t('Maqolalar statistikasi')" class="flex flex-col">
         <template #actions>
             <span
                 class="rounded-md border border-line px-2 py-1 text-[11px] font-medium text-navy-600"
             >
-                Oxirgi 6 oy
+                {{ t('Oxirgi 6 oy') }}
             </span>
         </template>
 
@@ -90,7 +91,9 @@ const hovered = ref<number | null>(null);
                     :viewBox="`0 0 ${W} ${H}`"
                     class="h-auto w-full"
                     role="img"
-                    aria-label="Oxirgi 6 oy bo'yicha maqolalar statistikasi"
+                    :aria-label="
+                        t('Oxirgi 6 oy bo\'yicha maqolalar statistikasi')
+                    "
                     @mouseleave="hovered = null"
                 >
                     <g class="text-[10px]">
@@ -179,7 +182,7 @@ const hovered = ref<number | null>(null);
                                 class="size-2 rounded-sm"
                                 :style="{ background: s.color }"
                             />
-                            {{ s.label }}
+                            {{ t(s.label) }}
                         </span>
                         <span class="font-semibold text-navy-900 tabular-nums">
                             {{ data[s.key][hovered] }}
@@ -200,7 +203,7 @@ const hovered = ref<number | null>(null);
                         class="size-2.5 rounded-sm"
                         :style="{ background: s.color }"
                     />
-                    {{ s.label }}
+                    {{ t(s.label) }}
                 </li>
             </ul>
         </div>

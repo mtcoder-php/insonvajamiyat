@@ -6,6 +6,7 @@ import DashCard from '@/components/admin/dashboard/DashCard.vue';
 import ActionDialog from '@/components/admin/ui/ActionDialog.vue';
 import { formatDate, formatTime } from '@/lib/format';
 import type { ArticleDraft, CabinetLinks } from '@/types';
+import { t, tk } from '@/lib/i18n';
 
 /**
  * Forma yon paneli: joriy bosqich bo'yicha maslahatlar, foydali havolalar,
@@ -19,37 +20,61 @@ const props = defineProps<{
 
 const tips: Record<number, string[]> = {
     1: [
-        "Sarlavha qisqa va aniq bo'lsin — odatda 10–15 so'z.",
-        "Maqola turini hajmi va ko'rib chiqish muddatiga qarab tanlang.",
-        "Maqola tili — matn yozilgan til; annotatsiya va kalit so'zlar shu tilda majburiy.",
+        tk("Sarlavha qisqa va aniq bo'lsin — odatda 10–15 so'z."),
+        tk("Maqola turini hajmi va ko'rib chiqish muddatiga qarab tanlang."),
+        tk(
+            "Maqola tili — matn yozilgan til; annotatsiya va kalit so'zlar shu tilda majburiy.",
+        ),
     ],
     2: [
-        "Mualliflarni maqolada qanday tartibda bo'lsa, shunday kiriting.",
-        "Aloqa uchun mas'ul muallif tahririyat bilan yozishmalarni olib boradi.",
-        "Hammuallif tizimda ro'yxatdan o'tgan bo'lsa, maqola uning kabinetida ham ko'rinadi.",
+        tk("Mualliflarni maqolada qanday tartibda bo'lsa, shunday kiriting."),
+        tk(
+            "Aloqa uchun mas'ul muallif tahririyat bilan yozishmalarni olib boradi.",
+        ),
+        tk(
+            "Hammuallif tizimda ro'yxatdan o'tgan bo'lsa, maqola uning kabinetida ham ko'rinadi.",
+        ),
     ],
     3: [
-        "Annotatsiya 150–300 so'z: dolzarblik, maqsad, usullar, natijalar va xulosa.",
-        'Annotatsiyada qisqartmalar, formulalar va iqtiboslardan foydalanmang.',
-        'Ingliz tilidagi annotatsiya maqolaning xalqaro bazalarda topilishini osonlashtiradi.',
+        tk(
+            "Annotatsiya 150–300 so'z: dolzarblik, maqsad, usullar, natijalar va xulosa.",
+        ),
+        tk(
+            'Annotatsiyada qisqartmalar, formulalar va iqtiboslardan foydalanmang.',
+        ),
+        tk(
+            'Ingliz tilidagi annotatsiya maqolaning xalqaro bazalarda topilishini osonlashtiradi.',
+        ),
     ],
     4: [
-        "3–10 ta kalit so'z yoki so'z birikmasi kiriting.",
-        "Sarlavhadagi so'zlarni aynan takrorlamang — mavzuni kengroq yoriting.",
-        "Bir nechta so'zni vergul bilan ajratib, birdaniga qo'yishingiz mumkin.",
+        tk("3–10 ta kalit so'z yoki so'z birikmasi kiriting."),
+        tk(
+            "Sarlavhadagi so'zlarni aynan takrorlamang — mavzuni kengroq yoriting.",
+        ),
+        tk(
+            "Bir nechta so'zni vergul bilan ajratib, birdaniga qo'yishingiz mumkin.",
+        ),
     ],
     5: [
-        'Maqolani jurnal shabloni asosida rasmiylashtiring.',
-        "Mustaqil taqriz uchun faylda mualliflar ismi ko'rsatilmasligi tavsiya etiladi.",
-        "Rasmlar kamida 300 dpi sifatda bo'lsin.",
+        tk('Maqolani jurnal shabloni asosida rasmiylashtiring.'),
+        tk(
+            "Mustaqil taqriz uchun faylda mualliflar ismi ko'rsatilmasligi tavsiya etiladi.",
+        ),
+        tk("Rasmlar kamida 300 dpi sifatda bo'lsin."),
     ],
     6: [
-        "Barcha bosqichlarni diqqat bilan tekshiring — yuborilgandan keyin ma'lumotlarni o'zgartirib bo'lmaydi.",
-        'Kamchilik bo\'lsa, "Tahrirlash" orqali tegishli bosqichga qayting.',
+        tk(
+            "Barcha bosqichlarni diqqat bilan tekshiring — yuborilgandan keyin ma'lumotlarni o'zgartirib bo'lmaydi.",
+        ),
+        tk(
+            'Kamchilik bo\'lsa, "Tahrirlash" orqali tegishli bosqichga qayting.',
+        ),
     ],
     7: [
-        'Yuborilgan maqola holatini "Mening maqolalarim" bo\'limida kuzatasiz.',
-        'Tahririyat izohlari va taqriz natijalari kabinetingizga keladi.',
+        tk(
+            'Yuborilgan maqola holatini "Mening maqolalarim" bo\'limida kuzatasiz.',
+        ),
+        tk('Tahririyat izohlari va taqriz natijalari kabinetingizga keladi.'),
     ],
 };
 
@@ -77,7 +102,7 @@ function destroy(): void {
                 class="mb-3 flex items-center gap-2 font-sans text-[15px] font-bold text-navy-950"
             >
                 <Lightbulb class="size-[18px] text-gold-500" />
-                Maslahatlar
+                {{ t('Maslahatlar') }}
             </h2>
             <ul class="grid gap-2.5">
                 <li
@@ -89,7 +114,7 @@ function destroy(): void {
                         class="mt-2 size-1.5 shrink-0 rounded-full bg-brand-500"
                         aria-hidden="true"
                     />
-                    {{ tip }}
+                    {{ t(tip) }}
                 </li>
             </ul>
             <div class="mt-4 grid gap-2 border-t border-line pt-4">
@@ -102,7 +127,7 @@ function destroy(): void {
                     <Download
                         class="size-4 text-navy-400 transition-transform group-hover:translate-y-0.5 group-hover:text-brand-600"
                     />
-                    Maqola shablonini yuklab olish
+                    {{ t('Maqola shablonini yuklab olish') }}
                 </a>
                 <Link
                     :href="links.guidelines"
@@ -111,7 +136,7 @@ function destroy(): void {
                     <BookOpenText
                         class="size-4 text-navy-400 group-hover:text-brand-600"
                     />
-                    Mualliflar uchun yo'riqnoma
+                    {{ t("Mualliflar uchun yo'riqnoma") }}
                 </Link>
             </div>
         </DashCard>
@@ -121,7 +146,7 @@ function destroy(): void {
                 class="mb-2 flex items-center gap-2 font-sans text-[15px] font-bold text-navy-950"
             >
                 <Save class="size-[18px] text-brand-600" />
-                Qoralama
+                {{ t('Qoralama') }}
             </h2>
             <p class="text-[13px] leading-relaxed text-navy-600">
                 Ma'lumotlar har bir bosqichda saqlanadi — formani istalgan
@@ -132,8 +157,11 @@ function destroy(): void {
                 v-if="article.updatedAt"
                 class="mt-2 text-xs text-navy-400 tabular-nums"
             >
-                Oxirgi saqlangan: {{ formatDate(article.updatedAt) }}
-                {{ formatTime(article.updatedAt) }}
+                {{
+                    t('Oxirgi saqlangan: :date', {
+                        date: `${formatDate(article.updatedAt)} ${formatTime(article.updatedAt)}`,
+                    })
+                }}
             </p>
             <button
                 type="button"
@@ -143,17 +171,21 @@ function destroy(): void {
                 <Trash2
                     class="size-4 transition-transform group-hover:-rotate-12"
                 />
-                Qoralamani o'chirish
+                {{ t("Qoralamani o'chirish") }}
             </button>
         </DashCard>
 
         <ActionDialog
             v-model:open="deleteOpen"
-            title="Qoralamani o'chirasizmi?"
-            description="Kiritilgan barcha ma'lumotlar va yuklangan fayllar butunlay o'chiriladi. Bu amalni bekor qilib bo'lmaydi."
+            :title="t('Qoralamani o\'chirasizmi?')"
+            :description="
+                t(
+                    'Kiritilgan barcha ma\'lumotlar va yuklangan fayllar butunlay o\'chiriladi. Bu amalni bekor qilib bo\'lmaydi.',
+                )
+            "
             :icon="Trash2"
             tone="danger"
-            confirm-text="O'chirish"
+            :confirm-text="t('O\'chirish')"
             :processing="deleting"
             @confirm="destroy"
         />

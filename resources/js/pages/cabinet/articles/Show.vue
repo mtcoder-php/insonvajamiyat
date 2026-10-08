@@ -42,6 +42,7 @@ import type {
     RevisionRequest,
     TimelineStep,
 } from '@/types';
+import { t, tk } from '@/lib/i18n';
 
 /**
  * Muallif kabineti — maqola sahifasi: holat (timeline), ma'lumotlar, mualliflar,
@@ -65,37 +66,42 @@ defineOptions({
 });
 
 const languages: Record<string, string> = {
-    uz: "O'zbek",
-    ru: 'Rus',
-    en: 'Ingliz',
+    uz: tk("O'zbek"),
+    ru: tk('Rus'),
+    en: tk('Ingliz'),
 };
 
 const details = computed(() =>
     [
-        { label: "Yo'nalish", value: props.article.subject },
-        { label: 'Maqola turi', value: props.article.type },
+        { label: t("Yo'nalish"), value: props.article.subject },
+        { label: t('Maqola turi'), value: props.article.type },
         {
-            label: 'Til',
+            label: t('Til'),
             value:
-                languages[props.article.language ?? ''] ??
+                t(languages[props.article.language ?? ''] ?? '') ||
                 props.article.language,
         },
-        { label: 'Jurnal soni', value: props.article.issue },
+        { label: t('Jurnal soni'), value: props.article.issue },
         {
-            label: 'Yuborilgan sana',
+            label: t('Yuborilgan sana'),
             value: props.article.submittedAt
                 ? `${formatDate(props.article.submittedAt)} ${formatTime(props.article.submittedAt)}`
                 : null,
         },
-        { label: "To'lov holati", value: props.article.paymentStatusLabel },
         {
-            label: 'Taqriz bosqichi',
+            label: t("To'lov holati"),
+            value: props.article.paymentStatusLabel,
+        },
+        {
+            label: t('Taqriz bosqichi'),
             value:
                 props.article.reviewRound > 0
-                    ? `${props.article.reviewRound}-bosqich`
+                    ? t(':number-bosqich', {
+                          number: props.article.reviewRound,
+                      })
                     : null,
         },
-        { label: 'UDK', value: props.article.udc },
+        { label: t('UDK'), value: props.article.udc },
         { label: 'DOI', value: props.article.doi },
     ].filter((item) => item.value),
 );
@@ -148,8 +154,8 @@ const historyDot: Record<string, string> = {
             :icon="FileText"
             :quote="false"
             :breadcrumbs="[
-                { title: 'Mening maqolalarim', href: index() },
-                { title: 'Maqola', href: show(article.uuid) },
+                { title: t('Mening maqolalarim'), href: index() },
+                { title: t('Maqola'), href: show(article.uuid) },
             ]"
         >
             <div class="mt-3 flex flex-wrap items-center gap-2">
@@ -161,8 +167,11 @@ const historyDot: Record<string, string> = {
                     v-if="article.updatedAt"
                     class="text-xs text-navy-500 tabular-nums"
                 >
-                    Oxirgi yangilanish: {{ formatDate(article.updatedAt) }}
-                    {{ formatTime(article.updatedAt) }}
+                    {{
+                        t('Oxirgi yangilanish: :date', {
+                            date: `${formatDate(article.updatedAt)} ${formatTime(article.updatedAt)}`,
+                        })
+                    }}
                 </span>
             </div>
         </CabinetPageHeader>
@@ -193,20 +202,25 @@ const historyDot: Record<string, string> = {
                         class="mb-1 flex items-center gap-2 font-sans text-[15px] font-bold text-navy-950"
                     >
                         <MessagesSquare class="size-[18px] text-brand-600" />
-                        Tahririyat bilan yozishma
+                        {{ t('Tahririyat bilan yozishma') }}
                     </h2>
                     <p class="mb-4 text-xs text-navy-500">
-                        Maqola bo'yicha savollaringizni shu yerda yozing — javob
-                        email orqali ham xabar qilinadi.
+                        {{
+                            t(
+                                "Maqola bo'yicha savollaringizni shu yerda yozing — javob email orqali ham xabar qilinadi.",
+                            )
+                        }}
                     </p>
                     <MessageThread
                         :messages="messages.items"
                         :send-url="messages.sendUrl"
-                        empty-text="Tahririyat bilan yozishma hali boshlanmagan."
+                        :empty-text="
+                            t('Tahririyat bilan yozishma hali boshlanmagan.')
+                        "
                     />
                 </DashCard>
 
-                <DashCard title="Maqola ma'lumotlari">
+                <DashCard :title="t('Maqola ma\'lumotlari')">
                     <dl
                         class="grid gap-x-6 gap-y-3 sm:grid-cols-2 2xl:grid-cols-3"
                     >
@@ -228,7 +242,7 @@ const historyDot: Record<string, string> = {
 
                     <div v-if="article.abstract" class="mt-5">
                         <h3 class="text-[13px] font-bold text-navy-950">
-                            Annotatsiya
+                            {{ t('Annotatsiya') }}
                         </h3>
                         <p
                             class="mt-1.5 text-[13px] leading-relaxed whitespace-pre-line text-navy-700"
@@ -239,7 +253,7 @@ const historyDot: Record<string, string> = {
 
                     <div v-if="article.keywords.length" class="mt-4">
                         <h3 class="text-[13px] font-bold text-navy-950">
-                            Kalit so'zlar
+                            {{ t("Kalit so'zlar") }}
                         </h3>
                         <div class="mt-2 flex flex-wrap gap-1.5">
                             <span
@@ -259,7 +273,7 @@ const historyDot: Record<string, string> = {
                             class="mb-4 flex items-center gap-2 font-sans text-[15px] font-bold text-navy-950"
                         >
                             <UsersRound class="size-[18px] text-brand-600" />
-                            Mualliflar
+                            {{ t('Mualliflar') }}
                         </h2>
                         <ul class="flex flex-col gap-2">
                             <li
@@ -274,7 +288,9 @@ const historyDot: Record<string, string> = {
                                     <Star
                                         v-if="author.isCorresponding"
                                         class="size-3.5 fill-gold-400 text-gold-500"
-                                        aria-label="Aloqa uchun mas'ul muallif"
+                                        :aria-label="
+                                            t('Aloqa uchun mas\'ul muallif')
+                                        "
                                     />
                                 </p>
                                 <p
@@ -299,7 +315,7 @@ const historyDot: Record<string, string> = {
                             class="mb-4 flex items-center gap-2 font-sans text-[15px] font-bold text-navy-950"
                         >
                             <FileText class="size-[18px] text-brand-600" />
-                            Fayllar
+                            {{ t('Fayllar') }}
                         </h2>
                         <ul
                             v-if="article.files.length"
@@ -338,7 +354,7 @@ const historyDot: Record<string, string> = {
                             v-else
                             class="py-4 text-center text-sm text-navy-500"
                         >
-                            Fayllar yuklanmagan
+                            {{ t('Fayllar yuklanmagan') }}
                         </p>
                     </DashCard>
                 </div>
@@ -348,7 +364,7 @@ const historyDot: Record<string, string> = {
                         class="mb-4 flex items-center gap-2 font-sans text-[15px] font-bold text-navy-950"
                     >
                         <History class="size-[18px] text-brand-600" />
-                        Holat tarixi
+                        {{ t('Holat tarixi') }}
                     </h2>
                     <ol
                         v-if="article.history.length"
@@ -389,7 +405,7 @@ const historyDot: Record<string, string> = {
                         </li>
                     </ol>
                     <p v-else class="py-4 text-center text-sm text-navy-500">
-                        Tarix hali yo'q
+                        {{ t("Tarix hali yo'q") }}
                     </p>
                 </DashCard>
             </div>
@@ -402,7 +418,7 @@ const historyDot: Record<string, string> = {
                         class="mb-4 flex items-center gap-2 font-sans text-[15px] font-bold text-navy-950"
                     >
                         <Route class="size-[18px] text-brand-600" />
-                        Maqolaning holati
+                        {{ t('Maqolaning holati') }}
                     </h2>
                     <StatusTimeline :steps="steps" />
                 </DashCard>
@@ -411,7 +427,7 @@ const historyDot: Record<string, string> = {
 
                 <ArticleAiCard v-if="ai" :ai="ai" />
 
-                <DashCard title="Amallar">
+                <DashCard :title="t('Amallar')">
                     <div class="flex flex-col gap-2">
                         <a
                             v-if="article.publicUrl"
@@ -421,7 +437,7 @@ const historyDot: Record<string, string> = {
                             class="group flex items-center gap-3 rounded-lg bg-brand-600 px-3.5 py-2.5 text-[13px] font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-brand-700"
                         >
                             <ExternalLink class="size-4" />
-                            Saytda ko'rish
+                            {{ t("Saytda ko'rish") }}
                         </a>
                         <Link
                             v-if="article.can.edit && article.editUrl"
@@ -431,7 +447,7 @@ const historyDot: Record<string, string> = {
                             <PenLine
                                 class="size-4 transition-transform group-hover:-rotate-12"
                             />
-                            Formani davom ettirish
+                            {{ t('Formani davom ettirish') }}
                         </Link>
                         <button
                             v-if="article.can.delete && article.destroyUrl"
@@ -442,7 +458,7 @@ const historyDot: Record<string, string> = {
                             <Trash2
                                 class="size-4 transition-transform group-hover:-rotate-12"
                             />
-                            Qoralamani o'chirish
+                            {{ t("Qoralamani o'chirish") }}
                         </button>
                         <button
                             v-if="article.can.withdraw && !article.can.delete"
@@ -453,7 +469,7 @@ const historyDot: Record<string, string> = {
                             <Undo2
                                 class="size-4 transition-transform group-hover:-rotate-12"
                             />
-                            Maqolani qaytarib olish
+                            {{ t('Maqolani qaytarib olish') }}
                         </button>
                         <Link
                             :href="index()"
@@ -462,7 +478,7 @@ const historyDot: Record<string, string> = {
                             <ArrowLeft
                                 class="size-4 transition-transform group-hover:-translate-x-0.5"
                             />
-                            Barcha maqolalar
+                            {{ t('Barcha maqolalar') }}
                         </Link>
                     </div>
                 </DashCard>
@@ -472,27 +488,35 @@ const historyDot: Record<string, string> = {
 
     <ActionDialog
         v-model:open="deleteOpen"
-        title="Qoralamani o'chirasizmi?"
-        description="Kiritilgan barcha ma'lumotlar va yuklangan fayllar butunlay o'chiriladi."
+        :title="t('Qoralamani o\'chirasizmi?')"
+        :description="
+            t(
+                'Kiritilgan barcha ma\'lumotlar va yuklangan fayllar butunlay o\'chiriladi.',
+            )
+        "
         :icon="Trash2"
         tone="danger"
-        confirm-text="O'chirish"
+        :confirm-text="t('O\'chirish')"
         :processing="deleting"
         @confirm="destroyDraft"
     />
 
     <ActionDialog
         v-model:open="withdrawOpen"
-        title="Maqolani qaytarib olasizmi?"
-        description="Qaytarib olingan maqola tahririyat tomonidan ko'rib chiqilmaydi. Bu amalni bekor qilib bo'lmaydi."
+        :title="t('Maqolani qaytarib olasizmi?')"
+        :description="
+            t(
+                'Qaytarib olingan maqola tahririyat tomonidan ko\'rib chiqilmaydi. Bu amalni bekor qilib bo\'lmaydi.',
+            )
+        "
         :icon="Undo2"
         tone="danger"
-        confirm-text="Qaytarib olish"
+        :confirm-text="t('Qaytarib olish')"
         :processing="withdrawForm.processing"
         @confirm="submitWithdraw"
     >
         <label class="block text-xs font-medium text-navy-700" for="reason">
-            Sababi (ixtiyoriy)
+            {{ t('Sababi (ixtiyoriy)') }}
         </label>
         <textarea
             id="reason"

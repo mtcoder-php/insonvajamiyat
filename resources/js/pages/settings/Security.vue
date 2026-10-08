@@ -9,6 +9,7 @@ import ManageTwoFactor from '@/components/ManageTwoFactor.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
 import { inputClass, primaryButtonClass } from '@/lib/formStyles';
 import { edit } from '@/routes/security';
+import { t } from '@/lib/i18n';
 
 /**
  * Xavfsizlik: parolni almashtirish va ikki bosqichli himoya (2FA).
@@ -29,12 +30,16 @@ defineOptions({
 </script>
 
 <template>
-    <Head title="Xavfsizlik" />
+    <Head :title="t('Xavfsizlik')" />
 
     <div class="grid items-start gap-5 xl:grid-cols-2">
         <SectionCard
-            title="Parolni almashtirish"
-            description="Kamida 8 belgi: katta-kichik harf, raqam va belgi aralash bo'lgani ma'qul"
+            :title="t('Parolni almashtirish')"
+            :description="
+                t(
+                    'Kamida 8 belgi: katta-kichik harf, raqam va belgi aralash bo\'lgani ma\'qul',
+                )
+            "
             :icon="KeyRound"
         >
             <Form
@@ -50,7 +55,7 @@ defineOptions({
                 v-slot="{ errors, processing, recentlySuccessful }"
             >
                 <FormField
-                    label="Joriy parol"
+                    :label="t('Joriy parol')"
                     for="current_password"
                     :error="errors.current_password"
                 >
@@ -62,7 +67,7 @@ defineOptions({
                     />
                 </FormField>
                 <FormField
-                    label="Yangi parol"
+                    :label="t('Yangi parol')"
                     for="password"
                     :error="errors.password"
                 >
@@ -75,7 +80,7 @@ defineOptions({
                     />
                 </FormField>
                 <FormField
-                    label="Yangi parolni takrorlang"
+                    :label="t('Yangi parolni takrorlang')"
                     for="password_confirmation"
                     :error="errors.password_confirmation"
                 >
@@ -92,7 +97,7 @@ defineOptions({
                         v-if="recentlySuccessful"
                         class="text-sm font-medium text-emerald-600"
                     >
-                        Saqlandi
+                        {{ t('Saqlandi') }}
                     </p>
                     <button
                         type="submit"
@@ -105,7 +110,7 @@ defineOptions({
                             class="size-4 animate-spin"
                         />
                         <Save v-else class="size-4" />
-                        Parolni saqlash
+                        {{ t('Parolni saqlash') }}
                     </button>
                 </div>
             </Form>
@@ -113,8 +118,10 @@ defineOptions({
 
         <SectionCard
             v-if="canManageTwoFactor"
-            title="Ikki bosqichli himoya (2FA)"
-            description="Akkauntingizni parol o'g'irlanishidan himoya qiladi"
+            :title="t('Ikki bosqichli himoya (2FA)')"
+            :description="
+                t('Akkauntingizni parol o\'g\'irlanishidan himoya qiladi')
+            "
             :icon="ShieldCheck"
         >
             <ManageTwoFactor

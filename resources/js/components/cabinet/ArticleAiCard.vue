@@ -5,6 +5,7 @@ import { studios } from '@/components/ai/aiMeta';
 import { formatDateTime } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { ArticleAiSummary } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Maqola sahifasidagi "AI Studio" bloki: shu maqolaga biriktirilgan so'nggi AI natijalari
@@ -32,8 +33,11 @@ defineProps<{ ai: ArticleAiSummary }>();
             AI Studio
         </h2>
         <p class="mt-2 text-xs leading-relaxed text-navy-600">
-            Annotatsiya yoki matnni imlo va uslub bo'yicha tekshiring,
-            ingliz/rus tiliga ilmiy tarjima qiling.
+            {{
+                t(
+                    "Annotatsiya yoki matnni imlo va uslub bo'yicha tekshiring, ingliz/rus tiliga ilmiy tarjima qiling.",
+                )
+            }}
         </p>
 
         <ul v-if="ai.requests.length" class="mt-3 grid grid-cols-1 gap-1">
@@ -73,7 +77,7 @@ defineProps<{ ai: ArticleAiSummary }>();
             :href="ai.url"
             class="group mt-3 inline-flex h-9 w-full items-center justify-center gap-2 rounded-lg bg-brand-50 text-[13px] font-semibold text-brand-700 transition-all hover:-translate-y-px hover:bg-brand-100"
         >
-            AI Studio'da ochish
+            {{ t("AI Studio'da ochish") }}
             <ArrowRight
                 class="size-4 transition-transform group-hover:translate-x-0.5"
             />

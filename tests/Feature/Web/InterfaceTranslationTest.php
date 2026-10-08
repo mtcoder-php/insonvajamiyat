@@ -2,6 +2,10 @@
 
 namespace Tests\Feature\Web;
 
+use App\Enums\ArticleStatus;
+use App\Enums\RoleName;
+use App\Models\Article;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\File;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -10,22 +14,17 @@ use Tests\TestCase;
 /**
  * Interfeys tarjimalari (UZ / RU / EN): lang/ru.json, lang/en.json.
  *
- * Kalit — o'zbekcha matn. Frontend'da t('...') / tc('...') bilan, backend'da __('...') bilan
+ * Kalit — o'zbekcha matn. Frontend'da t('...') / tc('...') / tk('...') bilan, backend'da __('...') bilan
  * ishlatilgan har bir kalit ikkala lug'atda bo'lishi va joy egalari (:name) saqlanishi shart.
  */
 class InterfaceTranslationTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** Backend: ommaviy sayt va kirish sahifalariga chiqadigan __() matnlari */
+    /** Backend: __() matnlari shu papkalarda qidiriladi (barchasi tarjima qilingan bo'lishi shart) */
     private const PHP_SOURCES = [
-        'app/Http/Controllers/Web',
-        'app/Http/Requests/Web',
-        'app/Actions/Fortify/CreateNewUser.php',
-        'app/Http/Middleware/EnsureAccountIsActive.php',
-        'app/Http/Middleware/EnsureUserIsStaff.php',
-        'app/Providers/FortifyServiceProvider.php',
-        'app/Support/Seo/SeoMeta.php',
+        'app',
+        'resources/views',
     ];
 
     /**
@@ -46,7 +45,7 @@ class InterfaceTranslationTest extends TestCase
     private function frontendKeys(): array
     {
         $keys = [];
-        $call = '/\btc?\(\s*([\'"])((?:\\\\.|(?!\1).)*)\1/s';
+        $call = '/\bt[ck]?\(\s*([\'"])((?:\\\\.|(?!\1).)*)\1/s';
         $layout = '/defineOptions\(\{\s*layout:\s*\{(.*?)\}\s*,?\s*\}\)/s';
         $layoutField = '/(?:title|description):\s*([\'"])((?:\\\\.|(?!\1).)*)\1/s';
 
@@ -62,16 +61,16 @@ class InterfaceTranslationTest extends TestCase
             $source = $file->getContents();
             preg_match_all($call, $source, $matches);
 
-            foreach ($matches[2] as $key) {
-                $keys[stripslashes($key)] = $file->getRelativePathname();
+            foreach ($matches[2] as $i => $key) {
+                $keys[$this->unescape($matches[1][$i], $key)] = $file->getRelativePathname();
             }
 
             // Auth sahifalari: sarlavha layout'da tarjima qilinadi
             if (str_contains($path, '/pages/auth/') && preg_match($layout, $source, $block)) {
                 preg_match_all($layoutField, $block[1], $fields);
 
-                foreach ($fields[2] as $key) {
-                    $keys[stripslashes($key)] = $file->getRelativePathname();
+                foreach ($fields[2] as $i => $key) {
+                    $keys[$this->unescape($fields[1][$i], $key)] = $file->getRelativePathname();
                 }
             }
         }
@@ -88,18 +87,31 @@ class InterfaceTranslationTest extends TestCase
 
         foreach (self::PHP_SOURCES as $source) {
             $path = base_path($source);
-            $files = is_dir($path) ? File::allFiles($path) : [new \SplFileInfo($path)];
+            $files = File::allFiles($path);
 
             foreach ($files as $file) {
                 preg_match_all('/__\(\s*([\'"])((?:\\\\.|(?!\1).)*)\1/s', (string) file_get_contents($file->getPathname()), $matches);
 
-                foreach ($matches[2] as $key) {
-                    $keys[stripslashes($key)] = $source;
+                foreach ($matches[2] as $i => $key) {
+                    // Guruh kalitlari (validation.required, passwords.sent) — lang/*/*.php da
+                    if (preg_match('/^[a-z_]+\.[a-z_.]+$/', $key)) {
+                        continue;
+                    }
+
+                    $keys[$this->unescape($matches[1][$i], $key)] = $source;
                 }
             }
         }
 
         return $keys;
+    }
+
+    /** Manba koddagi satr literalini haqiqiy matnga aylantiradi ("\n", \' va h.k.) */
+    private function unescape(string $quote, string $literal): string
+    {
+        return $quote === '"'
+            ? stripcslashes($literal)
+            : str_replace(["\\'", '\\\\'], ["'", '\\'], $literal);
     }
 
     /**
@@ -154,7 +166,7 @@ class InterfaceTranslationTest extends TestCase
         $this->assertSame([], $missing, "Tarjimasi yo'q kalitlar (lang/ru.json, lang/en.json)");
     }
 
-    public function test_public_backend_messages_are_translated(): void
+    public function test_every_backend_message_is_translated(): void
     {
         $ru = $this->dictionary('ru');
         $en = $this->dictionary('en');
@@ -210,5 +222,26 @@ class InterfaceTranslationTest extends TestCase
 
         app()->setLocale('uz');
         $this->assertSame('Ism to\'ldirilishi shart.', __('validation.required', ['attribute' => 'ism']));
+    }
+
+    public function test_author_notifications_use_the_author_language(): void
+    {
+        $editor = User::factory()->withRole(RoleName::Editor)->createOne(['locale' => 'uz']);
+        $author = User::factory()->author()->createOne(['locale' => 'ru']);
+        $article = Article::factory()->status(ArticleStatus::UnderReview)->createOne([
+            'submitter_id' => $author->id,
+            'handling_editor_id' => $editor->id,
+            'submitted_at' => now()->subDay(),
+        ]);
+
+        // Muharrir o'zbek tilida ishlaydi — muallifga bildirishnoma rus tilida boradi
+        $this->actingAs($editor)
+            ->post(route('admin.articles.messages.store', $article->uuid), ['body' => 'Fayl qabul qilindi.'])
+            ->assertSessionHasNoErrors();
+
+        $notification = $author->notifications()->firstOrFail();
+        $this->assertSame('Новое сообщение от редакции', $notification->data['title']);
+        $this->assertSame('uz', app()->getLocale());
+        $this->assertSame('ru', $author->preferredLocale());
     }
 }

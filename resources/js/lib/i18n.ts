@@ -92,11 +92,37 @@ function replace(text: string, replacements: Replacements): string {
         );
 }
 
+/**
+ * Kalit belgisi: statik ro'yxatlardagi matnni o'zgartirmaydi, faqat "bu tarjima kaliti"
+ * deb belgilaydi (InterfaceTranslationTest shu belgini ham tekshiradi). Ko'rsatishda — t(label).
+ */
+export function tk(key: string): string {
+    return key;
+}
+
 /** Tarjima: topilmasa — o'zbekcha kalitning o'zi */
 export function t(key: string, replacements: Replacements = {}): string {
     const text = dictionary.value[key] || key;
 
     return replace(text, replacements);
+}
+
+/**
+ * Gapni joy egasi atrofida ikkiga bo'ladi — o'rtadagi qiymatni alohida teg bilan
+ * (masalan, <b>) chizish uchun:
+ *   const [before, after] = tp(':date gacha tasdiqlang', 'date')
+ */
+export function tp(
+    key: string,
+    slot: string,
+    replacements: Replacements = {},
+): [string, string] {
+    const text = replace(dictionary.value[key] || key, replacements);
+    const index = text.indexOf(`:${slot}`);
+
+    return index === -1
+        ? [text, '']
+        : [text.slice(0, index), text.slice(index + slot.length + 1)];
 }
 
 /**

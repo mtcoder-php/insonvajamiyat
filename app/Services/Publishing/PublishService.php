@@ -179,7 +179,7 @@ class PublishService
     {
         $issue = $article->placement()->with('issue')->first()?->issue;
 
-        $article->submitter->notify(new ArticleUpdateNotification(
+        $article->submitter->notifyInLocale(fn (): ArticleUpdateNotification => new ArticleUpdateNotification(
             $article,
             ArticleUpdateNotification::DECISION,
             self::t('Maqolangiz chop etildi'),

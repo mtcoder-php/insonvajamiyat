@@ -3,6 +3,7 @@ import { Link } from '@inertiajs/vue3';
 import { Check } from '@lucide/vue';
 import { cn } from '@/lib/utils';
 import type { WizardStepInfo } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Yangi maqola formasining bosqichlari (dizayn: "Yangi maqola yuborish jarayoni").
@@ -25,7 +26,7 @@ const state = (step: number): 'current' | 'done' | 'todo' =>
 <template>
     <nav
         class="rounded-xl border border-line bg-white px-3 py-4 shadow-[0_1px_2px_rgba(0,30,60,0.05)] sm:px-5"
-        aria-label="Yuborish bosqichlari"
+        :aria-label="t('Yuborish bosqichlari')"
     >
         <div class="-mx-1 overflow-x-auto px-1 pb-1">
             <ol class="flex min-w-[680px] items-start">
@@ -71,7 +72,12 @@ const state = (step: number): 'current' | 'done' | 'todo' =>
                                 ? 'step'
                                 : undefined
                         "
-                        :aria-label="`${step.number}-bosqich: ${step.label}`"
+                        :aria-label="
+                            t(':number-bosqich: :label', {
+                                number: step.number,
+                                label: step.label,
+                            })
+                        "
                     >
                         <Check
                             v-if="state(step.number) === 'done'"

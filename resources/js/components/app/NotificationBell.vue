@@ -25,6 +25,7 @@ import { timeAgo } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import { readAll } from '@/routes/notifications';
 import type { NotificationItem } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Header'dagi qo'ng'iroqcha (admin panel va kabinet):
@@ -116,7 +117,11 @@ const triggerClass = computed(() =>
                         triggerClass,
                     )
                 "
-                :aria-label="`Bildirishnomalar: ${unread} ta o'qilmagan`"
+                :aria-label="
+                    t('Bildirishnomalar: :count ta o\'qilmagan', {
+                        count: unread,
+                    })
+                "
             >
                 <Bell :class="cn('size-5', ring && 'animate-bell')" />
                 <span
@@ -143,13 +148,13 @@ const triggerClass = computed(() =>
             >
                 <div>
                     <p class="font-serif text-base font-bold text-navy-950">
-                        Bildirishnomalar
+                        {{ t('Bildirishnomalar') }}
                     </p>
                     <p class="text-[11px] text-navy-500">
                         {{
                             unread > 0
-                                ? `${unread} ta o'qilmagan`
-                                : "Hammasi o'qilgan"
+                                ? t(":count ta o'qilmagan", { count: unread })
+                                : t("Hammasi o'qilgan")
                         }}
                     </p>
                 </div>
@@ -165,7 +170,7 @@ const triggerClass = computed(() =>
                         class="size-3.5 animate-spin"
                     />
                     <CheckCheck v-else class="size-3.5" />
-                    Hammasini o'qish
+                    {{ t("Hammasini o'qish") }}
                 </button>
             </header>
 
@@ -222,7 +227,7 @@ const triggerClass = computed(() =>
                                 <span
                                     v-if="!item.read"
                                     class="mt-1.5 size-2 shrink-0 rounded-full bg-brand-500"
-                                    aria-label="O'qilmagan"
+                                    :aria-label="t('O\'qilmagan')"
                                 />
                             </span>
                             <span
@@ -249,7 +254,7 @@ const triggerClass = computed(() =>
                 class="flex flex-col items-center gap-2 px-6 py-10 text-center text-sm text-navy-500"
             >
                 <BellOff class="size-7 text-navy-300" />
-                Hozircha bildirishnomalar yo'q
+                {{ t("Hozircha bildirishnomalar yo'q") }}
             </div>
         </DropdownMenuContent>
     </DropdownMenu>

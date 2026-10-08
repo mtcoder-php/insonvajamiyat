@@ -4,6 +4,7 @@ import { computed } from 'vue';
 import { cn } from '@/lib/utils';
 import type { AiRequestDetail } from '@/types';
 import { studios } from './aiMeta';
+import { t } from '@/lib/i18n';
 
 /**
  * So'rov navbatda / bajarilmoqda (progress) yoki xato bilan tugagan holat.
@@ -52,16 +53,20 @@ const percent = computed(() =>
                 <p class="font-sans text-base font-bold text-navy-950">
                     {{
                         request.status === 'queued'
-                            ? 'Navbatda kutilmoqda…'
-                            : `${studio.name} ishlamoqda…`
+                            ? t('Navbatda kutilmoqda…')
+                            : t(':name ishlamoqda…', { name: studio.name })
                     }}
                 </p>
                 <p class="mt-1 text-xs text-navy-500">
                     {{
                         request.chunksTotal > 1
-                            ? `${request.chunksCompleted} / ${request.chunksTotal} bo'lak tayyor · `
+                            ? `${t(":done / :total bo'lak tayyor", { done: request.chunksCompleted, total: request.chunksTotal })} · `
                             : ''
-                    }}Sahifani yopishingiz mumkin — natija "Tarix"da saqlanadi.
+                    }}{{
+                        t(
+                            'Sahifani yopishingiz mumkin — natija «Tarix»da saqlanadi.',
+                        )
+                    }}
                 </p>
             </div>
             <div
@@ -82,7 +87,7 @@ const percent = computed(() =>
             </span>
             <div class="max-w-md">
                 <p class="font-sans text-base font-bold text-navy-950">
-                    So'rov bajarilmadi
+                    {{ t("So'rov bajarilmadi") }}
                 </p>
                 <p class="mt-1 text-[13px] leading-relaxed text-navy-600">
                     {{ request.error ?? "Noma'lum xato." }}
@@ -94,7 +99,7 @@ const percent = computed(() =>
                 class="inline-flex h-9 items-center gap-2 rounded-lg border border-red-200 bg-white px-4 text-[13px] font-semibold text-red-700 transition-all hover:-translate-y-px hover:border-red-300 hover:shadow-sm"
                 @click="$emit('retry')"
             >
-                <RotateCcw class="size-4" /> Matnni formaga qaytarish
+                <RotateCcw class="size-4" /> {{ t('Matnni formaga qaytarish') }}
             </button>
         </template>
     </div>

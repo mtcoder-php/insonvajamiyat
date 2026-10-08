@@ -3,6 +3,7 @@ import { Check, X } from '@lucide/vue';
 import { formatDate, formatTime } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { TimelineStep } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Maqola holati — vertikal timeline (dizayn: "Maqolaning holati").
@@ -13,15 +14,15 @@ defineProps<{ steps: TimelineStep[] }>();
 
 const caption = (step: TimelineStep): string => {
     if (step.state === 'current') {
-        return 'Hozirda';
+        return t('Hozirda');
     }
 
     if (step.state === 'pending') {
-        return 'Kutilmoqda';
+        return t('Kutilmoqda');
     }
 
     if (step.state === 'skipped') {
-        return 'Talab qilinmadi';
+        return t('Talab qilinmadi');
     }
 
     return step.date ? `${formatDate(step.date)} ${formatTime(step.date)}` : '';

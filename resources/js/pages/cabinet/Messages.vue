@@ -26,6 +26,7 @@ import type {
     NotificationItem,
     SimpleMeta,
 } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Muallif kabineti → Xabarlar (TZ 4.1.3):
@@ -116,14 +117,18 @@ function markAll(): void {
 </script>
 
 <template>
-    <Head title="Xabarlar" />
+    <Head :title="t('Xabarlar')" />
 
     <div class="flex flex-col gap-5">
         <CabinetPageHeader
-            title="Xabarlar"
-            description="Tahririyat bilan yozishmalar va maqolalaringiz bo'yicha bildirishnomalar."
+            :title="t('Xabarlar')"
+            :description="
+                t(
+                    'Tahririyat bilan yozishmalar va maqolalaringiz bo\'yicha bildirishnomalar.',
+                )
+            "
             :icon="Mail"
-            :breadcrumbs="[{ title: 'Xabarlar', href: index() }]"
+            :breadcrumbs="[{ title: t('Xabarlar'), href: index() }]"
         />
 
         <nav
@@ -134,13 +139,13 @@ function markAll(): void {
                 v-for="t in [
                     {
                         key: 'messages',
-                        label: 'Yozishmalar',
+                        label: t('Yozishmalar'),
                         icon: MessagesSquare,
                         count: unreadMessages,
                     },
                     {
                         key: 'notifications',
-                        label: 'Bildirishnomalar',
+                        label: t('Bildirishnomalar'),
                         icon: Bell,
                         count: $page.props.notifications?.unread ?? 0,
                     },
@@ -191,14 +196,16 @@ function markAll(): void {
             >
                 <div class="border-b border-line p-3">
                     <label class="relative block">
-                        <span class="sr-only">Maqolani qidirish</span>
+                        <span class="sr-only">{{
+                            t('Maqolani qidirish')
+                        }}</span>
                         <Search
                             class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-navy-400"
                         />
                         <input
                             v-model="search"
                             type="search"
-                            placeholder="Maqola nomi yoki kodi..."
+                            :placeholder="t('Maqola nomi yoki kodi...')"
                             :class="cn(inputClass, 'h-9 pl-9 text-[13px]')"
                         />
                     </label>
@@ -262,14 +269,14 @@ function markAll(): void {
                                         <template v-if="c.last">
                                             {{
                                                 c.last.mine
-                                                    ? 'Siz: '
-                                                    : 'Tahririyat: '
+                                                    ? t('Siz: ')
+                                                    : t('Tahririyat: ')
                                             }}{{ c.last.body }}
                                         </template>
                                         <span
                                             v-else
                                             class="text-navy-400 italic"
-                                            >Xabar yo'q</span
+                                            >{{ t("Xabar yo'q") }}</span
                                         >
                                     </span>
                                     <span
@@ -310,7 +317,7 @@ function markAll(): void {
                         <button
                             type="button"
                             class="flex size-8 items-center justify-center rounded-lg text-navy-600 hover:bg-brand-50 lg:hidden"
-                            aria-label="Ro'yxatga qaytish"
+                            :aria-label="t('Ro\'yxatga qaytish')"
                             @click="showList = true"
                         >
                             <ArrowLeft class="size-4" />
@@ -334,16 +341,20 @@ function markAll(): void {
                             class="inline-flex items-center gap-1.5 rounded-lg border border-line px-3 py-1.5 text-xs font-semibold text-navy-700 transition-all hover:-translate-y-px hover:border-brand-300 hover:text-brand-700"
                         >
                             <ExternalLink class="size-3.5" />
-                            <span class="hidden sm:inline"
-                                >Maqolani ochish</span
-                            >
+                            <span class="hidden sm:inline">{{
+                                t('Maqolani ochish')
+                            }}</span>
                         </Link>
                     </header>
                     <div class="flex-1 p-4 sm:p-5">
                         <MessageThread
                             :messages="thread.items"
                             :send-url="thread.sendUrl"
-                            empty-text="Hali yozishma yo'q. Savolingiz bo'lsa, tahririyatga yozing."
+                            :empty-text="
+                                t(
+                                    'Hali yozishma yo\'q. Savolingiz bo\'lsa, tahririyatga yozing.',
+                                )
+                            "
                         />
                     </div>
                 </template>
@@ -357,11 +368,14 @@ function markAll(): void {
                         <MessagesSquare class="size-7" />
                     </span>
                     <p class="font-semibold text-navy-800">
-                        Yozishmani tanlang
+                        {{ t('Yozishmani tanlang') }}
                     </p>
                     <p class="max-w-sm text-sm text-navy-500">
-                        Chapdagi ro'yxatdan maqolani tanlang — tahririyat bilan
-                        yozishma shu yerda ochiladi.
+                        {{
+                            t(
+                                "Chapdagi ro'yxatdan maqolani tanlang — tahririyat bilan yozishma shu yerda ochiladi.",
+                            )
+                        }}
                     </p>
                 </div>
             </div>
@@ -378,8 +392,8 @@ function markAll(): void {
                 <div class="flex gap-1">
                     <button
                         v-for="opt in [
-                            { unread: false, label: 'Barchasi' },
-                            { unread: true, label: `O'qilmaganlar` },
+                            { unread: false, label: t('Barchasi') },
+                            { unread: true, label: t('O\'qilmaganlar') },
                         ]"
                         :key="opt.label"
                         type="button"
@@ -402,8 +416,8 @@ function markAll(): void {
                     class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold text-brand-700 transition-colors hover:bg-brand-50"
                     @click="markAll"
                 >
-                    <CheckCheck class="size-4" /> Hammasini o'qilgan deb
-                    belgilash
+                    <CheckCheck class="size-4" />
+                    {{ t("Hammasini o'qilgan deb belgilash") }}
                 </button>
             </header>
 

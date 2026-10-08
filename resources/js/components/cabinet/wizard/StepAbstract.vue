@@ -12,6 +12,7 @@ import type {
     WizardLimits,
     WizardOptions,
 } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * 3-bosqich: annotatsiya — maqola tilida majburiy, qolgan tillarda ixtiyoriy
@@ -104,7 +105,7 @@ function save(stay: boolean): void {
                 <span
                     v-if="language.code === main"
                     class="rounded bg-brand-600 px-1.5 py-px text-[10px] text-white"
-                    >asosiy</span
+                    >{{ t('asosiy') }}</span
                 >
                 <span
                     :class="
@@ -129,7 +130,7 @@ function save(stay: boolean): void {
                     class="rounded-lg border border-line bg-[#f8fafd] px-4 py-3"
                 >
                     <p class="text-[11px] font-medium text-navy-500">
-                        Sarlavha (1-bosqichda kiritilgan)
+                        {{ t('Sarlavha (1-bosqichda kiritilgan)') }}
                     </p>
                     <p class="mt-0.5 text-sm font-semibold text-navy-900">
                         {{ article.title[main] }}
@@ -137,9 +138,11 @@ function save(stay: boolean): void {
                 </div>
                 <FormField
                     v-else
-                    :label="`Sarlavha (${language.label})`"
+                    :label="
+                        t('Sarlavha (:language)', { language: language.label })
+                    "
                     :error="errors[`title.${language.code}`]"
-                    hint="Ixtiyoriy — sarlavhaning tarjimasi"
+                    :hint="t('Ixtiyoriy — sarlavhaning tarjimasi')"
                 >
                     <textarea
                         v-model="form.title[language.code]"
@@ -150,7 +153,11 @@ function save(stay: boolean): void {
                 </FormField>
 
                 <FormField
-                    :label="`Annotatsiya (${language.label})`"
+                    :label="
+                        t('Annotatsiya (:language)', {
+                            language: language.label,
+                        })
+                    "
                     :required="language.code === main"
                     :error="errors[`abstract.${language.code}`]"
                 >
@@ -161,8 +168,10 @@ function save(stay: boolean): void {
                         :aria-invalid="!!errors[`abstract.${language.code}`]"
                         :placeholder="
                             language.code === main
-                                ? 'Tadqiqotning maqsadi, usullari, asosiy natijalari va xulosalari...'
-                                : 'Ixtiyoriy'
+                                ? t(
+                                      'Tadqiqotning maqsadi, usullari, asosiy natijalari va xulosalari...',
+                                  )
+                                : t('Ixtiyoriy')
                         "
                         :class="cn(textareaClass, 'min-h-52')"
                     />
@@ -181,7 +190,9 @@ function save(stay: boolean): void {
                         {{ form.abstract[language.code].trim().length }} /
                         {{ limits.abstractMax }}
                         <template v-if="language.code === main">
-                            (kamida {{ limits.abstractMin }})
+                            {{
+                                t('(kamida :min)', { min: limits.abstractMin })
+                            }}
                         </template>
                     </p>
                 </FormField>
@@ -192,14 +203,21 @@ function save(stay: boolean): void {
             class="flex items-start gap-2 rounded-lg bg-brand-50/60 px-3 py-2.5 text-xs leading-relaxed text-brand-800"
         >
             <Languages class="mt-0.5 size-4 shrink-0" />
-            Annotatsiyani uch tilda kiritish tavsiya etiladi — maqola xalqaro
-            bazalarda va sayt katalogida shu tillarda ko'rinadi.
+            {{
+                t(
+                    "Annotatsiyani uch tilda kiritish tavsiya etiladi — maqola xalqaro bazalarda va sayt katalogida shu tillarda ko'rinadi.",
+                )
+            }}
         </p>
 
         <FormField
-            label="Adabiyotlar ro'yxati"
+            :label="t('Adabiyotlar ro\'yxati')"
             :error="form.errors.references"
-            hint="Ixtiyoriy. Har bir manba yangi qatordan. To'liq ro'yxat maqola faylida bo'lishi kerak."
+            :hint="
+                t(
+                    'Ixtiyoriy. Har bir manba yangi qatordan. To\'liq ro\'yxat maqola faylida bo\'lishi kerak.',
+                )
+            "
         >
             <textarea
                 v-model="form.references"

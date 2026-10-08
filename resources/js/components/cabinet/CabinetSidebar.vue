@@ -7,6 +7,7 @@ import { useCabinetNav } from '@/composables/useCabinetNav';
 import { cn } from '@/lib/utils';
 import { cabinetUsefulLinks } from '@/navigation/cabinet';
 import { edit as profileEdit } from '@/routes/profile';
+import { t } from '@/lib/i18n';
 
 /**
  * Muallif kabineti chap paneli (dizayn: "Muallif kabineti"):
@@ -18,7 +19,7 @@ const user = computed(() => page.props.auth.user);
 const position = computed(() =>
     typeof user.value?.position === 'string' && user.value.position !== ''
         ? user.value.position
-        : 'Muallif',
+        : t('Muallif'),
 );
 const unread = computed(() => page.props.notifications?.unread ?? 0);
 
@@ -30,7 +31,10 @@ const quoteImage = '/images/admin/sidebar-banner.png';
 </script>
 
 <template>
-    <aside class="flex flex-col gap-4" aria-label="Muallif kabineti menyusi">
+    <aside
+        class="flex flex-col gap-4"
+        :aria-label="t('Muallif kabineti menyusi')"
+    >
         <!-- Profil kartasi -->
         <Link
             v-if="user"
@@ -72,10 +76,10 @@ const quoteImage = '/images/admin/sidebar-banner.png';
                     <span
                         v-if="item.disabled"
                         class="flex cursor-not-allowed items-center gap-3 rounded-lg px-3 py-2.5 text-[13px] font-medium text-navy-400"
-                        title="Tez orada"
+                        :title="t('Tez orada')"
                     >
                         <component :is="item.icon" class="size-[18px]" />
-                        <span class="flex-1">{{ item.title }}</span>
+                        <span class="flex-1">{{ t(item.title) }}</span>
                         <span
                             v-if="item.badge && unread > 0"
                             class="flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-[10px] font-bold text-white tabular-nums"
@@ -86,7 +90,7 @@ const quoteImage = '/images/admin/sidebar-banner.png';
                             v-else
                             class="rounded bg-navy-50 px-1.5 py-0.5 text-[10px] text-navy-400"
                         >
-                            tez orada
+                            {{ t('tez orada') }}
                         </span>
                     </span>
                     <Link
@@ -113,7 +117,7 @@ const quoteImage = '/images/admin/sidebar-banner.png';
                                 )
                             "
                         />
-                        <span class="flex-1">{{ item.title }}</span>
+                        <span class="flex-1">{{ t(item.title) }}</span>
                     </Link>
                 </li>
             </ul>
@@ -125,7 +129,7 @@ const quoteImage = '/images/admin/sidebar-banner.png';
                     :aria-expanded="usefulOpen"
                     @click="usefulOpen = !usefulOpen"
                 >
-                    Foydali havolalar
+                    {{ t('Foydali havolalar') }}
                     <ChevronDown
                         :class="
                             cn(
@@ -148,7 +152,7 @@ const quoteImage = '/images/admin/sidebar-banner.png';
                                 :is="link.icon"
                                 class="size-4 shrink-0 text-navy-400 transition-colors group-hover/item:text-brand-600"
                             />
-                            {{ link.title }}
+                            {{ t(link.title) }}
                         </Link>
                     </li>
                 </ul>
@@ -172,7 +176,9 @@ const quoteImage = '/images/admin/sidebar-banner.png';
             <blockquote
                 class="mt-3 font-serif text-lg leading-snug text-white/95 italic"
             >
-                “Ilm — insonni yuksaltiradi, jamiyatni rivojlantiradi.”
+                {{
+                    t('“Ilm — insonni yuksaltiradi, jamiyatni rivojlantiradi.”')
+                }}
             </blockquote>
         </figure>
     </aside>

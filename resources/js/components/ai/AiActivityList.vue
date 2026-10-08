@@ -5,15 +5,16 @@ import { formatTime, timeAgo } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { AiRequestItem } from '@/types';
 import { statusTone, studios } from './aiMeta';
+import { t } from '@/lib/i18n';
 
 /** "So'nggi faoliyat" */
 defineProps<{ items: AiRequestItem[]; historyUrl: string }>();
 </script>
 
 <template>
-    <DashCard title="So'nggi faoliyat" :href="historyUrl">
+    <DashCard :title="t('So\'nggi faoliyat')" :href="historyUrl">
         <p v-if="!items.length" class="py-4 text-center text-xs text-navy-400">
-            Hali so'rov yo'q
+            {{ t("Hali so'rov yo'q") }}
         </p>
         <ul v-else class="grid grid-cols-1 gap-1">
             <li v-for="item in items" :key="item.uuid">

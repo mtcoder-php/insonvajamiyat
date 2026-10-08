@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import { ArrowRight, ListOrdered } from '@lucide/vue';
 import DashCard from '@/components/admin/dashboard/DashCard.vue';
 import { cn } from '@/lib/utils';
 import { create } from '@/routes/cabinet/articles';
+import { t } from '@/lib/i18n';
 
 /**
  * "Yangi maqola yuborish jarayoni" — 7 bosqich (forma: cabinet/articles/Create).
@@ -11,15 +13,15 @@ import { create } from '@/routes/cabinet/articles';
  */
 const { current = 1 } = defineProps<{ current?: number }>();
 
-const steps = [
-    "Maqola ma'lumotlari",
-    'Mualliflar',
-    'Annotatsiya',
-    "Kalit so'zlar",
-    'Fayllar',
-    'Tekshirish',
-    'Yuborish',
-];
+const steps = computed(() => [
+    t("Maqola ma'lumotlari"),
+    t('Mualliflar'),
+    t('Annotatsiya'),
+    t("Kalit so'zlar"),
+    t('Fayllar'),
+    t('Tekshirish'),
+    t('Yuborish'),
+]);
 </script>
 
 <template>
@@ -29,13 +31,13 @@ const steps = [
                 class="flex items-center gap-2 font-sans text-[15px] font-bold text-navy-950"
             >
                 <ListOrdered class="size-[18px] text-brand-600" />
-                Yangi maqola yuborish jarayoni
+                {{ t('Yangi maqola yuborish jarayoni') }}
             </h2>
             <Link
                 :href="create()"
                 class="group inline-flex items-center gap-1 text-xs font-medium text-brand-700 hover:text-brand-600"
             >
-                Boshlash
+                {{ t('Boshlash') }}
                 <ArrowRight
                     class="size-3.5 transition-transform group-hover:translate-x-0.5"
                 />
@@ -71,7 +73,12 @@ const steps = [
                                       : 'border border-line bg-white text-navy-500 group-hover/step:border-brand-300 group-hover/step:text-brand-700',
                             )
                         "
-                        :aria-label="`${i + 1}-bosqich: ${label}`"
+                        :aria-label="
+                            t(':number-bosqich: :label', {
+                                number: i + 1,
+                                label,
+                            })
+                        "
                         :aria-current="i + 1 === current ? 'step' : undefined"
                     >
                         {{ i + 1 }}

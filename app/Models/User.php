@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Enums\Language;
 use App\Enums\RoleName;
 use App\Notifications\Auth\ResetPasswordNotification;
 use App\Notifications\Auth\VerifyEmailNotification;
 use App\Support\MediaUrl;
+use Closure;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Builder;
@@ -19,7 +22,9 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Notifications\Notification;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\App;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -52,7 +57,7 @@ use Spatie\Permission\Traits\HasRoles;
  */
 #[Fillable(['name', 'email', 'password', 'phone', 'locale'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable implements HasLocalePreference, MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, HasRoles, Notifiable, SoftDeletes, TwoFactorAuthenticatable;
@@ -196,5 +201,34 @@ class User extends Authenticatable implements MustVerifyEmail
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_blocked', false);
+    }
+
+    /**
+     * Foydalanuvchi tanlagan interfeys tili: xatlar va bildirishnomalar shu tilda yuboriladi
+     * (Laravel HasLocalePreference — toMail()/toArray() shu til bilan chaqiriladi).
+     */
+    public function preferredLocale(): string
+    {
+        $language = Language::tryFrom($this->locale) ?? Language::default();
+
+        return $language->value;
+    }
+
+    /**
+     * Bildirishnomani qabul qiluvchining tilida yaratib yuboradi: konstruktorga beriladigan
+     * __() matnlari (sarlavha, izoh) ham shu tilda tarjima qilinadi.
+     *
+     * @param  Closure(): Notification  $make
+     */
+    public function notifyInLocale(Closure $make): void
+    {
+        $previous = App::getLocale();
+        App::setLocale($this->preferredLocale());
+
+        try {
+            $this->notify($make());
+        } finally {
+            App::setLocale($previous);
+        }
     }
 }

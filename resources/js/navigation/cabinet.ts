@@ -16,6 +16,7 @@ import { index as aiIndex } from '@/routes/cabinet/ai';
 import { create, index } from '@/routes/cabinet/articles';
 import { index as messagesIndex } from '@/routes/cabinet/messages';
 import { edit as profileEdit } from '@/routes/profile';
+import { tk } from '@/lib/i18n';
 import type { NavGroup, NavItem } from '@/types';
 
 /**
@@ -26,19 +27,28 @@ export type CabinetNavItem = NavItem & { disabled?: boolean };
 
 export function cabinetMainNavigation(): CabinetNavItem[] {
     return [
-        { title: 'Asosiy sahifa', href: dashboard(), icon: House, exact: true },
-        { title: 'Mening maqolalarim', href: index(), icon: Files },
-        { title: 'Yangi maqola yuborish', href: create(), icon: Send },
-        { title: 'AI Studio', href: aiIndex(), icon: BrainCircuit },
-        { title: "Profil ma'lumotlari", href: profileEdit(), icon: UserRound },
         {
-            title: 'Xabarlar',
+            title: tk('Asosiy sahifa'),
+            href: dashboard(),
+            icon: House,
+            exact: true,
+        },
+        { title: tk('Mening maqolalarim'), href: index(), icon: Files },
+        { title: tk('Yangi maqola yuborish'), href: create(), icon: Send },
+        { title: 'AI Studio', href: aiIndex(), icon: BrainCircuit },
+        {
+            title: tk("Profil ma'lumotlari"),
+            href: profileEdit(),
+            icon: UserRound,
+        },
+        {
+            title: tk('Xabarlar'),
             href: messagesIndex(),
             icon: Mail,
             badge: 'notifications',
         },
         {
-            title: 'Tahririyat bilan aloqa',
+            title: tk('Tahririyat bilan aloqa'),
             href: contact(),
             icon: MessagesSquare,
         },
@@ -49,14 +59,14 @@ export function cabinetUsefulLinks(): CabinetNavItem[] {
     const url = guidelines.url();
 
     return [
-        { title: "Yo'riqnoma (PDF)", href: url, icon: BookOpenText },
+        { title: tk("Yo'riqnoma (PDF)"), href: url, icon: BookOpenText },
         {
-            title: "Maqola yozish bo'yicha maslahatlar",
+            title: tk("Maqola yozish bo'yicha maslahatlar"),
             href: `${url}#maslahatlar`,
             icon: FilePen,
         },
         {
-            title: "Tez-tez so'raladigan savollar",
+            title: tk("Tez-tez so'raladigan savollar"),
             href: `${url}#faq`,
             icon: CircleHelp,
         },
@@ -67,11 +77,11 @@ export function cabinetUsefulLinks(): CabinetNavItem[] {
 export function cabinetNavigation(): NavGroup[] {
     return [
         {
-            label: 'Kabinet',
+            label: tk('Kabinet'),
             items: cabinetMainNavigation().filter((item) => !item.disabled),
         },
         {
-            label: 'Foydali havolalar',
+            label: tk('Foydali havolalar'),
             items: cabinetUsefulLinks(),
         },
     ];

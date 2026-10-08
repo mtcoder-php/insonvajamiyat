@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight } from '@lucide/vue';
 import { computed } from 'vue';
 import { cn } from '@/lib/utils';
 import type { SimpleMeta } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Sahifalash (partial reload uchun): "1–8 / 120 ta" va sahifa raqamlari,
@@ -52,10 +53,16 @@ const item =
     <nav
         v-if="meta.total > 0"
         class="flex flex-col items-center justify-between gap-3 sm:flex-row"
-        aria-label="Sahifalar"
+        :aria-label="t('Sahifalar')"
     >
         <p class="text-xs text-navy-500 tabular-nums">
-            {{ meta.from }}–{{ meta.to }} / {{ meta.total }} ta
+            {{
+                t(':from–:to / :total ta', {
+                    from: meta.from,
+                    to: meta.to,
+                    total: meta.total,
+                })
+            }}
         </p>
         <div v-if="meta.lastPage > 1" class="flex flex-wrap items-center gap-1">
             <button
@@ -67,7 +74,7 @@ const item =
                         'text-navy-700 hover:bg-surface-muted disabled:text-navy-300 disabled:hover:bg-transparent',
                     )
                 "
-                aria-label="Oldingi sahifa"
+                :aria-label="t('Oldingi sahifa')"
                 @click="emit('go', meta.currentPage - 1)"
             >
                 <ChevronLeft class="size-4" />
@@ -105,7 +112,7 @@ const item =
                         'text-navy-700 hover:bg-surface-muted disabled:text-navy-300 disabled:hover:bg-transparent',
                     )
                 "
-                aria-label="Keyingi sahifa"
+                :aria-label="t('Keyingi sahifa')"
                 @click="emit('go', meta.currentPage + 1)"
             >
                 <ChevronRight class="size-4" />

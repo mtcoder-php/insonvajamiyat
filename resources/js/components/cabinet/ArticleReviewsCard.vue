@@ -3,6 +3,7 @@ import { ClipboardCheck, Star } from '@lucide/vue';
 import DashCard from '@/components/admin/dashboard/DashCard.vue';
 import { formatDate } from '@/lib/format';
 import type { AuthorReview } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Muallif uchun taqriz natijalari (anonim): baho, mezonlar va taqrizchi izohi.
@@ -16,11 +17,14 @@ defineProps<{ reviews: AuthorReview[] }>();
             class="mb-1 flex items-center gap-2 font-sans text-[15px] font-bold text-navy-950"
         >
             <ClipboardCheck class="size-[18px] text-brand-600" />
-            Taqriz natijalari
+            {{ t('Taqriz natijalari') }}
         </h2>
         <p class="mb-4 text-xs text-navy-500">
-            Taqrizchilar ismi ko'rsatilmaydi (blind review). Izohlar asosida
-            maqolangizni takomillashtiring.
+            {{
+                t(
+                    "Taqrizchilar ismi ko'rsatilmaydi (blind review). Izohlar asosida maqolangizni takomillashtiring.",
+                )
+            }}
         </p>
         <div class="grid gap-3 lg:grid-cols-2">
             <article
@@ -34,7 +38,7 @@ defineProps<{ reviews: AuthorReview[] }>();
                             {{ review.label }}
                         </p>
                         <p class="text-[11px] text-navy-500">
-                            {{ review.round }}-raund ·
+                            {{ t(':number-raund', { number: review.round }) }} ·
                             {{ formatDate(review.completedAt) }}
                         </p>
                     </div>

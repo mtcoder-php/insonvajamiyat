@@ -16,6 +16,7 @@ import { dashboard } from '@/routes/cabinet';
 import { create, index as articlesIndex } from '@/routes/cabinet/articles';
 import { edit as profileEdit } from '@/routes/profile';
 import type { AuthorDashboardProps } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Muallif kabineti — bosh sahifa (dizayn: "Muallif kabineti"):
@@ -32,13 +33,17 @@ defineOptions({
 </script>
 
 <template>
-    <Head title="Muallif kabineti" />
+    <Head :title="t('Muallif kabineti')" />
 
     <div class="flex flex-col gap-5">
         <CabinetPageHeader
             variant="dark"
-            title="Muallif kabineti"
-            description="Maqolalaringizni boshqaring, nashr jarayonini kuzating va ilmiy faoliyatingizni rivojlantiring."
+            :title="t('Muallif kabineti')"
+            :description="
+                t(
+                    'Maqolalaringizni boshqaring, nashr jarayonini kuzating va ilmiy faoliyatingizni rivojlantiring.',
+                )
+            "
         />
 
         <Link
@@ -48,9 +53,14 @@ defineOptions({
         >
             <TriangleAlert class="size-5 shrink-0 text-amber-600" />
             <span class="flex-1">
-                <strong class="font-semibold">Profilingizni to'ldiring.</strong>
-                Maqola yuborishdan oldin tashkilot, lavozim, ilmiy daraja va
-                ORCID ma'lumotlarini kiriting.
+                <strong class="font-semibold">{{
+                    t("Profilingizni to'ldiring.")
+                }}</strong>
+                {{
+                    t(
+                        "Maqola yuborishdan oldin tashkilot, lavozim, ilmiy daraja va ORCID ma'lumotlarini kiriting.",
+                    )
+                }}
             </span>
             <ArrowRight
                 class="size-4 shrink-0 transition-transform group-hover:translate-x-0.5"
@@ -66,7 +76,7 @@ defineOptions({
         >
             <section
                 class="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 2xl:grid-cols-5 [&>*:last-child]:col-span-2 md:[&>*:last-child]:col-span-1"
-                aria-label="Maqolalar statistikasi"
+                :aria-label="t('Maqolalar statistikasi')"
             >
                 <AuthorStatCard
                     v-for="card in cards"
@@ -78,7 +88,7 @@ defineOptions({
             <!-- O'ng ustun -->
             <aside
                 class="grid content-start items-start gap-5 md:grid-cols-2 xl:grid-cols-3 2xl:col-start-2 2xl:row-span-4 2xl:row-start-1 2xl:grid-cols-1"
-                aria-label="Maqola holati va tezkor amallar"
+                :aria-label="t('Maqola holati va tezkor amallar')"
             >
                 <DashCard>
                     <header class="mb-4">
@@ -86,7 +96,7 @@ defineOptions({
                             class="flex items-center gap-2 font-sans text-[15px] font-bold text-navy-950"
                         >
                             <Route class="size-[18px] text-brand-600" />
-                            Maqolaning holati
+                            {{ t('Maqolaning holati') }}
                         </h2>
                     </header>
 
@@ -109,7 +119,7 @@ defineOptions({
                         <StatusTimeline :steps="focus.steps" />
                     </template>
                     <p v-else class="py-6 text-center text-sm text-navy-500">
-                        Jarayondagi maqola yo'q
+                        {{ t("Jarayondagi maqola yo'q") }}
                     </p>
                 </DashCard>
 
@@ -123,13 +133,13 @@ defineOptions({
                         class="flex items-center gap-2 font-sans text-[15px] font-bold text-navy-950"
                     >
                         <FileStack class="size-[18px] text-brand-600" />
-                        Mening maqolalarim
+                        {{ t('Mening maqolalarim') }}
                     </h2>
                     <Link
                         :href="articlesIndex()"
                         class="group inline-flex items-center gap-1 text-xs font-medium text-brand-700 hover:text-brand-600"
                     >
-                        Barchasi
+                        {{ t('Barchasi') }}
                         <ArrowRight
                             class="size-3.5 transition-transform group-hover:translate-x-0.5"
                         />
@@ -138,13 +148,13 @@ defineOptions({
                 <AuthorArticlesTable :items="articles" class="-mx-1">
                     <template #empty>
                         <p class="text-sm text-navy-600">
-                            Siz hali maqola yubormagansiz.
+                            {{ t('Siz hali maqola yubormagansiz.') }}
                         </p>
                         <Link
                             :href="create()"
                             class="mt-1 inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-4 py-2 text-xs font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-brand-700"
                         >
-                            Birinchi maqolani yuborish
+                            {{ t('Birinchi maqolani yuborish') }}
                             <ArrowRight class="size-3.5" />
                         </Link>
                     </template>

@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/card';
 import { useTwoFactorAuth } from '@/composables/useTwoFactorAuth';
 import { regenerateRecoveryCodes } from '@/routes/two-factor';
+import { t } from '@/lib/i18n';
 
 const { recoveryCodesList, fetchRecoveryCodes, errors } = useTwoFactorAuth();
 const isRecoveryCodesVisible = ref<boolean>(false);
@@ -42,11 +43,14 @@ onMounted(async () => {
     <Card class="w-full">
         <CardHeader>
             <CardTitle class="flex gap-3">
-                <LockKeyhole class="size-4" />Zaxira kodlar
+                <LockKeyhole class="size-4" />{{ t('Zaxira kodlar') }}
             </CardTitle>
             <CardDescription>
-                Telefoningiz yo'qolsa, zaxira kodlar orqali akkauntga kira
-                olasiz. Ularni xavfsiz joyda saqlang.
+                {{
+                    t(
+                        "Telefoningiz yo'qolsa, zaxira kodlar orqali akkauntga kira olasiz. Ularni xavfsiz joyda saqlang.",
+                    )
+                }}
             </CardDescription>
         </CardHeader>
         <CardContent>
@@ -58,8 +62,11 @@ onMounted(async () => {
                         :is="isRecoveryCodesVisible ? EyeOff : Eye"
                         class="size-4"
                     />
-                    Zaxira kodlarni
-                    {{ isRecoveryCodesVisible ? 'yashirish' : "ko'rish" }}
+                    {{
+                        isRecoveryCodesVisible
+                            ? t('Zaxira kodlarni yashirish')
+                            : t("Zaxira kodlarni ko'rish")
+                    }}
                 </Button>
 
                 <Form
@@ -75,7 +82,7 @@ onMounted(async () => {
                         type="submit"
                         :disabled="processing"
                     >
-                        <RefreshCw /> Yangi kodlar yaratish
+                        <RefreshCw /> {{ t('Yangi kodlar yaratish') }}
                     </Button>
                 </Form>
             </div>
@@ -111,10 +118,15 @@ onMounted(async () => {
                         </div>
                     </div>
                     <p class="text-xs text-muted-foreground select-none">
-                        Har bir kod faqat bir marta ishlatiladi va ishlatilgach
-                        o'chadi. Kodlar tugasa, yuqoridagi
-                        <span class="font-bold">Yangi kodlar yaratish</span>
-                        tugmasini bosing.
+                        {{
+                            t(
+                                "Har bir kod faqat bir marta ishlatiladi va ishlatilgach o'chadi. Kodlar tugasa, yuqoridagi",
+                            )
+                        }}
+                        <span class="font-bold">{{
+                            t('Yangi kodlar yaratish')
+                        }}</span>
+                        {{ t('tugmasini bosing.') }}
                     </p>
                 </div>
             </div>

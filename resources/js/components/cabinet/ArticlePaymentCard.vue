@@ -15,6 +15,7 @@ import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { formatDate, formatSum, formatTime } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { AuthorArticlePayment } from '@/types';
+import { t, tk } from '@/lib/i18n';
 
 /**
  * Maqola sahifasidagi nashr to'lovi bloki:
@@ -31,12 +32,12 @@ const brand: Record<string, { ring: string; dot: string; hint: string }> = {
     click: {
         ring: 'hover:border-[#00a0e3] hover:shadow-[0_14px_30px_-16px_rgba(0,160,227,0.75)]',
         dot: 'bg-[#00a0e3]',
-        hint: 'Uzcard · Humo · Click hamyon',
+        hint: tk('Uzcard · Humo · Click hamyon'),
     },
     payme: {
         ring: 'hover:border-[#00baba] hover:shadow-[0_14px_30px_-16px_rgba(0,186,186,0.75)]',
         dot: 'bg-[#00baba]',
-        hint: 'Uzcard · Humo · Payme ilovasi',
+        hint: tk('Uzcard · Humo · Payme ilovasi'),
     },
 };
 
@@ -59,7 +60,9 @@ function pay(provider: string): void {
             onError: (errors) =>
                 (error.value =
                     errors.provider ??
-                    "To'lovni boshlab bo'lmadi. Birozdan keyin qayta urinib ko'ring."),
+                    t(
+                        "To'lovni boshlab bo'lmadi. Birozdan keyin qayta urinib ko'ring.",
+                    )),
             onFinish: () => (starting.value = null),
         },
     );
@@ -130,11 +133,11 @@ onBeforeUnmount(() => {
 const checking = computed(() => watching.value && !timedOut.value);
 
 const labels: Record<string, string> = {
-    recipient: 'Qabul qiluvchi',
-    bank: 'Bank',
-    account: 'Hisob raqami',
+    recipient: tk('Qabul qiluvchi'),
+    bank: tk('Bank'),
+    account: tk('Hisob raqami'),
     mfo: 'MFO',
-    inn: 'STIR (INN)',
+    inn: tk('STIR (INN)'),
 };
 
 const requisites = computed(() =>
@@ -165,7 +168,7 @@ async function copy(key: string, value: string): Promise<void> {
             class="flex items-center gap-2 font-sans text-[15px] font-bold text-navy-950"
         >
             <Hourglass class="size-[18px] text-amber-600" />
-            Nashr to'lovi kutilmoqda
+            {{ t("Nashr to'lovi kutilmoqda") }}
         </h2>
         <p class="mt-3 font-sans text-2xl font-bold text-navy-950 tabular-nums">
             {{ formatSum(payment.amount) }}
@@ -189,11 +192,14 @@ async function copy(key: string, value: string): Promise<void> {
             />
             <div class="text-xs leading-relaxed text-navy-700">
                 <p class="font-semibold text-navy-900">
-                    To'lov holati tekshirilmoqda…
+                    {{ t("To'lov holati tekshirilmoqda…") }}
                 </p>
                 <p>
-                    To'lov tizimidan tasdiq kelishi bilan sahifa avtomatik
-                    yangilanadi.
+                    {{
+                        t(
+                            "To'lov tizimidan tasdiq kelishi bilan sahifa avtomatik yangilanadi.",
+                        )
+                    }}
                 </p>
             </div>
         </div>
@@ -203,9 +209,11 @@ async function copy(key: string, value: string): Promise<void> {
         >
             <Hourglass class="mt-0.5 size-4 shrink-0 text-amber-600" />
             <p>
-                Tasdiq hali kelmadi. Agar kartangizdan pul yechilgan bo'lsa, bir
-                necha daqiqadan so'ng sahifani yangilang yoki tahririyatga
-                yozing.
+                {{
+                    t(
+                        "Tasdiq hali kelmadi. Agar kartangizdan pul yechilgan bo'lsa, bir necha daqiqadan so'ng sahifani yangilang yoki tahririyatga yozing.",
+                    )
+                }}
             </p>
         </div>
         <div
@@ -214,9 +222,12 @@ async function copy(key: string, value: string): Promise<void> {
         >
             <Hourglass class="mt-0.5 size-4 shrink-0 text-brand-600" />
             <p>
-                Tugallanmagan to'lov bor ({{ online.lastAttempt?.provider }}).
-                Agar to'lagan bo'lsangiz, tasdiq bir necha daqiqada keladi —
-                qayta to'lamang.
+                {{
+                    t(
+                        "Tugallanmagan to'lov bor (:provider). Agar to'lagan bo'lsangiz, tasdiq bir necha daqiqada keladi — qayta to'lamang.",
+                        { provider: online.lastAttempt?.provider },
+                    )
+                }}
             </p>
         </div>
         <div
@@ -225,9 +236,15 @@ async function copy(key: string, value: string): Promise<void> {
         >
             <TriangleAlert class="mt-0.5 size-4 shrink-0 text-red-500" />
             <p>
-                Oxirgi urinish ({{ cancelledAttempt.provider }})
-                {{ cancelledAttempt.statusLabel.toLowerCase() }}. Qaytadan
-                to'lashingiz mumkin.
+                {{
+                    t(
+                        "Oxirgi urinish (:provider): :status. Qaytadan to'lashingiz mumkin.",
+                        {
+                            provider: cancelledAttempt.provider,
+                            status: cancelledAttempt.statusLabel.toLowerCase(),
+                        },
+                    )
+                }}
             </p>
         </div>
 
@@ -264,11 +281,13 @@ async function copy(key: string, value: string): Promise<void> {
                     <CreditCard v-else class="size-4" />
                 </span>
                 <span class="min-w-0 flex-1">
-                    <span class="block text-[13px] font-bold text-navy-950"
-                        >{{ provider.label }} orqali to'lash</span
-                    >
+                    <span class="block text-[13px] font-bold text-navy-950">{{
+                        t(":provider orqali to'lash", {
+                            provider: provider.label,
+                        })
+                    }}</span>
                     <span class="block text-[11px] text-navy-500">{{
-                        brand[provider.value]?.hint
+                        t(brand[provider.value]?.hint ?? '')
                     }}</span>
                 </span>
                 <ArrowUpRight
@@ -277,7 +296,11 @@ async function copy(key: string, value: string): Promise<void> {
             </button>
             <p class="flex items-center gap-1.5 text-[11px] text-navy-500">
                 <ShieldCheck class="size-3.5 text-emerald-600" />
-                Karta ma'lumotlari faqat to'lov tizimi sahifasida kiritiladi.
+                {{
+                    t(
+                        "Karta ma'lumotlari faqat to'lov tizimi sahifasida kiritiladi.",
+                    )
+                }}
             </p>
             <p v-if="error" class="text-xs text-red-600">{{ error }}</p>
         </div>
@@ -286,7 +309,7 @@ async function copy(key: string, value: string): Promise<void> {
             v-if="online?.providers.length && requisites.length"
             class="mt-4 flex items-center gap-2 text-[11px] font-semibold tracking-wide text-navy-400 uppercase"
         >
-            <Landmark class="size-3.5" /> yoki bank orqali
+            <Landmark class="size-3.5" /> {{ t('yoki bank orqali') }}
         </p>
 
         <dl
@@ -299,7 +322,7 @@ async function copy(key: string, value: string): Promise<void> {
                 class="group flex items-center gap-2 rounded-lg bg-white px-3 py-2 ring-1 ring-line"
             >
                 <dt class="w-24 shrink-0 text-[11px] text-navy-500">
-                    {{ labels[key] ?? key }}
+                    {{ t(labels[key] ?? key) }}
                 </dt>
                 <dd
                     class="min-w-0 flex-1 font-medium [overflow-wrap:anywhere] text-navy-900"
@@ -309,7 +332,11 @@ async function copy(key: string, value: string): Promise<void> {
                 <button
                     type="button"
                     class="rounded p-1 text-navy-300 transition-colors hover:bg-brand-50 hover:text-brand-600"
-                    :aria-label="`${labels[key] ?? key} — nusxalash`"
+                    :aria-label="
+                        t(':label — nusxalash', {
+                            label: t(labels[key] ?? key),
+                        })
+                    "
                     @click="copy(key, value)"
                 >
                     <BadgeCheck
@@ -323,7 +350,9 @@ async function copy(key: string, value: string): Promise<void> {
                 v-if="payment.purpose"
                 class="rounded-lg bg-white px-3 py-2 ring-1 ring-line"
             >
-                <dt class="text-[11px] text-navy-500">To'lov maqsadi</dt>
+                <dt class="text-[11px] text-navy-500">
+                    {{ t("To'lov maqsadi") }}
+                </dt>
                 <dd class="mt-0.5 font-medium text-navy-900">
                     {{ payment.purpose }}
                 </dd>
@@ -334,7 +363,7 @@ async function copy(key: string, value: string): Promise<void> {
             class="mt-4 flex items-start gap-2 rounded-lg bg-white px-3 py-2.5 text-xs leading-relaxed text-navy-600 ring-1 ring-line"
         >
             <CreditCard class="mt-0.5 size-4 shrink-0 text-navy-400" />
-            To'lov tartibi bo'yicha tahririyat bilan bog'laning.
+            {{ t("To'lov tartibi bo'yicha tahririyat bilan bog'laning.") }}
         </p>
     </section>
 
@@ -346,33 +375,33 @@ async function copy(key: string, value: string): Promise<void> {
             class="flex items-center gap-2 font-sans text-[15px] font-bold text-navy-950"
         >
             <BadgeCheck class="size-[18px] text-emerald-600" />
-            Nashr to'lovi
+            {{ t("Nashr to'lovi") }}
         </h2>
         <dl class="mt-3 grid gap-1.5 text-[13px]">
             <div class="flex justify-between gap-3">
-                <dt class="text-navy-500">Summa</dt>
+                <dt class="text-navy-500">{{ t('Summa') }}</dt>
                 <dd class="font-semibold text-navy-950 tabular-nums">
                     {{ formatSum(payment.amount) }}
                 </dd>
             </div>
             <div class="flex justify-between gap-3">
-                <dt class="text-navy-500">Holat</dt>
+                <dt class="text-navy-500">{{ t('Holat') }}</dt>
                 <dd class="font-medium text-emerald-700">
                     {{ payment.statusLabel }}
                 </dd>
             </div>
             <div v-if="payment.receipt" class="flex justify-between gap-3">
-                <dt class="text-navy-500">Chek</dt>
+                <dt class="text-navy-500">{{ t('Chek') }}</dt>
                 <dd class="font-mono text-xs font-semibold">
                     {{ payment.receipt }}
                 </dd>
             </div>
             <div v-if="payment.provider" class="flex justify-between gap-3">
-                <dt class="text-navy-500">To'lov usuli</dt>
+                <dt class="text-navy-500">{{ t("To'lov usuli") }}</dt>
                 <dd>{{ payment.provider }}</dd>
             </div>
             <div v-if="payment.paidAt" class="flex justify-between gap-3">
-                <dt class="text-navy-500">Sana</dt>
+                <dt class="text-navy-500">{{ t('Sana') }}</dt>
                 <dd class="tabular-nums">
                     {{ formatDate(payment.paidAt) }}
                     {{ formatTime(payment.paidAt) }}

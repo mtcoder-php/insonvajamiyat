@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ArrowRight, Bot, Sparkles } from '@lucide/vue';
+import { t } from '@/lib/i18n';
 
 /**
  * "AI yordamchi" — AI laboratoriya moduli tayyor bo'lgach havolaga aylanadi.
@@ -22,24 +23,27 @@ import { ArrowRight, Bot, Sparkles } from '@lucide/vue';
             </span>
             <div class="min-w-0">
                 <h2 class="font-sans text-[15px] font-bold text-navy-950">
-                    AI yordamchi
+                    {{ t('AI yordamchi') }}
                 </h2>
                 <p class="mt-1 text-xs leading-relaxed text-navy-600">
-                    Maqola yozish, imlo va uslubni tekshirishda sizga yordam
-                    beradi.
+                    {{
+                        t(
+                            'Maqola yozish, imlo va uslubni tekshirishda sizga yordam beradi.',
+                        )
+                    }}
                 </p>
             </div>
         </div>
         <button
             type="button"
             disabled
-            title="Tez orada"
+            :title="t('Tez orada')"
             class="mt-4 inline-flex w-full cursor-not-allowed items-center justify-center gap-1.5 rounded-lg border border-brand-200 bg-white px-3 py-2 text-xs font-semibold text-brand-700"
         >
-            AI laboratoriya
+            {{ t('AI laboratoriya') }}
             <span
                 class="rounded bg-brand-50 px-1.5 py-0.5 text-[10px] font-medium"
-                >tez orada</span
+                >{{ t('tez orada') }}</span
             >
             <ArrowRight class="size-3.5" />
         </button>

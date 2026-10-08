@@ -6,6 +6,7 @@ import DashCard from '@/components/admin/dashboard/DashCard.vue';
 import { formatDate, formatNumber } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { AiStats } from '@/types';
+import { t } from '@/lib/i18n';
 
 /** "AI statistika" (oxirgi 30 kun) */
 const props = defineProps<{ stats: AiStats; global: boolean }>();
@@ -14,32 +15,32 @@ const rows = computed<
     { label: string; value: string; icon: Component; tint: string }[]
 >(() => [
     {
-        label: "Jami so'rovlar",
+        label: t("Jami so'rovlar"),
         value: formatNumber(props.stats.total),
         icon: Sparkles,
         tint: 'bg-brand-50 text-brand-600',
     },
     {
-        label: 'Muvaffaqiyatli',
+        label: t('Muvaffaqiyatli'),
         value: `${formatNumber(props.stats.completed)} (${props.stats.completedPct}%)`,
         icon: CircleCheck,
         tint: 'bg-emerald-50 text-emerald-600',
     },
     {
-        label: 'Xatolar',
+        label: t('Xatolar'),
         value: `${formatNumber(props.stats.failed)} (${props.stats.failedPct}%)`,
         icon: CircleX,
         tint: 'bg-red-50 text-red-600',
     },
     {
-        label: 'Sarflangan tokenlar',
+        label: t('Sarflangan tokenlar'),
         value: formatNumber(props.stats.tokens),
         icon: Coins,
         tint: 'bg-violet-50 text-violet-600',
     },
     {
-        label: "O'rtacha ishlash vaqti",
-        value: `${props.stats.avgSeconds} soniya`,
+        label: t("O'rtacha ishlash vaqti"),
+        value: t(':seconds soniya', { seconds: props.stats.avgSeconds }),
         icon: Clock3,
         tint: 'bg-amber-50 text-amber-600',
     },
@@ -47,7 +48,7 @@ const rows = computed<
 </script>
 
 <template>
-    <DashCard :title="global ? 'AI statistika' : 'Mening statistikam'">
+    <DashCard :title="global ? t('AI statistika') : t('Mening statistikam')">
         <template #actions>
             <span class="text-[11px] text-navy-400"
                 >{{ formatDate(stats.from) }} – {{ formatDate(stats.to) }}</span
