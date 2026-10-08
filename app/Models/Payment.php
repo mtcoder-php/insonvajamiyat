@@ -50,6 +50,7 @@ use Illuminate\Support\Carbon;
  * @property-read User|null $confirmedBy
  * @property-read Collection<int, PaymentItem> $items
  * @property-read Collection<int, PaymentLog> $logs
+ * @property-read Collection<int, Refund> $refunds
  */
 #[Fillable(['user_id', 'purpose', 'article_id', 'journal_issue_id', 'amount', 'currency', 'provider', 'receipt_number'])]
 class Payment extends Model
@@ -109,6 +110,12 @@ class Payment extends Model
     public function items(): HasMany
     {
         return $this->hasMany(PaymentItem::class);
+    }
+
+    /** @return HasMany<Refund, $this> */
+    public function refunds(): HasMany
+    {
+        return $this->hasMany(Refund::class);
     }
 
     /** @return HasMany<PaymentLog, $this> */

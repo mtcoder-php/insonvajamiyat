@@ -10,7 +10,8 @@ export type PaymentTab =
     | 'click'
     | 'payme'
     | 'manual'
-    | 'failed';
+    | 'failed'
+    | 'refunds';
 
 export type PaymentProviderKey = 'click' | 'payme' | 'manual';
 
@@ -36,6 +37,46 @@ export type PaymentListItem = {
     note: string | null;
     proofName: string | null;
     proofUrl: string | null;
+    refundedAt: string | null;
+    /** Qaytarish: blocked — mumkin emasligi sababi (null — mumkin); history — so'rovlar tarixi */
+    refund: {
+        blocked: string | null;
+        url: string;
+        history: RefundItem[];
+    } | null;
+};
+
+export type RefundStatusKey =
+    | 'requested'
+    | 'processing'
+    | 'completed'
+    | 'failed';
+
+/** Qaytarish — App\Http\Resources\Admin\RefundResource */
+export type RefundItem = {
+    id: number;
+    amount: number;
+    reason: string;
+    status: RefundStatusKey;
+    statusLabel: string;
+    open: boolean;
+    reference: string | null;
+    error: string | null;
+    requestedBy: string;
+    processedBy: string | null;
+    createdAt: string | null;
+    processedAt: string | null;
+    payment: {
+        uuid: string;
+        receipt: string;
+        transaction: string | null;
+        provider: PaymentProviderKey;
+        providerLabel: string;
+        user: { name: string; email: string };
+        article: string | null;
+    };
+    awaitingProvider: boolean;
+    urls: { cancel: string | null };
 };
 
 export type AwaitingPaymentItem = {
@@ -86,7 +127,8 @@ export type AdminPaymentsProps = {
     recent: RecentPayment[];
     awaiting: Paginated<AwaitingPaymentItem> | null;
     payments: Paginated<PaymentListItem> | null;
-    can: { confirm: boolean };
+    refunds: Paginated<RefundItem> | null;
+    can: { confirm: boolean; refund: boolean };
     remindAllUrl: string;
     reminderDays: number[];
 };

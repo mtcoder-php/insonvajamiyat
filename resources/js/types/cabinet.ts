@@ -151,6 +151,7 @@ export type AuthorArticlePayment = {
     receipt: string | null;
     provider: string | null;
     paidAt: string | null;
+    refundedAt: string | null;
     requisites: Partial<
         Record<'recipient' | 'bank' | 'account' | 'mfo' | 'inn', string>
     >;

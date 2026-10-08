@@ -2,8 +2,11 @@
 
 namespace App\Http\Resources\Admin;
 
+use App\Enums\PaymentStatus;
 use App\Models\Payment;
 use App\Models\PaymentItem;
+use App\Models\Refund;
+use App\Services\Payments\RefundService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -53,6 +56,15 @@ class PaymentListResource extends JsonResource
             'note' => $this->confirmation_note,
             'proofName' => is_string($proof) ? ($this->meta['proof_name'] ?? 'kvitansiya') : null,
             'proofUrl' => is_string($proof) ? route('admin.payments.proof', $this->uuid) : null,
+            'refundedAt' => $this->refunded_at?->toIso8601String(),
+            // Qaytarish: mumkin emasligi sababi (null — mumkin) va tarix
+            'refund' => $this->status === PaymentStatus::Paid || ($this->relationLoaded('refunds') && $this->refunds->isNotEmpty()) ? [
+                'blocked' => $this->resource instanceof Payment ? RefundService::blockedReason($this->resource) : null,
+                'url' => route('admin.payments.refund', $this->uuid),
+                'history' => $this->relationLoaded('refunds')
+                    ? RefundResource::collection($this->refunds->sortByDesc('id')->each(fn (Refund $r) => $r->setRelation('payment', $this->resource))->values())->resolve()
+                    : [],
+            ] : null,
         ];
     }
 }

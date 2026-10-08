@@ -8,6 +8,7 @@ import {
     Hourglass,
     LoaderCircle,
     Search,
+    Undo2,
     Wallet,
     X,
 } from '@lucide/vue';
@@ -20,6 +21,9 @@ import PaymentStatCards from '@/components/admin/payments/PaymentStatCards.vue';
 import PaymentStatusPill from '@/components/admin/payments/PaymentStatusPill.vue';
 import ProviderBadge from '@/components/admin/payments/ProviderBadge.vue';
 import ProviderDonut from '@/components/admin/payments/ProviderDonut.vue';
+import RefundPaymentDialog from '@/components/admin/payments/RefundPaymentDialog.vue';
+import RefundStatusPill from '@/components/admin/payments/RefundStatusPill.vue';
+import ActionDialog from '@/components/admin/ui/ActionDialog.vue';
 import WaivePaymentDialog from '@/components/admin/payments/WaivePaymentDialog.vue';
 import PageHeader from '@/components/admin/ui/PageHeader.vue';
 import Pagination from '@/components/admin/ui/Pagination.vue';
@@ -33,6 +37,7 @@ import type {
     AwaitingPaymentItem,
     PaymentListItem,
     PaymentTab,
+    RefundItem,
 } from '@/types';
 import { t, tc, tk } from '@/lib/i18n';
 
@@ -58,6 +63,7 @@ const tabs: { key: PaymentTab; label: string }[] = [
     { key: 'payme', label: 'Payme' },
     { key: 'manual', label: t("Qo'lda tasdiqlangan") },
     { key: 'failed', label: t('Muvaffaqiyatsiz') },
+    { key: 'refunds', label: t('Qaytarishlar') },
 ];
 
 const form = reactive({
@@ -76,7 +82,7 @@ function apply(): void {
         preserveState: true,
         preserveScroll: true,
         replace: true,
-        only: ['filters', 'awaiting', 'payments', 'counts'],
+        only: ['filters', 'awaiting', 'payments', 'refunds', 'counts'],
     });
 }
 
@@ -97,7 +103,43 @@ watch(
     (tab) => (form.tab = tab),
 );
 
-const meta = computed(() => (props.awaiting ?? props.payments)?.meta ?? null);
+const meta = computed(
+    () => (props.awaiting ?? props.payments ?? props.refunds)?.meta ?? null,
+);
+
+// Qaytarish (refund)
+const refunding = ref<PaymentListItem | null>(null);
+const refundOpen = ref(false);
+
+function openRefund(payment: PaymentListItem): void {
+    detailOpen.value = false;
+    refunding.value = payment;
+    refundOpen.value = true;
+}
+
+const cancelling = ref<RefundItem | null>(null);
+const cancelOpen = ref(false);
+const cancelProcessing = ref(false);
+
+function askCancel(refund: RefundItem): void {
+    cancelling.value = refund;
+    cancelOpen.value = true;
+}
+
+function cancelRefund(): void {
+    const url = cancelling.value?.urls.cancel;
+
+    if (!url) {
+        return;
+    }
+
+    router.delete(url, {
+        preserveScroll: true,
+        onStart: () => (cancelProcessing.value = true),
+        onFinish: () => (cancelProcessing.value = false),
+        onSuccess: () => (cancelOpen.value = false),
+    });
+}
 
 // Dialoglar
 const selected = ref<AwaitingPaymentItem | null>(null);
@@ -188,7 +230,7 @@ function showDetail(payment: PaymentListItem): void {
             class="overflow-hidden rounded-xl border border-line bg-white shadow-[0_1px_2px_rgba(0,30,60,0.05)]"
         >
             <div
-                class="flex flex-col gap-3 border-b border-line px-4 pt-3 xl:flex-row xl:items-end xl:justify-between"
+                class="flex flex-col gap-3 border-b border-line px-4 pt-3 2xl:flex-row 2xl:items-end 2xl:justify-between"
             >
                 <div
                     class="-mb-px flex gap-1 overflow-x-auto"
@@ -229,7 +271,7 @@ function showDetail(payment: PaymentListItem): void {
                         </span>
                     </button>
                 </div>
-                <label class="relative mb-3 block xl:w-80">
+                <label class="relative mb-3 block 2xl:w-80">
                     <span class="sr-only">{{ t('Qidirish') }}</span>
                     <Search
                         class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-navy-400"
@@ -601,8 +643,169 @@ function showDetail(payment: PaymentListItem): void {
                     <p class="text-sm text-navy-600">
                         {{
                             form.search
-                                ? "Qidiruv bo'yicha to'lov topilmadi"
-                                : "Hozircha to'lovlar yo'q"
+                                ? t("Qidiruv bo'yicha to'lov topilmadi")
+                                : t("Hozircha to'lovlar yo'q")
+                        }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Qaytarishlar tarixi -->
+            <div v-else-if="refunds" class="overflow-x-auto">
+                <table
+                    v-if="refunds.data.length"
+                    class="w-full min-w-[1080px] text-left text-[13px]"
+                >
+                    <thead>
+                        <tr
+                            class="border-b border-line bg-[#f8fafc] text-[11px] font-semibold tracking-wide text-navy-500 uppercase"
+                        >
+                            <th class="py-3 pr-4 pl-5">{{ t('Chek') }}</th>
+                            <th class="py-3 pr-4">{{ t("To'lovchi") }}</th>
+                            <th class="py-3 pr-4 text-right">
+                                {{ t('Summa') }}
+                            </th>
+                            <th class="py-3 pr-4">{{ t("To'lov usuli") }}</th>
+                            <th class="py-3 pr-4">{{ t('Sabab') }}</th>
+                            <th class="py-3 pr-4">{{ t('Holat') }}</th>
+                            <th class="py-3 pr-4">{{ t('Sana') }}</th>
+                            <th class="py-3 pr-5 text-right">
+                                {{ t('Amallar') }}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-line">
+                        <tr
+                            v-for="refund in refunds.data"
+                            :key="refund.id"
+                            :class="
+                                cn(
+                                    'transition-colors hover:bg-brand-50/40',
+                                    refund.awaitingProvider && 'bg-amber-50/40',
+                                )
+                            "
+                        >
+                            <td class="py-3.5 pr-4 pl-5 align-top">
+                                <p
+                                    class="font-semibold whitespace-nowrap text-navy-950 tabular-nums"
+                                >
+                                    {{ refund.payment.receipt }}
+                                </p>
+                                <p
+                                    v-if="refund.payment.transaction"
+                                    class="mt-0.5 font-mono text-[11px] text-navy-400"
+                                >
+                                    {{ refund.payment.transaction }}
+                                </p>
+                            </td>
+                            <td class="py-3.5 pr-4 align-top">
+                                <p
+                                    class="font-medium whitespace-nowrap text-navy-800"
+                                >
+                                    {{ refund.payment.user.name }}
+                                </p>
+                                <p
+                                    v-if="refund.payment.article"
+                                    class="line-clamp-1 max-w-56 text-xs text-navy-500"
+                                >
+                                    {{ refund.payment.article }}
+                                </p>
+                            </td>
+                            <td
+                                class="py-3.5 pr-4 text-right align-top font-semibold whitespace-nowrap text-navy-950 tabular-nums"
+                            >
+                                {{ formatSum(refund.amount) }}
+                            </td>
+                            <td class="py-3.5 pr-4 align-top">
+                                <ProviderBadge
+                                    :provider="refund.payment.provider"
+                                    :label="refund.payment.providerLabel"
+                                />
+                            </td>
+                            <td class="py-3.5 pr-4 align-top">
+                                <p class="line-clamp-2 max-w-xs text-navy-700">
+                                    {{ refund.reason }}
+                                </p>
+                                <p
+                                    v-if="refund.error"
+                                    class="mt-0.5 line-clamp-2 max-w-xs text-xs text-red-600"
+                                >
+                                    {{ refund.error }}
+                                </p>
+                                <p
+                                    v-else-if="refund.reference"
+                                    class="mt-0.5 text-xs text-navy-400"
+                                >
+                                    {{ refund.reference }}
+                                </p>
+                            </td>
+                            <td class="py-3.5 pr-4 align-top">
+                                <RefundStatusPill
+                                    :status="refund.status"
+                                    :label="refund.statusLabel"
+                                />
+                                <p
+                                    v-if="refund.awaitingProvider"
+                                    class="mt-1 max-w-44 text-[11px] leading-snug text-amber-700"
+                                >
+                                    {{
+                                        t(
+                                            'Payme kabinetida bekor qilinishi kutilmoqda',
+                                        )
+                                    }}
+                                </p>
+                            </td>
+                            <td
+                                class="py-3.5 pr-4 align-top whitespace-nowrap tabular-nums"
+                            >
+                                <p class="text-navy-700">
+                                    {{
+                                        formatDateTime(
+                                            refund.processedAt ??
+                                                refund.createdAt,
+                                        )
+                                    }}
+                                </p>
+                                <p class="text-xs text-navy-400">
+                                    {{
+                                        refund.processedBy ?? refund.requestedBy
+                                    }}
+                                </p>
+                            </td>
+                            <td class="py-3.5 pr-5 text-right align-top">
+                                <button
+                                    v-if="refund.urls.cancel && can.refund"
+                                    type="button"
+                                    class="inline-flex h-8 items-center gap-1.5 rounded-lg border border-line px-3 text-xs font-semibold whitespace-nowrap text-navy-700 transition-all hover:-translate-y-px hover:border-red-200 hover:text-red-700"
+                                    @click="askCancel(refund)"
+                                >
+                                    <X class="size-3.5" />
+                                    {{ t('Bekor qilish') }}
+                                </button>
+                                <span v-else class="text-xs text-navy-300"
+                                    >—</span
+                                >
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div
+                    v-else
+                    class="flex flex-col items-center gap-2 py-14 text-center"
+                >
+                    <span
+                        class="flex size-12 items-center justify-center rounded-full bg-navy-50 text-navy-500"
+                    >
+                        <Undo2 class="size-6" />
+                    </span>
+                    <p class="text-sm font-semibold text-navy-900">
+                        {{ t("Qaytarilgan to'lovlar yo'q") }}
+                    </p>
+                    <p class="max-w-md text-xs text-navy-500">
+                        {{
+                            t(
+                                "To'lovni qaytarish uchun «Barcha to'lovlar» ro'yxatidan to'lovni oching va «To'lovni qaytarish» tugmasini bosing.",
+                            )
                         }}
                     </p>
                 </div>
@@ -619,5 +822,25 @@ function showDetail(payment: PaymentListItem): void {
 
     <ConfirmPaymentDialog v-model:open="confirmOpen" :article="selected" />
     <WaivePaymentDialog v-model:open="waiveOpen" :article="selected" />
-    <PaymentDetailsSheet v-model:open="detailOpen" :payment="detail" />
+    <PaymentDetailsSheet
+        v-model:open="detailOpen"
+        :payment="detail"
+        :can-refund="can.refund"
+        @refund="openRefund"
+    />
+    <RefundPaymentDialog v-model:open="refundOpen" :payment="refunding" />
+    <ActionDialog
+        v-model:open="cancelOpen"
+        :title="t('Qaytarish so\'rovini bekor qilish')"
+        :description="
+            t(
+                'To\'lov «Muvaffaqiyatli» holatida qoladi. Payme kabinetida tranzaksiya bekor qilinmagan bo\'lishi kerak.',
+            )
+        "
+        :icon="Undo2"
+        tone="danger"
+        :confirm-text="t('Bekor qilish')"
+        :processing="cancelProcessing"
+        @confirm="cancelRefund"
+    />
 </template>

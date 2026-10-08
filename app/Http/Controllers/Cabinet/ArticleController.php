@@ -288,7 +288,7 @@ class ArticleController extends Controller
     }
 
     /**
-     * Nashr to'lovi: summa, holat, chek raqami; "To'lov kutilmoqda" da — bank rekvizitlari.
+     * Nashr to'lovi: summa, holat, chek raqami (qaytarilgan bo'lsa — sanasi); "To'lov kutilmoqda" da — bank rekvizitlari.
      * Qoralama va bepul (ozod qilingan) maqolada to'lov bloki ko'rsatilmaydi.
      *
      * @return array<string, mixed>|null
@@ -297,7 +297,7 @@ class ArticleController extends Controller
     {
         $payment = $article->payments()
             ->where('purpose', PaymentPurpose::Publication->value)
-            ->where('status', PaymentStatus::Paid->value)
+            ->whereIn('status', [PaymentStatus::Paid->value, PaymentStatus::Refunded->value])
             ->latest('paid_at')
             ->first();
         $awaiting = $article->status === ArticleStatus::AwaitingPayment;
@@ -320,6 +320,7 @@ class ArticleController extends Controller
             'receipt' => $payment?->receipt_number,
             'provider' => $payment?->provider->label(),
             'paidAt' => $payment?->paid_at?->toIso8601String(),
+            'refundedAt' => $payment?->refunded_at?->toIso8601String(),
             'requisites' => $awaiting ? $requisites : [],
             'purpose' => $awaiting
                 ? __("Nashr to'lovi: maqola :id", ['id' => mb_strtoupper(mb_substr($article->uuid, 0, 8))])
