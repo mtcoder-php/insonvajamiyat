@@ -21,6 +21,10 @@ abstract class TestCase extends BaseTestCase
 
         // Testlar `npm run build` natijasiga (Vite manifest) bog'liq bo'lmasin
         $this->withoutVite();
+
+        // SSR o'chiq: `npm run dev` ishlab turganda (public/hot) Inertia Vite serveriga SSR so'rovi
+        // yubormasin — testlar tashqi jarayonga bog'liq bo'lmasin va Http::preventStrayRequests() buzilmasin
+        config(['inertia.ssr.enabled' => false]);
     }
 
     protected function skipUnlessFortifyHas(string $feature, ?string $message = null): void
