@@ -3,6 +3,7 @@ import { computed, ref } from 'vue';
 import { niceScale, smoothLine } from '@/lib/chart';
 import { formatCompact, formatNumber } from '@/lib/format';
 import type { ChartSeries } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Ko'p chiziqli grafik (kutubxonasiz SVG): yumshoq chiziqlar, birinchi seriya ostida
@@ -18,7 +19,7 @@ const props = withDefaults(
         format?: (value: number) => string;
         ariaLabel?: string;
     }>(),
-    { height: 250, area: true, format: undefined, ariaLabel: 'Grafik' },
+    { height: 250, area: true, format: undefined, ariaLabel: undefined },
 );
 
 const W = 640;
@@ -83,7 +84,7 @@ function onMove(event: MouseEvent): void {
             :viewBox="`0 0 ${W} ${H}`"
             class="h-auto w-full touch-none"
             role="img"
-            :aria-label="ariaLabel"
+            :aria-label="ariaLabel ?? t('Grafik')"
             @mousemove="onMove"
             @mouseleave="hovered = null"
         >

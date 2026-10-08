@@ -17,6 +17,7 @@ import { cn } from '@/lib/utils';
 import { dashboard } from '@/routes/admin';
 import { index } from '@/routes/admin/reviews';
 import type { LocaleCode, ReviewShowProps } from '@/types';
+import { t, tk } from '@/lib/i18n';
 
 /**
  * Taqriz sahifasi (admin reviewer.png): anonim maqola, PDF ko'rish, taqriz formasi.
@@ -26,9 +27,9 @@ const props = defineProps<ReviewShowProps>();
 defineOptions({
     layout: {
         breadcrumbs: [
-            { title: 'Admin panel', href: dashboard() },
-            { title: 'Taqrizlarim', href: index() },
-            { title: 'Maqola', href: index() },
+            { title: tk('Admin panel'), href: dashboard() },
+            { title: tk('Taqrizlarim'), href: index() },
+            { title: tk('Maqola'), href: index() },
         ],
     },
 });
@@ -36,16 +37,16 @@ defineOptions({
 type Tab = 'content' | 'files' | 'criteria' | 'history';
 
 const tabs: { key: Tab; label: string }[] = [
-    { key: 'content', label: 'Maqola mazmuni' },
-    { key: 'files', label: 'Fayllar' },
-    { key: 'criteria', label: 'Taqrizlash mezonlari' },
-    { key: 'history', label: 'Tarix va jarayon' },
+    { key: 'content', label: t('Maqola mazmuni') },
+    { key: 'files', label: t('Fayllar') },
+    { key: 'criteria', label: t('Taqrizlash mezonlari') },
+    { key: 'history', label: t('Tarix va jarayon') },
 ];
 
 const tab = ref<Tab>('content');
 
 const LANGUAGES: Record<LocaleCode, string> = {
-    uz: "O'zbekcha",
+    uz: t("O'zbekcha"),
     ru: 'Русский',
     en: 'English',
 };
@@ -91,16 +92,22 @@ const statusTint: Record<string, string> = {
 };
 
 const criteriaHints: Record<string, string> = {
-    relevance:
+    relevance: t(
         "Mavzu fan va jamiyat uchun qanchalik dolzarb, muammo aniq qo'yilganmi.",
-    novelty:
+    ),
+    novelty: t(
         'Ilmiy yangilik, mualliflik hissasi va mavjud tadqiqotlardan farqi.',
-    methodology:
+    ),
+    methodology: t(
         "Tadqiqot usullari, ma'lumotlar va yondashuvning asoslanganligi.",
-    results: 'Natijalar ishonchliligi, tahlil chuqurligi va dalillar sifati.',
-    conclusions:
+    ),
+    results: t(
+        'Natijalar ishonchliligi, tahlil chuqurligi va dalillar sifati.',
+    ),
+    conclusions: t(
         'Xulosalar natijalardan kelib chiqadimi, amaliy tavsiyalar bormi.',
-    references: "Manbalar soni, dolzarbligi va to'g'ri rasmiylashtirilishi.",
+    ),
+    references: t("Manbalar soni, dolzarbligi va to'g'ri rasmiylashtirilishi."),
 };
 
 const history = computed(() =>
@@ -113,10 +120,10 @@ const history = computed(() =>
             at: props.review.respondedAt,
             text:
                 props.review.status === 'declined'
-                    ? 'Taklif rad etildi'
-                    : 'Taklif qabul qilindi',
+                    ? t('Taklif rad etildi')
+                    : t('Taklif qabul qilindi'),
         },
-        { at: props.review.completedAt, text: 'Taqriz topshirildi' },
+        { at: props.review.completedAt, text: t('Taqriz topshirildi') },
     ].filter((e) => e.at),
 );
 </script>
@@ -141,7 +148,7 @@ const history = computed(() =>
                                 :href="review.urls.index"
                                 class="inline-flex items-center gap-1.5 rounded-lg border border-line px-3 py-1.5 text-[13px] font-semibold text-navy-800 transition-all hover:-translate-x-0.5 hover:border-brand-300 hover:text-brand-700"
                             >
-                                <ArrowLeft class="size-4" /> Orqaga
+                                <ArrowLeft class="size-4" /> {{ t('Orqaga') }}
                             </Link>
                             <h1
                                 class="mt-3 font-serif text-2xl leading-snug font-bold text-navy-950 md:text-[28px]"
@@ -159,8 +166,11 @@ const history = computed(() =>
                                     class="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-2.5 py-1 text-[11px] font-semibold text-red-700 ring-1 ring-red-200 ring-inset"
                                 >
                                     <ShieldCheck class="size-3.5" />
-                                    Blind Review (muallif ma'lumotlari
-                                    ko'rsatilmaydi)
+                                    {{
+                                        t(
+                                            "Blind Review (muallif ma'lumotlari ko'rsatilmaydi)",
+                                        )
+                                    }}
                                 </span>
                             </div>
                         </div>
@@ -169,7 +179,7 @@ const history = computed(() =>
                         >
                             <div>
                                 <dt class="text-[11px] text-navy-500">
-                                    Maqola ID
+                                    {{ t('Maqola ID') }}
                                 </dt>
                                 <dd class="font-bold text-navy-900">
                                     #IJ-{{ article.code }}
@@ -177,20 +187,24 @@ const history = computed(() =>
                             </div>
                             <div>
                                 <dt class="text-[11px] text-navy-500">
-                                    Qabul qilingan
+                                    {{ t('Qabul qilingan') }}
                                 </dt>
                                 <dd class="font-bold text-navy-900">
                                     {{ formatDate(article.submittedAt) }}
                                 </dd>
                             </div>
                             <div>
-                                <dt class="text-[11px] text-navy-500">Turi</dt>
+                                <dt class="text-[11px] text-navy-500">
+                                    {{ t('Turi') }}
+                                </dt>
                                 <dd class="font-medium text-navy-900">
                                     {{ article.type }}
                                 </dd>
                             </div>
                             <div>
-                                <dt class="text-[11px] text-navy-500">Holat</dt>
+                                <dt class="text-[11px] text-navy-500">
+                                    {{ t('Holat') }}
+                                </dt>
                                 <dd>
                                     <span
                                         :class="
@@ -211,29 +225,42 @@ const history = computed(() =>
                         class="mt-5 grid gap-4 rounded-xl bg-[#f5f8fc] px-4 py-3 text-[13px] sm:grid-cols-4"
                     >
                         <div>
-                            <p class="text-[11px] text-navy-500">Muallif</p>
+                            <p class="text-[11px] text-navy-500">
+                                {{ t('Muallif') }}
+                            </p>
                             <p
                                 class="flex items-center gap-1.5 font-semibold text-navy-800"
                             >
-                                <Lock class="size-3.5 text-navy-400" /> Anonim
+                                <Lock class="size-3.5 text-navy-400" />
+                                {{ t('Anonim') }}
                             </p>
                         </div>
                         <div>
-                            <p class="text-[11px] text-navy-500">Yo'nalish</p>
+                            <p class="text-[11px] text-navy-500">
+                                {{ t("Yo'nalish") }}
+                            </p>
                             <p class="font-semibold text-navy-800">
                                 {{ article.subject ?? '—' }}
                             </p>
                         </div>
                         <div>
-                            <p class="text-[11px] text-navy-500">Til</p>
+                            <p class="text-[11px] text-navy-500">
+                                {{ t('Til') }}
+                            </p>
                             <p class="font-semibold text-navy-800">
                                 {{ LANGUAGES[article.language] }}
                             </p>
                         </div>
                         <div>
-                            <p class="text-[11px] text-navy-500">Raund</p>
+                            <p class="text-[11px] text-navy-500">
+                                {{ t('Raund') }}
+                            </p>
                             <p class="font-semibold text-navy-800">
-                                {{ review.round }}-taqriz raundi
+                                {{
+                                    t(':number-taqriz raundi', {
+                                        number: review.round,
+                                    })
+                                }}
                             </p>
                         </div>
                     </div>
@@ -285,8 +312,11 @@ const history = computed(() =>
                                 <p
                                     class="text-[11px] font-semibold tracking-wide text-orange-700 uppercase"
                                 >
-                                    Muallif javobi · v{{
-                                        article.authorResponse.version
+                                    {{
+                                        t('Muallif javobi · v:version', {
+                                            version:
+                                                article.authorResponse.version,
+                                        })
                                     }}
                                 </p>
                                 <p
@@ -295,8 +325,11 @@ const history = computed(() =>
                                     {{ article.authorResponse.note }}
                                 </p>
                                 <p class="mt-2 text-[11px] text-navy-500">
-                                    Oldingi raund izohlariga javob. Tuzatilgan
-                                    fayl «Fayllar» tabida birinchi turadi.
+                                    {{
+                                        t(
+                                            'Oldingi raund izohlariga javob. Tuzatilgan fayl «Fayllar» tabida birinchi turadi.',
+                                        )
+                                    }}
                                 </p>
                             </div>
                             <div
@@ -307,7 +340,7 @@ const history = computed(() =>
                                 <p
                                     class="text-[11px] font-semibold tracking-wide text-brand-700 uppercase"
                                 >
-                                    Annotatsiya · {{ item.label }}
+                                    {{ t('Annotatsiya') }} · {{ item.label }}
                                 </p>
                                 <p
                                     v-if="item.title"
@@ -325,7 +358,7 @@ const history = computed(() =>
                                 <p
                                     class="mb-2 text-xs font-semibold text-navy-700"
                                 >
-                                    Kalit so'zlar
+                                    {{ t("Kalit so'zlar") }}
                                 </p>
                                 <div class="flex flex-wrap gap-1.5">
                                     <span
@@ -344,12 +377,14 @@ const history = computed(() =>
                                     class="mt-0.5 size-4 shrink-0 text-emerald-600"
                                 />
                                 <span>
-                                    <b class="block text-[13px]"
-                                        >Blind Review</b
-                                    >
-                                    Muallifning shaxsiy ma'lumotlari sizga
-                                    ko'rsatilmaydi. Maqola anonim tarzda taqriz
-                                    qilinadi.
+                                    <b class="block text-[13px]">{{
+                                        t('Blind Review')
+                                    }}</b>
+                                    {{
+                                        t(
+                                            "Muallifning shaxsiy ma'lumotlari sizga ko'rsatilmaydi. Maqola anonim tarzda taqriz qilinadi.",
+                                        )
+                                    }}
                                 </span>
                             </div>
                         </div>
@@ -365,8 +400,11 @@ const history = computed(() =>
                                     <Lock class="size-6" />
                                 </span>
                                 <p class="max-w-sm text-sm text-navy-600">
-                                    Maqola fayllari taklifni qabul
-                                    qilganingizdan so'ng ochiladi.
+                                    {{
+                                        t(
+                                            "Maqola fayllari taklifni qabul qilganingizdan so'ng ochiladi.",
+                                        )
+                                    }}
                                 </p>
                             </div>
                             <div
@@ -396,9 +434,9 @@ const history = computed(() =>
                                         class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-brand-700 transition-colors hover:bg-brand-50"
                                     >
                                         <Download class="size-4" />
-                                        <span class="hidden sm:inline"
-                                            >Yuklab olish</span
-                                        >
+                                        <span class="hidden sm:inline">{{
+                                            t('Yuklab olish')
+                                        }}</span>
                                     </a>
                                     <a
                                         :href="pdf.viewUrl"
@@ -407,9 +445,9 @@ const history = computed(() =>
                                         class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-navy-700 transition-colors hover:bg-navy-50"
                                     >
                                         <ExternalLink class="size-4" />
-                                        <span class="hidden sm:inline"
-                                            >To'liq ekran</span
-                                        >
+                                        <span class="hidden sm:inline">{{
+                                            t("To'liq ekran")
+                                        }}</span>
                                     </a>
                                 </div>
                                 <iframe
@@ -435,7 +473,11 @@ const history = computed(() =>
                             v-if="locked"
                             class="py-8 text-center text-sm text-navy-500"
                         >
-                            Fayllar taklifni qabul qilgandan keyin ochiladi.
+                            {{
+                                t(
+                                    'Fayllar taklifni qabul qilgandan keyin ochiladi.',
+                                )
+                            }}
                         </p>
                         <ul v-else class="grid gap-2">
                             <li
@@ -462,14 +504,15 @@ const history = computed(() =>
                                     :href="file.downloadUrl"
                                     class="inline-flex items-center gap-1.5 rounded-lg border border-line px-3 py-1.5 text-xs font-semibold text-navy-800 transition-colors hover:border-brand-300 hover:text-brand-700"
                                 >
-                                    <Download class="size-4" /> Yuklab olish
+                                    <Download class="size-4" />
+                                    {{ t('Yuklab olish') }}
                                 </a>
                             </li>
                             <li
                                 v-if="!files.length"
                                 class="py-8 text-center text-sm text-navy-500"
                             >
-                                Fayllar yo'q.
+                                {{ t("Fayllar yo'q.") }}
                             </li>
                         </ul>
                     </div>
@@ -494,8 +537,11 @@ const history = computed(() =>
                             </p>
                         </div>
                         <p class="text-xs text-navy-500 sm:col-span-2">
-                            Har bir mezon 1 dan 5 gacha (0,5 qadam) baholanadi:
-                            1 — juda past, 3 — qoniqarli, 5 — a'lo.
+                            {{
+                                t(
+                                    "Har bir mezon 1 dan 5 gacha (0,5 qadam) baholanadi: 1 — juda past, 3 — qoniqarli, 5 — a'lo.",
+                                )
+                            }}
                         </p>
                     </div>
 

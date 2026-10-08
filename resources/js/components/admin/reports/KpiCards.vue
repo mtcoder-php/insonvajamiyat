@@ -13,6 +13,7 @@ import type { Component } from 'vue';
 import { formatNumber } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { ReportKpi, ReportKpiKey } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * 6 ta asosiy ko'rsatkich. O'zgarish rangi ko'rsatkich "yaxshi" yo'nalishiga qarab:
@@ -25,33 +26,33 @@ const meta: Record<
     { label: string; icon: Component; tint: string; suffix?: string }
 > = {
     submitted: {
-        label: 'Yuborilgan maqolalar',
+        label: t('Yuborilgan maqolalar'),
         icon: FileText,
         tint: 'bg-brand-50 text-brand-600 ring-brand-100',
     },
     accepted: {
-        label: 'Qabul qilingan',
+        label: t('Qabul qilingan'),
         icon: CircleCheck,
         tint: 'bg-emerald-50 text-emerald-600 ring-emerald-100',
     },
     rejected: {
-        label: 'Rad etilgan',
+        label: t('Rad etilgan'),
         icon: CircleX,
         tint: 'bg-red-50 text-red-600 ring-red-100',
     },
     review_days: {
-        label: "O'rtacha taqriz vaqti",
+        label: t("O'rtacha taqriz vaqti"),
         icon: Clock3,
         tint: 'bg-amber-50 text-amber-600 ring-amber-100',
         suffix: 'kun',
     },
     authors: {
-        label: 'Faol mualliflar',
+        label: t('Faol mualliflar'),
         icon: UsersRound,
         tint: 'bg-violet-50 text-violet-600 ring-violet-100',
     },
     views: {
-        label: "Maqola ko'rishlari",
+        label: t("Maqola ko'rishlari"),
         icon: Eye,
         tint: 'bg-cyan-50 text-cyan-700 ring-cyan-100',
     },
@@ -77,7 +78,7 @@ function display(kpi: ReportKpi): string {
 <template>
     <section
         class="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 2xl:grid-cols-6"
-        aria-label="Asosiy ko'rsatkichlar"
+        :aria-label="t('Asosiy ko\'rsatkichlar')"
     >
         <article
             v-for="kpi in kpis"
@@ -132,7 +133,7 @@ function display(kpi: ReportKpi): string {
                 <span v-else class="font-semibold text-navy-400">—</span>
             </p>
             <p class="mt-1 text-[11px] leading-tight text-navy-400">
-                oldingi {{ days }} kunga nisbatan
+                {{ t('oldingi :days kunga nisbatan', { days }) }}
             </p>
         </article>
     </section>

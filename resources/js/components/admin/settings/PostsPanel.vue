@@ -27,6 +27,7 @@ import type {
 import DeleteDialog from './DeleteDialog.vue';
 import PostDialog from './PostDialog.vue';
 import { useSettingsQuery } from './useSettingsQuery';
+import { t } from '@/lib/i18n';
 
 /** Yangiliklar va e'lonlar: tur bo'yicha filtr, qidiruv, sahifalash */
 const props = defineProps<{
@@ -58,22 +59,22 @@ function remove(post: SettingsPost): void {
 }
 
 const chips = [
-    { value: '', label: 'Hammasi', key: 'all' },
-    { value: 'news', label: 'Yangiliklar', key: 'news' },
-    { value: 'announcement', label: "E'lonlar", key: 'announcement' },
+    { value: '', label: t('Hammasi'), key: 'all' },
+    { value: 'news', label: t('Yangiliklar'), key: 'news' },
+    { value: 'announcement', label: t("E'lonlar"), key: 'announcement' },
 ] as const;
 
 const statuses: Record<SettingsPostStatus, { label: string; class: string }> = {
     published: {
-        label: 'Chop etilgan',
+        label: t('Chop etilgan'),
         class: 'bg-emerald-50 text-emerald-700 ring-emerald-200',
     },
     scheduled: {
-        label: 'Rejalashtirilgan',
+        label: t('Rejalashtirilgan'),
         class: 'bg-amber-50 text-amber-700 ring-amber-200',
     },
     draft: {
-        label: 'Qoralama',
+        label: t('Qoralama'),
         class: 'bg-slate-100 text-slate-600 ring-slate-200',
     },
 };
@@ -84,10 +85,14 @@ const statuses: Record<SettingsPostStatus, { label: string; class: string }> = {
         <header class="mb-4 flex flex-wrap items-center justify-between gap-3">
             <div>
                 <h2 class="font-sans text-[15px] font-bold text-navy-950">
-                    Yangiliklar va e'lonlar
+                    {{ t("Yangiliklar va e'lonlar") }}
                 </h2>
                 <p class="text-xs text-navy-500">
-                    Saytdagi «Yangiliklar» bo'limi va bosh sahifadagi blok
+                    {{
+                        t(
+                            "Saytdagi «Yangiliklar» bo'limi va bosh sahifadagi blok",
+                        )
+                    }}
                 </p>
             </div>
             <button
@@ -95,7 +100,7 @@ const statuses: Record<SettingsPostStatus, { label: string; class: string }> = {
                 class="inline-flex h-9 items-center gap-2 rounded-lg bg-brand-600 px-4 text-[13px] font-semibold text-white shadow-[0_8px_18px_-10px_rgba(0,108,246,0.9)] transition-all hover:-translate-y-px hover:bg-brand-500"
                 @click="open(null)"
             >
-                <Plus class="size-4" /> Xabar qo'shish
+                <Plus class="size-4" /> {{ t("Xabar qo'shish") }}
             </button>
         </header>
 
@@ -138,7 +143,7 @@ const statuses: Record<SettingsPostStatus, { label: string; class: string }> = {
                 <input
                     v-model="search"
                     type="search"
-                    placeholder="Sarlavha bo'yicha qidirish…"
+                    :placeholder="t('Sarlavha bo\'yicha qidirish…')"
                     :class="cn(inputClass, 'pl-9')"
                 />
             </label>
@@ -169,7 +174,7 @@ const statuses: Record<SettingsPostStatus, { label: string; class: string }> = {
                     <span
                         v-if="post.isPinned"
                         class="absolute top-1.5 left-1.5 inline-flex size-6 items-center justify-center rounded-full bg-gold-500 text-white shadow"
-                        title="Qadalgan"
+                        :title="t('Qadalgan')"
                     >
                         <Pin class="size-3.5" />
                     </span>
@@ -187,8 +192,8 @@ const statuses: Record<SettingsPostStatus, { label: string; class: string }> = {
                             <Newspaper v-else class="size-3" />
                             {{
                                 post.type === 'announcement'
-                                    ? "E'lon"
-                                    : 'Yangilik'
+                                    ? t("E'lon")
+                                    : t('Yangilik')
                             }}
                         </span>
                         <span
@@ -232,7 +237,8 @@ const statuses: Record<SettingsPostStatus, { label: string; class: string }> = {
                             v-if="!post.translations.body.uz"
                             class="inline-flex items-center gap-1 text-amber-600"
                         >
-                            <FileText class="size-3.5" /> Matn kiritilmagan
+                            <FileText class="size-3.5" />
+                            {{ t('Matn kiritilmagan') }}
                         </span>
                     </div>
                 </div>
@@ -244,14 +250,14 @@ const statuses: Record<SettingsPostStatus, { label: string; class: string }> = {
                         target="_blank"
                         rel="noopener"
                         class="inline-flex size-8 items-center justify-center rounded-lg text-navy-500 transition-colors hover:bg-brand-50 hover:text-brand-700"
-                        aria-label="Saytda ko'rish"
+                        :aria-label="t('Saytda ko\'rish')"
                     >
                         <ExternalLink class="size-4" />
                     </a>
                     <button
                         type="button"
                         class="inline-flex size-8 items-center justify-center rounded-lg text-navy-500 transition-colors hover:bg-brand-50 hover:text-brand-700"
-                        aria-label="Tahrirlash"
+                        :aria-label="t('Tahrirlash')"
                         @click="open(post)"
                     >
                         <PenLine class="size-4" />
@@ -259,7 +265,7 @@ const statuses: Record<SettingsPostStatus, { label: string; class: string }> = {
                     <button
                         type="button"
                         class="inline-flex size-8 items-center justify-center rounded-lg text-navy-500 transition-colors hover:bg-red-50 hover:text-red-600"
-                        aria-label="O'chirish"
+                        :aria-label="t('O\'chirish')"
                         @click="remove(post)"
                     >
                         <Trash2 class="size-4" />
@@ -292,8 +298,12 @@ const statuses: Record<SettingsPostStatus, { label: string; class: string }> = {
         <DeleteDialog
             v-model:open="deleteOpen"
             :url="removing?.urls.destroy ?? null"
-            title="Xabarni o'chirish"
-            :description="`«${removing?.title ?? ''}» saytdan olib tashlanadi.`"
+            :title="t('Xabarni o\'chirish')"
+            :description="
+                t('«:title» saytdan olib tashlanadi.', {
+                    title: removing?.title ?? '',
+                })
+            "
         />
     </section>
 </template>

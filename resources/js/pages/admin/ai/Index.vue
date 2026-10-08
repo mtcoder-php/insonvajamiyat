@@ -6,6 +6,7 @@ import PageHeader from '@/components/admin/ui/PageHeader.vue';
 import { dashboard } from '@/routes/admin';
 import { index } from '@/routes/admin/ai';
 import type { AiStudioPageProps } from '@/types';
+import { t, tk } from '@/lib/i18n';
 
 /**
  * Admin → AI Studio (super admin ai page.png). Ish maydoni — components/ai/AiStudio.vue.
@@ -15,8 +16,8 @@ const props = defineProps<AiStudioPageProps>();
 defineOptions({
     layout: {
         breadcrumbs: [
-            { title: 'Admin panel', href: dashboard() },
-            { title: 'AI Studio', href: index() },
+            { title: tk('Admin panel'), href: dashboard() },
+            { title: tk('AI Studio'), href: index() },
         ],
     },
 });
@@ -30,7 +31,11 @@ defineOptions({
             <template #header>
                 <PageHeader
                     title="AI Studio"
-                    description="Ilmiy maqolalar uchun sun'iy intellekt yordamida tahrirlash, tarjima va tahlil qilish."
+                    :description="
+                        t(
+                            'Ilmiy maqolalar uchun sun\'iy intellekt yordamida tahrirlash, tarjima va tahlil qilish.',
+                        )
+                    "
                 >
                     <template #before>
                         <span class="mb-2 inline-flex items-center gap-2">
@@ -41,7 +46,7 @@ defineOptions({
                             </span>
                             <span
                                 class="rounded-full bg-violet-100 px-2 py-0.5 text-[11px] font-bold text-violet-700"
-                                >Beta</span
+                                >{{ t('Beta') }}</span
                             >
                         </span>
                     </template>

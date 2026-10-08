@@ -37,6 +37,7 @@ import { cn } from '@/lib/utils';
 import { dashboard } from '@/routes/admin';
 import { index } from '@/routes/admin/backups';
 import type { BackupItem, BackupSettings, BackupsPageProps } from '@/types';
+import { t, tk } from '@/lib/i18n';
 
 /**
  * Admin → Zaxira nusxa: qo'lda yaratish (to'liq / baza / fayllar), jadval, ro'yxat,
@@ -47,8 +48,8 @@ const props = defineProps<BackupsPageProps>();
 defineOptions({
     layout: {
         breadcrumbs: [
-            { title: 'Admin panel', href: dashboard() },
-            { title: 'Zaxira nusxa', href: index() },
+            { title: tk('Admin panel'), href: dashboard() },
+            { title: tk('Zaxira nusxa'), href: index() },
         ],
     },
 });
@@ -74,9 +75,9 @@ const typeIcons: Record<BackupSettings['type'], Component> = {
 };
 
 const typeHints: Record<BackupSettings['type'], string> = {
-    full: "Baza va barcha yuklangan fayllar — to'liq tiklash uchun",
-    database: 'Faqat baza — tez va kichik hajm',
-    files: 'Maqola fayllari, PDF, muqova va rasmlar',
+    full: t("Baza va barcha yuklangan fayllar — to'liq tiklash uchun"),
+    database: t('Faqat baza — tez va kichik hajm'),
+    files: t('Maqola fayllari, PDF, muqova va rasmlar'),
 };
 
 const creating = ref<BackupSettings['type'] | null>(null);
@@ -102,7 +103,8 @@ function create(): void {
         {
             preserveScroll: true,
             onSuccess: () => (confirmOpen.value = false),
-            onError: (e) => (createError.value = Object.values(e)[0] ?? 'Xato'),
+            onError: (e) =>
+                (createError.value = Object.values(e)[0] ?? t('Xato')),
             onFinish: () => (creating.value = null),
         },
     );
@@ -134,10 +136,10 @@ function askRemove(item: BackupItem): void {
 const tiles = computed(() => [
     {
         key: 'last',
-        label: 'Oxirgi zaxira',
+        label: t('Oxirgi zaxira'),
         value: props.stats.last?.createdAt
             ? timeAgo(props.stats.last.createdAt)
-            : "Hali yo'q",
+            : t("Hali yo'q"),
         hint: props.stats.last?.type,
         icon: DatabaseBackup,
         tint: props.stats.last
@@ -146,7 +148,7 @@ const tiles = computed(() => [
     },
     {
         key: 'count',
-        label: 'Saqlangan arxivlar',
+        label: t('Saqlangan arxivlar'),
         value: formatNumber(props.stats.count),
         hint: `Jami ${formatFileSize(props.stats.totalSize)}`,
         icon: Archive,
@@ -154,19 +156,19 @@ const tiles = computed(() => [
     },
     {
         key: 'next',
-        label: 'Keyingi avtomatik',
+        label: t('Keyingi avtomatik'),
         value: props.stats.nextRun
             ? formatDateTime(props.stats.nextRun)
-            : "O'chirilgan",
+            : t("O'chirilgan"),
         hint: props.settings.enabled
             ? `Har kuni ${props.settings.time}`
-            : 'Jadval yoqilmagan',
+            : t('Jadval yoqilmagan'),
         icon: CalendarClock,
         tint: 'bg-violet-50 text-violet-600',
     },
     {
         key: 'disk',
-        label: "Diskda bo'sh joy",
+        label: t("Diskda bo'sh joy"),
         value:
             props.stats.freeSpace === null
                 ? '—'
@@ -186,21 +188,25 @@ const statusMeta: Record<
     { label: string; class: string; icon: Component }
 > = {
     queued: {
-        label: 'Navbatda',
+        label: t('Navbatda'),
         class: 'bg-slate-100 text-slate-600',
         icon: Clock,
     },
     running: {
-        label: 'Yaratilmoqda',
+        label: t('Yaratilmoqda'),
         class: 'bg-amber-50 text-amber-700',
         icon: LoaderCircle,
     },
     done: {
-        label: 'Tayyor',
+        label: t('Tayyor'),
         class: 'bg-emerald-50 text-emerald-700',
         icon: CircleCheck,
     },
-    failed: { label: 'Xato', class: 'bg-red-50 text-red-700', icon: CircleX },
+    failed: {
+        label: t('Xato'),
+        class: 'bg-red-50 text-red-700',
+        icon: CircleX,
+    },
 };
 
 function duration(ms: number | null): string {
@@ -231,14 +237,18 @@ const restoreCommands = computed(() =>
 </script>
 
 <template>
-    <Head title="Zaxira nusxa" />
+    <Head :title="t('Zaxira nusxa')" />
 
     <div
         class="flex flex-1 flex-col gap-5 bg-[#f5f7fb] p-4 text-navy-900 md:p-6"
     >
         <PageHeader
-            title="Zaxira nusxa"
-            description="Ma'lumotlar bazasi va yuklangan fayllarning arxivlari: qo'lda yoki har kuni avtomatik"
+            :title="t('Zaxira nusxa')"
+            :description="
+                t(
+                    'Ma\'lumotlar bazasi va yuklangan fayllarning arxivlari: qo\'lda yoki har kuni avtomatik',
+                )
+            "
         >
             <template #before>
                 <span
@@ -251,7 +261,7 @@ const restoreCommands = computed(() =>
 
         <section
             class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4"
-            aria-label="Holat"
+            :aria-label="t('Holat')"
         >
             <MetricTile
                 v-for="tile in tiles"
@@ -302,11 +312,15 @@ const restoreCommands = computed(() =>
 
                 <!-- Ro'yxat -->
                 <SectionCard
-                    title="Arxivlar"
+                    :title="t('Arxivlar')"
                     :description="
                         inProgress
-                            ? 'Zaxira yaratilmoqda — sahifa avtomatik yangilanadi'
-                            : `So'nggi ${backups.length} ta yozuv`
+                            ? t(
+                                  'Zaxira yaratilmoqda — sahifa avtomatik yangilanadi',
+                              )
+                            : t('So\'nggi :count ta yozuv', {
+                                  count: backups.length,
+                              })
                     "
                     :icon="Archive"
                 >
@@ -321,12 +335,18 @@ const restoreCommands = computed(() =>
                                 <tr
                                     class="border-b border-line bg-[#f8fafc] text-[11px] font-semibold tracking-wide text-navy-500 uppercase"
                                 >
-                                    <th class="py-2.5 pl-5">Arxiv</th>
-                                    <th class="py-2.5 pr-4">Holat</th>
-                                    <th class="py-2.5 pr-4 text-right">
-                                        Hajmi
+                                    <th class="py-2.5 pl-5">
+                                        {{ t('Arxiv') }}
                                     </th>
-                                    <th class="py-2.5 pr-4">Yaratilgan</th>
+                                    <th class="py-2.5 pr-4">
+                                        {{ t('Holat') }}
+                                    </th>
+                                    <th class="py-2.5 pr-4 text-right">
+                                        {{ t('Hajmi') }}
+                                    </th>
+                                    <th class="py-2.5 pr-4">
+                                        {{ t('Yaratilgan') }}
+                                    </th>
                                     <th class="w-20 py-2.5 pr-5" />
                                 </tr>
                             </thead>
@@ -422,8 +442,8 @@ const restoreCommands = computed(() =>
                                             >{{
                                                 item.creator ??
                                                 (item.trigger === 'schedule'
-                                                    ? 'Avtomatik'
-                                                    : 'Konsol')
+                                                    ? t('Avtomatik')
+                                                    : t('Konsol'))
                                             }}</span
                                         >
                                     </td>
@@ -433,7 +453,7 @@ const restoreCommands = computed(() =>
                                                 v-if="item.downloadUrl"
                                                 :href="item.downloadUrl"
                                                 class="flex size-8 items-center justify-center rounded-lg border border-line text-navy-500 transition-all hover:-translate-y-px hover:border-brand-200 hover:text-brand-600"
-                                                title="Yuklab olish"
+                                                :title="t('Yuklab olish')"
                                             >
                                                 <Download class="size-4" />
                                             </a>
@@ -444,7 +464,7 @@ const restoreCommands = computed(() =>
                                                 "
                                                 type="button"
                                                 class="flex size-8 items-center justify-center rounded-lg border border-line text-navy-500 transition-all hover:-translate-y-px hover:border-red-200 hover:bg-red-50 hover:text-red-600"
-                                                title="O'chirish"
+                                                :title="t('O\'chirish')"
                                                 @click="askRemove(item)"
                                             >
                                                 <Trash2 class="size-4" />
@@ -461,11 +481,14 @@ const restoreCommands = computed(() =>
                     >
                         <DatabaseBackup class="size-8 text-navy-300" />
                         <p class="text-sm font-semibold text-navy-700">
-                            Hali zaxira nusxa yo'q
+                            {{ t("Hali zaxira nusxa yo'q") }}
                         </p>
                         <p class="text-xs text-navy-500">
-                            Yuqoridan «To'liq» zaxirani yarating yoki avtomatik
-                            jadvalni yoqing.
+                            {{
+                                t(
+                                    "Yuqoridan «To'liq» zaxirani yarating yoki avtomatik jadvalni yoqing.",
+                                )
+                            }}
                         </p>
                     </div>
                 </SectionCard>
@@ -473,8 +496,12 @@ const restoreCommands = computed(() =>
 
             <aside class="flex min-w-0 flex-col gap-5">
                 <SectionCard
-                    title="Avtomatik zaxira"
-                    description="Har kuni belgilangan vaqtda (server cron: schedule:run)"
+                    :title="t('Avtomatik zaxira')"
+                    :description="
+                        t(
+                            'Har kuni belgilangan vaqtda (server cron: schedule:run)',
+                        )
+                    "
                     :icon="CalendarClock"
                 >
                     <form class="grid gap-4" @submit.prevent="saveSettings">
@@ -491,11 +518,11 @@ const restoreCommands = computed(() =>
                             <span>
                                 <span
                                     class="block text-[13px] font-semibold text-navy-900"
-                                    >Har kuni avtomatik</span
+                                    >{{ t('Har kuni avtomatik') }}</span
                                 >
                                 <span class="block text-xs text-navy-500">{{
                                     settingsForm.enabled
-                                        ? 'Yoqilgan'
+                                        ? t('Yoqilgan')
                                         : "O'chirilgan"
                                 }}</span>
                             </span>
@@ -507,7 +534,7 @@ const restoreCommands = computed(() =>
                         </label>
                         <div class="grid grid-cols-2 gap-3">
                             <FormField
-                                label="Vaqti"
+                                :label="t('Vaqti')"
                                 for="bk-time"
                                 :error="settingsForm.errors.time"
                             >
@@ -519,10 +546,10 @@ const restoreCommands = computed(() =>
                                 />
                             </FormField>
                             <FormField
-                                label="Saqlanadi"
+                                :label="t('Saqlanadi')"
                                 for="bk-keep"
                                 :error="settingsForm.errors.keep"
-                                hint="oxirgi N ta"
+                                :hint="t('oxirgi N ta')"
                             >
                                 <input
                                     id="bk-keep"
@@ -535,7 +562,7 @@ const restoreCommands = computed(() =>
                             </FormField>
                         </div>
                         <FormField
-                            label="Turi"
+                            :label="t('Turi')"
                             for="bk-type"
                             :error="settingsForm.errors.type"
                         >
@@ -564,31 +591,46 @@ const restoreCommands = computed(() =>
                                 class="size-4 animate-spin"
                             />
                             <Save v-else class="size-4" />
-                            Saqlash
+                            {{ t('Saqlash') }}
                         </button>
                     </form>
                 </SectionCard>
 
                 <SectionCard
-                    title="Tiklash"
-                    description="Xavfsizlik uchun faqat serverda, qo'lda bajariladi"
+                    :title="t('Tiklash')"
+                    :description="
+                        t('Xavfsizlik uchun faqat serverda, qo\'lda bajariladi')
+                    "
                     :icon="TerminalSquare"
                 >
                     <ol
                         class="mb-3 list-inside list-decimal space-y-1 text-xs text-navy-600"
                     >
                         <li>
-                            Saytni texnik rejimga o'tkazing: php artisan down
+                            {{
+                                t(
+                                    "Saytni texnik rejimga o'tkazing: php artisan down",
+                                )
+                            }}
                         </li>
-                        <li>Arxivni serverga yuklab, quyidagilarni bajaring</li>
-                        <li>So'ng: php artisan up</li>
+                        <li>
+                            {{
+                                t(
+                                    'Arxivni serverga yuklab, quyidagilarni bajaring',
+                                )
+                            }}
+                        </li>
+                        <li>{{ t("So'ng: php artisan up") }}</li>
                     </ol>
                     <pre
                         class="overflow-x-auto rounded-lg bg-navy-950 px-3 py-2.5 font-mono text-[11px] leading-relaxed text-emerald-200"
                         >{{ restoreCommands }}</pre>
                     <p class="mt-2 text-[11px] text-navy-400">
-                        Arxivda maxfiy ma'lumotlar bor — uni xavfsiz joyda
-                        saqlang va boshqalarga bermang.
+                        {{
+                            t(
+                                "Arxivda maxfiy ma'lumotlar bor — uni xavfsiz joyda saqlang va boshqalarga bermang.",
+                            )
+                        }}
                     </p>
                 </SectionCard>
             </aside>
@@ -596,10 +638,19 @@ const restoreCommands = computed(() =>
 
         <ActionDialog
             v-model:open="confirmOpen"
-            title="Zaxira nusxa yaratish"
-            :description="`«${types.find((t) => t.value === confirmType)?.label ?? ''}» arxivi navbatda yaratiladi. Hajmga qarab bir necha daqiqa davom etishi mumkin.`"
+            :title="t('Zaxira nusxa yaratish')"
+            :description="
+                t(
+                    '«:label» arxivi navbatda yaratiladi. Hajmga qarab bir necha daqiqa davom etishi mumkin.',
+                    {
+                        label:
+                            types.find((t) => t.value === confirmType)?.label ??
+                            '',
+                    },
+                )
+            "
             :icon="DatabaseBackup"
-            confirm-text="Boshlash"
+            :confirm-text="t('Boshlash')"
             :processing="creating !== null"
             @confirm="create"
         >
@@ -614,8 +665,12 @@ const restoreCommands = computed(() =>
         <DeleteDialog
             v-model:open="removeOpen"
             :url="removing?.destroyUrl ?? null"
-            title="Arxivni o'chirish"
-            :description="`${removing?.fileName ?? 'Arxiv'} butunlay o'chiriladi.`"
+            :title="t('Arxivni o\'chirish')"
+            :description="
+                t(':fileName butunlay o\'chiriladi.', {
+                    fileName: removing?.fileName ?? t('Arxiv'),
+                })
+            "
         />
     </div>
 </template>

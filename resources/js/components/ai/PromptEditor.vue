@@ -7,6 +7,7 @@ import { formatDateTime } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { AiPromptTemplate } from '@/types';
 import { studios } from './aiMeta';
+import { t } from '@/lib/i18n';
 
 /**
  * AI ko'rsatmasi (system prompt) tahrirlovchisi. O'rinbosarlar: {source_language}, {target_language}, {checks}, {text}.
@@ -33,7 +34,9 @@ function save(): void {
 function reset(): void {
     if (
         !confirm(
-            "Shablon standart matnga qaytarilsinmi? Joriy o'zgarishlar yo'qoladi.",
+            t(
+                "Shablon standart matnga qaytarilsinmi? Joriy o'zgarishlar yo'qoladi.",
+            ),
         )
     ) {
         return;
@@ -79,7 +82,7 @@ function reset(): void {
                 <span class="block text-[11px] text-navy-400">
                     {{
                         prompt.isActive
-                            ? 'Faol'
+                            ? t('Faol')
                             : "O'chirilgan (standart matn ishlatiladi)"
                     }}
                     <template v-if="prompt.updatedAt">
@@ -106,8 +109,9 @@ function reset(): void {
             @submit.prevent="save"
         >
             <label>
-                <span class="mb-1.5 block text-xs font-semibold text-navy-600"
-                    >Ko'rsatma (system prompt)</span
+                <span
+                    class="mb-1.5 block text-xs font-semibold text-navy-600"
+                    >{{ t("Ko'rsatma (system prompt)") }}</span
                 >
                 <textarea
                     v-model="form.system_prompt"
@@ -125,33 +129,35 @@ function reset(): void {
                     >{{ form.errors.system_prompt }}</span
                 >
                 <span class="mt-1 block text-[11px] text-navy-400">
-                    O'rinbosarlar: <code>{source_language}</code>,
+                    {{ t("O'rinbosarlar:") }}
+                    <code>{source_language}</code>,
                     <code>{target_language}</code>, <code>{checks}</code>
                 </span>
             </label>
             <label>
-                <span class="mb-1.5 block text-xs font-semibold text-navy-600"
-                    >Foydalanuvchi xabari shabloni</span
+                <span
+                    class="mb-1.5 block text-xs font-semibold text-navy-600"
+                    >{{ t('Foydalanuvchi xabari shabloni') }}</span
                 >
                 <textarea
                     v-model="form.user_prompt_template"
                     :class="cn(textareaClass, 'min-h-16 font-mono text-[12px]')"
                 />
                 <span class="mt-1 block text-[11px] text-navy-400"
-                    ><code>{text}</code> — matn bo'lagi shu joyga
-                    qo'yiladi</span
+                    ><code>{text}</code>
+                    {{ t("— matn bo'lagi shu joyga qo'yiladi") }}</span
                 >
             </label>
             <div class="grid gap-3 sm:grid-cols-4">
                 <label class="sm:col-span-2">
                     <span
                         class="mb-1.5 block text-xs font-semibold text-navy-600"
-                        >Model (ixtiyoriy)</span
+                        >{{ t('Model (ixtiyoriy)') }}</span
                     >
                     <input
                         v-model="form.model"
                         :class="inputClass"
-                        placeholder="Umumiy sozlamadagi model"
+                        :placeholder="t('Umumiy sozlamadagi model')"
                     />
                     <span
                         v-if="form.errors.model"
@@ -162,7 +168,7 @@ function reset(): void {
                 <label>
                     <span
                         class="mb-1.5 block text-xs font-semibold text-navy-600"
-                        >Temperature</span
+                        >{{ t('Temperature') }}</span
                     >
                     <input
                         v-model.number="form.temperature"
@@ -176,7 +182,7 @@ function reset(): void {
                 <label>
                     <span
                         class="mb-1.5 block text-xs font-semibold text-navy-600"
-                        >Maks. token</span
+                        >{{ t('Maks. token') }}</span
                     >
                     <input
                         v-model.number="form.max_tokens"
@@ -197,7 +203,7 @@ function reset(): void {
                         type="checkbox"
                         class="size-4 accent-brand-600"
                     />
-                    Faol (o'chirilsa — standart matn ishlatiladi)
+                    {{ t("Faol (o'chirilsa — standart matn ishlatiladi)") }}
                 </label>
                 <div class="flex gap-2">
                     <button
@@ -205,7 +211,8 @@ function reset(): void {
                         class="inline-flex h-9 items-center gap-2 rounded-lg border border-line bg-white px-3 text-[13px] font-semibold text-navy-600 transition-all hover:border-amber-300 hover:text-amber-700"
                         @click="reset"
                     >
-                        <RotateCcw class="size-4" /> Standartga qaytarish
+                        <RotateCcw class="size-4" />
+                        {{ t('Standartga qaytarish') }}
                     </button>
                     <button
                         type="submit"
@@ -216,7 +223,7 @@ function reset(): void {
                             v-if="form.processing"
                             class="size-4 animate-spin"
                         />
-                        <Save v-else class="size-4" /> Saqlash
+                        <Save v-else class="size-4" /> {{ t('Saqlash') }}
                     </button>
                 </div>
             </div>

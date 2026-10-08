@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { AppArea } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Sidebar sarlavhasidagi logotip (to'q ko'k sidebar uchun oq variant).
@@ -26,7 +27,7 @@ defineProps<{
             Inson va Jamiyat
         </span>
         <span class="truncate text-xs text-sidebar-foreground/70">
-            {{ area === 'admin' ? 'Admin panel' : 'Muallif kabineti' }}
+            {{ area === 'admin' ? t('Admin panel') : t('Muallif kabineti') }}
         </span>
     </div>
 </template>

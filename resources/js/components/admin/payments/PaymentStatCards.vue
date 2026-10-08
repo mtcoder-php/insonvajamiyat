@@ -5,6 +5,7 @@ import { computed } from 'vue';
 import { formatNumber, formatSum } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { PaymentStats, PaymentTab } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * To'lovlar statistikasi: jami tushum, Click, Payme, qo'lda tasdiqlangan, to'lov kutilmoqda.
@@ -32,7 +33,7 @@ const cards = computed<Card[]>(() => [
     {
         key: 'revenue',
         tab: 'all',
-        label: 'Jami tushum',
+        label: t('Jami tushum'),
         amount: props.stats.revenue.amount,
         hint: `Shu oy: ${formatSum(props.stats.revenue.month)}`,
         icon: Wallet,
@@ -42,7 +43,7 @@ const cards = computed<Card[]>(() => [
     {
         key: 'click',
         tab: 'click',
-        label: "Click to'lovlar",
+        label: t("Click to'lovlar"),
         amount: props.stats.click.amount,
         hint: `${formatNumber(props.stats.click.count)} ta to'lov`,
         icon: null,
@@ -54,7 +55,7 @@ const cards = computed<Card[]>(() => [
     {
         key: 'payme',
         tab: 'payme',
-        label: "Payme to'lovlar",
+        label: t("Payme to'lovlar"),
         amount: props.stats.payme.amount,
         hint: `${formatNumber(props.stats.payme.count)} ta to'lov`,
         icon: null,
@@ -66,7 +67,7 @@ const cards = computed<Card[]>(() => [
     {
         key: 'manual',
         tab: 'manual',
-        label: "Qo'lda tasdiqlangan",
+        label: t("Qo'lda tasdiqlangan"),
         amount: props.stats.manual.amount,
         hint: `${formatNumber(props.stats.manual.count)} ta to'lov`,
         icon: Landmark,
@@ -77,7 +78,7 @@ const cards = computed<Card[]>(() => [
     {
         key: 'awaiting',
         tab: 'awaiting',
-        label: "To'lov kutilmoqda",
+        label: t("To'lov kutilmoqda"),
         amount: props.stats.awaiting.amount,
         hint: `${formatNumber(props.stats.awaiting.count)} ta maqola`,
         icon: Hourglass,
@@ -89,7 +90,7 @@ const cards = computed<Card[]>(() => [
 <template>
     <section
         class="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 2xl:grid-cols-5 [&>*:last-child]:col-span-2 lg:[&>*:last-child]:col-span-1"
-        aria-label="To'lovlar statistikasi"
+        :aria-label="t('To\'lovlar statistikasi')"
     >
         <button
             v-for="card in cards"
@@ -151,7 +152,7 @@ const cards = computed<Card[]>(() => [
             <span
                 v-if="card.bar"
                 class="mt-3 block h-1.5 overflow-hidden rounded-full bg-navy-50"
-                :title="`Ulushi: ${card.share ?? 0}%`"
+                :title="t('Ulushi: :value%', { value: card.share ?? 0 })"
             >
                 <span
                     :class="

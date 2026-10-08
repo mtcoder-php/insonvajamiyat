@@ -7,6 +7,7 @@ import Breadcrumbs from '@/components/Breadcrumbs.vue';
 import { useSidebar } from '@/components/ui/sidebar';
 import LocaleSwitcher from '@/components/web/LocaleSwitcher.vue';
 import type { BreadcrumbItem } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Admin panel va muallif kabineti header'i (super admin dashboard.png):
@@ -50,8 +51,8 @@ const bannerUrl = '/images/admin/banner.png';
                 class="relative -ml-1 flex size-10 shrink-0 items-center justify-center rounded-lg text-white/85 transition-all duration-300 hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:outline-none"
                 :aria-label="
                     isMobile || state === 'collapsed'
-                        ? 'Menyuni ochish'
-                        : 'Menyuni yig\'ish'
+                        ? t('Menyuni ochish')
+                        : t('Menyuni yig\'ish')
                 "
                 @click="toggleSidebar"
             >

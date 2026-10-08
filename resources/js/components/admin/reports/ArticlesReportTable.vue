@@ -7,6 +7,7 @@ import { inputClass } from '@/lib/formStyles';
 import { formatDateTime } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { ReportArticleRow, ReportTableTab, SimpleMeta } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * "So'nggi maqolalar" jadvali: davrda yuborilgan maqolalar, holat tablari,
@@ -24,12 +25,12 @@ const emit = defineEmits<{
 }>();
 
 const tabs: { key: ReportTableTab; label: string }[] = [
-    { key: 'all', label: 'Barchasi' },
-    { key: 'new', label: 'Yangi' },
-    { key: 'reviewing', label: "Ko'rib chiqilmoqda" },
-    { key: 'accepted', label: 'Qabul qilingan' },
-    { key: 'published', label: 'Nashr etilgan' },
-    { key: 'rejected', label: 'Rad etilgan' },
+    { key: 'all', label: t('Barchasi') },
+    { key: 'new', label: t('Yangi') },
+    { key: 'reviewing', label: t("Ko'rib chiqilmoqda") },
+    { key: 'accepted', label: t('Qabul qilingan') },
+    { key: 'published', label: t('Nashr etilgan') },
+    { key: 'rejected', label: t('Rad etilgan') },
 ];
 
 const pill: Record<string, string> = {
@@ -88,7 +89,7 @@ function go(page: number): void {
                 <h2
                     class="pb-3 text-[15px] font-bold whitespace-nowrap text-navy-950"
                 >
-                    So'nggi maqolalar
+                    {{ t("So'nggi maqolalar") }}
                 </h2>
                 <div class="-mb-px flex gap-1 overflow-x-auto" role="tablist">
                     <button
@@ -112,14 +113,14 @@ function go(page: number): void {
                 </div>
             </div>
             <label class="relative mb-3 block xl:w-72">
-                <span class="sr-only">Qidirish</span>
+                <span class="sr-only">{{ t('Qidirish') }}</span>
                 <Search
                     class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-navy-400"
                 />
                 <input
                     v-model="search"
                     type="search"
-                    placeholder="Kod, sarlavha yoki muallif..."
+                    :placeholder="t('Kod, sarlavha yoki muallif...')"
                     :class="cn(inputClass, 'h-9 pl-9 text-[13px]')"
                 />
             </label>
@@ -132,14 +133,14 @@ function go(page: number): void {
                         class="border-b border-line bg-[#f8fafc] text-[11px] font-semibold tracking-wide text-navy-500 uppercase"
                     >
                         <th class="w-10 py-2.5 pr-2 pl-5">№</th>
-                        <th class="py-2.5 pr-4">Kod</th>
-                        <th class="py-2.5 pr-4">Sarlavha</th>
-                        <th class="py-2.5 pr-4">Muallif</th>
-                        <th class="py-2.5 pr-4">Yo'nalish</th>
-                        <th class="py-2.5 pr-4">Holat</th>
-                        <th class="py-2.5 pr-4">Yuborilgan</th>
+                        <th class="py-2.5 pr-4">{{ t('Kod') }}</th>
+                        <th class="py-2.5 pr-4">{{ t('Sarlavha') }}</th>
+                        <th class="py-2.5 pr-4">{{ t('Muallif') }}</th>
+                        <th class="py-2.5 pr-4">{{ t("Yo'nalish") }}</th>
+                        <th class="py-2.5 pr-4">{{ t('Holat') }}</th>
+                        <th class="py-2.5 pr-4">{{ t('Yuborilgan') }}</th>
                         <th class="py-2.5 pr-5 text-right">
-                            <span class="sr-only">Ochish</span>
+                            <span class="sr-only">{{ t('Ochish') }}</span>
                         </th>
                     </tr>
                 </thead>
@@ -200,7 +201,9 @@ function go(page: number): void {
                             <Link
                                 :href="row.url"
                                 class="inline-flex size-8 items-center justify-center rounded-lg text-navy-400 transition-all hover:bg-brand-50 hover:text-brand-700"
-                                :aria-label="`${row.code} ni ochish`"
+                                :aria-label="
+                                    t(':code ni ochish', { code: row.code })
+                                "
                             >
                                 <ArrowUpRight class="size-4" />
                             </Link>
@@ -210,7 +213,7 @@ function go(page: number): void {
             </table>
         </div>
         <p v-else class="py-10 text-center text-sm text-navy-400">
-            Tanlangan shartlar bo'yicha maqola topilmadi
+            {{ t("Tanlangan shartlar bo'yicha maqola topilmadi") }}
         </p>
 
         <div class="mt-4">

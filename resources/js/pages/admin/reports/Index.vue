@@ -31,6 +31,7 @@ import { dashboard } from '@/routes/admin';
 import { index as auditIndex } from '@/routes/admin/audit';
 import { index } from '@/routes/admin/reports';
 import type { ReportTab, ReportTableTab, ReportsPageProps } from '@/types';
+import { t, tc, tk } from '@/lib/i18n';
 
 /**
  * Admin → Statistika va hisobotlar (super admin analistic page.png).
@@ -42,8 +43,8 @@ const props = defineProps<ReportsPageProps>();
 defineOptions({
     layout: {
         breadcrumbs: [
-            { title: 'Admin panel', href: dashboard() },
-            { title: 'Statistika va hisobotlar', href: index() },
+            { title: tk('Admin panel'), href: dashboard() },
+            { title: tk('Statistika va hisobotlar'), href: index() },
         ],
     },
 });
@@ -51,9 +52,9 @@ defineOptions({
 const { can } = usePermissions();
 
 const tabs: { key: ReportTab; label: string; icon: Component }[] = [
-    { key: 'overview', label: "Umumiy ko'rsatkichlar", icon: ChartPie },
-    { key: 'reviewers', label: 'Taqrizchilar', icon: UserCheck },
-    { key: 'exports', label: 'Hisobotlar', icon: FileDown },
+    { key: 'overview', label: t("Umumiy ko'rsatkichlar"), icon: ChartPie },
+    { key: 'reviewers', label: t('Taqrizchilar'), icon: UserCheck },
+    { key: 'exports', label: t('Hisobotlar'), icon: FileDown },
 ];
 
 type Query = Record<string, string | number>;
@@ -133,19 +134,19 @@ const dynamicsSeries = computed(() =>
         ? [
               {
                   key: 'submitted',
-                  label: 'Yuborilgan',
+                  label: t('Yuborilgan'),
                   color: '#1a82f7',
                   values: props.dynamics.submitted,
               },
               {
                   key: 'accepted',
-                  label: 'Qabul qilingan',
+                  label: t('Qabul qilingan'),
                   color: '#0fa37f',
                   values: props.dynamics.accepted,
               },
               {
                   key: 'rejected',
-                  label: 'Rad etilgan',
+                  label: t('Rad etilgan'),
                   color: '#e5484d',
                   values: props.dynamics.rejected,
               },
@@ -170,7 +171,7 @@ const revenueSeries = computed(() =>
               },
               {
                   key: 'manual',
-                  label: "Bank o'tkazmasi",
+                  label: t("Bank o'tkazmasi"),
                   color: '#8b5cf6',
                   values: props.revenue.manual,
               },
@@ -180,12 +181,16 @@ const revenueSeries = computed(() =>
 </script>
 
 <template>
-    <Head title="Statistika va hisobotlar" />
+    <Head :title="t('Statistika va hisobotlar')" />
 
     <div class="flex flex-1 flex-col gap-5 bg-[#f5f7fb] p-4 md:p-6">
         <PageHeader
-            title="Statistika va hisobotlar"
-            description="Platforma faoliyati bo'yicha statistik ma'lumotlar va tahlillar"
+            :title="t('Statistika va hisobotlar')"
+            :description="
+                t(
+                    'Platforma faoliyati bo\'yicha statistik ma\'lumotlar va tahlillar',
+                )
+            "
         >
             <template #before>
                 <span
@@ -208,7 +213,7 @@ const revenueSeries = computed(() =>
         <nav
             class="-mb-1 flex gap-1 overflow-x-auto border-b border-line"
             role="tablist"
-            aria-label="Bo'limlar"
+            :aria-label="t('Bo\'limlar')"
         >
             <button
                 v-for="tab in tabs"
@@ -242,7 +247,10 @@ const revenueSeries = computed(() =>
                     <div
                         class="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]"
                     >
-                        <DashCard v-if="dynamics" title="Maqolalar dinamikasi">
+                        <DashCard
+                            v-if="dynamics"
+                            :title="t('Maqolalar dinamikasi')"
+                        >
                             <template #actions>
                                 <ul
                                     class="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-navy-600"
@@ -263,13 +271,13 @@ const revenueSeries = computed(() =>
                             <LineChart
                                 :labels="dynamics.labels"
                                 :series="dynamicsSeries"
-                                aria-label="Maqolalar dinamikasi"
+                                :aria-label="t('Maqolalar dinamikasi')"
                             />
                         </DashCard>
 
                         <DashCard
                             v-if="subjectsChart"
-                            title="Maqolalar yo'nalishlari"
+                            :title="t('Maqolalar yo\'nalishlari')"
                         >
                             <DonutChart
                                 :items="subjectsChart.items"
@@ -282,7 +290,7 @@ const revenueSeries = computed(() =>
                     <div
                         class="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]"
                     >
-                        <DashCard v-if="revenue" title="Daromadlar">
+                        <DashCard v-if="revenue" :title="t('Daromadlar')">
                             <template #actions>
                                 <div class="text-right">
                                     <p
@@ -291,7 +299,12 @@ const revenueSeries = computed(() =>
                                         {{ formatSum(revenue.total) }}
                                     </p>
                                     <p class="text-[11px] text-navy-400">
-                                        {{ revenue.count }} ta to'lov
+                                        {{
+                                            tc(
+                                                ":count ta to'lov",
+                                                revenue.count,
+                                            )
+                                        }}
                                         <span
                                             v-if="revenue.trend !== null"
                                             :class="
@@ -325,13 +338,13 @@ const revenueSeries = computed(() =>
                                 :labels="revenue.labels"
                                 :series="revenueSeries"
                                 :format="formatSum"
-                                aria-label="Daromadlar dinamikasi"
+                                :aria-label="t('Daromadlar dinamikasi')"
                             />
                         </DashCard>
 
                         <DashCard
                             v-if="countries"
-                            title="Mamlakatlar bo'yicha mualliflar"
+                            :title="t('Mamlakatlar bo\'yicha mualliflar')"
                         >
                             <HBarList
                                 :items="countries.items"
@@ -347,7 +360,7 @@ const revenueSeries = computed(() =>
 
                         <DashCard
                             v-if="organizations"
-                            title="Tashkilotlar / muassasalar"
+                            :title="t('Tashkilotlar / muassasalar')"
                         >
                             <DonutChart
                                 :items="organizations.items"
@@ -402,7 +415,7 @@ const revenueSeries = computed(() =>
 
             <aside
                 class="grid grid-cols-1 content-start gap-5 md:grid-cols-2 2xl:grid-cols-1"
-                aria-label="Qo'shimcha ma'lumotlar"
+                :aria-label="t('Qo\'shimcha ma\'lumotlar')"
             >
                 <QuickStatsCard :items="quick" />
                 <TopAuthorsCard :items="topAuthors" />

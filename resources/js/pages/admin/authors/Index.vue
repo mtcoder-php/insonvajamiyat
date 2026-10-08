@@ -22,6 +22,7 @@ import { cn } from '@/lib/utils';
 import { dashboard } from '@/routes/admin';
 import { index } from '@/routes/admin/authors';
 import type { AuthorFilters, AuthorsPageProps } from '@/types';
+import { t, tk } from '@/lib/i18n';
 
 /**
  * Admin → Mualliflar: qidiruv (ism, email, tashkilot, ORCID), yo'nalish, tartib.
@@ -31,8 +32,8 @@ const props = defineProps<AuthorsPageProps>();
 defineOptions({
     layout: {
         breadcrumbs: [
-            { title: 'Admin panel', href: dashboard() },
-            { title: 'Mualliflar', href: index() },
+            { title: tk('Admin panel'), href: dashboard() },
+            { title: tk('Mualliflar'), href: index() },
         ],
     },
 });
@@ -47,16 +48,16 @@ const { form, hasFilters, apply, reset } = usePeopleFilters<AuthorFilters>(
 );
 
 const sorts = [
-    { value: 'latest', label: "Yangi qo'shilganlar" },
-    { value: 'name', label: "Ism bo'yicha (A–Z)" },
-    { value: 'articles', label: "Ko'p maqola yuborgan" },
-    { value: 'published', label: "Ko'p nashr etilgan" },
+    { value: 'latest', label: t("Yangi qo'shilganlar") },
+    { value: 'name', label: t("Ism bo'yicha (A–Z)") },
+    { value: 'articles', label: t("Ko'p maqola yuborgan") },
+    { value: 'published', label: t("Ko'p nashr etilgan") },
 ];
 
 const tiles = computed(() => [
     {
         key: 'total',
-        label: 'Jami mualliflar',
+        label: t('Jami mualliflar'),
         value: formatNumber(props.counts.total),
         hint: `Bu oy: +${formatNumber(props.counts.newThisMonth)}`,
         icon: Users,
@@ -64,23 +65,23 @@ const tiles = computed(() => [
     },
     {
         key: 'active',
-        label: 'Maqola yuborgan',
+        label: t('Maqola yuborgan'),
         value: formatNumber(props.counts.active),
-        hint: 'Kamida bitta maqola',
+        hint: t('Kamida bitta maqola'),
         icon: PenTool,
         tint: 'bg-sky-50 text-sky-600',
     },
     {
         key: 'published',
-        label: 'Nashr etilgan',
+        label: t('Nashr etilgan'),
         value: formatNumber(props.counts.published),
-        hint: 'Maqolasi chop etilgan',
+        hint: t('Maqolasi chop etilgan'),
         icon: BookOpenCheck,
         tint: 'bg-violet-50 text-violet-600',
     },
     {
         key: 'orcid',
-        label: "ORCID bog'langan",
+        label: t("ORCID bog'langan"),
         value: formatNumber(props.counts.orcid),
         hint: props.counts.total
             ? `${Math.round((props.counts.orcid / props.counts.total) * 100)}% mualliflar`
@@ -96,19 +97,23 @@ function open(url: string): void {
 </script>
 
 <template>
-    <Head title="Mualliflar" />
+    <Head :title="t('Mualliflar')" />
 
     <div
         class="flex flex-1 flex-col gap-5 bg-[#f5f7fb] p-4 text-navy-900 md:p-6"
     >
         <PageHeader
-            title="Mualliflar"
-            description="Jurnal mualliflari: profil, yo'nalishlar, maqolalar va to'lovlar tarixi"
+            :title="t('Mualliflar')"
+            :description="
+                t(
+                    'Jurnal mualliflari: profil, yo\'nalishlar, maqolalar va to\'lovlar tarixi',
+                )
+            "
         />
 
         <section
             class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4"
-            aria-label="Statistika"
+            :aria-label="t('Statistika')"
         >
             <MetricTile
                 v-for="tile in tiles"
@@ -128,7 +133,7 @@ function open(url: string): void {
                 class="grid grid-cols-1 gap-3 border-b border-line p-4 md:grid-cols-[minmax(0,1fr)_14rem_14rem_auto]"
             >
                 <label class="relative">
-                    <span class="sr-only">Qidirish</span>
+                    <span class="sr-only">{{ t('Qidirish') }}</span>
                     <Search
                         class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-navy-400"
                     />
@@ -136,11 +141,16 @@ function open(url: string): void {
                         v-model="form.search"
                         type="search"
                         :class="cn(inputClass, 'pl-9')"
-                        placeholder="Ism, email, tashkilot yoki ORCID..."
+                        :placeholder="t('Ism, email, tashkilot yoki ORCID...')"
                     />
                 </label>
-                <SelectInput v-model="form.subject" aria-label="Yo'nalish">
-                    <option :value="null">Barcha yo'nalishlar</option>
+                <SelectInput
+                    v-model="form.subject"
+                    :aria-label="t('Yo\'nalish')"
+                >
+                    <option :value="null">
+                        {{ t("Barcha yo'nalishlar") }}
+                    </option>
                     <option
                         v-for="subject in subjects"
                         :key="subject.value"
@@ -149,7 +159,7 @@ function open(url: string): void {
                         {{ subject.label }}
                     </option>
                 </SelectInput>
-                <SelectInput v-model="form.sort" aria-label="Tartib">
+                <SelectInput v-model="form.sort" :aria-label="t('Tartib')">
                     <option v-for="s in sorts" :key="s.value" :value="s.value">
                         {{ s.label }}
                     </option>
@@ -160,7 +170,7 @@ function open(url: string): void {
                     class="inline-flex h-10 items-center justify-center gap-1.5 rounded-lg px-3 text-sm font-medium text-navy-600 transition-colors hover:bg-navy-50 hover:text-navy-900"
                     @click="reset"
                 >
-                    <X class="size-4" /> Tozalash
+                    <X class="size-4" /> {{ t('Tozalash') }}
                 </button>
             </div>
 
@@ -173,14 +183,20 @@ function open(url: string): void {
                         <tr
                             class="border-b border-line bg-[#f8fafc] text-[11px] font-semibold tracking-wide text-navy-500 uppercase"
                         >
-                            <th class="py-3 pl-5">Muallif</th>
-                            <th class="py-3 pr-4">Yo'nalishlar</th>
-                            <th class="py-3 pr-4 text-right">Maqolalar</th>
-                            <th class="py-3 pr-4 text-right">Nashr</th>
-                            <th v-if="canPayments" class="py-3 pr-4 text-right">
-                                To'langan
+                            <th class="py-3 pl-5">{{ t('Muallif') }}</th>
+                            <th class="py-3 pr-4">{{ t("Yo'nalishlar") }}</th>
+                            <th class="py-3 pr-4 text-right">
+                                {{ t('Maqolalar') }}
                             </th>
-                            <th class="py-3 pr-4">Ro'yxatdan o'tgan</th>
+                            <th class="py-3 pr-4 text-right">
+                                {{ t('Nashr') }}
+                            </th>
+                            <th v-if="canPayments" class="py-3 pr-4 text-right">
+                                {{ t("To'langan") }}
+                            </th>
+                            <th class="py-3 pr-4">
+                                {{ t("Ro'yxatdan o'tgan") }}
+                            </th>
                             <th class="w-10 py-3 pr-5" />
                         </tr>
                     </thead>
@@ -214,7 +230,7 @@ function open(url: string): void {
                                             <span
                                                 v-if="author.isBlocked"
                                                 class="shrink-0 rounded bg-red-50 px-1 text-[10px] font-semibold text-red-700"
-                                                >bloklangan</span
+                                                >{{ t('bloklangan') }}</span
                                             >
                                         </p>
                                         <p
@@ -317,7 +333,8 @@ function open(url: string): void {
                             <p
                                 class="mt-1.5 text-xs text-navy-600 tabular-nums"
                             >
-                                Maqola: <b>{{ author.articles }}</b> · Nashr:
+                                {{ t('Maqola:') }} <b>{{ author.articles }}</b>
+                                {{ t('· Nashr:') }}
                                 <b>{{ author.published }}</b>
                             </p>
                         </div>
@@ -335,10 +352,14 @@ function open(url: string): void {
                     <Users class="size-7" />
                 </span>
                 <p class="mt-4 font-semibold text-navy-900">
-                    Muallif topilmadi
+                    {{ t('Muallif topilmadi') }}
                 </p>
                 <p class="mt-1 text-sm text-navy-500">
-                    Qidiruv so'zini yoki filtrlarni o'zgartirib ko'ring.
+                    {{
+                        t(
+                            "Qidiruv so'zini yoki filtrlarni o'zgartirib ko'ring.",
+                        )
+                    }}
                 </p>
                 <button
                     v-if="hasFilters"
@@ -346,7 +367,7 @@ function open(url: string): void {
                     class="mt-4 text-sm font-semibold text-brand-700 hover:text-brand-600"
                     @click="reset"
                 >
-                    Filtrlarni tozalash
+                    {{ t('Filtrlarni tozalash') }}
                 </button>
             </div>
 

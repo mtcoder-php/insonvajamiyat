@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils';
 import type { SettingsBanner } from '@/types';
 import BannerDialog from './BannerDialog.vue';
 import DeleteDialog from './DeleteDialog.vue';
+import { t } from '@/lib/i18n';
 
 /** Bosh sahifa slayderi bannerlari */
 defineProps<{ banners: SettingsBanner[]; storeUrl: string }>();
@@ -39,11 +40,14 @@ function remove(banner: SettingsBanner): void {
         <header class="mb-4 flex flex-wrap items-center justify-between gap-3">
             <div>
                 <h2 class="font-sans text-[15px] font-bold text-navy-950">
-                    Bosh sahifa bannerlari
+                    {{ t('Bosh sahifa bannerlari') }}
                 </h2>
                 <p class="text-xs text-navy-500">
-                    Faol banner bo'lmasa, bosh sahifada standart slaydlar
-                    ko'rsatiladi
+                    {{
+                        t(
+                            "Faol banner bo'lmasa, bosh sahifada standart slaydlar ko'rsatiladi",
+                        )
+                    }}
                 </p>
             </div>
             <button
@@ -51,7 +55,7 @@ function remove(banner: SettingsBanner): void {
                 class="inline-flex h-9 items-center gap-2 rounded-lg bg-brand-600 px-4 text-[13px] font-semibold text-white shadow-[0_8px_18px_-10px_rgba(0,108,246,0.9)] transition-all hover:-translate-y-px hover:bg-brand-500"
                 @click="open(null)"
             >
-                <Plus class="size-4" /> Banner qo'shish
+                <Plus class="size-4" /> {{ t("Banner qo'shish") }}
             </button>
         </header>
 
@@ -112,8 +116,8 @@ function remove(banner: SettingsBanner): void {
                             banner.visible
                                 ? "Ko'rinmoqda"
                                 : banner.isActive
-                                  ? 'Muddatdan tashqari'
-                                  : 'Nofaol'
+                                  ? t('Muddatdan tashqari')
+                                  : t('Nofaol')
                         }}
                     </span>
                 </div>
@@ -142,14 +146,14 @@ function remove(banner: SettingsBanner): void {
                         <ExternalLink class="size-3.5 shrink-0" />
                         {{ banner.linkUrl }}
                     </a>
-                    <span class="tabular-nums"
-                        >Tartib: {{ banner.sortOrder }}</span
-                    >
+                    <span class="tabular-nums">{{
+                        t('Tartib: :order', { order: banner.sortOrder })
+                    }}</span>
                     <span class="ml-auto inline-flex gap-1">
                         <button
                             type="button"
                             class="inline-flex size-8 items-center justify-center rounded-lg text-navy-500 transition-colors hover:bg-brand-50 hover:text-brand-700"
-                            aria-label="Tahrirlash"
+                            :aria-label="t('Tahrirlash')"
                             @click="open(banner)"
                         >
                             <PenLine class="size-4" />
@@ -157,7 +161,7 @@ function remove(banner: SettingsBanner): void {
                         <button
                             type="button"
                             class="inline-flex size-8 items-center justify-center rounded-lg text-navy-500 transition-colors hover:bg-red-50 hover:text-red-600"
-                            aria-label="O'chirish"
+                            :aria-label="t('O\'chirish')"
                             @click="remove(banner)"
                         >
                             <Trash2 class="size-4" />
@@ -170,7 +174,11 @@ function remove(banner: SettingsBanner): void {
             v-if="!banners.length"
             class="rounded-xl border border-dashed border-line bg-white px-4 py-10 text-center text-sm text-navy-400"
         >
-            Bannerlar yo'q — bosh sahifada standart slaydlar ko'rsatilmoqda
+            {{
+                t(
+                    "Bannerlar yo'q — bosh sahifada standart slaydlar ko'rsatilmoqda",
+                )
+            }}
         </p>
 
         <BannerDialog
@@ -181,8 +189,12 @@ function remove(banner: SettingsBanner): void {
         <DeleteDialog
             v-model:open="deleteOpen"
             :url="removing?.urls.destroy ?? null"
-            title="Bannerni o'chirish"
-            :description="`«${removing?.title ?? ''}» banneri va uning rasmi o'chiriladi.`"
+            :title="t('Bannerni o\'chirish')"
+            :description="
+                t('«:title» banneri va uning rasmi o\'chiriladi.', {
+                    title: removing?.title ?? '',
+                })
+            "
         />
     </section>
 </template>

@@ -6,6 +6,7 @@ import { textareaClass } from '@/lib/formStyles';
 import { formatDate, formatTime } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { EditorialNote } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Tahririyat izohlari — ichki yozuvlar (muallifga ko'rinmaydi).
@@ -19,7 +20,7 @@ const props = withDefaults(
         reload: string;
         title?: string;
     }>(),
-    { title: 'Muharrir izohlari' },
+    { title: undefined },
 );
 
 const form = useForm({ body: '' });
@@ -39,12 +40,12 @@ function submit(): void {
             class="mb-3 flex items-center gap-2 text-[13px] font-bold text-navy-950"
         >
             <MessageSquareText class="size-4 text-brand-600" />
-            {{ title }}
+            {{ title ?? t('Muharrir izohlari') }}
             <span
                 class="inline-flex items-center gap-1 rounded bg-navy-50 px-1.5 py-0.5 text-[10px] font-medium text-navy-500"
             >
                 <Lock class="size-3" />
-                muallifga ko'rinmaydi
+                {{ t("muallifga ko'rinmaydi") }}
             </span>
         </h3>
 
@@ -87,7 +88,7 @@ function submit(): void {
                     v-model="form.body"
                     rows="2"
                     maxlength="2000"
-                    placeholder="Izoh yozish..."
+                    :placeholder="t('Izoh yozish...')"
                     :aria-invalid="!!form.errors.body"
                     :class="cn(textareaClass, 'min-h-12')"
                     @keydown.ctrl.enter.prevent="submit"
@@ -105,7 +106,7 @@ function submit(): void {
                 <Send
                     class="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                 />
-                Yuborish
+                {{ t('Yuborish') }}
             </button>
         </form>
     </section>

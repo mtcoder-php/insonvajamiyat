@@ -32,6 +32,7 @@ import type {
     PaymentListItem,
     PaymentTab,
 } from '@/types';
+import { t, tk } from '@/lib/i18n';
 
 /**
  * Admin → To'lovlar (supper admin payments.png): statistika, dinamika,
@@ -42,19 +43,19 @@ const props = defineProps<AdminPaymentsProps>();
 defineOptions({
     layout: {
         breadcrumbs: [
-            { title: 'Admin panel', href: dashboard() },
-            { title: "To'lovlar", href: index() },
+            { title: tk('Admin panel'), href: dashboard() },
+            { title: tk("To'lovlar"), href: index() },
         ],
     },
 });
 
 const tabs: { key: PaymentTab; label: string }[] = [
-    { key: 'awaiting', label: "To'lov kutilmoqda" },
-    { key: 'all', label: "Barcha to'lovlar" },
+    { key: 'awaiting', label: t("To'lov kutilmoqda") },
+    { key: 'all', label: t("Barcha to'lovlar") },
     { key: 'click', label: 'Click' },
     { key: 'payme', label: 'Payme' },
-    { key: 'manual', label: "Qo'lda tasdiqlangan" },
-    { key: 'failed', label: 'Muvaffaqiyatsiz' },
+    { key: 'manual', label: t("Qo'lda tasdiqlangan") },
+    { key: 'failed', label: t('Muvaffaqiyatsiz') },
 ];
 
 const form = reactive({
@@ -121,12 +122,16 @@ function showDetail(payment: PaymentListItem): void {
 </script>
 
 <template>
-    <Head title="To'lovlar" />
+    <Head :title="t('To\'lovlar')" />
 
     <div class="flex flex-1 flex-col gap-5 bg-[#f5f7fb] p-4 md:p-6">
         <PageHeader
-            title="To'lovlar"
-            description="Maqolalar uchun to'lovlar, qo'lda tasdiqlash va moliyaviy statistika"
+            :title="t('To\'lovlar')"
+            :description="
+                t(
+                    'Maqolalar uchun to\'lovlar, qo\'lda tasdiqlash va moliyaviy statistika',
+                )
+            "
         />
 
         <PaymentStatCards
@@ -152,7 +157,7 @@ function showDetail(payment: PaymentListItem): void {
                 <div
                     class="-mb-px flex gap-1 overflow-x-auto"
                     role="tablist"
-                    aria-label="To'lovlar bo'limlari"
+                    :aria-label="t('To\'lovlar bo\'limlari')"
                 >
                     <button
                         v-for="tab in tabs"
@@ -189,7 +194,7 @@ function showDetail(payment: PaymentListItem): void {
                     </button>
                 </div>
                 <label class="relative mb-3 block xl:w-80">
-                    <span class="sr-only">Qidirish</span>
+                    <span class="sr-only">{{ t('Qidirish') }}</span>
                     <Search
                         class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-navy-400"
                     />
@@ -198,8 +203,10 @@ function showDetail(payment: PaymentListItem): void {
                         type="search"
                         :placeholder="
                             form.tab === 'awaiting'
-                                ? 'Maqola yoki muallif...'
-                                : 'Chek, hujjat raqami, muallif yoki maqola...'
+                                ? t('Maqola yoki muallif...')
+                                : t(
+                                      'Chek, hujjat raqami, muallif yoki maqola...',
+                                  )
                         "
                         :class="cn(inputClass, 'h-9 pr-8 pl-9 text-[13px]')"
                     />
@@ -207,7 +214,7 @@ function showDetail(payment: PaymentListItem): void {
                         v-if="form.search"
                         type="button"
                         class="absolute top-1/2 right-2 -translate-y-1/2 rounded p-0.5 text-navy-400 hover:text-navy-700"
-                        aria-label="Qidiruvni tozalash"
+                        :aria-label="t('Qidiruvni tozalash')"
                         @click="form.search = ''"
                     >
                         <X class="size-3.5" />
@@ -225,12 +232,16 @@ function showDetail(payment: PaymentListItem): void {
                         <tr
                             class="border-b border-line bg-[#f8fafc] text-[11px] font-semibold tracking-wide text-navy-500 uppercase"
                         >
-                            <th class="py-3 pl-5">Maqola</th>
-                            <th class="py-3 pr-4">Muallif</th>
-                            <th class="py-3 pr-4">Maqola turi</th>
-                            <th class="py-3 pr-4 text-right">Summa</th>
-                            <th class="py-3 pr-4">Yuborilgan</th>
-                            <th class="py-3 pr-5 text-right">Amallar</th>
+                            <th class="py-3 pl-5">{{ t('Maqola') }}</th>
+                            <th class="py-3 pr-4">{{ t('Muallif') }}</th>
+                            <th class="py-3 pr-4">{{ t('Maqola turi') }}</th>
+                            <th class="py-3 pr-4 text-right">
+                                {{ t('Summa') }}
+                            </th>
+                            <th class="py-3 pr-4">{{ t('Yuborilgan') }}</th>
+                            <th class="py-3 pr-5 text-right">
+                                {{ t('Amallar') }}
+                            </th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-line">
@@ -293,7 +304,10 @@ function showDetail(payment: PaymentListItem): void {
                                     {{
                                         article.waitingDays === 0
                                             ? 'bugun'
-                                            : `${article.waitingDays} kun kutmoqda`
+                                            : t(':waitingDays kun kutmoqda', {
+                                                  waitingDays:
+                                                      article.waitingDays,
+                                              })
                                     }}
                                 </p>
                             </td>
@@ -308,7 +322,7 @@ function showDetail(payment: PaymentListItem): void {
                                         @click="confirmPayment(article)"
                                     >
                                         <BadgeCheck class="size-4" />
-                                        Tasdiqlash
+                                        {{ t('Tasdiqlash') }}
                                     </button>
                                     <button
                                         type="button"
@@ -316,14 +330,14 @@ function showDetail(payment: PaymentListItem): void {
                                         @click="waivePayment(article)"
                                     >
                                         <HandCoins class="size-4" />
-                                        Ozod qilish
+                                        {{ t('Ozod qilish') }}
                                     </button>
                                 </div>
                                 <span
                                     v-else
                                     class="block text-right text-xs text-navy-400"
                                 >
-                                    Ruxsat yo'q
+                                    {{ t("Ruxsat yo'q") }}
                                 </span>
                             </td>
                         </tr>
@@ -339,10 +353,14 @@ function showDetail(payment: PaymentListItem): void {
                         <BadgeCheck class="size-6" />
                     </span>
                     <p class="text-sm font-semibold text-navy-900">
-                        To'lov kutilayotgan maqola yo'q
+                        {{ t("To'lov kutilayotgan maqola yo'q") }}
                     </p>
                     <p class="text-xs text-navy-500">
-                        Barcha yuborilgan maqolalarning to'lovi tasdiqlangan.
+                        {{
+                            t(
+                                "Barcha yuborilgan maqolalarning to'lovi tasdiqlangan.",
+                            )
+                        }}
                     </p>
                 </div>
             </div>
@@ -357,14 +375,20 @@ function showDetail(payment: PaymentListItem): void {
                         <tr
                             class="border-b border-line bg-[#f8fafc] text-[11px] font-semibold tracking-wide text-navy-500 uppercase"
                         >
-                            <th class="py-3 pl-5">Chek</th>
-                            <th class="py-3 pr-4">Maqola / xizmat</th>
-                            <th class="py-3 pr-4">To'lovchi</th>
-                            <th class="py-3 pr-4 text-right">Summa</th>
-                            <th class="py-3 pr-4">To'lov usuli</th>
-                            <th class="py-3 pr-4">Holat</th>
-                            <th class="py-3 pr-4">Sana</th>
-                            <th class="py-3 pr-5 text-right">Amallar</th>
+                            <th class="py-3 pl-5">{{ t('Chek') }}</th>
+                            <th class="py-3 pr-4">
+                                {{ t('Maqola / xizmat') }}
+                            </th>
+                            <th class="py-3 pr-4">{{ t("To'lovchi") }}</th>
+                            <th class="py-3 pr-4 text-right">
+                                {{ t('Summa') }}
+                            </th>
+                            <th class="py-3 pr-4">{{ t("To'lov usuli") }}</th>
+                            <th class="py-3 pr-4">{{ t('Holat') }}</th>
+                            <th class="py-3 pr-4">{{ t('Sana') }}</th>
+                            <th class="py-3 pr-5 text-right">
+                                {{ t('Amallar') }}
+                            </th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-line">
@@ -430,7 +454,11 @@ function showDetail(payment: PaymentListItem): void {
                                 <button
                                     type="button"
                                     class="inline-flex size-8 items-center justify-center rounded-lg border border-line text-navy-500 transition-colors group-hover:border-brand-200 group-hover:text-brand-600"
-                                    :aria-label="`${payment.receipt} — tafsilotlar`"
+                                    :aria-label="
+                                        t(':receipt — tafsilotlar', {
+                                            receipt: payment.receipt,
+                                        })
+                                    "
                                     @click.stop="showDetail(payment)"
                                 >
                                     <Eye class="size-4" />

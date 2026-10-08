@@ -18,6 +18,7 @@ import { cn } from '@/lib/utils';
 import { dashboard } from '@/routes/admin';
 import { index } from '@/routes/admin/system';
 import type { SystemPageProps, SystemTab } from '@/types';
+import { t, tk } from '@/lib/i18n';
 
 /**
  * Admin → Tizim sozlamalari: jurnal rekvizitlari, aloqa, bank rekvizitlari, pochta va tizim holati.
@@ -28,8 +29,8 @@ const props = defineProps<SystemPageProps>();
 defineOptions({
     layout: {
         breadcrumbs: [
-            { title: 'Admin panel', href: dashboard() },
-            { title: 'Tizim sozlamalari', href: index() },
+            { title: tk('Admin panel'), href: dashboard() },
+            { title: tk('Tizim sozlamalari'), href: index() },
         ],
     },
 });
@@ -52,41 +53,50 @@ const tabs: { key: SystemTab; label: string; hint: string; icon: Component }[] =
     [
         {
             key: 'journal',
-            label: 'Jurnal',
-            hint: 'Nom, ISSN, DOI',
+            label: t('Jurnal'),
+            hint: t('Nom, ISSN, DOI'),
             icon: Building2,
         },
         {
             key: 'contacts',
-            label: 'Aloqa',
-            hint: 'Email, telefon, tarmoqlar',
+            label: t('Aloqa'),
+            hint: t('Email, telefon, tarmoqlar'),
             icon: AtSign,
         },
         {
             key: 'payment',
-            label: 'Rekvizitlar',
-            hint: "Bank orqali to'lov",
+            label: t('Rekvizitlar'),
+            hint: t("Bank orqali to'lov"),
             icon: Landmark,
         },
-        { key: 'mail', label: 'Pochta', hint: 'SMTP va test xat', icon: Mail },
+        {
+            key: 'mail',
+            label: t('Pochta'),
+            hint: t('SMTP va test xat'),
+            icon: Mail,
+        },
         {
             key: 'status',
-            label: 'Tizim holati',
-            hint: 'Server va xizmatlar',
+            label: t('Tizim holati'),
+            hint: t('Server va xizmatlar'),
             icon: MonitorCog,
         },
     ];
 </script>
 
 <template>
-    <Head title="Tizim sozlamalari" />
+    <Head :title="t('Tizim sozlamalari')" />
 
     <div
         class="flex flex-1 flex-col gap-5 bg-[#f5f7fb] p-4 text-navy-900 md:p-6"
     >
         <PageHeader
-            title="Tizim sozlamalari"
-            description="Jurnal rekvizitlari, aloqa ma'lumotlari, pochta va server holati. O'zgarishlar darhol saytda aks etadi."
+            :title="t('Tizim sozlamalari')"
+            :description="
+                t(
+                    'Jurnal rekvizitlari, aloqa ma\'lumotlari, pochta va server holati. O\'zgarishlar darhol saytda aks etadi.',
+                )
+            "
         >
             <template #before>
                 <span

@@ -24,6 +24,7 @@ import {
 } from '@/lib/formStyles';
 import { cn } from '@/lib/utils';
 import type { BroadcastAudienceOption, BroadcastItem } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Ommaviy xabar: qabul qiluvchilar guruhi (sonlari bilan), mavzu, matn, email ham yuborish;
@@ -67,18 +68,40 @@ const statusMeta: Record<
     BroadcastItem['status'],
     { label: string; class: string }
 > = {
-    queued: { label: 'Navbatda', class: 'bg-slate-100 text-slate-600' },
-    sending: { label: 'Yuborilmoqda', class: 'bg-amber-50 text-amber-700' },
-    sent: { label: 'Yuborildi', class: 'bg-emerald-50 text-emerald-700' },
-    failed: { label: 'Xato', class: 'bg-red-50 text-red-700' },
+    queued: { label: t('Navbatda'), class: 'bg-slate-100 text-slate-600' },
+    sending: { label: t('Yuborilmoqda'), class: 'bg-amber-50 text-amber-700' },
+    sent: { label: t('Yuborildi'), class: 'bg-emerald-50 text-emerald-700' },
+    failed: { label: t('Xato'), class: 'bg-red-50 text-red-700' },
 };
+
+const confirmDescription = computed(() => {
+    const replacements = {
+        subject: form.subject,
+        count: formatNumber(selected.value?.count ?? 0),
+        audience: selected.value?.label ?? '',
+    };
+
+    return form.send_email
+        ? t(
+              "«:subject» :count ta foydalanuvchiga (:audience) bildirishnoma va email sifatida yuboriladi. Yuborilgan xabarni qaytarib bo'lmaydi.",
+              replacements,
+          )
+        : t(
+              "«:subject» :count ta foydalanuvchiga (:audience) bildirishnoma sifatida yuboriladi. Yuborilgan xabarni qaytarib bo'lmaydi.",
+              replacements,
+          );
+});
 </script>
 
 <template>
     <div class="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_24rem]">
         <SectionCard
-            title="Yangi ommaviy xabar"
-            description="Tanlangan guruhdagi har bir foydalanuvchiga bildirishnoma (va ixtiyoriy email) yuboriladi"
+            :title="t('Yangi ommaviy xabar')"
+            :description="
+                t(
+                    'Tanlangan guruhdagi har bir foydalanuvchiga bildirishnoma (va ixtiyoriy email) yuboriladi',
+                )
+            "
             :icon="Megaphone"
         >
             <form
@@ -87,7 +110,7 @@ const statusMeta: Record<
             >
                 <div>
                     <p class="mb-2 text-[13px] font-semibold text-navy-800">
-                        Kimga <span class="text-red-500">*</span>
+                        {{ t('Kimga') }} <span class="text-red-500">*</span>
                     </p>
                     <div
                         class="grid grid-cols-1 gap-2 sm:grid-cols-2 2xl:grid-cols-3"
@@ -134,9 +157,10 @@ const statusMeta: Record<
                                 <span
                                     class="block text-xs text-navy-500 tabular-nums"
                                     >{{
-                                        formatNumber(audience.count)
-                                    }}
-                                    kishi</span
+                                        t(':count kishi', {
+                                            count: formatNumber(audience.count),
+                                        })
+                                    }}</span
                                 >
                             </span>
                         </button>
@@ -150,7 +174,7 @@ const statusMeta: Record<
                 </div>
 
                 <FormField
-                    label="Mavzu"
+                    :label="t('Mavzu')"
                     for="b-subject"
                     required
                     :error="form.errors.subject"
@@ -160,15 +184,25 @@ const statusMeta: Record<
                         v-model="form.subject"
                         maxlength="200"
                         :class="inputClass"
-                        placeholder="Navbatdagi son uchun maqolalar qabuli boshlandi"
+                        :placeholder="
+                            t('Navbatdagi son uchun maqolalar qabuli boshlandi')
+                        "
                     />
                 </FormField>
                 <FormField
-                    label="Matn"
+                    :label="t('Matn')"
                     for="b-body"
                     required
                     :error="form.errors.body"
-                    :hint="`${formatNumber(form.body.length)} / ${formatNumber(MAX)} · xatboshilarni bo'sh qator bilan ajrating`"
+                    :hint="
+                        t(
+                            ':count / :MAX · xatboshilarni bo\'sh qator bilan ajrating',
+                            {
+                                count: formatNumber(form.body.length),
+                                MAX: formatNumber(MAX),
+                            },
+                        )
+                    "
                 >
                     <textarea
                         id="b-body"
@@ -176,7 +210,7 @@ const statusMeta: Record<
                         rows="8"
                         :maxlength="MAX"
                         :class="textareaClass"
-                        placeholder="Hurmatli mualliflar! ..."
+                        :placeholder="t('Hurmatli mualliflar! ...')"
                     />
                 </FormField>
 
@@ -192,13 +226,14 @@ const statusMeta: Record<
                         <span
                             class="flex items-center gap-1.5 text-[13px] font-semibold text-navy-900"
                         >
-                            <Mail class="size-3.5 text-brand-600" /> Email ham
-                            yuborish
+                            <Mail class="size-3.5 text-brand-600" />
+                            {{ t('Email ham yuborish') }}
                         </span>
-                        <span class="block text-xs text-navy-500"
-                            >Emaili tasdiqlangan foydalanuvchilarga. Aks holda —
-                            faqat saytdagi bildirishnoma.</span
-                        >
+                        <span class="block text-xs text-navy-500">{{
+                            t(
+                                'Emaili tasdiqlangan foydalanuvchilarga. Aks holda — faqat saytdagi bildirishnoma.',
+                            )
+                        }}</span>
                     </span>
                 </label>
 
@@ -214,7 +249,7 @@ const statusMeta: Record<
                         :class="primaryButtonClass"
                     >
                         <Send class="size-4" />
-                        Yuborish
+                        {{ t('Yuborish') }}
                         <span
                             v-if="selected"
                             class="rounded-full bg-white/20 px-1.5 text-xs tabular-nums"
@@ -226,8 +261,8 @@ const statusMeta: Record<
         </SectionCard>
 
         <SectionCard
-            title="Yuborilganlar"
-            :description="`So'nggi ${history.length} ta`"
+            :title="t('Yuborilganlar')"
+            :description="t('So\'nggi :count ta', { count: history.length })"
             :icon="Clock"
         >
             <ul v-if="history.length" class="-mx-5 -my-5 divide-y divide-line">
@@ -252,7 +287,7 @@ const statusMeta: Record<
                                         formatNumber(item.recipients)
                                     }}
                                     <template v-if="item.sendEmail">
-                                        · email</template
+                                        {{ t('· email') }}</template
                                     ></span
                                 >
                             </span>
@@ -308,16 +343,16 @@ const statusMeta: Record<
                 v-else
                 class="rounded-lg border border-dashed border-line px-4 py-8 text-center text-sm text-navy-400"
             >
-                Hali ommaviy xabar yuborilmagan
+                {{ t('Hali ommaviy xabar yuborilmagan') }}
             </p>
         </SectionCard>
 
         <ActionDialog
             v-model:open="confirmOpen"
-            title="Xabarni yuborish"
-            :description="`«${form.subject}» ${formatNumber(selected?.count ?? 0)} ta foydalanuvchiga (${selected?.label ?? ''}) ${form.send_email ? 'bildirishnoma va email' : 'bildirishnoma'} sifatida yuboriladi. Yuborilgan xabarni qaytarib bo'lmaydi.`"
+            :title="t('Xabarni yuborish')"
+            :description="confirmDescription"
             :icon="Megaphone"
-            confirm-text="Ha, yuborish"
+            :confirm-text="t('Ha, yuborish')"
             :processing="form.processing"
             @confirm="submit"
         />

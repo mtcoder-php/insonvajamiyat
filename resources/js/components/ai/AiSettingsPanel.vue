@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils';
 import type { AiSettingsData } from '@/types';
 import PromptEditor from './PromptEditor.vue';
 import UsageLimitRow from './UsageLimitRow.vue';
+import { t } from '@/lib/i18n';
 
 /**
  * AI Studio → Sozlamalar (Super Admin): kalit va model, limitlar, ko'rsatmalar, foydalanuvchilar sarfi.
@@ -40,7 +41,9 @@ function save(): void {
 function forgetKey(): void {
     if (
         confirm(
-            "Bazadagi API kaliti o'chirilsinmi? (.env dagi kalit bo'lsa, o'sha ishlatiladi)",
+            t(
+                "Bazadagi API kaliti o'chirilsinmi? (.env dagi kalit bo'lsa, o'sha ishlatiladi)",
+            ),
         )
     ) {
         router.delete(props.settings.urls.forgetKey, { preserveScroll: true });
@@ -61,9 +64,9 @@ function find(): void {
 }
 
 const keySourceLabel: Record<AiSettingsData['values']['keySource'], string> = {
-    database: 'admin panelda kiritilgan (shifrlangan)',
-    env: '.env faylidan',
-    none: 'kiritilmagan',
+    database: t('admin panelda kiritilgan (shifrlangan)'),
+    env: t('.env faylidan'),
+    none: t('kiritilmagan'),
 };
 </script>
 
@@ -79,10 +82,10 @@ const keySourceLabel: Record<AiSettingsData['values']['keySource'], string> = {
             >
                 <div>
                     <h2 class="font-sans text-[15px] font-bold text-navy-950">
-                        Anthropic Claude API
+                        {{ t('Anthropic Claude API') }}
                     </h2>
                     <p class="text-xs text-navy-500">
-                        Kalit, model va oylik limitlar
+                        {{ t('Kalit, model va oylik limitlar') }}
                     </p>
                 </div>
                 <label
@@ -101,7 +104,9 @@ const keySourceLabel: Record<AiSettingsData['values']['keySource'], string> = {
                         class="size-4 accent-emerald-600"
                     />
                     {{
-                        form.enabled ? 'Xizmat yoqilgan' : "Xizmat o'chirilgan"
+                        form.enabled
+                            ? t('Xizmat yoqilgan')
+                            : "Xizmat o'chirilgan"
                     }}
                 </label>
             </header>
@@ -111,7 +116,7 @@ const keySourceLabel: Record<AiSettingsData['values']['keySource'], string> = {
                     <span
                         class="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-navy-600"
                     >
-                        <KeyRound class="size-3.5" /> API kaliti
+                        <KeyRound class="size-3.5" /> {{ t('API kaliti') }}
                     </span>
                     <div class="flex gap-2">
                         <input
@@ -121,7 +126,13 @@ const keySourceLabel: Record<AiSettingsData['values']['keySource'], string> = {
                             :class="inputClass"
                             :placeholder="
                                 settings.values.maskedKey
-                                    ? `Joriy: ${settings.values.maskedKey} — almashtirish uchun yangisini kiriting`
+                                    ? t(
+                                          'Joriy: :maskedKey — almashtirish uchun yangisini kiriting',
+                                          {
+                                              maskedKey:
+                                                  settings.values.maskedKey,
+                                          },
+                                      )
                                     : 'sk-ant-…'
                             "
                             :aria-invalid="!!form.errors.api_key"
@@ -132,7 +143,7 @@ const keySourceLabel: Record<AiSettingsData['values']['keySource'], string> = {
                             class="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-lg border border-line px-3 text-xs font-semibold text-navy-600 transition-colors hover:border-red-200 hover:text-red-600"
                             @click="forgetKey"
                         >
-                            <Trash2 class="size-4" /> O'chirish
+                            <Trash2 class="size-4" /> {{ t("O'chirish") }}
                         </button>
                     </div>
                     <span
@@ -144,21 +155,28 @@ const keySourceLabel: Record<AiSettingsData['values']['keySource'], string> = {
                         class="mt-1 flex items-center gap-1 text-[11px] text-navy-400"
                     >
                         <ShieldCheck class="size-3.5 text-emerald-600" />
-                        Joriy kalit:
-                        {{ keySourceLabel[settings.values.keySource] }}. Kalit
-                        bazada shifrlangan holda saqlanadi.
+                        {{
+                            t(
+                                'Joriy kalit: :source. Kalit bazada shifrlangan holda saqlanadi.',
+                                {
+                                    source: keySourceLabel[
+                                        settings.values.keySource
+                                    ],
+                                },
+                            )
+                        }}
                     </span>
                 </label>
 
                 <label>
                     <span
                         class="mb-1.5 block text-xs font-semibold text-navy-600"
-                        >Model identifikatori</span
+                        >{{ t('Model identifikatori') }}</span
                     >
                     <input
                         v-model="form.model"
                         :class="inputClass"
-                        placeholder="Anthropic konsolidagi model nomi"
+                        :placeholder="t('Anthropic konsolidagi model nomi')"
                         :aria-invalid="!!form.errors.model"
                     />
                     <span
@@ -170,7 +188,7 @@ const keySourceLabel: Record<AiSettingsData['values']['keySource'], string> = {
                 <label>
                     <span
                         class="mb-1.5 block text-xs font-semibold text-navy-600"
-                        >Bitta so'rovdagi matn (belgi)</span
+                        >{{ t("Bitta so'rovdagi matn (belgi)") }}</span
                     >
                     <input
                         v-model.number="form.max_input_chars"
@@ -188,7 +206,7 @@ const keySourceLabel: Record<AiSettingsData['values']['keySource'], string> = {
                 <label>
                     <span
                         class="mb-1.5 block text-xs font-semibold text-navy-600"
-                        >Muallif uchun oylik limit (token)</span
+                        >{{ t('Muallif uchun oylik limit (token)') }}</span
                     >
                     <input
                         v-model.number="form.author_monthly_limit"
@@ -197,14 +215,14 @@ const keySourceLabel: Record<AiSettingsData['values']['keySource'], string> = {
                         step="1000"
                         :class="inputClass"
                     />
-                    <span class="mt-1 block text-[11px] text-navy-400"
-                        >0 — cheklanmagan</span
-                    >
+                    <span class="mt-1 block text-[11px] text-navy-400">{{
+                        t('0 — cheklanmagan')
+                    }}</span>
                 </label>
                 <label>
                     <span
                         class="mb-1.5 block text-xs font-semibold text-navy-600"
-                        >Xodim uchun oylik limit (token)</span
+                        >{{ t('Xodim uchun oylik limit (token)') }}</span
                     >
                     <input
                         v-model.number="form.staff_monthly_limit"
@@ -213,9 +231,9 @@ const keySourceLabel: Record<AiSettingsData['values']['keySource'], string> = {
                         step="1000"
                         :class="inputClass"
                     />
-                    <span class="mt-1 block text-[11px] text-navy-400"
-                        >0 — cheklanmagan</span
-                    >
+                    <span class="mt-1 block text-[11px] text-navy-400">{{
+                        t('0 — cheklanmagan')
+                    }}</span>
                 </label>
             </div>
 
@@ -229,7 +247,7 @@ const keySourceLabel: Record<AiSettingsData['values']['keySource'], string> = {
                         v-if="form.processing"
                         class="size-4 animate-spin"
                     />
-                    <Save v-else class="size-4" /> Saqlash
+                    <Save v-else class="size-4" /> {{ t('Saqlash') }}
                 </button>
             </div>
         </form>
@@ -237,11 +255,14 @@ const keySourceLabel: Record<AiSettingsData['values']['keySource'], string> = {
         <!-- Ko'rsatmalar -->
         <section>
             <h2 class="mb-1 font-sans text-[15px] font-bold text-navy-950">
-                Ko'rsatma shablonlari (prompt)
+                {{ t("Ko'rsatma shablonlari (prompt)") }}
             </h2>
             <p class="mb-3 text-xs text-navy-500">
-                AI ning ishlash qoidalari. Kodni o'zgartirmasdan tahrirlanadi;
-                o'zgarish keyingi so'rovlardan kuchga kiradi.
+                {{
+                    t(
+                        "AI ning ishlash qoidalari. Kodni o'zgartirmasdan tahrirlanadi; o'zgarish keyingi so'rovlardan kuchga kiradi.",
+                    )
+                }}
             </p>
             <div class="grid grid-cols-1 gap-3">
                 <PromptEditor
@@ -261,11 +282,14 @@ const keySourceLabel: Record<AiSettingsData['values']['keySource'], string> = {
             >
                 <div>
                     <h2 class="font-sans text-[15px] font-bold text-navy-950">
-                        Tokenlar va balans
+                        {{ t('Tokenlar va balans') }}
                     </h2>
                     <p class="text-xs text-navy-500">
-                        Joriy oy sarfi va shaxsiy limitlar (bo'sh — rol bo'yicha
-                        standart)
+                        {{
+                            t(
+                                "Joriy oy sarfi va shaxsiy limitlar (bo'sh — rol bo'yicha standart)",
+                            )
+                        }}
                     </p>
                 </div>
                 <form class="relative" @submit.prevent="find">
@@ -275,7 +299,7 @@ const keySourceLabel: Record<AiSettingsData['values']['keySource'], string> = {
                     <input
                         v-model="search"
                         :class="cn(inputClass, 'h-9 w-64 pl-9')"
-                        placeholder="Ism yoki email bo'yicha qidirish"
+                        :placeholder="t('Ism yoki email bo\'yicha qidirish')"
                     />
                 </form>
             </header>
@@ -285,11 +309,15 @@ const keySourceLabel: Record<AiSettingsData['values']['keySource'], string> = {
                         class="bg-[#fafcff] text-[11px] font-semibold tracking-wide text-navy-500 uppercase"
                     >
                         <tr>
-                            <th class="px-4 py-2.5">Foydalanuvchi</th>
-                            <th class="px-4 py-2.5 text-right">So'rovlar</th>
-                            <th class="px-4 py-2.5">Sarf / limit</th>
+                            <th class="px-4 py-2.5">
+                                {{ t('Foydalanuvchi') }}
+                            </th>
                             <th class="px-4 py-2.5 text-right">
-                                Shaxsiy limit
+                                {{ t("So'rovlar") }}
+                            </th>
+                            <th class="px-4 py-2.5">{{ t('Sarf / limit') }}</th>
+                            <th class="px-4 py-2.5 text-right">
+                                {{ t('Shaxsiy limit') }}
                             </th>
                         </tr>
                     </thead>
@@ -306,8 +334,8 @@ const keySourceLabel: Record<AiSettingsData['values']['keySource'], string> = {
                             >
                                 {{
                                     settings.search
-                                        ? 'Foydalanuvchi topilmadi'
-                                        : 'Bu oy hali AI dan foydalanilmagan'
+                                        ? t('Foydalanuvchi topilmadi')
+                                        : t('Bu oy hali AI dan foydalanilmagan')
                                 }}
                             </td>
                         </tr>

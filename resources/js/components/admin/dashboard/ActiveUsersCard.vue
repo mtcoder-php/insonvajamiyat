@@ -2,6 +2,7 @@
 import DashCard from '@/components/admin/dashboard/DashCard.vue';
 import { timeAgo } from '@/lib/format';
 import type { ActiveUser } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * "Faol foydalanuvchilar" — oxirgi kirganlar.
@@ -34,7 +35,7 @@ function isOnline(value: string | null): boolean {
 </script>
 
 <template>
-    <DashCard title="Faol foydalanuvchilar">
+    <DashCard :title="t('Faol foydalanuvchilar')">
         <ul v-if="items.length" class="-mx-2 space-y-0.5">
             <li
                 v-for="(user, index) in items"
@@ -84,7 +85,7 @@ function isOnline(value: string | null): boolean {
             </li>
         </ul>
         <p v-else class="py-6 text-center text-sm text-navy-500">
-            Hozircha faol foydalanuvchilar yo'q
+            {{ t("Hozircha faol foydalanuvchilar yo'q") }}
         </p>
     </DashCard>
 </template>

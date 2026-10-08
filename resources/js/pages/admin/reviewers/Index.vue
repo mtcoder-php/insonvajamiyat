@@ -30,6 +30,7 @@ import type {
     ReviewerListItem,
     ReviewersPageProps,
 } from '@/types';
+import { t, tk } from '@/lib/i18n';
 
 /**
  * Admin → Taqrizchilar: bazasi, joriy yuklama, tezlik va muddatga rioya.
@@ -39,8 +40,8 @@ const props = defineProps<ReviewersPageProps>();
 defineOptions({
     layout: {
         breadcrumbs: [
-            { title: 'Admin panel', href: dashboard() },
-            { title: 'Taqrizchilar', href: index() },
+            { title: tk('Admin panel'), href: dashboard() },
+            { title: tk('Taqrizchilar'), href: index() },
         ],
     },
 });
@@ -62,35 +63,35 @@ const { form, hasFilters, apply, reset } = usePeopleFilters<ReviewerFilters>(
 const addOpen = ref(false);
 
 const statuses = [
-    { value: '', label: 'Barcha holatlar' },
-    { value: 'available', label: "Bo'sh (taklif qilish mumkin)" },
-    { value: 'busy', label: 'Band' },
-    { value: 'overdue', label: "Muddati o'tgan taqrizi bor" },
-    { value: 'paused', label: "To'xtatilgan" },
+    { value: '', label: t('Barcha holatlar') },
+    { value: 'available', label: t("Bo'sh (taklif qilish mumkin)") },
+    { value: 'busy', label: t('Band') },
+    { value: 'overdue', label: t("Muddati o'tgan taqrizi bor") },
+    { value: 'paused', label: t("To'xtatilgan") },
 ];
 
 const sorts = [
-    { value: 'name', label: "Ism bo'yicha (A–Z)" },
-    { value: 'load', label: 'Eng band' },
-    { value: 'completed', label: "Ko'p taqriz yozgan" },
-    { value: 'latest', label: "Yangi qo'shilganlar" },
+    { value: 'name', label: t("Ism bo'yicha (A–Z)") },
+    { value: 'load', label: t('Eng band') },
+    { value: 'completed', label: t("Ko'p taqriz yozgan") },
+    { value: 'latest', label: t("Yangi qo'shilganlar") },
 ];
 
 const tiles = computed(() => [
     {
         key: 'total',
-        label: 'Taqrizchilar',
+        label: t('Taqrizchilar'),
         value: formatNumber(props.counts.total),
         hint: props.counts.paused
             ? `${props.counts.paused} ta to'xtatilgan`
-            : 'Barchasi faol',
+            : t('Barchasi faol'),
         icon: NotebookPen,
         tint: 'bg-brand-50 text-brand-600',
         status: '' as const,
     },
     {
         key: 'available',
-        label: "Bo'sh",
+        label: t("Bo'sh"),
         value: formatNumber(props.counts.available),
         hint: `${props.busyFrom} tadan kam faol taqriz`,
         icon: UserCheck,
@@ -99,11 +100,11 @@ const tiles = computed(() => [
     },
     {
         key: 'active',
-        label: 'Faol taqrizlar',
+        label: t('Faol taqrizlar'),
         value: formatNumber(props.counts.active),
         hint: props.counts.overdue
             ? `${props.counts.overdue} tasi muddati o'tgan`
-            : "Muddati o'tgani yo'q",
+            : t("Muddati o'tgani yo'q"),
         icon: AlarmClock,
         tint: props.counts.overdue
             ? 'bg-red-50 text-red-600'
@@ -112,10 +113,10 @@ const tiles = computed(() => [
     },
     {
         key: 'speed',
-        label: "O'rtacha muddat",
+        label: t("O'rtacha muddat"),
         value:
             props.counts.avgDays === null ? '—' : `${props.counts.avgDays} kun`,
-        hint: 'Taklifdan xulosagacha',
+        hint: t('Taklifdan xulosagacha'),
         icon: Timer,
         tint: 'bg-violet-50 text-violet-600',
         status: null,
@@ -128,27 +129,27 @@ function load(reviewer: ReviewerListItem): {
 } {
     if (reviewer.isPaused) {
         return {
-            label: "To'xtatilgan",
+            label: t("To'xtatilgan"),
             class: 'bg-slate-100 text-slate-600 ring-slate-200',
         };
     }
 
     if (reviewer.overdue) {
         return {
-            label: "Muddati o'tgan",
+            label: t("Muddati o'tgan"),
             class: 'bg-red-50 text-red-700 ring-red-200',
         };
     }
 
     if (reviewer.active >= props.busyFrom) {
         return {
-            label: 'Band',
+            label: t('Band'),
             class: 'bg-amber-50 text-amber-700 ring-amber-200',
         };
     }
 
     return {
-        label: "Bo'sh",
+        label: t("Bo'sh"),
         class: 'bg-emerald-50 text-emerald-700 ring-emerald-200',
     };
 }
@@ -167,14 +168,18 @@ function speedTone(onTime: number | null): string {
 </script>
 
 <template>
-    <Head title="Taqrizchilar" />
+    <Head :title="t('Taqrizchilar')" />
 
     <div
         class="flex flex-1 flex-col gap-5 bg-[#f5f7fb] p-4 text-navy-900 md:p-6"
     >
         <PageHeader
-            title="Taqrizchilar"
-            description="Taqrizchilar bazasi: yo'nalishlar, joriy yuklama, tezlik va muddatga rioya"
+            :title="t('Taqrizchilar')"
+            :description="
+                t(
+                    'Taqrizchilar bazasi: yo\'nalishlar, joriy yuklama, tezlik va muddatga rioya',
+                )
+            "
         >
             <template #actions>
                 <button
@@ -183,14 +188,14 @@ function speedTone(onTime: number | null): string {
                     @click="addOpen = true"
                 >
                     <UserRoundPlus class="size-4" />
-                    Taqrizchi qo'shish
+                    {{ t("Taqrizchi qo'shish") }}
                 </button>
             </template>
         </PageHeader>
 
         <section
             class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4"
-            aria-label="Statistika"
+            :aria-label="t('Statistika')"
         >
             <MetricTile
                 v-for="tile in tiles"
@@ -213,7 +218,7 @@ function speedTone(onTime: number | null): string {
                 class="grid grid-cols-1 gap-3 border-b border-line p-4 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_13rem_13rem_12rem_auto]"
             >
                 <label class="relative md:col-span-2 xl:col-span-1">
-                    <span class="sr-only">Qidirish</span>
+                    <span class="sr-only">{{ t('Qidirish') }}</span>
                     <Search
                         class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-navy-400"
                     />
@@ -221,11 +226,16 @@ function speedTone(onTime: number | null): string {
                         v-model="form.search"
                         type="search"
                         :class="cn(inputClass, 'pl-9')"
-                        placeholder="Ism, email yoki tashkilot..."
+                        :placeholder="t('Ism, email yoki tashkilot...')"
                     />
                 </label>
-                <SelectInput v-model="form.subject" aria-label="Yo'nalish">
-                    <option :value="null">Barcha yo'nalishlar</option>
+                <SelectInput
+                    v-model="form.subject"
+                    :aria-label="t('Yo\'nalish')"
+                >
+                    <option :value="null">
+                        {{ t("Barcha yo'nalishlar") }}
+                    </option>
                     <option
                         v-for="subject in subjects"
                         :key="subject.value"
@@ -234,7 +244,7 @@ function speedTone(onTime: number | null): string {
                         {{ subject.label }}
                     </option>
                 </SelectInput>
-                <SelectInput v-model="form.status" aria-label="Holat">
+                <SelectInput v-model="form.status" :aria-label="t('Holat')">
                     <option
                         v-for="s in statuses"
                         :key="s.value"
@@ -243,7 +253,7 @@ function speedTone(onTime: number | null): string {
                         {{ s.label }}
                     </option>
                 </SelectInput>
-                <SelectInput v-model="form.sort" aria-label="Tartib">
+                <SelectInput v-model="form.sort" :aria-label="t('Tartib')">
                     <option v-for="s in sorts" :key="s.value" :value="s.value">
                         {{ s.label }}
                     </option>
@@ -254,7 +264,7 @@ function speedTone(onTime: number | null): string {
                     class="inline-flex h-10 items-center justify-center gap-1.5 rounded-lg px-3 text-sm font-medium text-navy-600 transition-colors hover:bg-navy-50 hover:text-navy-900"
                     @click="reset"
                 >
-                    <X class="size-4" /> Tozalash
+                    <X class="size-4" /> {{ t('Tozalash') }}
                 </button>
             </div>
 
@@ -267,13 +277,19 @@ function speedTone(onTime: number | null): string {
                         <tr
                             class="border-b border-line bg-[#f8fafc] text-[11px] font-semibold tracking-wide text-navy-500 uppercase"
                         >
-                            <th class="py-3 pl-5">Taqrizchi</th>
-                            <th class="py-3 pr-4">Yo'nalishlar</th>
-                            <th class="py-3 pr-4">Yuklama</th>
-                            <th class="py-3 pr-4 text-right">Yakunlangan</th>
-                            <th class="py-3 pr-4 text-right">O'rtacha</th>
-                            <th class="py-3 pr-4 text-right">Muddatida</th>
-                            <th class="py-3 pr-4">Holat</th>
+                            <th class="py-3 pl-5">{{ t('Taqrizchi') }}</th>
+                            <th class="py-3 pr-4">{{ t("Yo'nalishlar") }}</th>
+                            <th class="py-3 pr-4">{{ t('Yuklama') }}</th>
+                            <th class="py-3 pr-4 text-right">
+                                {{ t('Yakunlangan') }}
+                            </th>
+                            <th class="py-3 pr-4 text-right">
+                                {{ t("O'rtacha") }}
+                            </th>
+                            <th class="py-3 pr-4 text-right">
+                                {{ t('Muddatida') }}
+                            </th>
+                            <th class="py-3 pr-4">{{ t('Holat') }}</th>
                             <th class="w-10 py-3 pr-5" />
                         </tr>
                     </thead>
@@ -348,14 +364,18 @@ function speedTone(onTime: number | null): string {
                                 <span
                                     v-else
                                     class="text-xs font-medium text-amber-600"
-                                    >Belgilanmagan</span
+                                    >{{ t('Belgilanmagan') }}</span
                                 >
                             </td>
                             <td class="py-3 pr-4">
                                 <div class="flex items-center gap-2">
                                     <div
                                         class="flex h-2 w-20 gap-0.5"
-                                        :title="`${reviewer.active} ta faol taqriz`"
+                                        :title="
+                                            t(':active ta faol taqriz', {
+                                                active: reviewer.active,
+                                            })
+                                        "
                                     >
                                         <span
                                             v-for="slot in busyFrom"
@@ -393,7 +413,11 @@ function speedTone(onTime: number | null): string {
                                 <span
                                     v-if="reviewer.declined"
                                     class="ml-1 text-[11px] font-normal text-navy-400"
-                                    :title="`${reviewer.declined} ta rad etgan`"
+                                    :title="
+                                        t(':declined ta rad etgan', {
+                                            declined: reviewer.declined,
+                                        })
+                                    "
                                     >/ −{{ reviewer.declined }}</span
                                 >
                             </td>
@@ -403,7 +427,9 @@ function speedTone(onTime: number | null): string {
                                 {{
                                     reviewer.avgDays === null
                                         ? '—'
-                                        : `${reviewer.avgDays} kun`
+                                        : t(':avgDays kun', {
+                                              avgDays: reviewer.avgDays,
+                                          })
                                 }}
                             </td>
                             <td
@@ -480,8 +506,9 @@ function speedTone(onTime: number | null): string {
                                     >{{ load(reviewer).label }}</span
                                 >
                                 <span class="tabular-nums"
-                                    >Faol: <b>{{ reviewer.active }}</b> ·
-                                    Yakunlangan:
+                                    >{{ t('Faol:') }}
+                                    <b>{{ reviewer.active }}</b>
+                                    {{ t('· Yakunlangan:') }}
                                     <b>{{ reviewer.completed }}</b></span
                                 >
                             </div>
@@ -502,7 +529,7 @@ function speedTone(onTime: number | null): string {
                 <p class="mt-4 font-semibold text-navy-900">
                     {{
                         hasFilters
-                            ? 'Taqrizchi topilmadi'
+                            ? t('Taqrizchi topilmadi')
                             : "Hali taqrizchilar yo'q"
                     }}
                 </p>
@@ -519,7 +546,7 @@ function speedTone(onTime: number | null): string {
                     class="mt-4 text-sm font-semibold text-brand-700 hover:text-brand-600"
                     @click="reset"
                 >
-                    Filtrlarni tozalash
+                    {{ t('Filtrlarni tozalash') }}
                 </button>
                 <button
                     v-else
@@ -527,7 +554,8 @@ function speedTone(onTime: number | null): string {
                     :class="cn(primaryButtonClass, 'mt-4')"
                     @click="addOpen = true"
                 >
-                    <UserRoundPlus class="size-4" /> Taqrizchi qo'shish
+                    <UserRoundPlus class="size-4" />
+                    {{ t("Taqrizchi qo'shish") }}
                 </button>
             </div>
 

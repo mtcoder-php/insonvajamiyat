@@ -18,6 +18,7 @@ import { cn } from '@/lib/utils';
 import { dashboard } from '@/routes/admin';
 import { index } from '@/routes/admin/issues';
 import type { IssueIndexProps, IssueStatusKey } from '@/types';
+import { t, tc, tk } from '@/lib/i18n';
 
 /**
  * "Jurnallar" — jurnal sonlari ro'yxati va yangi son yaratish.
@@ -27,8 +28,8 @@ const props = defineProps<IssueIndexProps>();
 defineOptions({
     layout: {
         breadcrumbs: [
-            { title: 'Admin panel', href: dashboard() },
-            { title: 'Jurnallar', href: index() },
+            { title: tk('Admin panel'), href: dashboard() },
+            { title: tk('Jurnallar'), href: index() },
         ],
     },
 });
@@ -64,12 +65,16 @@ const readyPercent = (ready: number, total: number): number =>
 </script>
 
 <template>
-    <Head title="Jurnallar" />
+    <Head :title="t('Jurnallar')" />
 
     <div class="flex flex-1 flex-col gap-5 bg-[#f5f7fb] p-4 md:p-6">
         <PageHeader
-            title="Jurnal sonlari"
-            description="Sonlarni shakllantirish: maqolalarni joylashtirish, sahifalar, muqova, mundarija va to'liq PDF"
+            :title="t('Jurnal sonlari')"
+            :description="
+                t(
+                    'Sonlarni shakllantirish: maqolalarni joylashtirish, sahifalar, muqova, mundarija va to\'liq PDF',
+                )
+            "
         >
             <template #actions>
                 <button
@@ -77,7 +82,7 @@ const readyPercent = (ready: number, total: number): number =>
                     :class="primaryButtonClass"
                     @click="createOpen = true"
                 >
-                    <BookPlus class="size-4" /> Yangi son
+                    <BookPlus class="size-4" /> {{ t('Yangi son') }}
                 </button>
             </template>
         </PageHeader>
@@ -121,25 +126,25 @@ const readyPercent = (ready: number, total: number): number =>
             <SelectInput
                 v-model="year"
                 class="w-36"
-                aria-label="Yil"
+                :aria-label="t('Yil')"
                 @change="applyFilters"
             >
-                <option :value="null">Barcha yillar</option>
+                <option :value="null">{{ t('Barcha yillar') }}</option>
                 <option v-for="y in years" :key="y" :value="y">{{ y }}</option>
             </SelectInput>
             <SelectInput
                 v-model="status"
                 class="w-48"
-                aria-label="Holat"
+                :aria-label="t('Holat')"
                 @change="applyFilters"
             >
-                <option :value="null">Barcha holatlar</option>
-                <option value="draft">Qoralama</option>
-                <option value="published">Chop etilgan</option>
+                <option :value="null">{{ t('Barcha holatlar') }}</option>
+                <option value="draft">{{ t('Qoralama') }}</option>
+                <option value="published">{{ t('Chop etilgan') }}</option>
             </SelectInput>
-            <span class="text-xs text-navy-500"
-                >{{ issues.length }} ta son</span
-            >
+            <span class="text-xs text-navy-500">{{
+                tc(':count son', issues.length)
+            }}</span>
         </div>
 
         <div
@@ -201,22 +206,26 @@ const readyPercent = (ready: number, total: number): number =>
                         >{{ issue.title }}</span
                     >
                     <span class="mt-2 grid gap-0.5 text-xs text-navy-500">
-                        <span v-if="issue.volume">{{ issue.volume }}-jild</span>
+                        <span v-if="issue.volume">{{
+                            t(':volume-jild', { volume: issue.volume })
+                        }}</span>
                         <span
-                            >{{ issue.articles }} maqola
+                            >{{ tc(':count maqola', issue.articles) }}
                             <template v-if="issue.pages"
-                                >· {{ issue.pages }} bet</template
+                                >· {{ tc(':count bet', issue.pages) }}</template
                             ></span
                         >
-                        <span v-if="issue.publishedAt"
-                            >Chop: {{ formatDate(issue.publishedAt) }}</span
-                        >
+                        <span v-if="issue.publishedAt">{{
+                            t('Chop: :date', {
+                                date: formatDate(issue.publishedAt),
+                            })
+                        }}</span>
                     </span>
                     <span class="mt-auto pt-3">
                         <span
                             class="mb-1 flex items-center justify-between text-[11px] text-navy-500"
                         >
-                            Nashrga tayyor
+                            {{ t('Nashrga tayyor') }}
                             <b class="text-navy-800 tabular-nums"
                                 >{{ issue.ready }}/{{ issue.articles }}</b
                             >
@@ -243,7 +252,8 @@ const readyPercent = (ready: number, total: number): number =>
                             v-if="issue.hasPdf"
                             class="mt-2 inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700"
                         >
-                            <FileText class="size-3.5" /> To'liq PDF yuklangan
+                            <FileText class="size-3.5" />
+                            {{ t("To'liq PDF yuklangan") }}
                         </span>
                     </span>
                 </span>
@@ -254,13 +264,15 @@ const readyPercent = (ready: number, total: number): number =>
             class="flex flex-col items-center gap-3 rounded-xl border border-dashed border-navy-200 bg-white py-16 text-center"
         >
             <BookDashed class="size-10 text-navy-300" />
-            <p class="text-sm text-navy-500">Hali jurnal soni yo'q</p>
+            <p class="text-sm text-navy-500">
+                {{ t("Hali jurnal soni yo'q") }}
+            </p>
             <button
                 type="button"
                 :class="primaryButtonClass"
                 @click="createOpen = true"
             >
-                <BookPlus class="size-4" /> Birinchi sonni yaratish
+                <BookPlus class="size-4" /> {{ t('Birinchi sonni yaratish') }}
             </button>
         </div>
     </div>

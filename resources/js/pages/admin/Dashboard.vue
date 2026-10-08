@@ -14,6 +14,7 @@ import SystemHealthCard from '@/components/admin/dashboard/SystemHealthCard.vue'
 import WelcomeBanner from '@/components/admin/dashboard/WelcomeBanner.vue';
 import { dashboard } from '@/routes/admin';
 import type { AdminDashboardProps } from '@/types';
+import { t, tk } from '@/lib/i18n';
 
 /**
  * Super admin dashboard (super admin dashboard.png):
@@ -24,13 +25,13 @@ defineProps<AdminDashboardProps>();
 
 defineOptions({
     layout: {
-        breadcrumbs: [{ title: 'Admin panel', href: dashboard() }],
+        breadcrumbs: [{ title: tk('Admin panel'), href: dashboard() }],
     },
 });
 </script>
 
 <template>
-    <Head title="Dashboard" />
+    <Head :title="t('Dashboard')" />
 
     <div
         class="grid flex-1 gap-5 bg-[#f5f7fb] p-4 md:p-6 2xl:grid-cols-[minmax(0,1fr)_22rem]"
@@ -41,7 +42,7 @@ defineOptions({
 
             <section
                 class="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 xl:grid-cols-5"
-                aria-label="Maqolalar statistikasi"
+                :aria-label="t('Maqolalar statistikasi')"
             >
                 <StatCard v-for="card in cards" :key="card.key" :card="card" />
             </section>
@@ -70,7 +71,7 @@ defineOptions({
         <!-- O'ng panel -->
         <aside
             class="grid content-start gap-5 md:grid-cols-2 2xl:grid-cols-1"
-            aria-label="Qo'shimcha ma'lumotlar"
+            :aria-label="t('Qo\'shimcha ma\'lumotlar')"
         >
             <NotificationsCard :items="notificationsList" />
             <ActiveUsersCard :items="activeUsers" />

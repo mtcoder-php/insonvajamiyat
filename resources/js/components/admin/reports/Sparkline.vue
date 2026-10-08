@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { smoothLine } from '@/lib/chart';
+import { t } from '@/lib/i18n';
 
 /**
  * Kichik trend chizig'i (o'qlarsiz) — kartalar ichida.
@@ -12,7 +13,7 @@ const props = withDefaults(
         height?: number;
         label?: string;
     }>(),
-    { color: '#1a82f7', height: 56, label: 'Trend' },
+    { color: '#1a82f7', height: 56, label: undefined },
 );
 
 const W = 240;
@@ -49,7 +50,7 @@ const id = `sp-${Math.random().toString(36).slice(2, 8)}`;
         class="h-auto w-full"
         preserveAspectRatio="none"
         role="img"
-        :aria-label="label"
+        :aria-label="label ?? t('Trend')"
     >
         <defs>
             <linearGradient :id="id" x1="0" x2="0" y1="0" y2="1">

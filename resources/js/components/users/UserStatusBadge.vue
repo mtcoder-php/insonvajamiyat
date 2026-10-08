@@ -2,6 +2,7 @@
 import { Ban, CircleCheck, Trash2 } from '@lucide/vue';
 import { computed } from 'vue';
 import { cn } from '@/lib/utils';
+import { t } from '@/lib/i18n';
 
 /**
  * Holat: faol / bloklangan / o'chirilgan (rang + ikonka + matn).
@@ -14,7 +15,7 @@ const props = defineProps<{
 const state = computed(() => {
     if (props.isDeleted) {
         return {
-            label: "O'chirilgan",
+            label: t("O'chirilgan"),
             icon: Trash2,
             class: 'bg-navy-50 text-navy-600 ring-navy-200',
         };
@@ -22,14 +23,14 @@ const state = computed(() => {
 
     if (props.isBlocked) {
         return {
-            label: 'Bloklangan',
+            label: t('Bloklangan'),
             icon: Ban,
             class: 'bg-red-50 text-red-700 ring-red-200',
         };
     }
 
     return {
-        label: 'Faol',
+        label: t('Faol'),
         icon: CircleCheck,
         class: 'bg-emerald-50 text-emerald-700 ring-emerald-200',
     };

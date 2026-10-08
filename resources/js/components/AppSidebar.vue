@@ -16,6 +16,7 @@ import { cabinetNavigation } from '@/navigation/cabinet';
 import { dashboard as adminDashboard } from '@/routes/admin';
 import { dashboard as cabinetDashboard } from '@/routes/cabinet';
 import type { AppArea } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Admin panel / muallif kabineti sidebar'i (to'q ko'k, to'liq balandlik).
@@ -94,7 +95,11 @@ const homeHref = computed(() =>
                     <blockquote
                         class="font-serif text-[15px] leading-snug text-white/95 italic drop-shadow-sm"
                     >
-                        “Ilm — insonni yuksaltiradi, jamiyatni rivojlantiradi.”
+                        {{
+                            t(
+                                '“Ilm — insonni yuksaltiradi, jamiyatni rivojlantiradi.”',
+                            )
+                        }}
                     </blockquote>
                     <div
                         class="mt-3 gold-rule w-20 transition-all duration-500 group-hover/quote:w-28"
@@ -103,8 +108,16 @@ const homeHref = computed(() =>
                 <p
                     class="mt-3 px-1 text-[11px] leading-relaxed text-sidebar-foreground/45"
                 >
-                    © {{ year }} Inson va Jamiyat<br />
-                    Ilmiy jurnali. Barcha huquqlar himoyalangan.
+                    ©
+                    {{
+                        t(
+                            ':year «:name» ilmiy jurnali. Barcha huquqlar himoyalangan.',
+                            {
+                                year,
+                                name: $page.props.journal.name,
+                            },
+                        )
+                    }}
                 </p>
             </div>
         </SidebarContent>

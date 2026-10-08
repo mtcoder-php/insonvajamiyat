@@ -15,6 +15,7 @@ import { inputClass } from '@/lib/formStyles';
 import { cn } from '@/lib/utils';
 import type { PeopleOption, ReviewerCandidate } from '@/types';
 import SubjectPicker from './SubjectPicker.vue';
+import { t } from '@/lib/i18n';
 
 /**
  * Taqrizchi qo'shish: mavjud foydalanuvchini (ism, email, tashkilot) qidirib topish,
@@ -106,10 +107,14 @@ function submit(): void {
 <template>
     <ActionDialog
         v-model:open="open"
-        title="Taqrizchi qo'shish"
-        description="Ro'yxatdan o'tgan foydalanuvchiga «Taqrizchi» roli beriladi. U admin panelga kirib, taklif qilingan maqolalarni ko'rib chiqa oladi."
+        :title="t('Taqrizchi qo\'shish')"
+        :description="
+            t(
+                'Ro\'yxatdan o\'tgan foydalanuvchiga «Taqrizchi» roli beriladi. U admin panelga kirib, taklif qilingan maqolalarni ko\'rib chiqa oladi.',
+            )
+        "
         :icon="UserRoundPlus"
-        confirm-text="Taqrizchi qilish"
+        :confirm-text="t('Taqrizchi qilish')"
         :processing="form.processing"
         :disabled="!form.user_id"
         size="lg"
@@ -117,7 +122,7 @@ function submit(): void {
     >
         <div class="grid grid-cols-1 gap-4">
             <FormField
-                label="Foydalanuvchi"
+                :label="t('Foydalanuvchi')"
                 for="reviewer-search"
                 required
                 :error="errors.user_id"
@@ -132,7 +137,9 @@ function submit(): void {
                         type="search"
                         autocomplete="off"
                         :class="cn(inputClass, 'pl-9')"
-                        placeholder="Ism, email yoki tashkilot (kamida 2 harf)..."
+                        :placeholder="
+                            t('Ism, email yoki tashkilot (kamida 2 harf)...')
+                        "
                     />
                     <LoaderCircle
                         v-if="loading"
@@ -202,24 +209,29 @@ function submit(): void {
                 v-else-if="term.trim().length >= 2 && !loading"
                 class="rounded-lg border border-dashed border-line px-4 py-5 text-center text-xs text-navy-500"
             >
-                Mos foydalanuvchi topilmadi (taqrizchilar, bloklangan va emaili
-                tasdiqlanmaganlar chiqmaydi).
+                {{
+                    t(
+                        'Mos foydalanuvchi topilmadi (taqrizchilar, bloklangan va emaili tasdiqlanmaganlar chiqmaydi).',
+                    )
+                }}
                 <Link
                     v-if="createUserUrl"
                     :href="createUserUrl"
                     class="mt-2 flex items-center justify-center gap-1 font-semibold text-brand-700 hover:text-brand-600"
                 >
-                    <UserPlus class="size-3.5" /> Yangi foydalanuvchi yaratish
+                    <UserPlus class="size-3.5" />
+                    {{ t('Yangi foydalanuvchi yaratish') }}
                 </Link>
             </div>
 
             <div v-if="selected" class="grid gap-2">
                 <p class="text-[13px] font-semibold text-navy-800">
-                    Ilmiy yo'nalishlari
-                    <span class="font-normal text-navy-400"
-                        >— taklif qilishda mos taqrizchilar birinchi
-                        ko'rsatiladi</span
-                    >
+                    {{ t("Ilmiy yo'nalishlari") }}
+                    <span class="font-normal text-navy-400">{{
+                        t(
+                            "— taklif qilishda mos taqrizchilar birinchi ko'rsatiladi",
+                        )
+                    }}</span>
                 </p>
                 <SubjectPicker v-model="form.subject_ids" :options="subjects" />
                 <p

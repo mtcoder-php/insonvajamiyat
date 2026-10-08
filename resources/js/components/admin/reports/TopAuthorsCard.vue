@@ -2,6 +2,7 @@
 import DashCard from '@/components/admin/dashboard/DashCard.vue';
 import { cn } from '@/lib/utils';
 import type { ReportTopAuthor } from '@/types';
+import { t, tc } from '@/lib/i18n';
 
 /**
  * "Eng faol mualliflar" — davrda yuborgan maqolalari soni bo'yicha.
@@ -25,12 +26,12 @@ function initials(name: string): string {
 </script>
 
 <template>
-    <DashCard title="Eng faol mualliflar">
+    <DashCard :title="t('Eng faol mualliflar')">
         <p
             v-if="items.length === 0"
             class="py-6 text-center text-sm text-navy-400"
         >
-            Tanlangan davrda maqola yuborilmagan
+            {{ t('Tanlangan davrda maqola yuborilmagan') }}
         </p>
         <ol v-else class="space-y-1">
             <li
@@ -70,7 +71,9 @@ function initials(name: string): string {
                 <span
                     class="text-xs whitespace-nowrap text-navy-500 tabular-nums"
                 >
-                    <b class="text-navy-900">{{ author.articles }}</b> maqola
+                    <b class="text-navy-900">{{
+                        tc(':count maqola', author.articles)
+                    }}</b>
                 </span>
             </li>
         </ol>

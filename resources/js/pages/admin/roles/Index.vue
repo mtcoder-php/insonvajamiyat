@@ -18,6 +18,7 @@ import { cn } from '@/lib/utils';
 import { dashboard } from '@/routes/admin';
 import { index } from '@/routes/admin/roles';
 import type { RoleRow, RolesPageProps } from '@/types';
+import { t, tk } from '@/lib/i18n';
 
 /**
  * Admin → Rollar va ruxsatlar: rol × ruxsat matritsasi.
@@ -28,8 +29,8 @@ const props = defineProps<RolesPageProps>();
 defineOptions({
     layout: {
         breadcrumbs: [
-            { title: 'Admin panel', href: dashboard() },
-            { title: 'Rollar va ruxsatlar', href: index() },
+            { title: tk('Admin panel'), href: dashboard() },
+            { title: tk('Rollar va ruxsatlar'), href: index() },
         ],
     },
 });
@@ -117,7 +118,8 @@ function save(role: RoleRow, next?: () => void): void {
             preserveState: true,
             onSuccess: () => delete edits[role.name],
             onError: (e) =>
-                (errors[role.name] = Object.values(e)[0] ?? "Saqlab bo'lmadi."),
+                (errors[role.name] =
+                    Object.values(e)[0] ?? t("Saqlab bo'lmadi.")),
             onFinish: () => {
                 saving.value = null;
                 next?.();
@@ -178,7 +180,7 @@ function confirmReset(): void {
             },
             onError: (e) =>
                 (errors[role.name] =
-                    Object.values(e)[0] ?? "Qaytarib bo'lmadi."),
+                    Object.values(e)[0] ?? t("Qaytarib bo'lmadi.")),
             onFinish: () => (resetProcessing.value = false),
         },
     );
@@ -192,14 +194,18 @@ const totalPermissions = computed(() =>
 </script>
 
 <template>
-    <Head title="Rollar va ruxsatlar" />
+    <Head :title="t('Rollar va ruxsatlar')" />
 
     <div
         class="flex flex-1 flex-col gap-5 bg-[#f5f7fb] p-4 text-navy-900 md:p-6"
     >
         <PageHeader
-            title="Rollar va ruxsatlar"
-            description="Har bir rol qaysi amallarni bajara olishini belgilang. Foydalanuvchiga rol «Foydalanuvchilar» bo'limida beriladi."
+            :title="t('Rollar va ruxsatlar')"
+            :description="
+                t(
+                    'Har bir rol qaysi amallarni bajara olishini belgilang. Foydalanuvchiga rol «Foydalanuvchilar» bo\'limida beriladi.',
+                )
+            "
         >
             <template #before>
                 <span
@@ -214,19 +220,21 @@ const totalPermissions = computed(() =>
             class="flex flex-col gap-2 rounded-xl border border-brand-100 bg-brand-50/60 px-4 py-3 text-xs text-navy-700 sm:flex-row sm:items-center sm:gap-5"
         >
             <span class="inline-flex items-center gap-1.5 font-semibold">
-                <Info class="size-4 text-brand-600" /> Belgilar:
+                <Info class="size-4 text-brand-600" /> {{ t('Belgilar:') }}
             </span>
             <span class="inline-flex items-center gap-1.5">
-                <Lock class="size-3.5 text-navy-400" /> o'zgartirib bo'lmaydi
+                <Lock class="size-3.5 text-navy-400" />
+                {{ t("o'zgartirib bo'lmaydi") }}
             </span>
             <span class="inline-flex items-center gap-1.5">
-                <span class="size-2 rounded-full bg-gold-500" /> standartdan
-                farq qiladi
+                <span class="size-2 rounded-full bg-gold-500" />
+                {{ t('standartdan farq qiladi') }}
             </span>
-            <span class="text-navy-500 sm:ml-auto"
-                >Bosh administrator barcha ruxsatlarga ega; muallifga faqat AI
-                Studio berilishi mumkin.</span
-            >
+            <span class="text-navy-500 sm:ml-auto">{{
+                t(
+                    'Bosh administrator barcha ruxsatlarga ega; muallifga faqat AI Studio berilishi mumkin.',
+                )
+            }}</span>
         </div>
 
         <section
@@ -243,10 +251,10 @@ const totalPermissions = computed(() =>
                             <th
                                 class="sticky left-0 z-10 w-72 bg-[#f8fafc] px-5 py-4 text-left text-[11px] font-semibold tracking-wide text-navy-500 uppercase"
                             >
-                                Ruxsat
-                                <span class="block font-normal normal-case"
-                                    >{{ totalPermissions }} ta</span
-                                >
+                                {{ t('Ruxsat') }}
+                                <span class="block font-normal normal-case">{{
+                                    t(':count ta', { count: totalPermissions })
+                                }}</span>
                             </th>
                             <th
                                 v-for="role in roles"
@@ -274,24 +282,27 @@ const totalPermissions = computed(() =>
                                     <span
                                         v-if="role.locked"
                                         class="inline-flex items-center gap-0.5 rounded bg-navy-900 px-1.5 py-0.5 text-[10px] font-semibold text-white"
-                                        ><Lock class="size-2.5" /> To'liq</span
+                                        ><Lock class="size-2.5" />
+                                        {{ t("To'liq") }}</span
                                     >
                                     <span
                                         v-else-if="
                                             role.isDefault && !isDirty(role)
                                         "
                                         class="rounded bg-emerald-50 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700"
-                                        >Standart</span
+                                        >{{ t('Standart') }}</span
                                     >
                                     <button
                                         v-else-if="!isDirty(role)"
                                         type="button"
                                         class="inline-flex items-center gap-0.5 rounded bg-gold-100 px-1.5 py-0.5 text-[10px] font-semibold text-gold-700 transition-colors hover:bg-gold-200"
-                                        title="Standart ruxsatlarga qaytarish"
+                                        :title="
+                                            t('Standart ruxsatlarga qaytarish')
+                                        "
                                         @click="askReset(role)"
                                     >
                                         <RotateCcw class="size-2.5" />
-                                        O'zgartirilgan
+                                        {{ t("O'zgartirilgan") }}
                                     </button>
                                 </div>
                             </th>
@@ -390,7 +401,10 @@ const totalPermissions = computed(() =>
                             >
                                 {{
                                     dirtyCount
-                                        ? `${dirtyCount} ta rol o'zgartirildi — saqlang`
+                                        ? t(
+                                              ":dirtyCount ta rol o'zgartirildi — saqlang",
+                                              { dirtyCount: dirtyCount },
+                                          )
                                         : "O'zgarishlar yo'q"
                                 }}
                             </td>
@@ -409,14 +423,16 @@ const totalPermissions = computed(() =>
                                         :disabled="saving === role.name"
                                         @click="save(role)"
                                     >
-                                        <Save class="size-3.5" /> Saqlash
+                                        <Save class="size-3.5" />
+                                        {{ t('Saqlash') }}
                                     </button>
                                     <button
                                         type="button"
                                         class="inline-flex items-center gap-0.5 text-[11px] font-medium text-navy-500 hover:text-navy-900"
                                         @click="discard(role)"
                                     >
-                                        <Undo2 class="size-3" /> Bekor
+                                        <Undo2 class="size-3" />
+                                        {{ t('Bekor') }}
                                     </button>
                                 </div>
                                 <p
@@ -448,7 +464,8 @@ const totalPermissions = computed(() =>
                     <ShieldCheck class="size-4" />
                 </span>
                 <p class="mr-auto text-[13px] text-navy-800">
-                    <b>{{ dirtyCount }}</b> ta rolda saqlanmagan o'zgarish:
+                    <b>{{ dirtyCount }}</b>
+                    {{ t("ta rolda saqlanmagan o'zgarish:") }}
                     <span class="text-navy-500">{{
                         roles
                             .filter((r) => isDirty(r))
@@ -461,7 +478,7 @@ const totalPermissions = computed(() =>
                     class="inline-flex h-9 items-center gap-1.5 rounded-lg px-3 text-sm font-semibold text-navy-600 transition-colors hover:bg-navy-50"
                     @click="discardAll"
                 >
-                    <Undo2 class="size-4" /> Bekor qilish
+                    <Undo2 class="size-4" /> {{ t('Bekor qilish') }}
                 </button>
                 <button
                     type="button"
@@ -469,17 +486,22 @@ const totalPermissions = computed(() =>
                     :disabled="saving !== null"
                     @click="saveAll"
                 >
-                    <Save class="size-4" /> Hammasini saqlash
+                    <Save class="size-4" /> {{ t('Hammasini saqlash') }}
                 </button>
             </div>
         </Transition>
 
         <ActionDialog
             v-model:open="resetOpen"
-            title="Standart ruxsatlarga qaytarish"
-            :description="`«${resetting?.label ?? ''}» roli tizimdagi standart ruxsatlar to'plamiga qaytariladi. Qo'lda qilingan o'zgarishlar bekor bo'ladi.`"
+            :title="t('Standart ruxsatlarga qaytarish')"
+            :description="
+                t(
+                    '«:role» roli tizimdagi standart ruxsatlar to\'plamiga qaytariladi. Qo\'lda qilingan o\'zgarishlar bekor bo\'ladi.',
+                    { role: resetting?.label ?? '' },
+                )
+            "
             :icon="RotateCcw"
-            confirm-text="Qaytarish"
+            :confirm-text="t('Qaytarish')"
             :processing="resetProcessing"
             @confirm="confirmReset"
         />

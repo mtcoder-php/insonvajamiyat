@@ -34,6 +34,7 @@ import { cn } from '@/lib/utils';
 import { dashboard } from '@/routes/admin';
 import { index } from '@/routes/admin/audit';
 import type { AuditLogRow, AuditPageProps, AuditSeverity } from '@/types';
+import { t, tk } from '@/lib/i18n';
 
 /**
  * Admin → Audit log: kim, qachon, qayerdan (IP), nima qildi.
@@ -44,8 +45,8 @@ const props = defineProps<AuditPageProps>();
 defineOptions({
     layout: {
         breadcrumbs: [
-            { title: 'Admin panel', href: dashboard() },
-            { title: 'Audit log', href: index() },
+            { title: tk('Admin panel'), href: dashboard() },
+            { title: tk('Audit log'), href: index() },
         ],
     },
 });
@@ -71,9 +72,9 @@ const severityStyle: Record<AuditSeverity, string> = {
 };
 
 const severityLabel: Record<AuditSeverity, string> = {
-    info: "Ma'lumot",
-    warning: 'Muhim',
-    danger: 'Xavfli',
+    info: t("Ma'lumot"),
+    warning: t('Muhim'),
+    danger: t('Xavfli'),
 };
 
 const form = reactive({
@@ -199,7 +200,7 @@ function browser(ua: string | null): string {
               ? 'Chrome'
               : /Safari\//.test(ua)
                 ? 'Safari'
-                : 'Boshqa';
+                : t('Boshqa');
     const os = /Windows/.test(ua)
         ? 'Windows'
         : /Android/.test(ua)
@@ -217,19 +218,19 @@ function browser(ua: string | null): string {
 
 const cards = computed(() => [
     {
-        label: 'Bugungi amallar',
+        label: t('Bugungi amallar'),
         value: props.stats.today,
         icon: Activity,
         tint: 'bg-brand-50 text-brand-600',
     },
     {
-        label: 'Faol foydalanuvchilar (24 soat)',
+        label: t('Faol foydalanuvchilar (24 soat)'),
         value: props.stats.activeUsers,
         icon: UsersRound,
         tint: 'bg-emerald-50 text-emerald-600',
     },
     {
-        label: 'Muvaffaqiyatsiz kirishlar (24 soat)',
+        label: t('Muvaffaqiyatsiz kirishlar (24 soat)'),
         value: props.stats.failedLogins,
         icon: ShieldAlert,
         tint:
@@ -238,7 +239,7 @@ const cards = computed(() => [
                 : 'bg-navy-50 text-navy-500',
     },
     {
-        label: 'Jami yozuvlar',
+        label: t('Jami yozuvlar'),
         value: props.stats.total,
         icon: History,
         tint: 'bg-violet-50 text-violet-600',
@@ -247,12 +248,17 @@ const cards = computed(() => [
 </script>
 
 <template>
-    <Head title="Audit log" />
+    <Head :title="t('Audit log')" />
 
     <div class="flex flex-1 flex-col gap-5 bg-[#f5f7fb] p-4 md:p-6">
         <PageHeader
-            title="Audit log"
-            :description="`Tizimdagi muhim amallar tarixi: kim, qachon, qayerdan va nima qildi. Yozuvlar ${retentionDays} kun saqlanadi.`"
+            :title="t('Audit log')"
+            :description="
+                t(
+                    'Tizimdagi muhim amallar tarixi: kim, qachon, qayerdan va nima qildi. Yozuvlar :retentionDays kun saqlanadi.',
+                    { retentionDays: retentionDays },
+                )
+            "
         >
             <template #before>
                 <span
@@ -266,14 +272,14 @@ const cards = computed(() => [
                     :href="exportUrl"
                     class="inline-flex h-10 items-center gap-2 rounded-lg bg-brand-600 px-4 text-[13px] font-semibold text-white shadow-[0_10px_22px_-12px_rgba(0,108,246,0.9)] transition-all hover:-translate-y-px hover:bg-brand-700"
                 >
-                    <Download class="size-4" /> Excel (CSV) eksport
+                    <Download class="size-4" /> {{ t('Excel (CSV) eksport') }}
                 </a>
             </template>
         </PageHeader>
 
         <section
             class="grid grid-cols-2 gap-3 xl:grid-cols-4"
-            aria-label="Qisqa statistika"
+            :aria-label="t('Qisqa statistika')"
         >
             <article
                 v-for="card in cards"
@@ -314,23 +320,25 @@ const cards = computed(() => [
                 class="grid gap-2 border-b border-line p-4 md:grid-cols-2 xl:grid-cols-4"
             >
                 <label class="relative block md:col-span-2">
-                    <span class="sr-only">Qidirish</span>
+                    <span class="sr-only">{{ t('Qidirish') }}</span>
                     <Search
                         class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-navy-400"
                     />
                     <input
                         v-model="form.q"
                         type="search"
-                        placeholder="Foydalanuvchi, obyekt, izoh yoki IP..."
+                        :placeholder="
+                            t('Foydalanuvchi, obyekt, izoh yoki IP...')
+                        "
                         :class="cn(inputClass, 'h-10 pl-9 text-[13px]')"
                     />
                 </label>
                 <SelectInput
                     v-model="form.category"
-                    aria-label="Bo'lim"
+                    :aria-label="t('Bo\'lim')"
                     class="text-[13px]"
                 >
-                    <option :value="null">Barcha bo'limlar</option>
+                    <option :value="null">{{ t("Barcha bo'limlar") }}</option>
                     <option
                         v-for="c in categories"
                         :key="c.value"
@@ -341,10 +349,10 @@ const cards = computed(() => [
                 </SelectInput>
                 <SelectInput
                     v-model="form.event"
-                    aria-label="Amal"
+                    :aria-label="t('Amal')"
                     class="text-[13px]"
                 >
-                    <option :value="null">Barcha amallar</option>
+                    <option :value="null">{{ t('Barcha amallar') }}</option>
                     <option
                         v-for="e in eventOptions"
                         :key="e.value"
@@ -355,10 +363,12 @@ const cards = computed(() => [
                 </SelectInput>
                 <SelectInput
                     v-model="form.severity"
-                    aria-label="Ahamiyati"
+                    :aria-label="t('Ahamiyati')"
                     class="text-[13px]"
                 >
-                    <option :value="null">Har qanday ahamiyat</option>
+                    <option :value="null">
+                        {{ t('Har qanday ahamiyat') }}
+                    </option>
                     <option
                         v-for="(label, key) in severityLabel"
                         :key="key"
@@ -369,10 +379,12 @@ const cards = computed(() => [
                 </SelectInput>
                 <SelectInput
                     v-model="form.user"
-                    aria-label="Foydalanuvchi"
+                    :aria-label="t('Foydalanuvchi')"
                     class="text-[13px]"
                 >
-                    <option :value="null">Barcha foydalanuvchilar</option>
+                    <option :value="null">
+                        {{ t('Barcha foydalanuvchilar') }}
+                    </option>
                     <option v-for="u in users" :key="u.value" :value="u.value">
                         {{ u.label }}
                     </option>
@@ -381,13 +393,13 @@ const cards = computed(() => [
                     <input
                         v-model="form.from"
                         type="date"
-                        aria-label="Sanadan"
+                        :aria-label="t('Sanadan')"
                         :class="cn(inputClass, 'h-10 text-[13px]')"
                     />
                     <input
                         v-model="form.to"
                         type="date"
-                        aria-label="Sanagacha"
+                        :aria-label="t('Sanagacha')"
                         :class="cn(inputClass, 'h-10 text-[13px]')"
                     />
                 </div>
@@ -397,7 +409,7 @@ const cards = computed(() => [
                     class="inline-flex h-10 items-center justify-center gap-1.5 rounded-lg border border-line px-3 text-[13px] font-semibold text-navy-600 transition-colors hover:border-brand-300 hover:text-brand-700 disabled:opacity-40 disabled:hover:border-line disabled:hover:text-navy-600"
                     @click="reset"
                 >
-                    <RotateCcw class="size-4" /> Tozalash
+                    <RotateCcw class="size-4" /> {{ t('Tozalash') }}
                 </button>
             </div>
 
@@ -407,13 +419,15 @@ const cards = computed(() => [
                         <tr
                             class="border-b border-line bg-[#f8fafc] text-[11px] font-semibold tracking-wide text-navy-500 uppercase"
                         >
-                            <th class="py-2.5 pr-4 pl-5">Vaqt</th>
-                            <th class="py-2.5 pr-4">Foydalanuvchi</th>
-                            <th class="py-2.5 pr-4">Amal</th>
-                            <th class="py-2.5 pr-4">Obyekt</th>
-                            <th class="py-2.5 pr-4">IP / brauzer</th>
+                            <th class="py-2.5 pr-4 pl-5">{{ t('Vaqt') }}</th>
+                            <th class="py-2.5 pr-4">
+                                {{ t('Foydalanuvchi') }}
+                            </th>
+                            <th class="py-2.5 pr-4">{{ t('Amal') }}</th>
+                            <th class="py-2.5 pr-4">{{ t('Obyekt') }}</th>
+                            <th class="py-2.5 pr-4">{{ t('IP / brauzer') }}</th>
                             <th class="w-10 py-2.5 pr-5">
-                                <span class="sr-only">Tafsilot</span>
+                                <span class="sr-only">{{ t('Tafsilot') }}</span>
                             </th>
                         </tr>
                     </thead>
@@ -483,7 +497,7 @@ const cards = computed(() => [
                                     <span
                                         v-else
                                         class="text-[12px] text-navy-400 italic"
-                                        >Tizim / mehmon</span
+                                        >{{ t('Tizim / mehmon') }}</span
                                     >
                                 </td>
                                 <td class="py-3 pr-4">
@@ -564,7 +578,7 @@ const cards = computed(() => [
                                             <p
                                                 class="mb-2 text-[11px] font-semibold tracking-wide text-navy-400 uppercase"
                                             >
-                                                Tafsilotlar
+                                                {{ t('Tafsilotlar') }}
                                             </p>
                                             <AuditProperties
                                                 v-if="row.properties"
@@ -574,7 +588,11 @@ const cards = computed(() => [
                                                 v-else
                                                 class="text-[12px] text-navy-400"
                                             >
-                                                Qo'shimcha ma'lumot yo'q
+                                                {{
+                                                    t(
+                                                        "Qo'shimcha ma'lumot yo'q",
+                                                    )
+                                                }}
                                             </p>
                                         </div>
                                         <dl
@@ -583,7 +601,7 @@ const cards = computed(() => [
                                             <dt
                                                 class="font-semibold text-navy-400"
                                             >
-                                                Hodisa kodi
+                                                {{ t('Hodisa kodi') }}
                                             </dt>
                                             <dd class="font-mono text-navy-700">
                                                 {{ row.event }}
@@ -591,7 +609,7 @@ const cards = computed(() => [
                                             <dt
                                                 class="mt-1 font-semibold text-navy-400"
                                             >
-                                                Ahamiyati
+                                                {{ t('Ahamiyati') }}
                                             </dt>
                                             <dd class="text-navy-700">
                                                 {{
@@ -601,7 +619,7 @@ const cards = computed(() => [
                                             <dt
                                                 class="mt-1 font-semibold text-navy-400"
                                             >
-                                                Brauzer (user agent)
+                                                {{ t('Brauzer (user agent)') }}
                                             </dt>
                                             <dd class="break-all text-navy-600">
                                                 {{ row.userAgent ?? '—' }}
@@ -619,9 +637,11 @@ const cards = computed(() => [
                 class="flex flex-col items-center gap-2 px-6 py-14 text-center"
             >
                 <ShieldCheck class="size-10 text-navy-200" />
-                <p class="font-semibold text-navy-700">Yozuvlar topilmadi</p>
+                <p class="font-semibold text-navy-700">
+                    {{ t('Yozuvlar topilmadi') }}
+                </p>
                 <p class="text-sm text-navy-400">
-                    Filtrlarni o'zgartirib ko'ring.
+                    {{ t("Filtrlarni o'zgartirib ko'ring.") }}
                 </p>
             </div>
 

@@ -19,6 +19,7 @@ import { textareaClass } from '@/lib/formStyles';
 import { formatDate, formatDateTime } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { ProductionArticle } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * "Final amallar": maketga olish, yakuniy PDF, bosh muharrir tasdig'i, maketdan qaytarish.
@@ -68,7 +69,7 @@ const item =
         class="rounded-xl border border-line bg-white p-5 shadow-[0_1px_2px_rgba(0,30,60,0.05)]"
     >
         <h2 class="mb-4 font-sans text-[15px] font-bold text-navy-950">
-            Final amallar
+            {{ t('Final amallar') }}
         </h2>
         <div class="grid gap-2.5">
             <button
@@ -88,7 +89,7 @@ const item =
                     class="size-[18px] animate-spin"
                 />
                 <LayoutTemplate v-else class="size-[18px]" />
-                Maketga olish
+                {{ t('Maketga olish') }}
             </button>
 
             <button
@@ -105,8 +106,8 @@ const item =
                 <FileUp class="size-[18px]" />
                 {{
                     article.finalPdf
-                        ? 'Yangi PDF versiya yuklash'
-                        : 'Yakuniy PDF yuklash'
+                        ? t('Yangi PDF versiya yuklash')
+                        : t('Yakuniy PDF yuklash')
                 }}
             </button>
 
@@ -135,14 +136,15 @@ const item =
                     <b class="block">{{
                         article.production.proof.state === 'overdue'
                             ? "Korrektura muddati o'tdi"
-                            : 'Muallif javobi kutilmoqda'
+                            : t('Muallif javobi kutilmoqda')
                     }}</b>
-                    <span class="text-xs"
-                        >Muddat:
-                        {{
-                            formatDateTime(article.production.proof.dueAt)
-                        }}</span
-                    >
+                    <span class="text-xs">{{
+                        t('Muddat: :date', {
+                            date: formatDateTime(
+                                article.production.proof.dueAt,
+                            ),
+                        })
+                    }}</span>
                 </span>
             </div>
             <div
@@ -151,7 +153,7 @@ const item =
             >
                 <UserRoundCheck class="mt-0.5 size-[18px] shrink-0" />
                 <span class="min-w-0">
-                    <b class="block">Muallifsiz tasdiqlangan</b>
+                    <b class="block">{{ t('Muallifsiz tasdiqlangan') }}</b>
                     <span class="text-xs"
                         >{{ article.production.proof.waived?.by }} ·
                         {{
@@ -177,7 +179,7 @@ const item =
                 @click="waiveOpen = true"
             >
                 <UserRoundCheck class="size-[18px]" />
-                Muallifsiz tasdiqlash
+                {{ t('Muallifsiz tasdiqlash') }}
             </button>
 
             <div
@@ -186,7 +188,7 @@ const item =
             >
                 <BadgeCheck class="size-[18px] shrink-0 text-emerald-600" />
                 <span>
-                    <b class="block">Bosh muharrir tasdiqlagan</b>
+                    <b class="block">{{ t('Bosh muharrir tasdiqlagan') }}</b>
                     <span class="text-xs"
                         >{{ article.production.approvedBy }} ·
                         {{ formatDate(article.production.approvedAt) }}</span
@@ -200,7 +202,7 @@ const item =
                 :title="
                     article.ready
                         ? undefined
-                        : 'Avval tekshiruvning barcha bandlarini bajaring'
+                        : t('Avval tekshiruvning barcha bandlarini bajaring')
                 "
                 :class="
                     cn(
@@ -215,7 +217,7 @@ const item =
                     class="size-[18px] animate-spin"
                 />
                 <BadgeCheck v-else class="size-[18px] text-emerald-600" />
-                Bosh muharrir tasdig'i
+                {{ t("Bosh muharrir tasdig'i") }}
             </button>
             <button
                 v-if="article.can.revoke"
@@ -230,7 +232,7 @@ const item =
                 @click="post('revoke')"
             >
                 <Undo2 class="size-[18px]" />
-                Tasdiqni bekor qilish
+                {{ t('Tasdiqni bekor qilish') }}
             </button>
 
             <a
@@ -246,7 +248,7 @@ const item =
                 "
             >
                 <ExternalLink class="size-[18px]" />
-                Saytda ko'rish
+                {{ t("Saytda ko'rish") }}
             </a>
             <button
                 v-else
@@ -254,8 +256,12 @@ const item =
                 :disabled="!article.can.publish || busy !== null"
                 :title="
                     article.can.publish
-                        ? 'Chop etilgan songa qo\'shilgan maqolani alohida chop etish'
-                        : 'Maqola jurnal soni bilan birga chop etiladi («Jurnallar» → «Sonni chop etish»)'
+                        ? t(
+                              'Chop etilgan songa qo\'shilgan maqolani alohida chop etish',
+                          )
+                        : t(
+                              'Maqola jurnal soni bilan birga chop etiladi («Jurnallar» → «Sonni chop etish»)',
+                          )
                 "
                 :class="cn(item, 'bg-navy-900 text-white hover:bg-brand-700')"
                 @click="post('publish')"
@@ -265,7 +271,7 @@ const item =
                     class="size-[18px] animate-spin"
                 />
                 <Send v-else class="size-[18px]" />
-                Nashr qilish
+                {{ t('Nashr qilish') }}
             </button>
 
             <button
@@ -280,17 +286,21 @@ const item =
                 @click="cancelOpen = true"
             >
                 <XCircle class="size-[18px]" />
-                Maketdan qaytarish
+                {{ t('Maketdan qaytarish') }}
             </button>
         </div>
 
         <ActionDialog
             v-model:open="cancelOpen"
-            title="Maketdan qaytarish"
-            description="Maqola «Qabul qilindi» holatiga qaytadi, bosh muharrir tasdig'i bekor bo'ladi. Yuklangan fayllar saqlanadi. Bu muallifga ko'rinmaydi."
+            :title="t('Maketdan qaytarish')"
+            :description="
+                t(
+                    'Maqola «Qabul qilindi» holatiga qaytadi, bosh muharrir tasdig\'i bekor bo\'ladi. Yuklangan fayllar saqlanadi. Bu muallifga ko\'rinmaydi.',
+                )
+            "
             :icon="XCircle"
             tone="danger"
-            confirm-text="Qaytarish"
+            :confirm-text="t('Qaytarish')"
             :processing="cancelForm.processing"
             @confirm="cancel"
         >
@@ -298,16 +308,20 @@ const item =
                 v-model="cancelForm.reason"
                 rows="3"
                 maxlength="1000"
-                placeholder="Sabab (ixtiyoriy, ichki izoh)"
+                :placeholder="t('Sabab (ixtiyoriy, ichki izoh)')"
                 :class="textareaClass"
             />
         </ActionDialog>
         <ActionDialog
             v-model:open="waiveOpen"
-            title="Korrekturani muallifsiz tasdiqlash"
-            description="Muallif belgilangan muddatda javob bermadi. Qaror sababini yozing — u muallifga yuboriladi va audit log'ga yoziladi."
+            :title="t('Korrekturani muallifsiz tasdiqlash')"
+            :description="
+                t(
+                    'Muallif belgilangan muddatda javob bermadi. Qaror sababini yozing — u muallifga yuboriladi va audit log\'ga yoziladi.',
+                )
+            "
             :icon="UserRoundCheck"
-            confirm-text="Tasdiqlash"
+            :confirm-text="t('Tasdiqlash')"
             :processing="waiveForm.processing"
             @confirm="waive"
         >
@@ -315,7 +329,11 @@ const item =
                 v-model="waiveForm.reason"
                 rows="4"
                 maxlength="1000"
-                placeholder="Masalan: muallifga email va telefon orqali murojaat qilindi, javob bo'lmadi; son chop etish muddati yaqin."
+                :placeholder="
+                    t(
+                        'Masalan: muallifga email va telefon orqali murojaat qilindi, javob bo\'lmadi; son chop etish muddati yaqin.',
+                    )
+                "
                 :class="textareaClass"
             />
             <p v-if="waiveForm.errors.reason" class="mt-1 text-xs text-red-600">

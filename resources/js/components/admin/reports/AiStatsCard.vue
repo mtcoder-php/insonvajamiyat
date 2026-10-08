@@ -13,6 +13,7 @@ import LineChart from '@/components/admin/reports/LineChart.vue';
 import { formatNumber } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { ReportAi } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * "AI statistika": so'rovlar, muvaffaqiyatli, xatolar va xarajat + davr bo'yicha grafik.
@@ -25,23 +26,23 @@ const meta: Record<
     { label: string; icon: Component; tint: string; lowerIsBetter?: boolean }
 > = {
     total: {
-        label: "Jami so'rovlar",
+        label: t("Jami so'rovlar"),
         icon: Sparkles,
         tint: 'bg-brand-50 text-brand-600',
     },
     completed: {
-        label: 'Muvaffaqiyatli',
+        label: t('Muvaffaqiyatli'),
         icon: CircleCheck,
         tint: 'bg-emerald-50 text-emerald-600',
     },
     failed: {
-        label: 'Xatolar',
+        label: t('Xatolar'),
         icon: CircleAlert,
         tint: 'bg-red-50 text-red-600',
         lowerIsBetter: true,
     },
     cost: {
-        label: 'Xarajat',
+        label: t('Xarajat'),
         icon: DollarSign,
         tint: 'bg-violet-50 text-violet-600',
     },
@@ -71,7 +72,7 @@ function good(metric: ReportAi['metrics'][number]): boolean {
 </script>
 
 <template>
-    <DashCard title="AI statistika">
+    <DashCard :title="t('AI statistika')">
         <div class="grid gap-4">
             <ul class="grid grid-cols-2 gap-3 sm:grid-cols-4">
                 <li
@@ -122,16 +123,20 @@ function good(metric: ReportAi['metrics'][number]): boolean {
                     :series="[
                         {
                             key: 'ai',
-                            label: 'So\'rovlar',
+                            label: t('So\'rovlar'),
                             color: '#8b5cf6',
                             values: data.series,
                         },
                     ]"
                     :height="200"
-                    aria-label="AI so'rovlari dinamikasi"
+                    :aria-label="t('AI so\'rovlari dinamikasi')"
                 />
                 <p class="mt-1 text-right text-[11px] text-navy-400">
-                    Tokenlar: {{ formatNumber(data.tokens) }}
+                    {{
+                        t('Tokenlar: :count', {
+                            count: formatNumber(data.tokens),
+                        })
+                    }}
                 </p>
             </div>
         </div>

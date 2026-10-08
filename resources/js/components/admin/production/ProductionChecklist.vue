@@ -9,6 +9,7 @@ import {
 import { ref } from 'vue';
 import { cn } from '@/lib/utils';
 import type { ProductionArticle } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * "Nashr oldidan tekshiruv": avtomatik bandlar + texnik xodimning "formatga mos" belgisi.
@@ -35,7 +36,7 @@ function toggleFormat(): void {
             class="mb-4 flex items-center gap-2 font-sans text-[15px] font-bold text-navy-950"
         >
             <ShieldCheck class="size-[18px] text-brand-600" />
-            Nashr oldidan tekshiruv
+            {{ t('Nashr oldidan tekshiruv') }}
         </h2>
         <div class="grid gap-4 md:grid-cols-[minmax(0,1fr)_14rem]">
             <ul class="grid gap-1.5">
@@ -85,7 +86,11 @@ function toggleFormat(): void {
                         "
                         @click="toggleFormat"
                     >
-                        {{ check.ok ? 'Bekor qilish' : 'Mos deb belgilash' }}
+                        {{
+                            check.ok
+                                ? t('Bekor qilish')
+                                : t('Mos deb belgilash')
+                        }}
                     </button>
                 </li>
             </ul>
@@ -107,7 +112,9 @@ function toggleFormat(): void {
                 {{
                     article.ready
                         ? "Maqola barcha talablar bo'yicha tayyor."
-                        : `${article.checks.filter((c) => !c.ok).length} ta band bajarilmagan.`
+                        : t(':count ta band bajarilmagan.', {
+                              count: article.checks.filter((c) => !c.ok).length,
+                          })
                 }}
             </div>
         </div>

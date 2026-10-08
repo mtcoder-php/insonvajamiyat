@@ -30,6 +30,7 @@ import { cn } from '@/lib/utils';
 import { dashboard } from '@/routes/admin';
 import { index } from '@/routes/admin/reviewers';
 import type { ReviewerHistoryItem, ReviewerShowProps } from '@/types';
+import { t, tk } from '@/lib/i18n';
 
 /**
  * Taqrizchi sahifasi: profil, ko'rsatkichlar, tavsiyalar taqsimoti va taqrizlar tarixi;
@@ -40,9 +41,9 @@ const props = defineProps<ReviewerShowProps>();
 defineOptions({
     layout: {
         breadcrumbs: [
-            { title: 'Admin panel', href: dashboard() },
-            { title: 'Taqrizchilar', href: index() },
-            { title: 'Taqrizchi' },
+            { title: tk('Admin panel'), href: dashboard() },
+            { title: tk('Taqrizchilar'), href: index() },
+            { title: tk('Taqrizchi') },
         ],
     },
 });
@@ -104,7 +105,7 @@ function restoreReviewer(): void {
 const tiles = computed(() => [
     {
         key: 'active',
-        label: 'Faol taqrizlar',
+        label: t('Faol taqrizlar'),
         value: formatNumber(props.stats.active),
         hint: props.stats.overdue
             ? `${props.stats.overdue} tasi muddati o'tgan`
@@ -116,27 +117,27 @@ const tiles = computed(() => [
     },
     {
         key: 'completed',
-        label: 'Yakunlangan',
+        label: t('Yakunlangan'),
         value: formatNumber(props.stats.completed),
-        hint: `${props.stats.invited} ta taklifdan`,
+        hint: t(':invited ta taklifdan', { invited: props.stats.invited }),
         icon: CircleCheck,
         tint: 'bg-emerald-50 text-emerald-600',
     },
     {
         key: 'speed',
-        label: "O'rtacha muddat",
+        label: t("O'rtacha muddat"),
         value:
             props.stats.avgDays === null ? '—' : `${props.stats.avgDays} kun`,
         hint:
             props.stats.onTime === null
-                ? "Hali xulosa yo'q"
+                ? t("Hali xulosa yo'q")
                 : `${props.stats.onTime}% muddatida`,
         icon: Timer,
         tint: 'bg-violet-50 text-violet-600',
     },
     {
         key: 'score',
-        label: "O'rtacha baho",
+        label: t("O'rtacha baho"),
         value:
             props.stats.avgScore === null ? '—' : `${props.stats.avgScore} / 5`,
         hint:
@@ -149,10 +150,10 @@ const tiles = computed(() => [
 ]);
 
 const recommendationMeta: Record<string, { label: string; bar: string }> = {
-    accept: { label: 'Qabul qilish', bar: 'bg-emerald-500' },
-    minor_revision: { label: 'Kichik tuzatish', bar: 'bg-sky-500' },
-    major_revision: { label: 'Jiddiy tuzatish', bar: 'bg-amber-500' },
-    reject: { label: 'Rad etish', bar: 'bg-red-500' },
+    accept: { label: t('Qabul qilish'), bar: 'bg-emerald-500' },
+    minor_revision: { label: t('Kichik tuzatish'), bar: 'bg-sky-500' },
+    major_revision: { label: t('Jiddiy tuzatish'), bar: 'bg-amber-500' },
+    reject: { label: t('Rad etish'), bar: 'bg-red-500' },
 };
 
 const recommendationTotal = computed(() =>
@@ -162,11 +163,11 @@ const recommendationTotal = computed(() =>
 /* ---------- Taqrizlar tarixi ---------- */
 
 const filters = [
-    { value: '', label: 'Hammasi' },
-    { value: 'active', label: 'Faol' },
-    { value: 'completed', label: 'Yakunlangan' },
-    { value: 'declined', label: 'Rad etilgan' },
-    { value: 'cancelled', label: 'Bekor qilingan' },
+    { value: '', label: t('Hammasi') },
+    { value: 'active', label: t('Faol') },
+    { value: 'completed', label: t('Yakunlangan') },
+    { value: 'declined', label: t('Rad etilgan') },
+    { value: 'cancelled', label: t('Bekor qilingan') },
 ] as const;
 
 const filter = ref<(typeof filters)[number]['value']>('');
@@ -208,7 +209,7 @@ const dangerButton =
             <ArrowLeft
                 class="size-3.5 transition-transform group-hover:-translate-x-0.5"
             />
-            Taqrizchilar ro'yxati
+            {{ t("Taqrizchilar ro'yxati") }}
         </Link>
 
         <PersonHeader :profile="profile">
@@ -217,13 +218,13 @@ const dangerButton =
                     v-if="isReviewer"
                     class="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-semibold text-amber-700 ring-1 ring-amber-200 ring-inset"
                 >
-                    <NotebookPen class="size-3" /> Taqrizchi
+                    <NotebookPen class="size-3" /> {{ t('Taqrizchi') }}
                 </span>
                 <span
                     v-else
                     class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600 ring-1 ring-slate-200 ring-inset"
                 >
-                    Taqrizchilar bazasida emas
+                    {{ t('Taqrizchilar bazasida emas') }}
                 </span>
                 <span
                     v-if="isReviewer"
@@ -240,8 +241,10 @@ const dangerButton =
                     <CirclePlay v-else class="size-3" />
                     {{
                         isPaused
-                            ? `To'xtatilgan · ${formatDate(pausedAt)}`
-                            : 'Taklif qabul qiladi'
+                            ? t("To'xtatilgan · :date", {
+                                  date: formatDate(pausedAt),
+                              })
+                            : t('Taklif qabul qiladi')
                     }}
                 </span>
             </template>
@@ -256,14 +259,14 @@ const dangerButton =
                     >
                         <CirclePlay v-if="isPaused" class="size-4" />
                         <CirclePause v-else class="size-4" />
-                        {{ isPaused ? 'Faollashtirish' : "To'xtatish" }}
+                        {{ isPaused ? t('Faollashtirish') : "To'xtatish" }}
                     </button>
                     <button
                         type="button"
                         :class="secondaryButtonClass"
                         @click="openSubjects"
                     >
-                        <FolderTree class="size-4" /> Yo'nalishlar
+                        <FolderTree class="size-4" /> {{ t("Yo'nalishlar") }}
                     </button>
                 </template>
                 <button
@@ -273,21 +276,22 @@ const dangerButton =
                     :disabled="restoring"
                     @click="restoreReviewer"
                 >
-                    <UserRoundPlus class="size-4" /> Qayta taqrizchi qilish
+                    <UserRoundPlus class="size-4" />
+                    {{ t('Qayta taqrizchi qilish') }}
                 </button>
                 <Link
                     v-if="urls.author"
                     :href="urls.author"
                     :class="secondaryButtonClass"
                 >
-                    <PenTool class="size-4" /> Muallif profili
+                    <PenTool class="size-4" /> {{ t('Muallif profili') }}
                 </Link>
                 <Link
                     v-if="urls.user"
                     :href="urls.user"
                     :class="secondaryButtonClass"
                 >
-                    <ShieldCheck class="size-4" /> Hisob
+                    <ShieldCheck class="size-4" /> {{ t('Hisob') }}
                 </Link>
                 <button
                     v-if="isReviewer"
@@ -295,7 +299,7 @@ const dangerButton =
                     :class="dangerButton"
                     @click="removeOpen = true"
                 >
-                    <UserMinus class="size-4" /> Chiqarish
+                    <UserMinus class="size-4" /> {{ t('Chiqarish') }}
                 </button>
             </template>
         </PersonHeader>
@@ -307,14 +311,17 @@ const dangerButton =
                     v-if="isReviewer && !subjects.length"
                     class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-800"
                 >
-                    Yo'nalishlar belgilanmagan — maqolaga taqrizchi tanlashda
-                    «Mos yo'nalish» belgisi chiqmaydi.
+                    {{
+                        t(
+                            "Yo'nalishlar belgilanmagan — maqolaga taqrizchi tanlashda «Mos yo'nalish» belgisi chiqmaydi.",
+                        )
+                    }}
                     <button
                         type="button"
                         class="font-semibold underline hover:no-underline"
                         @click="openSubjects"
                     >
-                        Belgilash
+                        {{ t('Belgilash') }}
                     </button>
                 </p>
             </div>
@@ -336,8 +343,10 @@ const dangerButton =
 
                 <SectionCard
                     v-if="recommendationTotal"
-                    title="Tavsiyalar"
-                    description="Yakunlangan taqrizlardagi xulosalar taqsimoti"
+                    :title="t('Tavsiyalar')"
+                    :description="
+                        t('Yakunlangan taqrizlardagi xulosalar taqsimoti')
+                    "
                     :icon="ClipboardList"
                 >
                     <div
@@ -382,8 +391,10 @@ const dangerButton =
                 </SectionCard>
 
                 <SectionCard
-                    title="Taqrizlar tarixi"
-                    :description="`Jami ${stats.invited} ta taklif`"
+                    :title="t('Taqrizlar tarixi')"
+                    :description="
+                        t('Jami :invited ta taklif', { invited: stats.invited })
+                    "
                     :icon="NotebookPen"
                 >
                     <div class="mb-3 flex flex-wrap gap-1.5">
@@ -420,7 +431,14 @@ const dangerButton =
                                             class="font-mono font-semibold text-navy-600"
                                             >{{ review.article.code }}</span
                                         >
-                                        <span>· {{ review.round }}-raund</span>
+                                        <span
+                                            >·
+                                            {{
+                                                t(':number-raund', {
+                                                    number: review.round,
+                                                })
+                                            }}</span
+                                        >
                                         <span v-if="review.article.subject"
                                             >·
                                             {{ review.article.subject }}</span
@@ -457,8 +475,8 @@ const dangerButton =
                                         "
                                         :title="
                                             review.completedAt
-                                                ? 'Topshirilgan sana'
-                                                : 'Muddat'
+                                                ? t('Topshirilgan sana')
+                                                : t('Muddat')
                                         "
                                     >
                                         {{
@@ -470,7 +488,11 @@ const dangerButton =
                                                         'cancelled'
                                                   ? formatDate(review.invitedAt)
                                                   : review.dueAt
-                                                    ? `muddat: ${formatDate(review.dueAt)}`
+                                                    ? t('muddat: :date', {
+                                                          date: formatDate(
+                                                              review.dueAt,
+                                                          ),
+                                                      })
                                                     : formatDate(
                                                           review.invitedAt,
                                                       )
@@ -499,7 +521,7 @@ const dangerButton =
                         v-else
                         class="rounded-lg border border-dashed border-line px-4 py-8 text-center text-sm text-navy-400"
                     >
-                        Taqrizlar yo'q
+                        {{ t("Taqrizlar yo'q") }}
                     </p>
                 </SectionCard>
             </div>
@@ -509,26 +531,34 @@ const dangerButton =
             v-model:open="pauseOpen"
             :title="
                 isPaused
-                    ? 'Taqrizchini faollashtirish'
-                    : 'Vaqtincha to\'xtatish'
+                    ? t('Taqrizchini faollashtirish')
+                    : t('Vaqtincha to\'xtatish')
             "
             :description="
                 isPaused
-                    ? 'Taqrizchi yana maqolaga taqrizchi tanlash ro\'yxatida chiqadi.'
-                    : 'To\'xtatilgan taqrizchiga yangi taklif yuborilmaydi (ta\'til, bandlik). Joriy taqrizlari davom etadi.'
+                    ? t(
+                          'Taqrizchi yana maqolaga taqrizchi tanlash ro\'yxatida chiqadi.',
+                      )
+                    : t(
+                          'To\'xtatilgan taqrizchiga yangi taklif yuborilmaydi (ta\'til, bandlik). Joriy taqrizlari davom etadi.',
+                      )
             "
             :icon="isPaused ? CirclePlay : CirclePause"
-            :confirm-text="isPaused ? 'Faollashtirish' : 'To\'xtatish'"
+            :confirm-text="isPaused ? t('Faollashtirish') : t('To\'xtatish')"
             :processing="pausing"
             @confirm="togglePause"
         />
 
         <ActionDialog
             v-model:open="subjectsOpen"
-            title="Ilmiy yo'nalishlar"
-            description="Maqolaga taqrizchi tanlashda yo'nalishi mos taqrizchilar ro'yxat boshida «Mos yo'nalish» belgisi bilan chiqadi."
+            :title="t('Ilmiy yo\'nalishlar')"
+            :description="
+                t(
+                    'Maqolaga taqrizchi tanlashda yo\'nalishi mos taqrizchilar ro\'yxat boshida «Mos yo\'nalish» belgisi bilan chiqadi.',
+                )
+            "
             :icon="FolderTree"
-            confirm-text="Saqlash"
+            :confirm-text="t('Saqlash')"
             :processing="subjectsForm.processing"
             size="lg"
             @confirm="saveSubjects"
@@ -548,8 +578,13 @@ const dangerButton =
         <DeleteDialog
             v-model:open="removeOpen"
             :url="urls.destroy"
-            title="Taqrizchilikdan chiqarish"
-            :description="`${profile.name} dan «Taqrizchi» roli olinadi. Yakunlangan taqrizlar tarixi saqlanadi; faol taqrizlari bo'lsa, avval ularni yakunlang yoki bekor qiling.`"
+            :title="t('Taqrizchilikdan chiqarish')"
+            :description="
+                t(
+                    ':name dan «Taqrizchi» roli olinadi. Yakunlangan taqrizlar tarixi saqlanadi; faol taqrizlari bo\'lsa, avval ularni yakunlang yoki bekor qiling.',
+                    { name: profile.name },
+                )
+            "
         />
     </div>
 </template>

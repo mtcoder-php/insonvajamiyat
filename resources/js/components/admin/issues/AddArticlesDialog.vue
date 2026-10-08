@@ -6,6 +6,7 @@ import ActionDialog from '@/components/admin/ui/ActionDialog.vue';
 import { inputClass } from '@/lib/formStyles';
 import { cn } from '@/lib/utils';
 import type { AvailableArticle } from '@/types';
+import { t, tc } from '@/lib/i18n';
 
 /**
  * Songa maqola qo'shish: qabul qilingan va hali hech bir songa biriktirilmagan maqolalar.
@@ -56,10 +57,16 @@ function submit(): void {
 <template>
     <ActionDialog
         v-model:open="open"
-        title="Songa maqola qo'shish"
-        description="Qabul qilingan va nashrga tayyorlanayotgan maqolalar. Tanlanganlar son oxiriga qo'shiladi."
+        :title="t('Songa maqola qo\'shish')"
+        :description="
+            t(
+                'Qabul qilingan va nashrga tayyorlanayotgan maqolalar. Tanlanganlar son oxiriga qo\'shiladi.',
+            )
+        "
         :icon="FilePlus2"
-        :confirm-text="`Qo'shish (${form.article_ids.length})`"
+        :confirm-text="
+            t('Qo\'shish (:count)', { count: form.article_ids.length })
+        "
         :processing="form.processing"
         @confirm="submit"
     >
@@ -71,14 +78,14 @@ function submit(): void {
                 {{ errors.article_ids }}
             </p>
             <label class="relative block">
-                <span class="sr-only">Qidirish</span>
+                <span class="sr-only">{{ t('Qidirish') }}</span>
                 <Search
                     class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-navy-400"
                 />
                 <input
                     v-model="search"
                     type="search"
-                    placeholder="Sarlavha, muallif yoki ID..."
+                    :placeholder="t('Sarlavha, muallif yoki ID...')"
                     :class="cn(inputClass, 'h-9 pl-9 text-[13px]')"
                 />
             </label>
@@ -129,13 +136,17 @@ function submit(): void {
                                 #{{ article.code }} · {{ article.author }} ·
                                 {{ article.statusLabel }}
                                 <template v-if="article.pagesCount"
-                                    >· {{ article.pagesCount }} bet</template
+                                    >·
+                                    {{
+                                        tc(':count bet', article.pagesCount)
+                                    }}</template
                                 >
                                 <span
                                     v-if="article.approved"
                                     class="inline-flex items-center gap-0.5 font-semibold text-emerald-700"
                                 >
-                                    <BadgeCheck class="size-3" /> tasdiqlangan
+                                    <BadgeCheck class="size-3" />
+                                    {{ t('tasdiqlangan') }}
                                 </span>
                             </span>
                         </span>
@@ -145,8 +156,11 @@ function submit(): void {
                     v-if="!filtered.length"
                     class="py-6 text-center text-xs text-navy-500"
                 >
-                    Biriktirilmagan maqola yo'q. Maqolalar muharrir «Qabul
-                    qilish» qaroridan keyin shu yerda chiqadi.
+                    {{
+                        t(
+                            "Biriktirilmagan maqola yo'q. Maqolalar muharrir «Qabul qilish» qaroridan keyin shu yerda chiqadi.",
+                        )
+                    }}
                 </li>
             </ul>
         </div>

@@ -32,6 +32,7 @@ import type {
     StaffConversation,
     StaffInboxScope,
 } from '@/types';
+import { t, tk } from '@/lib/i18n';
 
 /**
  * Admin → Xabarlar: mualliflar bilan yozishmalar markazi (chapda ro'yxat, o'ngda yozishma),
@@ -42,8 +43,8 @@ const props = defineProps<MessageCenterProps>();
 defineOptions({
     layout: {
         breadcrumbs: [
-            { title: 'Admin panel', href: dashboard() },
-            { title: 'Xabarlar', href: index() },
+            { title: tk('Admin panel'), href: dashboard() },
+            { title: tk('Xabarlar'), href: index() },
         ],
     },
 });
@@ -145,28 +146,28 @@ const tabMeta = computed<
     Record<MessageCenterTab, { label: string; icon: Component; count: number }>
 >(() => ({
     messages: {
-        label: 'Yozishmalar',
+        label: t('Yozishmalar'),
         icon: MessagesSquare,
         count: props.counts.unread,
     },
-    broadcast: { label: 'Ommaviy xabar', icon: Megaphone, count: 0 },
+    broadcast: { label: t('Ommaviy xabar'), icon: Megaphone, count: 0 },
     notifications: {
-        label: 'Bildirishnomalar',
+        label: t('Bildirishnomalar'),
         icon: Bell,
         count: notificationsUnread.value,
     },
 }));
 
 const scopes = computed(() => [
-    { key: 'all' as const, label: 'Hammasi', count: props.counts.all },
+    { key: 'all' as const, label: t('Hammasi'), count: props.counts.all },
     {
         key: 'unread' as const,
-        label: 'Javob kutmoqda',
+        label: t('Javob kutmoqda'),
         count: props.counts.unread,
     },
     {
         key: 'mine' as const,
-        label: 'Menga biriktirilgan',
+        label: t('Menga biriktirilgan'),
         count: props.counts.mine,
     },
 ]);
@@ -182,14 +183,18 @@ function notificationsQuery(p = 1, unread = props.filters.unread): Query {
 </script>
 
 <template>
-    <Head title="Xabarlar" />
+    <Head :title="t('Xabarlar')" />
 
     <div
         class="flex flex-1 flex-col gap-5 bg-[#f5f7fb] p-4 text-navy-900 md:p-6"
     >
         <PageHeader
-            title="Xabarlar"
-            description="Mualliflar bilan yozishmalar, ommaviy e'lonlar va bildirishnomalar"
+            :title="t('Xabarlar')"
+            :description="
+                t(
+                    'Mualliflar bilan yozishmalar, ommaviy e\'lonlar va bildirishnomalar',
+                )
+            "
         >
             <template #before>
                 <span
@@ -252,14 +257,14 @@ function notificationsQuery(p = 1, unread = props.filters.unread): Query {
             >
                 <div class="grid gap-2 border-b border-line p-3">
                     <label class="relative block">
-                        <span class="sr-only">Qidirish</span>
+                        <span class="sr-only">{{ t('Qidirish') }}</span>
                         <Search
                             class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-navy-400"
                         />
                         <input
                             v-model="search"
                             type="search"
-                            placeholder="Maqola, kod yoki muallif..."
+                            :placeholder="t('Maqola, kod yoki muallif...')"
                             :class="cn(inputClass, 'h-9 pl-9 text-[13px]')"
                         />
                     </label>
@@ -331,7 +336,9 @@ function notificationsQuery(p = 1, unread = props.filters.unread): Query {
                                         <UserRoundCheck
                                             v-if="c.isMine"
                                             class="size-3 shrink-0 text-brand-600"
-                                            aria-label="Menga biriktirilgan"
+                                            :aria-label="
+                                                t('Menga biriktirilgan')
+                                            "
                                         />
                                     </span>
                                     <span
@@ -359,9 +366,9 @@ function notificationsQuery(p = 1, unread = props.filters.unread): Query {
                                                 class="mr-0.5 inline size-3"
                                             />{{
                                                 c.last.mine
-                                                    ? 'Siz'
+                                                    ? t('Siz')
                                                     : c.last.fromAuthor
-                                                      ? 'Muallif'
+                                                      ? t('Muallif')
                                                       : c.last.sender
                                             }}: {{ c.last.body }}
                                         </template>
@@ -383,7 +390,7 @@ function notificationsQuery(p = 1, unread = props.filters.unread): Query {
                     <Inbox class="size-8 text-navy-300" />
                     {{
                         filters.q || filters.scope !== 'all'
-                            ? 'Yozishma topilmadi'
+                            ? t('Yozishma topilmadi')
                             : "Hali yozishmalar yo'q. Maqola sahifasidan muallifga yozing."
                     }}
                 </div>
@@ -410,7 +417,7 @@ function notificationsQuery(p = 1, unread = props.filters.unread): Query {
                         <button
                             type="button"
                             class="flex size-8 items-center justify-center rounded-lg text-navy-600 hover:bg-brand-50 lg:hidden"
-                            aria-label="Ro'yxatga qaytish"
+                            :aria-label="t('Ro\'yxatga qaytish')"
                             @click="showList = true"
                         >
                             <ArrowLeft class="size-4" />
@@ -445,9 +452,11 @@ function notificationsQuery(p = 1, unread = props.filters.unread): Query {
                                         >{{ thread.authorEmail }}</a
                                     ></span
                                 >
-                                <span v-if="thread.editor"
-                                    >Mas'ul muharrir: {{ thread.editor }}</span
-                                >
+                                <span v-if="thread.editor">{{
+                                    t("Mas'ul muharrir: :name", {
+                                        name: thread.editor,
+                                    })
+                                }}</span>
                             </p>
                         </div>
                         <Link
@@ -455,17 +464,21 @@ function notificationsQuery(p = 1, unread = props.filters.unread): Query {
                             class="inline-flex items-center gap-1.5 rounded-lg border border-line px-3 py-1.5 text-xs font-semibold text-navy-700 transition-all hover:-translate-y-px hover:border-brand-300 hover:text-brand-700"
                         >
                             <ExternalLink class="size-3.5" />
-                            <span class="hidden sm:inline"
-                                >Maqolani ochish</span
-                            >
+                            <span class="hidden sm:inline">{{
+                                t('Maqolani ochish')
+                            }}</span>
                         </Link>
                     </header>
                     <div class="flex-1 p-4 sm:p-5">
                         <MessageThread
                             :messages="thread.items"
                             :send-url="thread.sendUrl"
-                            empty-text="Hali yozishma yo'q. Muallifga birinchi xabarni yozing."
-                            placeholder="Muallifga javob yozing..."
+                            :empty-text="
+                                t(
+                                    'Hali yozishma yo\'q. Muallifga birinchi xabarni yozing.',
+                                )
+                            "
+                            :placeholder="t('Muallifga javob yozing...')"
                         />
                     </div>
                 </template>
@@ -479,11 +492,14 @@ function notificationsQuery(p = 1, unread = props.filters.unread): Query {
                         <MessagesSquare class="size-7" />
                     </span>
                     <p class="font-semibold text-navy-800">
-                        Yozishmani tanlang
+                        {{ t('Yozishmani tanlang') }}
                     </p>
                     <p class="max-w-sm text-sm text-navy-500">
-                        Chapdagi ro'yxatdan maqolani tanlang. «Javob kutmoqda» —
-                        muallif yozgan va hali ochilmagan xabarlar.
+                        {{
+                            t(
+                                "Chapdagi ro'yxatdan maqolani tanlang. «Javob kutmoqda» — muallif yozgan va hali ochilmagan xabarlar.",
+                            )
+                        }}
                     </p>
                 </div>
             </div>

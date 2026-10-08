@@ -23,6 +23,7 @@ import { cn } from '@/lib/utils';
 import { dashboard } from '@/routes/admin';
 import { index } from '@/routes/admin/settings';
 import type { SettingsPageProps, SettingsTab } from '@/types';
+import { t, tk } from '@/lib/i18n';
 
 /**
  * Admin → Sozlamalar: ilmiy yo'nalishlar, maqola turlari va narxlar, bosh sahifa bannerlari,
@@ -34,8 +35,8 @@ const props = defineProps<SettingsPageProps>();
 defineOptions({
     layout: {
         breadcrumbs: [
-            { title: 'Admin panel', href: dashboard() },
-            { title: 'Sozlamalar', href: index() },
+            { title: tk('Admin panel'), href: dashboard() },
+            { title: tk('Sozlamalar'), href: index() },
         ],
     },
 });
@@ -45,38 +46,38 @@ const meta: Record<
     { label: string; hint: string; icon: Component }
 > = {
     subjects: {
-        label: "Yo'nalishlar",
-        hint: 'Rukn va fan sohalari',
+        label: t("Yo'nalishlar"),
+        hint: t('Rukn va fan sohalari'),
         icon: FolderTree,
     },
     types: {
-        label: 'Maqola turlari va narxlar',
-        hint: "Nashr to'lovi",
+        label: t('Maqola turlari va narxlar'),
+        hint: t("Nashr to'lovi"),
         icon: BadgeDollarSign,
     },
     banners: {
-        label: 'Bannerlar',
-        hint: 'Bosh sahifa slayderi',
+        label: t('Bannerlar'),
+        hint: t('Bosh sahifa slayderi'),
         icon: GalleryHorizontalEnd,
     },
     posts: {
-        label: "Yangiliklar va e'lonlar",
-        hint: 'Sayt xabarlari',
+        label: t("Yangiliklar va e'lonlar"),
+        hint: t('Sayt xabarlari'),
         icon: Newspaper,
     },
     events: {
-        label: 'Tadbirlar',
-        hint: 'Konferensiya, seminar',
+        label: t('Tadbirlar'),
+        hint: t('Konferensiya, seminar'),
         icon: CalendarDays,
     },
     books: {
-        label: 'Tavsiya etilgan kitoblar',
-        hint: "Bosh sahifa o'ng ustuni",
+        label: t('Tavsiya etilgan kitoblar'),
+        hint: t("Bosh sahifa o'ng ustuni"),
         icon: BookOpen,
     },
     partners: {
-        label: 'Hamkorlar',
-        hint: 'Indekslash bazalari',
+        label: t('Hamkorlar'),
+        hint: t('Indekslash bazalari'),
         icon: Handshake,
     },
 };
@@ -89,14 +90,18 @@ function go(tab: SettingsTab): void {
 </script>
 
 <template>
-    <Head title="Sozlamalar" />
+    <Head :title="t('Sozlamalar')" />
 
     <div
         class="flex flex-1 flex-col gap-5 bg-[#f5f7fb] p-4 text-navy-900 md:p-6"
     >
         <PageHeader
-            title="Sozlamalar"
-            description="Jurnal ma'lumotlari, ilmiy yo'nalishlar, maqola turlari va sayt kontenti."
+            :title="t('Sozlamalar')"
+            :description="
+                t(
+                    'Jurnal ma\'lumotlari, ilmiy yo\'nalishlar, maqola turlari va sayt kontenti.',
+                )
+            "
         >
             <template #before>
                 <span

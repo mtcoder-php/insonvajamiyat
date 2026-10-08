@@ -33,6 +33,7 @@ import type {
     UserFilters,
     UserListItem,
 } from '@/types';
+import { t, tk } from '@/lib/i18n';
 
 /**
  * Foydalanuvchilar ro'yxati: qidiruv, rol/holat filtrlari, tartiblash, sahifalash.
@@ -47,8 +48,8 @@ const props = defineProps<{
 defineOptions({
     layout: {
         breadcrumbs: [
-            { title: 'Admin panel', href: dashboard() },
-            { title: 'Foydalanuvchilar', href: index() },
+            { title: tk('Admin panel'), href: dashboard() },
+            { title: tk('Foydalanuvchilar'), href: index() },
         ],
     },
 });
@@ -119,7 +120,7 @@ type Stat = {
 const stats = computed<Stat[]>(() => [
     {
         key: 'total',
-        label: 'Jami',
+        label: t('Jami'),
         value: props.counts?.total,
         icon: Users,
         tint: 'bg-brand-50 text-brand-600',
@@ -128,7 +129,7 @@ const stats = computed<Stat[]>(() => [
     },
     {
         key: 'staff',
-        label: 'Xodimlar',
+        label: t('Xodimlar'),
         value: props.counts?.staff,
         icon: ShieldCheck,
         tint: 'bg-violet-50 text-violet-600',
@@ -137,7 +138,7 @@ const stats = computed<Stat[]>(() => [
     },
     {
         key: 'authors',
-        label: 'Mualliflar',
+        label: t('Mualliflar'),
         value: props.counts?.authors,
         icon: UserRound,
         tint: 'bg-amber-50 text-amber-600',
@@ -146,7 +147,7 @@ const stats = computed<Stat[]>(() => [
     },
     {
         key: 'blocked',
-        label: 'Bloklangan',
+        label: t('Bloklangan'),
         value: props.counts?.blocked,
         icon: Ban,
         tint: 'bg-red-50 text-red-600',
@@ -155,7 +156,7 @@ const stats = computed<Stat[]>(() => [
     },
     {
         key: 'deleted',
-        label: "O'chirilgan",
+        label: t("O'chirilgan"),
         value: props.counts?.deleted,
         icon: Trash2,
         tint: 'bg-navy-50 text-navy-600',
@@ -165,18 +166,18 @@ const stats = computed<Stat[]>(() => [
 ]);
 
 const statuses = [
-    { value: '', label: 'Barcha holatlar' },
-    { value: 'active', label: 'Faol' },
-    { value: 'blocked', label: 'Bloklangan' },
-    { value: 'unverified', label: 'Email tasdiqlanmagan' },
-    { value: 'deleted', label: "O'chirilgan" },
+    { value: '', label: t('Barcha holatlar') },
+    { value: 'active', label: t('Faol') },
+    { value: 'blocked', label: t('Bloklangan') },
+    { value: 'unverified', label: t('Email tasdiqlanmagan') },
+    { value: 'deleted', label: t("O'chirilgan") },
 ];
 
 const sorts = [
-    { value: 'latest', label: 'Avval yangilari' },
-    { value: 'oldest', label: 'Avval eskilari' },
-    { value: 'name', label: "Ism bo'yicha (A–Z)" },
-    { value: 'last_login', label: "Oxirgi kirish bo'yicha" },
+    { value: 'latest', label: t('Avval yangilari') },
+    { value: 'oldest', label: t('Avval eskilari') },
+    { value: 'name', label: t("Ism bo'yicha (A–Z)") },
+    { value: 'last_login', label: t("Oxirgi kirish bo'yicha") },
 ];
 
 function open(user: UserListItem): void {
@@ -185,17 +186,21 @@ function open(user: UserListItem): void {
 </script>
 
 <template>
-    <Head title="Foydalanuvchilar" />
+    <Head :title="t('Foydalanuvchilar')" />
 
     <div class="flex flex-1 flex-col gap-5 bg-[#f5f7fb] p-4 md:p-6">
         <PageHeader
-            title="Foydalanuvchilar"
-            description="Xodimlar va mualliflar: rollar, holat va profil ma'lumotlari"
+            :title="t('Foydalanuvchilar')"
+            :description="
+                t(
+                    'Xodimlar va mualliflar: rollar, holat va profil ma\'lumotlari',
+                )
+            "
         >
             <template #actions>
                 <Link :href="create()" :class="primaryButtonClass">
                     <UserPlus class="size-4" />
-                    Foydalanuvchi qo'shish
+                    {{ t("Foydalanuvchi qo'shish") }}
                 </Link>
             </template>
         </PageHeader>
@@ -203,7 +208,7 @@ function open(user: UserListItem): void {
         <!-- Statistika -->
         <section
             class="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-5"
-            aria-label="Statistika"
+            :aria-label="t('Statistika')"
         >
             <button
                 v-for="stat in stats"
@@ -255,7 +260,7 @@ function open(user: UserListItem): void {
                 class="grid gap-3 border-b border-line p-4 md:grid-cols-[minmax(0,1fr)_11rem_12rem_12rem_auto]"
             >
                 <label class="relative">
-                    <span class="sr-only">Qidirish</span>
+                    <span class="sr-only">{{ t('Qidirish') }}</span>
                     <Search
                         class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-navy-400"
                     />
@@ -263,12 +268,14 @@ function open(user: UserListItem): void {
                         v-model="form.search"
                         type="search"
                         :class="cn(inputClass, 'pl-9')"
-                        placeholder="Ism, email, telefon yoki tashkilot..."
+                        :placeholder="
+                            t('Ism, email, telefon yoki tashkilot...')
+                        "
                     />
                 </label>
-                <SelectInput v-model="form.role" aria-label="Rol">
-                    <option value="">Barcha rollar</option>
-                    <option value="staff">Barcha xodimlar</option>
+                <SelectInput v-model="form.role" :aria-label="t('Rol')">
+                    <option value="">{{ t('Barcha rollar') }}</option>
+                    <option value="staff">{{ t('Barcha xodimlar') }}</option>
                     <option
                         v-for="role in roleOptions"
                         :key="role.value"
@@ -277,7 +284,7 @@ function open(user: UserListItem): void {
                         {{ role.label }}
                     </option>
                 </SelectInput>
-                <SelectInput v-model="form.status" aria-label="Holat">
+                <SelectInput v-model="form.status" :aria-label="t('Holat')">
                     <option
                         v-for="s in statuses"
                         :key="s.value"
@@ -286,7 +293,7 @@ function open(user: UserListItem): void {
                         {{ s.label }}
                     </option>
                 </SelectInput>
-                <SelectInput v-model="form.sort" aria-label="Tartib">
+                <SelectInput v-model="form.sort" :aria-label="t('Tartib')">
                     <option v-for="s in sorts" :key="s.value" :value="s.value">
                         {{ s.label }}
                     </option>
@@ -298,7 +305,7 @@ function open(user: UserListItem): void {
                     @click="reset"
                 >
                     <X class="size-4" />
-                    Tozalash
+                    {{ t('Tozalash') }}
                 </button>
             </div>
 
@@ -312,13 +319,17 @@ function open(user: UserListItem): void {
                         <tr
                             class="border-b border-line bg-[#f8fafc] text-[11px] font-semibold tracking-wide text-navy-500 uppercase"
                         >
-                            <th class="py-3 pl-5">Foydalanuvchi</th>
-                            <th class="py-3 pr-4">Telefon</th>
-                            <th class="py-3 pr-4">Rollar</th>
-                            <th class="py-3 pr-4">Holat</th>
-                            <th class="py-3 pr-4">Oxirgi kirish</th>
-                            <th class="py-3 pr-4">Ro'yxatdan o'tgan</th>
-                            <th class="py-3 pr-5 text-right">Amallar</th>
+                            <th class="py-3 pl-5">{{ t('Foydalanuvchi') }}</th>
+                            <th class="py-3 pr-4">{{ t('Telefon') }}</th>
+                            <th class="py-3 pr-4">{{ t('Rollar') }}</th>
+                            <th class="py-3 pr-4">{{ t('Holat') }}</th>
+                            <th class="py-3 pr-4">{{ t('Oxirgi kirish') }}</th>
+                            <th class="py-3 pr-4">
+                                {{ t("Ro'yxatdan o'tgan") }}
+                            </th>
+                            <th class="py-3 pr-5 text-right">
+                                {{ t('Amallar') }}
+                            </th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-line">
@@ -353,9 +364,11 @@ function open(user: UserListItem): void {
                                             <span
                                                 v-if="!user.isVerified"
                                                 class="rounded bg-amber-50 px-1 text-[10px] font-semibold text-amber-700"
-                                                title="Email tasdiqlanmagan"
+                                                :title="
+                                                    t('Email tasdiqlanmagan')
+                                                "
                                             >
-                                                tasdiqlanmagan
+                                                {{ t('tasdiqlanmagan') }}
                                             </span>
                                         </p>
                                     </div>
@@ -381,7 +394,7 @@ function open(user: UserListItem): void {
                                 {{
                                     user.lastLoginAt
                                         ? timeAgo(user.lastLoginAt)
-                                        : 'Kirmagan'
+                                        : t('Kirmagan')
                                 }}
                             </td>
                             <td
@@ -394,7 +407,7 @@ function open(user: UserListItem): void {
                                     <Link
                                         :href="show(user.id)"
                                         class="flex size-8 items-center justify-center rounded-lg border border-line text-navy-500 transition-all hover:-translate-y-px hover:border-brand-200 hover:text-brand-600"
-                                        title="Profilni ko'rish"
+                                        :title="t('Profilni ko\'rish')"
                                     >
                                         <Eye class="size-4" />
                                     </Link>
@@ -402,7 +415,7 @@ function open(user: UserListItem): void {
                                         v-if="!user.isDeleted"
                                         :href="edit(user.id)"
                                         class="flex size-8 items-center justify-center rounded-lg border border-line text-navy-500 transition-all hover:-translate-y-px hover:border-brand-200 hover:text-brand-600"
-                                        title="Tahrirlash"
+                                        :title="t('Tahrirlash')"
                                     >
                                         <PenLine class="size-4" />
                                     </Link>
@@ -410,7 +423,7 @@ function open(user: UserListItem): void {
                                         v-else
                                         :href="show(user.id)"
                                         class="flex size-8 items-center justify-center rounded-lg border border-line text-navy-500 transition-all hover:-translate-y-px hover:border-emerald-200 hover:text-emerald-600"
-                                        title="Tiklash"
+                                        :title="t('Tiklash')"
                                     >
                                         <RotateCcw class="size-4" />
                                     </Link>
@@ -470,10 +483,14 @@ function open(user: UserListItem): void {
                     <Users class="size-7" />
                 </span>
                 <p class="mt-4 font-semibold text-navy-900">
-                    Foydalanuvchi topilmadi
+                    {{ t('Foydalanuvchi topilmadi') }}
                 </p>
                 <p class="mt-1 text-sm text-navy-500">
-                    Qidiruv so'zini yoki filtrlarni o'zgartirib ko'ring.
+                    {{
+                        t(
+                            "Qidiruv so'zini yoki filtrlarni o'zgartirib ko'ring.",
+                        )
+                    }}
                 </p>
                 <button
                     v-if="hasFilters"
@@ -481,7 +498,7 @@ function open(user: UserListItem): void {
                     class="mt-4 text-sm font-semibold text-brand-700 hover:text-brand-600"
                     @click="reset"
                 >
-                    Filtrlarni tozalash
+                    {{ t('Filtrlarni tozalash') }}
                 </button>
             </div>
 

@@ -5,6 +5,7 @@ import { ref } from 'vue';
 import { formatLimit, prepareImage } from '@/lib/image';
 import { cn } from '@/lib/utils';
 import type { ProductionArticle } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * "Maqola rasmi": saytdagi katalog, maqola sahifasi va bosh sahifa kartalarida ko'rinadi.
@@ -45,7 +46,9 @@ async function upload(picked: File | null | undefined): Promise<void> {
             onError: (errors) =>
                 (error.value =
                     errors.cover ??
-                    "Rasmni yuklab bo'lmadi. Fayl hajmi va formatini tekshiring."),
+                    t(
+                        "Rasmni yuklab bo'lmadi. Fayl hajmi va formatini tekshiring.",
+                    )),
             onFinish: () => {
                 busy.value = false;
 
@@ -77,7 +80,7 @@ function onDrop(event: DragEvent): void {
     >
         <header class="mb-3 flex items-center justify-between gap-3">
             <h2 class="font-sans text-[15px] font-bold text-navy-950">
-                Maqola rasmi
+                {{ t('Maqola rasmi') }}
             </h2>
             <div
                 v-if="article.coverUrl && article.can.cover"
@@ -87,8 +90,8 @@ function onDrop(event: DragEvent): void {
                     type="button"
                     :disabled="busy"
                     class="inline-flex size-8 items-center justify-center rounded-lg text-navy-500 transition-colors hover:bg-brand-50 hover:text-brand-700 disabled:opacity-50"
-                    title="Almashtirish"
-                    aria-label="Rasmni almashtirish"
+                    :title="t('Almashtirish')"
+                    :aria-label="t('Rasmni almashtirish')"
                     @click="input?.click()"
                 >
                     <RefreshCw class="size-4" />
@@ -97,8 +100,8 @@ function onDrop(event: DragEvent): void {
                     type="button"
                     :disabled="busy"
                     class="inline-flex size-8 items-center justify-center rounded-lg text-navy-500 transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
-                    title="O'chirish"
-                    aria-label="Rasmni o'chirish"
+                    :title="t('O\'chirish')"
+                    :aria-label="t('Rasmni o\'chirish')"
                     @click="remove"
                 >
                     <Trash2 class="size-4" />
@@ -145,19 +148,25 @@ function onDrop(event: DragEvent): void {
                 class="size-7 animate-spin text-brand-600"
             />
             <ImagePlus v-else class="size-7 text-brand-600" />
-            <span class="text-[13px] font-semibold text-navy-800"
-                >Rasm tanlang yoki shu yerga tashlang</span
-            >
-            <span class="text-[11px] text-navy-500"
-                >JPG, PNG yoki WEBP · kamida 600×400 px · katta rasm avtomatik
-                kichraytiriladi</span
-            >
+            <span class="text-[13px] font-semibold text-navy-800">{{
+                t('Rasm tanlang yoki shu yerga tashlang')
+            }}</span>
+            <span class="text-[11px] text-navy-500">{{
+                t(
+                    'JPG, PNG yoki WEBP · kamida 600×400 px · katta rasm avtomatik kichraytiriladi',
+                )
+            }}</span>
         </button>
-        <p v-else class="text-[13px] text-navy-500">Rasm yuklanmagan.</p>
+        <p v-else class="text-[13px] text-navy-500">
+            {{ t('Rasm yuklanmagan.') }}
+        </p>
 
         <p class="mt-2 text-[11px] text-navy-500">
-            Saytdagi maqolalar katalogi, maqola sahifasi va bosh sahifada
-            ko'rinadi. Tavsiya: 1200×800 px (3:2).
+            {{
+                t(
+                    "Saytdagi maqolalar katalogi, maqola sahifasi va bosh sahifada ko'rinadi. Tavsiya: 1200×800 px (3:2).",
+                )
+            }}
         </p>
         <p v-if="error" class="mt-1 text-xs text-red-600">{{ error }}</p>
 

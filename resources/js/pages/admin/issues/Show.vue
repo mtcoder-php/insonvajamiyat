@@ -33,6 +33,7 @@ import { cn } from '@/lib/utils';
 import { dashboard } from '@/routes/admin';
 import { index } from '@/routes/admin/issues';
 import type { IssueShowProps } from '@/types';
+import { t, tc, tk } from '@/lib/i18n';
 
 /**
  * Jurnal soni: tarkib (maqolalar tartibi, rukn, sahifalar), muqova, PDF, mundarija.
@@ -42,9 +43,9 @@ const props = defineProps<IssueShowProps>();
 defineOptions({
     layout: {
         breadcrumbs: [
-            { title: 'Admin panel', href: dashboard() },
-            { title: 'Jurnallar', href: index() },
-            { title: 'Son', href: index() },
+            { title: tk('Admin panel'), href: dashboard() },
+            { title: tk('Jurnallar'), href: index() },
+            { title: tk('Son'), href: index() },
         ],
     },
 });
@@ -117,14 +118,18 @@ function removeFile(type: FileType): void {
 const files = computed(() => [
     {
         type: 'pdf' as const,
-        title: "To'liq son PDF",
-        hint: 'Muqova, mundarija va barcha maqolalar bitta faylda — saytda «Sonni yuklab olish».',
+        title: t("To'liq son PDF"),
+        hint: t(
+            'Muqova, mundarija va barcha maqolalar bitta faylda — saytda «Sonni yuklab olish».',
+        ),
         info: props.issue.files.pdf,
     },
     {
         type: 'toc' as const,
-        title: 'Mundarija PDF',
-        hint: '«Mundarijani chop etish» sahifasidan PDF sifatida saqlab yuklang.',
+        title: t('Mundarija PDF'),
+        hint: t(
+            '«Mundarijani chop etish» sahifasidan PDF sifatida saqlab yuklang.',
+        ),
         info: props.issue.files.toc,
     },
 ]);
@@ -164,13 +169,13 @@ const checks = computed(() => [
             props.issue.summary.withPages === props.issue.summary.total,
         label: `Sahifalar belgilangan: ${props.issue.summary.withPages}/${props.issue.summary.total}`,
     },
-    { ok: props.issue.hasOwnCover, label: 'Muqova yuklangan' },
-    { ok: props.issue.files.pdf !== null, label: "To'liq son PDF" },
+    { ok: props.issue.hasOwnCover, label: t('Muqova yuklangan') },
+    { ok: props.issue.files.pdf !== null, label: t("To'liq son PDF") },
 ]);
 </script>
 
 <template>
-    <Head :title="`Jurnal soni ${issue.label}`" />
+    <Head :title="t('Jurnal soni :label', { label: issue.label })" />
 
     <div class="flex flex-1 flex-col gap-5 bg-[#f5f7fb] p-4 md:p-6">
         <!-- Sarlavha -->
@@ -211,8 +216,8 @@ const checks = computed(() => [
                         <ImageUp v-else class="size-6" />
                         {{
                             issue.hasOwnCover
-                                ? 'Muqovani almashtirish'
-                                : 'Muqova yuklash'
+                                ? t('Muqovani almashtirish')
+                                : t('Muqova yuklash')
                         }}
                     </button>
                     <input
@@ -229,13 +234,18 @@ const checks = computed(() => [
                         :href="issue.urls.index"
                         class="mb-2 inline-flex items-center gap-1 text-xs font-semibold text-navy-500 transition-colors hover:text-brand-700"
                     >
-                        <ArrowLeft class="size-3.5" /> Jurnallar
+                        <ArrowLeft class="size-3.5" /> {{ t('Jurnallar') }}
                     </Link>
                     <div class="flex flex-wrap items-center gap-3">
                         <h1
                             class="font-serif text-2xl font-bold text-navy-950 md:text-3xl"
                         >
-                            {{ issue.year }}-yil, {{ issue.number }}-son
+                            {{
+                                t(':year-yil, :number-son', {
+                                    year: issue.year,
+                                    number: issue.number,
+                                })
+                            }}
                         </h1>
                         <span
                             :class="
@@ -259,7 +269,9 @@ const checks = computed(() => [
                         class="mt-3 flex flex-wrap gap-x-6 gap-y-1.5 text-[13px] text-navy-600"
                     >
                         <div v-if="issue.volume">
-                            <dt class="me-1 inline text-navy-400">Jild:</dt>
+                            <dt class="me-1 inline text-navy-400">
+                                {{ t('Jild:') }}
+                            </dt>
                             <dd class="inline font-semibold text-navy-800">
                                 {{ issue.volume }}
                             </dd>
@@ -273,14 +285,20 @@ const checks = computed(() => [
                             </dd>
                         </div>
                         <div>
-                            <dt class="me-1 inline text-navy-400">Hajm:</dt>
+                            <dt class="me-1 inline text-navy-400">
+                                {{ t('Hajm:') }}
+                            </dt>
                             <dd class="inline font-semibold text-navy-800">
-                                {{ issue.summary.pages || '—' }} bet
+                                {{
+                                    issue.summary.pages
+                                        ? tc(':count bet', issue.summary.pages)
+                                        : '—'
+                                }}
                             </dd>
                         </div>
                         <div v-if="issue.publishedAt">
                             <dt class="me-1 inline text-navy-400">
-                                Chop etilgan:
+                                {{ t('Chop etilgan:') }}
                             </dt>
                             <dd class="inline font-semibold text-navy-800">
                                 {{ formatDate(issue.publishedAt) }}
@@ -310,7 +328,7 @@ const checks = computed(() => [
                         :class="cn(secondaryButtonClass, 'h-9 text-[13px]')"
                         @click="editOpen = true"
                     >
-                        <PenLine class="size-4" /> Tahrirlash
+                        <PenLine class="size-4" /> {{ t('Tahrirlash') }}
                     </button>
                     <a
                         :href="issue.urls.toc"
@@ -318,7 +336,8 @@ const checks = computed(() => [
                         rel="noopener"
                         :class="cn(secondaryButtonClass, 'h-9 text-[13px]')"
                     >
-                        <Printer class="size-4" /> Mundarijani chop etish
+                        <Printer class="size-4" />
+                        {{ t('Mundarijani chop etish') }}
                     </a>
                     <button
                         v-if="issue.hasOwnCover"
@@ -331,7 +350,8 @@ const checks = computed(() => [
                         "
                         @click="removeFile('cover')"
                     >
-                        <ImageUp class="size-4" /> Muqovani olib tashlash
+                        <ImageUp class="size-4" />
+                        {{ t('Muqovani olib tashlash') }}
                     </button>
                     <button
                         v-if="issue.can.delete"
@@ -344,7 +364,7 @@ const checks = computed(() => [
                         "
                         @click="deleteOpen = true"
                     >
-                        <Trash2 class="size-4" /> Sonni o'chirish
+                        <Trash2 class="size-4" /> {{ t("Sonni o'chirish") }}
                     </button>
                 </div>
             </div>
@@ -362,10 +382,10 @@ const checks = computed(() => [
                         class="flex items-center gap-2 font-sans text-[15px] font-bold text-navy-950"
                     >
                         <ListOrdered class="size-[18px] text-brand-600" />
-                        Son tarkibi
-                        <span class="text-xs font-medium text-navy-400"
-                            >— sudrab tartiblang</span
-                        >
+                        {{ t('Son tarkibi') }}
+                        <span class="text-xs font-medium text-navy-400">{{
+                            t('— sudrab tartiblang')
+                        }}</span>
                     </h2>
                     <div v-if="issue.can.manage" class="flex flex-wrap gap-2">
                         <button
@@ -374,14 +394,16 @@ const checks = computed(() => [
                             :class="cn(secondaryButtonClass, 'h-9 text-[13px]')"
                             @click="paginateOpen = true"
                         >
-                            <Calculator class="size-4" /> Sahifalarni hisoblash
+                            <Calculator class="size-4" />
+                            {{ t('Sahifalarni hisoblash') }}
                         </button>
                         <button
                             type="button"
                             class="inline-flex h-9 items-center gap-2 rounded-lg bg-brand-600 px-3.5 text-[13px] font-semibold text-white shadow-[0_8px_20px_-10px_rgba(0,108,246,0.9)] transition-all hover:-translate-y-px hover:bg-brand-500"
                             @click="addOpen = true"
                         >
-                            <FilePlus2 class="size-4" /> Maqola qo'shish
+                            <FilePlus2 class="size-4" />
+                            {{ t("Maqola qo'shish") }}
                             <span
                                 v-if="available.length"
                                 class="rounded-full bg-white/20 px-1.5 text-[10px] tabular-nums"
@@ -401,7 +423,7 @@ const checks = computed(() => [
                     <h2
                         class="mb-3 font-sans text-[15px] font-bold text-navy-950"
                     >
-                        Chop etishga tayyorlik
+                        {{ t('Chop etishga tayyorlik') }}
                     </h2>
                     <ul class="grid gap-2">
                         <li
@@ -429,8 +451,8 @@ const checks = computed(() => [
                         v-if="issue.summary.complete"
                         class="mt-4 flex items-center gap-2 rounded-lg bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800"
                     >
-                        <BadgeCheck class="size-4" /> Barcha maqolalar nashrga
-                        tayyor
+                        <BadgeCheck class="size-4" />
+                        {{ t('Barcha maqolalar nashrga tayyor') }}
                     </div>
                     <a
                         v-if="issue.publicUrl"
@@ -439,7 +461,8 @@ const checks = computed(() => [
                         rel="noopener"
                         class="mt-4 flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 text-sm font-semibold text-white shadow-[0_10px_22px_-12px_rgba(5,150,105,0.9)] transition-all hover:-translate-y-px hover:bg-emerald-500"
                     >
-                        <ExternalLink class="size-4" /> Saytda ko'rish
+                        <ExternalLink class="size-4" />
+                        {{ t("Saytda ko'rish") }}
                     </a>
                     <template v-else>
                         <ul
@@ -460,7 +483,11 @@ const checks = computed(() => [
                                 v-if="issue.problems.length > 5"
                                 class="pl-5 text-amber-700"
                             >
-                                va yana {{ issue.problems.length - 5 }} ta...
+                                {{
+                                    t('va yana :count ta...', {
+                                        count: issue.problems.length - 5,
+                                    })
+                                }}
                             </li>
                         </ul>
                         <button
@@ -469,12 +496,14 @@ const checks = computed(() => [
                             :title="
                                 issue.can.publish
                                     ? undefined
-                                    : 'Avval yuqoridagi kamchiliklarni bartaraf eting (chop etish — bosh muharrir huquqi)'
+                                    : t(
+                                          'Avval yuqoridagi kamchiliklarni bartaraf eting (chop etish — bosh muharrir huquqi)',
+                                      )
                             "
                             class="mt-4 flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-navy-900 text-sm font-semibold text-white shadow-[0_10px_22px_-12px_rgba(0,30,60,0.9)] transition-all hover:-translate-y-px hover:bg-brand-700 disabled:pointer-events-none disabled:opacity-50"
                             @click="publishOpen = true"
                         >
-                            <Send class="size-4" /> Sonni chop etish
+                            <Send class="size-4" /> {{ t('Sonni chop etish') }}
                         </button>
                     </template>
                 </section>
@@ -492,7 +521,7 @@ const checks = computed(() => [
                     <h2
                         class="mb-3 font-sans text-[15px] font-bold text-navy-950"
                     >
-                        Son fayllari
+                        {{ t('Son fayllari') }}
                     </h2>
                     <div class="grid gap-3">
                         <div
@@ -547,7 +576,8 @@ const checks = computed(() => [
                                     rel="noopener"
                                     class="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold text-navy-700 transition-colors hover:bg-navy-50"
                                 >
-                                    <Download class="size-3.5" /> Ochish
+                                    <Download class="size-3.5" />
+                                    {{ t('Ochish') }}
                                 </a>
                                 <template v-if="issue.can.manage">
                                     <button
@@ -563,8 +593,8 @@ const checks = computed(() => [
                                         <Upload v-else class="size-3.5" />
                                         {{
                                             item.info
-                                                ? 'Almashtirish'
-                                                : 'Yuklash'
+                                                ? t('Almashtirish')
+                                                : t('Yuklash')
                                         }}
                                     </button>
                                     <button
@@ -623,17 +653,21 @@ const checks = computed(() => [
 
     <ActionDialog
         v-model:open="paginateOpen"
-        title="Sahifalarni avtomatik hisoblash"
-        description="Maqolalar joriy tartibda, har birining hajmi (betlar soni) bo'yicha ketma-ket raqamlanadi. Hajm «Nashr jarayoni» sahifasida kiritiladi."
+        :title="t('Sahifalarni avtomatik hisoblash')"
+        :description="
+            t(
+                'Maqolalar joriy tartibda, har birining hajmi (betlar soni) bo\'yicha ketma-ket raqamlanadi. Hajm «Nashr jarayoni» sahifasida kiritiladi.',
+            )
+        "
         :icon="Calculator"
-        confirm-text="Hisoblash"
+        :confirm-text="t('Hisoblash')"
         :processing="paginateForm.processing"
         @confirm="paginate"
     >
         <label class="grid gap-1.5">
-            <span class="text-xs font-semibold text-navy-700"
-                >Birinchi maqola sahifasi</span
-            >
+            <span class="text-xs font-semibold text-navy-700">{{
+                t('Birinchi maqola sahifasi')
+            }}</span>
             <input
                 v-model.number="paginateForm.start_page"
                 type="number"
@@ -650,21 +684,30 @@ const checks = computed(() => [
 
     <ActionDialog
         v-model:open="publishOpen"
-        title="Sonni chop etish"
-        :description="`${issue.label} soni va undagi ${issue.summary.total} ta maqola saytda e'lon qilinadi, mualliflarga xabar yuboriladi. Chop etilgan maqolalarni keyin o'zgartirib bo'lmaydi.`"
+        :title="t('Sonni chop etish')"
+        :description="
+            t(
+                ':label soni va undagi :total ta maqola saytda e\'lon qilinadi, mualliflarga xabar yuboriladi. Chop etilgan maqolalarni keyin o\'zgartirib bo\'lmaydi.',
+                { label: issue.label, total: issue.summary.total },
+            )
+        "
         :icon="Send"
-        confirm-text="Chop etish"
+        :confirm-text="t('Chop etish')"
         :processing="publishing"
         @confirm="publish"
     />
 
     <ActionDialog
         v-model:open="deleteOpen"
-        title="Sonni o'chirish"
-        :description="`${issue.label} soni va uning fayllari o'chiriladi.`"
+        :title="t('Sonni o\'chirish')"
+        :description="
+            t(':label soni va uning fayllari o\'chiriladi.', {
+                label: issue.label,
+            })
+        "
         :icon="Trash2"
         tone="danger"
-        confirm-text="O'chirish"
+        :confirm-text="t('O\'chirish')"
         :processing="deleting"
         @confirm="destroy"
     />

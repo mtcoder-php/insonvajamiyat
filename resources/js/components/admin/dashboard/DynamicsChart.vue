@@ -4,6 +4,7 @@ import DashCard from '@/components/admin/dashboard/DashCard.vue';
 import { niceScale, roundedBar, smoothLine } from '@/lib/chart';
 import { MONTHS_SHORT, formatNumber } from '@/lib/format';
 import type { MonthlyDynamics } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * "Maqolalar dinamikasi": oyma-oy yuborilgan / qabul qilingan / nashr etilgan
@@ -12,9 +13,9 @@ import type { MonthlyDynamics } from '@/types';
 const props = defineProps<{ data: MonthlyDynamics }>();
 
 const series = [
-    { key: 'submitted', label: 'Jami', color: '#1a82f7' },
-    { key: 'accepted', label: 'Qabul qilinganlar', color: '#0fa37f' },
-    { key: 'published', label: 'Nashr etilganlar', color: '#8b5cf6' },
+    { key: 'submitted', label: t('Jami'), color: '#1a82f7' },
+    { key: 'accepted', label: t('Qabul qilinganlar'), color: '#0fa37f' },
+    { key: 'published', label: t('Nashr etilganlar'), color: '#8b5cf6' },
 ] as const;
 
 const W = 640;
@@ -71,7 +72,7 @@ const hovered = ref<number | null>(null);
 </script>
 
 <template>
-    <DashCard title="Maqolalar dinamikasi" class="flex flex-col">
+    <DashCard :title="t('Maqolalar dinamikasi')" class="flex flex-col">
         <template #actions>
             <ul
                 class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-navy-600"
@@ -95,7 +96,9 @@ const hovered = ref<number | null>(null);
                 :viewBox="`0 0 ${W} ${H}`"
                 class="h-auto w-full"
                 role="img"
-                :aria-label="`${data.year}-yil maqolalar dinamikasi`"
+                :aria-label="
+                    t(':year-yil maqolalar dinamikasi', { year: data.year })
+                "
                 @mouseleave="hovered = null"
             >
                 <g class="text-[10px]" fill="currentColor">

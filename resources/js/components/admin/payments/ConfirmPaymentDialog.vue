@@ -8,6 +8,7 @@ import { inputClass, textareaClass } from '@/lib/formStyles';
 import { formatSum } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { AwaitingPaymentItem } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Nashr to'lovini qo'lda tasdiqlash: summa (maqola turi narxi bilan to'ldiriladi),
@@ -77,14 +78,18 @@ function submit(): void {
 <template>
     <ActionDialog
         v-model:open="open"
-        title="To'lovni tasdiqlash"
+        :title="t('To\'lovni tasdiqlash')"
         :description="
             article
-                ? `«${article.title}» — ${article.author.name}. Kutilgan summa: ${formatSum(article.amountDue)}.`
+                ? t('«:title» — :name. Kutilgan summa: :amount.', {
+                      title: article.title,
+                      name: article.author.name,
+                      amount: formatSum(article.amountDue),
+                  })
                 : undefined
         "
         :icon="BadgeCheck"
-        confirm-text="Tasdiqlash"
+        :confirm-text="t('Tasdiqlash')"
         :processing="form.processing"
         @confirm="submit"
     >
@@ -97,7 +102,7 @@ function submit(): void {
             </p>
             <div class="grid gap-4">
                 <FormField
-                    label="Summa (so'm)"
+                    :label="t('Summa (so\'m)')"
                     for="pay-amount"
                     required
                     :error="form.errors.amount"
@@ -113,7 +118,7 @@ function submit(): void {
                     />
                 </FormField>
                 <FormField
-                    label="To'lov sanasi"
+                    :label="t('To\'lov sanasi')"
                     for="pay-date"
                     required
                     :error="form.errors.paid_at"
@@ -129,9 +134,13 @@ function submit(): void {
                 </FormField>
             </div>
             <FormField
-                label="To'lov hujjati raqami"
+                :label="t('To\'lov hujjati raqami')"
                 for="pay-ref"
-                hint="Bank to'lov topshiriqnomasi yoki kvitansiya raqami (ixtiyoriy)"
+                :hint="
+                    t(
+                        'Bank to\'lov topshiriqnomasi yoki kvitansiya raqami (ixtiyoriy)',
+                    )
+                "
                 :error="form.errors.reference"
             >
                 <input
@@ -142,7 +151,11 @@ function submit(): void {
                     :class="inputClass"
                 />
             </FormField>
-            <FormField label="Izoh" for="pay-note" :error="form.errors.note">
+            <FormField
+                :label="t('Izoh')"
+                for="pay-note"
+                :error="form.errors.note"
+            >
                 <textarea
                     id="pay-note"
                     v-model="form.note"
@@ -152,8 +165,8 @@ function submit(): void {
                 />
             </FormField>
             <FormField
-                label="Kvitansiya"
-                hint="PDF, JPG yoki PNG, 5 MB gacha (ixtiyoriy)"
+                :label="t('Kvitansiya')"
+                :hint="t('PDF, JPG yoki PNG, 5 MB gacha (ixtiyoriy)')"
                 :error="form.errors.proof"
             >
                 <div
@@ -167,7 +180,7 @@ function submit(): void {
                     <button
                         type="button"
                         class="rounded p-0.5 text-navy-400 hover:text-red-600"
-                        aria-label="Faylni olib tashlash"
+                        :aria-label="t('Faylni olib tashlash')"
                         @click="form.proof = null"
                     >
                         <X class="size-4" />
@@ -178,7 +191,7 @@ function submit(): void {
                     class="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-navy-200 px-3 py-2.5 text-[13px] font-medium text-navy-600 transition-colors hover:border-brand-300 hover:bg-brand-50/50 hover:text-brand-700"
                 >
                     <Paperclip class="size-4" />
-                    Fayl tanlash
+                    {{ t('Fayl tanlash') }}
                     <input
                         type="file"
                         accept=".pdf,.jpg,.jpeg,.png"

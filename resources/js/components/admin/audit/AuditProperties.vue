@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { t } from '@/lib/i18n';
 
 /**
  * Audit yozuvi tafsilotlari: {old, new} bo'lsa — "oldin → keyin" jadvali,
@@ -8,33 +9,33 @@ import { computed } from 'vue';
 const props = defineProps<{ properties: Record<string, unknown> | null }>();
 
 const LABELS: Record<string, string> = {
-    name: 'Ism',
-    email: 'Email',
-    roles: 'Rollar',
-    email_verified: 'Email tasdiqlangan',
-    avatar: 'Avatar',
-    reason: 'Sabab',
-    from: 'Oldingi holat',
-    to: 'Yangi holat',
-    comment: 'Izoh',
-    remember: 'Eslab qolish',
-    amount: 'Summa',
-    paid_at: "To'langan sana",
-    reference: 'Tranzaksiya',
-    article: 'Maqola',
-    reviewers: 'Taqrizchilar',
-    reviewer: 'Taqrizchi',
-    round: 'Raund',
-    due_days: 'Muddat (kun)',
-    editor: 'Muharrir',
-    file: 'Fayl',
+    name: t('Ism'),
+    email: t('Email'),
+    roles: t('Rollar'),
+    email_verified: t('Email tasdiqlangan'),
+    avatar: t('Avatar'),
+    reason: t('Sabab'),
+    from: t('Oldingi holat'),
+    to: t('Yangi holat'),
+    comment: t('Izoh'),
+    remember: t('Eslab qolish'),
+    amount: t('Summa'),
+    paid_at: t("To'langan sana"),
+    reference: t('Tranzaksiya'),
+    article: t('Maqola'),
+    reviewers: t('Taqrizchilar'),
+    reviewer: t('Taqrizchi'),
+    round: t('Raund'),
+    due_days: t('Muddat (kun)'),
+    editor: t('Muharrir'),
+    file: t('Fayl'),
     size: 'Hajm',
-    articles: 'Maqolalar soni',
+    articles: t('Maqolalar soni'),
     type: 'Turi',
     format: 'Format',
-    filters: 'Filtrlar',
-    subject: "Yo'nalish",
-    review: 'Taqriz',
+    filters: t('Filtrlar'),
+    subject: t("Yo'nalish"),
+    review: t('Taqriz'),
 };
 
 const label = (key: string): string => LABELS[key] ?? key;
@@ -45,7 +46,7 @@ function show(value: unknown): string {
     }
 
     if (typeof value === 'boolean') {
-        return value ? 'Ha' : "Yo'q";
+        return value ? t('Ha') : t("Yo'q");
     }
 
     if (Array.isArray(value)) {
@@ -98,9 +99,9 @@ const rest = computed(() =>
                 <tr
                     class="text-left text-[10px] tracking-wide text-navy-400 uppercase"
                 >
-                    <th class="py-1 pr-3 font-semibold">Maydon</th>
-                    <th class="py-1 pr-3 font-semibold">Oldin</th>
-                    <th class="py-1 font-semibold">Keyin</th>
+                    <th class="py-1 pr-3 font-semibold">{{ t('Maydon') }}</th>
+                    <th class="py-1 pr-3 font-semibold">{{ t('Oldin') }}</th>
+                    <th class="py-1 font-semibold">{{ t('Keyin') }}</th>
                 </tr>
             </thead>
             <tbody>

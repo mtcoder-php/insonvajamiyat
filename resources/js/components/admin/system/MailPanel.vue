@@ -21,6 +21,7 @@ import {
 } from '@/lib/formStyles';
 import { cn } from '@/lib/utils';
 import type { MailSettings, SystemPageProps } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Pochta (SMTP): server, port, shifrlash, login/parol, yuboruvchi. Parol frontendga
@@ -89,23 +90,30 @@ const isSmtp = computed(() => form.mailer === 'smtp');
     <div class="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_22rem]">
         <form class="grid min-w-0 grid-cols-1 gap-5" @submit.prevent="submit">
             <SectionCard
-                title="Pochta serveri (SMTP)"
-                description="Ro'yxatdan o'tish, parolni tiklash, maqola holati va boshqa xatlar shu orqali yuboriladi"
+                :title="t('Pochta serveri (SMTP)')"
+                :description="
+                    t(
+                        'Ro\'yxatdan o\'tish, parolni tiklash, maqola holati va boshqa xatlar shu orqali yuboriladi',
+                    )
+                "
                 :icon="Server"
             >
                 <div class="grid grid-cols-1 gap-4">
                     <div
                         class="grid grid-cols-2 gap-1 rounded-xl bg-[#eef3fa] p-1"
                         role="radiogroup"
-                        aria-label="Yuborish usuli"
+                        :aria-label="t('Yuborish usuli')"
                     >
                         <button
                             v-for="item in [
                                 {
                                     value: 'smtp',
-                                    label: 'SMTP orqali yuborish',
+                                    label: t('SMTP orqali yuborish'),
                                 },
-                                { value: 'log', label: 'Faqat logga yozish' },
+                                {
+                                    value: 'log',
+                                    label: t('Faqat logga yozish'),
+                                },
                             ] as const"
                             :key="item.value"
                             type="button"
@@ -130,16 +138,18 @@ const isSmtp = computed(() => form.mailer === 'smtp');
                         class="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800"
                     >
                         <TriangleAlert class="mt-0.5 size-4 shrink-0" />
-                        Xatlar foydalanuvchilarga yuborilmaydi —
-                        storage/logs/laravel.log fayliga yoziladi (faqat sinov
-                        uchun).
+                        {{
+                            t(
+                                'Xatlar foydalanuvchilarga yuborilmaydi — storage/logs/laravel.log fayliga yoziladi (faqat sinov uchun).',
+                            )
+                        }}
                     </p>
 
                     <template v-if="isSmtp">
                         <div class="flex flex-wrap items-center gap-1.5">
-                            <span class="text-xs text-navy-500"
-                                >Tayyor sozlama:</span
-                            >
+                            <span class="text-xs text-navy-500">{{
+                                t('Tayyor sozlama:')
+                            }}</span>
                             <button
                                 v-for="item in presets"
                                 :key="item.label"
@@ -162,7 +172,7 @@ const isSmtp = computed(() => form.mailer === 'smtp');
                             class="grid grid-cols-1 gap-4 sm:grid-cols-[minmax(0,1fr)_7rem_11rem]"
                         >
                             <FormField
-                                label="Server"
+                                :label="t('Server')"
                                 for="m-host"
                                 required
                                 :error="errors.host"
@@ -175,7 +185,7 @@ const isSmtp = computed(() => form.mailer === 'smtp');
                                 />
                             </FormField>
                             <FormField
-                                label="Port"
+                                :label="t('Port')"
                                 for="m-port"
                                 required
                                 :error="errors.port"
@@ -189,7 +199,7 @@ const isSmtp = computed(() => form.mailer === 'smtp');
                                 />
                             </FormField>
                             <FormField
-                                label="Shifrlash"
+                                :label="t('Shifrlash')"
                                 for="m-scheme"
                                 :error="errors.scheme"
                             >
@@ -205,7 +215,7 @@ const isSmtp = computed(() => form.mailer === 'smtp');
 
                         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <FormField
-                                label="Login"
+                                :label="t('Login')"
                                 for="m-username"
                                 :error="errors.username"
                             >
@@ -218,13 +228,25 @@ const isSmtp = computed(() => form.mailer === 'smtp');
                                 />
                             </FormField>
                             <FormField
-                                label="Parol"
+                                :label="t('Parol')"
                                 for="m-password"
                                 :error="errors.password"
                                 :hint="
                                     password.set
-                                        ? `Saqlangan (${password.source === 'env' ? '.env' : 'baza, shifrlangan'}). Bo'sh qoldirsangiz o'zgarmaydi.`
-                                        : 'Gmail uchun — «App password» (ilova paroli)'
+                                        ? t(
+                                              'Saqlangan (:source). Bo\'sh qoldirsangiz o\'zgarmaydi.',
+                                              {
+                                                  source:
+                                                      password.source === 'env'
+                                                          ? '.env'
+                                                          : t(
+                                                                'baza, shifrlangan',
+                                                            ),
+                                              },
+                                          )
+                                        : t(
+                                              'Gmail uchun — «App password» (ilova paroli)',
+                                          )
                                 "
                             >
                                 <div class="relative">
@@ -239,7 +261,9 @@ const isSmtp = computed(() => form.mailer === 'smtp');
                                         :class="cn(inputClass, 'pl-9')"
                                         :placeholder="
                                             password.set
-                                                ? '•••••••• (o\'zgartirish uchun yangisini kiriting)'
+                                                ? t(
+                                                      '•••••••• (o\'zgartirish uchun yangisini kiriting)',
+                                                  )
                                                 : ''
                                         "
                                     />
@@ -251,13 +275,17 @@ const isSmtp = computed(() => form.mailer === 'smtp');
             </SectionCard>
 
             <SectionCard
-                title="Yuboruvchi"
-                description="Xat «Kimdan» maydonida ko'rinadi. Ko'p serverlar login bilan bir xil manzilni talab qiladi."
+                :title="t('Yuboruvchi')"
+                :description="
+                    t(
+                        'Xat «Kimdan» maydonida ko\'rinadi. Ko\'p serverlar login bilan bir xil manzilni talab qiladi.',
+                    )
+                "
                 :icon="Mail"
             >
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <FormField
-                        label="Email"
+                        :label="t('Email')"
                         for="m-from"
                         required
                         :error="errors.from_address"
@@ -271,7 +299,7 @@ const isSmtp = computed(() => form.mailer === 'smtp');
                         />
                     </FormField>
                     <FormField
-                        label="Nomi"
+                        :label="t('Nomi')"
                         for="m-from-name"
                         required
                         :error="errors.from_name"
@@ -290,7 +318,7 @@ const isSmtp = computed(() => form.mailer === 'smtp');
                 class="sticky bottom-3 z-10 flex flex-wrap items-center justify-end gap-3 rounded-xl border border-line bg-white/95 px-4 py-3 shadow-[0_12px_30px_-18px_rgba(0,36,66,0.45)] backdrop-blur"
             >
                 <p v-if="form.isDirty" class="mr-auto text-xs text-gold-700">
-                    Saqlanmagan o'zgarishlar bor
+                    {{ t("Saqlanmagan o'zgarishlar bor") }}
                 </p>
                 <button
                     type="submit"
@@ -302,20 +330,20 @@ const isSmtp = computed(() => form.mailer === 'smtp');
                         class="size-4 animate-spin"
                     />
                     <Save v-else class="size-4" />
-                    Saqlash
+                    {{ t('Saqlash') }}
                 </button>
             </div>
         </form>
 
         <aside class="min-w-0">
             <SectionCard
-                title="Test xat"
-                description="Saqlangan sozlamalar bilan darhol yuboriladi"
+                :title="t('Test xat')"
+                :description="t('Saqlangan sozlamalar bilan darhol yuboriladi')"
                 :icon="MailCheck"
             >
                 <form class="grid gap-3" @submit.prevent="sendTest">
                     <FormField
-                        label="Qabul qiluvchi"
+                        :label="t('Qabul qiluvchi')"
                         for="m-test"
                         :error="test.errors.test_email"
                     >
@@ -328,8 +356,11 @@ const isSmtp = computed(() => form.mailer === 'smtp');
                         />
                     </FormField>
                     <p v-if="form.isDirty" class="text-xs text-amber-700">
-                        Avval o'zgarishlarni saqlang — test eski sozlamalar
-                        bilan yuboriladi.
+                        {{
+                            t(
+                                "Avval o'zgarishlarni saqlang — test eski sozlamalar bilan yuboriladi.",
+                            )
+                        }}
                     </p>
                     <button
                         type="submit"
@@ -341,7 +372,7 @@ const isSmtp = computed(() => form.mailer === 'smtp');
                             class="size-4 animate-spin"
                         />
                         <Send v-else class="size-4" />
-                        Test xat yuborish
+                        {{ t('Test xat yuborish') }}
                     </button>
                 </form>
             </SectionCard>

@@ -1,3 +1,4 @@
+import { t } from '@/lib/i18n';
 /**
  * Profil rasmini yuklashdan oldin brauzerda tayyorlash:
  * markazdan kvadrat qilib kesish va 512×512 gacha kichraytirish (WEBP).
@@ -20,7 +21,7 @@ function loadImage(file: File): Promise<HTMLImageElement> {
         };
         image.onerror = () => {
             URL.revokeObjectURL(url);
-            reject(new AvatarError("Rasmni o'qib bo'lmadi."));
+            reject(new AvatarError(t("Rasmni o'qib bo'lmadi.")));
         };
         image.src = url;
     });
@@ -28,11 +29,11 @@ function loadImage(file: File): Promise<HTMLImageElement> {
 
 export async function prepareAvatar(file: File): Promise<File> {
     if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
-        throw new AvatarError('Faqat JPG, PNG yoki WEBP rasm yuklang.');
+        throw new AvatarError(t('Faqat JPG, PNG yoki WEBP rasm yuklang.'));
     }
 
     if (file.size > AVATAR_MAX_BYTES) {
-        throw new AvatarError('Rasm hajmi juda katta (8 MB gacha).');
+        throw new AvatarError(t('Rasm hajmi juda katta (8 MB gacha).'));
     }
 
     const image = await loadImage(file);

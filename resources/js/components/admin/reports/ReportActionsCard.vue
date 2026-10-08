@@ -7,6 +7,7 @@ import {
 } from '@lucide/vue';
 import DashCard from '@/components/admin/dashboard/DashCard.vue';
 import type { ReportExportLink } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * "Tezkor amallar": maqolalar Excel (CSV) hisoboti, umumiy PDF hisobot, audit log.
@@ -22,7 +23,7 @@ const row =
 </script>
 
 <template>
-    <DashCard title="Tezkor amallar">
+    <DashCard :title="t('Tezkor amallar')">
         <div class="grid gap-2.5">
             <a
                 v-if="exports[0]"
@@ -33,7 +34,7 @@ const row =
                 ]"
             >
                 <FileSpreadsheet class="size-5 shrink-0" />
-                <span class="flex-1">Excel hisobotini yuklash</span>
+                <span class="flex-1">{{ t('Excel hisobotini yuklash') }}</span>
                 <ChevronRight
                     class="size-4 transition-transform group-hover:translate-x-0.5"
                 />
@@ -48,7 +49,7 @@ const row =
                 ]"
             >
                 <FileText class="size-5 shrink-0" />
-                <span class="flex-1">PDF hisobotini yuklash</span>
+                <span class="flex-1">{{ t('PDF hisobotini yuklash') }}</span>
                 <ChevronRight
                     class="size-4 transition-transform group-hover:translate-x-0.5"
                 />
@@ -62,7 +63,7 @@ const row =
                 ]"
             >
                 <ShieldCheck class="size-5 shrink-0" />
-                <span class="flex-1">Audit log</span>
+                <span class="flex-1">{{ t('Audit log') }}</span>
                 <ChevronRight
                     class="size-4 transition-transform group-hover:translate-x-0.5"
                 />

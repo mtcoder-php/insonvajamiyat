@@ -34,6 +34,7 @@ import { index as rolesIndex } from '@/routes/admin/roles';
 import { index as settingsIndex } from '@/routes/admin/settings';
 import { index as systemIndex } from '@/routes/admin/system';
 import { index as usersIndex } from '@/routes/admin/users';
+import { tk } from '@/lib/i18n';
 import type { NavGroup } from '@/types';
 
 /**
@@ -49,56 +50,56 @@ export function adminNavigation(): NavGroup[] {
             label: '',
             items: [
                 {
-                    title: 'Bosh sahifa',
+                    title: tk('Bosh sahifa'),
                     href: dashboard(),
                     icon: House,
                     permission: 'admin.access',
                     exact: true,
                 },
                 {
-                    title: 'Taqrizlarim',
+                    title: tk('Taqrizlarim'),
                     href: reviewsIndex(),
                     icon: ClipboardPen,
                     permission: 'reviews.submit',
                     badge: 'reviews',
                 },
                 {
-                    title: 'Maqolalar',
+                    title: tk('Maqolalar'),
                     href: articlesIndex(),
                     icon: FileText,
                     permission: 'articles.view_any',
                     badge: 'articles',
                 },
                 {
-                    title: 'Nashr jarayoni',
+                    title: tk('Nashr jarayoni'),
                     href: productionIndex(),
                     icon: BookCheck,
                     permission: 'production.manage',
                     badge: 'production',
                 },
                 {
-                    title: 'Jurnallar',
+                    title: tk('Jurnallar'),
                     href: issuesIndex(),
                     icon: BookText,
                     permission: 'issues.manage',
                     badge: 'issues',
                 },
                 {
-                    title: 'Mualliflar',
+                    title: tk('Mualliflar'),
                     href: authorsIndex(),
                     icon: UserRound,
                     permission: 'articles.view_any',
                     badge: 'authors',
                 },
                 {
-                    title: 'Taqrizchilar',
+                    title: tk('Taqrizchilar'),
                     href: reviewersIndex(),
                     icon: UserCheck,
                     permission: 'articles.assign_reviewer',
                     badge: 'reviewers',
                 },
                 {
-                    title: "To'lovlar",
+                    title: tk("To'lovlar"),
                     href: paymentsIndex(),
                     icon: CreditCard,
                     permission: 'payments.view',
@@ -112,20 +113,20 @@ export function adminNavigation(): NavGroup[] {
                     badge: 'ai',
                 },
                 {
-                    title: 'Xabarlar',
+                    title: tk('Xabarlar'),
                     href: messagesIndex(),
                     icon: Mail,
                     permission: 'articles.message_author',
                     badge: 'messages',
                 },
                 {
-                    title: 'Statistika',
+                    title: tk('Statistika'),
                     href: reportsIndex(),
                     icon: FileChartColumn,
                     permission: 'reports.view',
                 },
                 {
-                    title: 'Sozlamalar',
+                    title: tk('Sozlamalar'),
                     href: settingsIndex(),
                     icon: Settings,
                     permission: 'content.manage',
@@ -133,16 +134,16 @@ export function adminNavigation(): NavGroup[] {
             ],
         },
         {
-            label: 'Tizim boshqaruvi',
+            label: tk('Tizim boshqaruvi'),
             items: [
                 {
-                    title: 'Foydalanuvchilar',
+                    title: tk('Foydalanuvchilar'),
                     href: usersIndex(),
                     icon: Users,
                     permission: 'users.manage',
                 },
                 {
-                    title: 'Rollar va ruxsatlar',
+                    title: tk('Rollar va ruxsatlar'),
                     href: rolesIndex(),
                     icon: UserLock,
                     permission: 'roles.manage',
@@ -154,13 +155,13 @@ export function adminNavigation(): NavGroup[] {
                     permission: 'audit_log.view',
                 },
                 {
-                    title: 'Zaxira nusxa',
+                    title: tk('Zaxira nusxa'),
                     href: backupsIndex(),
                     icon: DatabaseBackup,
                     permission: 'settings.manage',
                 },
                 {
-                    title: 'Tizim sozlamalari',
+                    title: tk('Tizim sozlamalari'),
                     href: systemIndex(),
                     icon: Cog,
                     permission: 'settings.manage',

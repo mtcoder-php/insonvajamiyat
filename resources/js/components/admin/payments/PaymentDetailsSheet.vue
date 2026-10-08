@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/sheet';
 import { formatDateTime, formatSum } from '@/lib/format';
 import type { PaymentListItem } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * "To'lov tafsilotlari" — o'ngdan ochiladigan panel.
@@ -33,7 +34,7 @@ const open = defineModel<boolean>('open', { default: false });
                         class="flex items-center gap-2 text-xs font-medium tracking-wider text-gold-300 uppercase"
                     >
                         <ReceiptText class="size-4" />
-                        To'lov tafsilotlari
+                        {{ t("To'lov tafsilotlari") }}
                     </p>
                     <SheetTitle
                         class="mt-1 font-sans text-xl font-bold text-white tabular-nums"
@@ -47,7 +48,7 @@ const open = defineModel<boolean>('open', { default: false });
 
                 <dl class="grid gap-4 px-6 py-5 text-[13px]">
                     <div class="flex items-center justify-between gap-3">
-                        <dt class="text-navy-500">Holat</dt>
+                        <dt class="text-navy-500">{{ t('Holat') }}</dt>
                         <dd>
                             <PaymentStatusPill
                                 :status="payment.status"
@@ -56,7 +57,7 @@ const open = defineModel<boolean>('open', { default: false });
                         </dd>
                     </div>
                     <div class="flex items-center justify-between gap-3">
-                        <dt class="text-navy-500">To'lov usuli</dt>
+                        <dt class="text-navy-500">{{ t("To'lov usuli") }}</dt>
                         <dd>
                             <ProviderBadge
                                 :provider="payment.provider"
@@ -65,19 +66,19 @@ const open = defineModel<boolean>('open', { default: false });
                         </dd>
                     </div>
                     <div class="flex justify-between gap-3">
-                        <dt class="text-navy-500">Xizmat</dt>
+                        <dt class="text-navy-500">{{ t('Xizmat') }}</dt>
                         <dd class="text-right font-medium">
                             {{ payment.purposeLabel }}
                         </dd>
                     </div>
                     <div v-if="payment.article" class="grid gap-1">
-                        <dt class="text-navy-500">Maqola</dt>
+                        <dt class="text-navy-500">{{ t('Maqola') }}</dt>
                         <dd class="font-semibold text-navy-950">
                             {{ payment.article.title }}
                         </dd>
                     </div>
                     <div class="flex justify-between gap-3">
-                        <dt class="text-navy-500">To'lovchi</dt>
+                        <dt class="text-navy-500">{{ t("To'lovchi") }}</dt>
                         <dd class="text-right">
                             <span class="block font-medium">{{
                                 payment.user.name
@@ -91,19 +92,21 @@ const open = defineModel<boolean>('open', { default: false });
                         v-if="payment.reference"
                         class="flex justify-between gap-3"
                     >
-                        <dt class="text-navy-500">Hujjat / tranzaksiya</dt>
+                        <dt class="text-navy-500">
+                            {{ t('Hujjat / tranzaksiya') }}
+                        </dt>
                         <dd class="font-mono text-xs">
                             {{ payment.reference }}
                         </dd>
                     </div>
                     <div class="flex justify-between gap-3">
-                        <dt class="text-navy-500">To'langan sana</dt>
+                        <dt class="text-navy-500">{{ t("To'langan sana") }}</dt>
                         <dd class="tabular-nums">
                             {{ formatDateTime(payment.paidAt) || '—' }}
                         </dd>
                     </div>
                     <div class="flex justify-between gap-3">
-                        <dt class="text-navy-500">Yaratilgan</dt>
+                        <dt class="text-navy-500">{{ t('Yaratilgan') }}</dt>
                         <dd class="tabular-nums">
                             {{ formatDateTime(payment.createdAt) }}
                         </dd>
@@ -112,11 +115,11 @@ const open = defineModel<boolean>('open', { default: false });
                         v-if="payment.confirmedBy"
                         class="flex justify-between gap-3"
                     >
-                        <dt class="text-navy-500">Tasdiqlagan</dt>
+                        <dt class="text-navy-500">{{ t('Tasdiqlagan') }}</dt>
                         <dd class="font-medium">{{ payment.confirmedBy }}</dd>
                     </div>
                     <div v-if="payment.note" class="grid gap-1">
-                        <dt class="text-navy-500">Izoh</dt>
+                        <dt class="text-navy-500">{{ t('Izoh') }}</dt>
                         <dd
                             class="rounded-lg bg-[#f8fafd] px-3 py-2 leading-relaxed whitespace-pre-line"
                         >
@@ -124,7 +127,7 @@ const open = defineModel<boolean>('open', { default: false });
                         </dd>
                     </div>
                     <div v-if="payment.items.length" class="grid gap-1.5">
-                        <dt class="text-navy-500">To'lov tarkibi</dt>
+                        <dt class="text-navy-500">{{ t("To'lov tarkibi") }}</dt>
                         <dd
                             v-for="(item, i) in payment.items"
                             :key="i"
@@ -146,7 +149,9 @@ const open = defineModel<boolean>('open', { default: false });
                         <Download
                             class="size-4 transition-transform group-hover:translate-y-0.5"
                         />
-                        Kvitansiya: {{ payment.proofName }}
+                        {{
+                            t('Kvitansiya: :name', { name: payment.proofName })
+                        }}
                     </a>
                 </div>
             </template>

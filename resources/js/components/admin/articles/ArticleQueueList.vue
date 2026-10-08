@@ -9,6 +9,7 @@ import type {
     EditorialPageProps,
     EditorialQueue,
 } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Chap ustun: navbatlar, qidiruv va maqolalar ro'yxati (bosilganda o'rtada ochiladi).
@@ -27,15 +28,15 @@ const search = defineModel<string>('search', { required: true });
 const emit = defineEmits<{ open: [uuid: string]; page: [url: string] }>();
 
 const queues: { key: EditorialQueue; label: string }[] = [
-    { key: 'new', label: 'Yangi' },
-    { key: 'reviewing', label: "Ko'rib chiqilmoqda" },
-    { key: 'revision', label: 'Tuzatishda' },
-    { key: 'accepted', label: 'Nashrga tayyor' },
-    { key: 'mine', label: 'Mening vazifalarim' },
-    { key: 'payment', label: "To'lov kutilmoqda" },
-    { key: 'published', label: 'Nashr etilgan' },
-    { key: 'closed', label: 'Rad / qaytarilgan' },
-    { key: 'all', label: 'Barchasi' },
+    { key: 'new', label: t('Yangi') },
+    { key: 'reviewing', label: t("Ko'rib chiqilmoqda") },
+    { key: 'revision', label: t('Tuzatishda') },
+    { key: 'accepted', label: t('Nashrga tayyor') },
+    { key: 'mine', label: t('Mening vazifalarim') },
+    { key: 'payment', label: t("To'lov kutilmoqda") },
+    { key: 'published', label: t('Nashr etilgan') },
+    { key: 'closed', label: t('Rad / qaytarilgan') },
+    { key: 'all', label: t('Barchasi') },
 ];
 </script>
 
@@ -78,21 +79,21 @@ const queues: { key: EditorialQueue; label: string }[] = [
                 </button>
             </div>
             <label class="relative mt-3 block">
-                <span class="sr-only">Qidirish</span>
+                <span class="sr-only">{{ t('Qidirish') }}</span>
                 <Search
                     class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-navy-400"
                 />
                 <input
                     v-model="search"
                     type="search"
-                    placeholder="Maqola nomi yoki muallif..."
+                    :placeholder="t('Maqola nomi yoki muallif...')"
                     :class="cn(inputClass, 'h-9 pr-8 pl-9 text-[13px]')"
                 />
                 <button
                     v-if="search"
                     type="button"
                     class="absolute top-1/2 right-2 -translate-y-1/2 rounded p-0.5 text-navy-400 hover:text-navy-700"
-                    aria-label="Qidiruvni tozalash"
+                    :aria-label="t('Qidiruvni tozalash')"
                     @click="search = ''"
                 >
                     <X class="size-3.5" />
@@ -163,13 +164,15 @@ const queues: { key: EditorialQueue; label: string }[] = [
             class="flex flex-1 flex-col items-center justify-center gap-2 px-4 py-14 text-center"
         >
             <FileSearch class="size-8 text-navy-300" />
-            <p class="text-sm text-navy-500">Bu navbatda maqola yo'q</p>
+            <p class="text-sm text-navy-500">
+                {{ t("Bu navbatda maqola yo'q") }}
+            </p>
         </div>
 
         <nav
             v-if="meta.last_page > 1"
             class="mt-auto flex items-center justify-between gap-2 border-t border-line px-3 py-2.5"
-            aria-label="Sahifalar"
+            :aria-label="t('Sahifalar')"
         >
             <span class="text-xs text-navy-500 tabular-nums">
                 {{ meta.from }}–{{ meta.to }} / {{ meta.total }}

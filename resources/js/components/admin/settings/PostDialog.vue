@@ -17,6 +17,7 @@ import type { SettingsPost, Translated } from '@/types';
 import CheckCard from './CheckCard.vue';
 import ImagePicker from './ImagePicker.vue';
 import TranslatableField from './TranslatableField.vue';
+import { t } from '@/lib/i18n';
 
 /**
  * Yangilik yoki e'lon: tur, rasm, sarlavha, qisqa mazmun, matn (xatboshilar bo'sh qator bilan),
@@ -85,8 +86,8 @@ watch(open, (value) => {
 const errors = computed(() => form.errors as Record<string, string>);
 
 const types = [
-    { value: 'news', label: 'Yangilik', icon: Newspaper },
-    { value: 'announcement', label: "E'lon", icon: Megaphone },
+    { value: 'news', label: t('Yangilik'), icon: Newspaper },
+    { value: 'announcement', label: t("E'lon"), icon: Megaphone },
 ] as const;
 
 function submit(): void {
@@ -110,10 +111,12 @@ function submit(): void {
 <template>
     <ActionDialog
         v-model:open="open"
-        :title="post ? 'Xabarni tahrirlash' : 'Yangi xabar'"
-        description="Saytdagi «Yangiliklar» bo'limida va bosh sahifada ko'rinadi."
+        :title="post ? t('Xabarni tahrirlash') : t('Yangi xabar')"
+        :description="
+            t('Saytdagi «Yangiliklar» bo\'limida va bosh sahifada ko\'rinadi.')
+        "
         :icon="post ? PenLine : SquarePen"
-        :confirm-text="post ? 'Saqlash' : 'Qo\'shish'"
+        :confirm-text="post ? t('Saqlash') : t('Qo\'shish')"
         :processing="form.processing"
         size="lg"
         @confirm="submit"
@@ -122,7 +125,7 @@ function submit(): void {
             <div
                 class="grid grid-cols-2 gap-1 rounded-xl bg-[#eef3fa] p-1"
                 role="radiogroup"
-                aria-label="Turi"
+                :aria-label="t('Turi')"
             >
                 <button
                     v-for="item in types"
@@ -151,12 +154,12 @@ function submit(): void {
                 :current-url="post?.imageUrl ?? null"
                 :error="errors.image"
                 aspect-class="aspect-[16/6]"
-                hint="JPG, PNG, WEBP · kamida 600×300 · tavsiya 1600×800"
+                :hint="t('JPG, PNG, WEBP · kamida 600×300 · tavsiya 1600×800')"
             />
 
             <TranslatableField
                 v-model="form.title"
-                label="Sarlavha"
+                :label="t('Sarlavha')"
                 field="title"
                 :errors="errors"
                 required
@@ -164,44 +167,48 @@ function submit(): void {
             />
             <TranslatableField
                 v-model="form.excerpt"
-                label="Qisqa mazmun"
+                :label="t('Qisqa mazmun')"
                 field="excerpt"
                 :errors="errors"
                 multiline
                 :rows="2"
                 :maxlength="500"
-                placeholder="Ro'yxatda sarlavha ostida chiqadi"
+                :placeholder="t('Ro\'yxatda sarlavha ostida chiqadi')"
             />
             <TranslatableField
                 v-model="form.body"
-                label="To'liq matn"
+                :label="t('To\'liq matn')"
                 field="body"
                 :errors="errors"
                 multiline
                 :rows="8"
                 :maxlength="20000"
-                placeholder="Xatboshilarni bo'sh qator bilan ajrating"
+                :placeholder="t('Xatboshilarni bo\'sh qator bilan ajrating')"
             />
 
             <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <CheckCard
                     v-model="form.is_published"
-                    label="Chop etilgan"
-                    hint="Belgilanmasa — qoralama (saytda ko'rinmaydi)"
+                    :label="t('Chop etilgan')"
+                    :hint="t('Belgilanmasa — qoralama (saytda ko\'rinmaydi)')"
                     :icon="Eye"
                 />
                 <CheckCard
                     v-model="form.is_pinned"
-                    label="Qadab qo'yish"
-                    hint="Ro'yxat boshida turadi"
+                    :label="t('Qadab qo\'yish')"
+                    :hint="t('Ro\'yxat boshida turadi')"
                     :icon="Pin"
                 />
             </div>
             <FormField
-                label="Nashr sanasi va vaqti"
+                :label="t('Nashr sanasi va vaqti')"
                 for="post-date"
                 :error="errors.published_at"
-                hint="Bo'sh qoldirilsa — saqlangan vaqt. Kelajakdagi sana — rejalashtirilgan nashr."
+                :hint="
+                    t(
+                        'Bo\'sh qoldirilsa — saqlangan vaqt. Kelajakdagi sana — rejalashtirilgan nashr.',
+                    )
+                "
             >
                 <input
                     id="post-date"
