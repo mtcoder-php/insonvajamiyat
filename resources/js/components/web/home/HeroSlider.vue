@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { ArrowRight, ChevronLeft, ChevronRight } from '@lucide/vue';
+import {
+    ArrowRight,
+    ChevronLeft,
+    ChevronRight,
+    Pause,
+    Play,
+} from '@lucide/vue';
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import type { HeroSlide } from '@/types';
 import { t } from '@/lib/i18n';
@@ -11,6 +17,9 @@ import { t } from '@/lib/i18n';
  *
  * Slaydlar: admin bannerlari yoki config('journal.hero_slides').
  * Rasm yo'q slayd brend fonida chiqadi.
+ *
+ * Qulaylik: sahifaning h1 sarlavhasi Home.vue'da (slayd sarlavhalari — h2, almashganda yo'qolmaydi);
+ * avtomatik almashishni to'xtatish tugmasi bor (WCAG 2.2.2); fokusda ko'rinadigan halqa.
  */
 const props = defineProps<{
     slides: HeroSlide[];
@@ -40,12 +49,18 @@ function isExternal(url: string): boolean {
 
 const active = ref(0);
 const paused = ref(false);
+/** Foydalanuvchi o'zi to'xtatgan (hover/fokusdan farqli — doimiy) */
+const stopped = ref(false);
 const reduceMotion = ref(false);
 let timer: ReturnType<typeof setTimeout> | undefined;
 
 const count = computed(() => items.value.length);
 const autoplay = computed(
-    () => count.value > 1 && !paused.value && !reduceMotion.value,
+    () =>
+        count.value > 1 &&
+        !paused.value &&
+        !stopped.value &&
+        !reduceMotion.value,
 );
 
 function go(index: number): void {
@@ -107,7 +122,7 @@ onBeforeUnmount(() => clearTimeout(timer));
 <template>
     <section
         v-if="count"
-        class="relative isolate h-[32rem] overflow-hidden bg-navy-950 text-white outline-none select-none sm:h-[34rem] lg:h-[38rem]"
+        class="relative isolate h-[32rem] overflow-hidden bg-navy-950 text-white outline-none select-none focus-visible:ring-4 focus-visible:ring-gold-300/70 focus-visible:ring-inset sm:h-[34rem] lg:h-[38rem]"
         aria-roledescription="carousel"
         :aria-label="t('Asosiy slayder')"
         tabindex="0"
@@ -140,6 +155,7 @@ onBeforeUnmount(() => clearTimeout(timer));
                     :src="item.slide.imageUrl"
                     alt=""
                     :loading="index === 0 ? 'eager' : 'lazy'"
+                    :fetchpriority="index === 0 ? 'high' : 'auto'"
                     :class="[
                         'absolute inset-0 -z-10 size-full object-cover transition-transform duration-[8000ms] ease-out',
                         index === active ? 'scale-100' : 'scale-110',
@@ -185,7 +201,7 @@ onBeforeUnmount(() => clearTimeout(timer));
                     <span class="h-px w-8 bg-gold-400" aria-hidden="true" />
                 </p>
                 <component
-                    :is="index === 0 ? 'h1' : 'h2'"
+                    is="h2"
                     :class="[
                         'mt-6 font-serif text-4xl leading-[1.12] font-semibold text-balance text-white drop-shadow-sm transition-all delay-300 duration-700 sm:text-5xl lg:text-6xl',
                         index === active
@@ -250,17 +266,30 @@ onBeforeUnmount(() => clearTimeout(timer));
 
             <div
                 class="absolute bottom-7 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1 sm:bottom-11"
-                role="tablist"
+                role="group"
                 :aria-label="t('Slaydlar')"
             >
+                <button
+                    v-if="!reduceMotion"
+                    type="button"
+                    class="mr-1 flex size-7 items-center justify-center rounded-full border border-white/60 text-white transition-colors hover:bg-white hover:text-navy-900 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
+                    :aria-label="
+                        stopped
+                            ? t('Slaydlarni avtomatik almashtirish')
+                            : t('Avtomatik almashishni to\'xtatish')
+                    "
+                    :aria-pressed="stopped"
+                    @click="stopped = !stopped"
+                >
+                    <Play v-if="stopped" class="size-3.5" />
+                    <Pause v-else class="size-3.5" />
+                </button>
                 <button
                     v-for="(item, index) in items"
                     :key="item.key"
                     type="button"
-                    role="tab"
-                    class="group flex size-6 cursor-pointer items-center justify-center"
+                    class="group flex size-6 cursor-pointer items-center justify-center rounded-full focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
                     :aria-label="t(':number-slayd', { number: index + 1 })"
-                    :aria-selected="index === active"
                     :aria-current="index === active ? 'true' : undefined"
                     @click="go(index)"
                 >

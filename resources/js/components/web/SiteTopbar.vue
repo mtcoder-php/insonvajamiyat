@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { socialLabel } from '@/lib/social';
 import { usePage } from '@inertiajs/vue3';
 import { Mail, MapPin, Phone } from '@lucide/vue';
 import { computed } from 'vue';
@@ -66,7 +67,7 @@ const phoneHref = computed(
                     :href="url"
                     target="_blank"
                     rel="noopener noreferrer"
-                    :aria-label="network"
+                    :aria-label="socialLabel(network)"
                     class="transition-colors hover:text-white"
                 >
                     <SocialIcon :network="network" />

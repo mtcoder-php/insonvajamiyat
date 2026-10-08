@@ -12,6 +12,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
  */
 class EventResource extends JsonResource
 {
+    private const WALL_TIME = 'Y-m-d\TH:i:s';
+
     /**
      * @return array<string, mixed>
      */
@@ -22,8 +24,10 @@ class EventResource extends JsonResource
             'slug' => $this->slug,
             'title' => $this->title,
             'location' => $this->location,
-            'startsAt' => $this->starts_at->toIso8601String(),
-            'endsAt' => $this->ends_at?->toIso8601String(),
+            // Tadbir vaqti — admin kiritgan "devor soati" (Toshkent): vaqt mintaqasisiz yuboriladi,
+            // aks holda brauzer UTC deb qabul qilib +5 soat (va kechki tadbirda sanani) siljitadi
+            'startsAt' => $this->starts_at->format(self::WALL_TIME),
+            'endsAt' => $this->ends_at?->format(self::WALL_TIME),
             'registrationUrl' => $this->registration_url,
             'imageUrl' => MediaUrl::from($this->image_path),
             'url' => route('events.show', $this->slug),

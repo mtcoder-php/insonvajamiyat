@@ -6,6 +6,7 @@ use App\Enums\Language;
 use App\Models\User;
 use App\Services\Admin\NavigationBadges;
 use App\Services\Notifications\NotificationCenter;
+use App\Support\Seo\SeoMeta;
 use App\Support\Translations;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -47,6 +48,9 @@ class HandleInertiaRequests extends Middleware
             'name' => config('app.name'),
             'auth' => fn () => $this->authPayload($user),
             'locale' => fn () => app()->getLocale(),
+            // Meta description: server (SeoMeta) hisoblaydi; layout'dagi <Head> uni har sahifada yangilaydi,
+            // aks holda Inertia server qo'ygan tegni gidratatsiyada o'chirib yuboradi
+            'seoDescription' => fn () => app(SeoMeta::class)->description(),
             'locales' => fn () => array_map(fn (Language $language): array => [
                 'code' => $language->value,
                 'label' => $language->label(),

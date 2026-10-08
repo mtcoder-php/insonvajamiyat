@@ -44,10 +44,12 @@ withDefaults(
                 )
             "
             tabindex="-1"
+            aria-hidden="true"
         >
+            <!-- Sarlavha havolasi yonida takrorlanmasin: dekorativ rasm -->
             <ArticleCover
                 :src="article.coverUrl"
-                :alt="article.title"
+                alt=""
                 :subject-slug="article.subject?.slug"
                 :class="
                     cn(
@@ -168,15 +170,30 @@ withDefaults(
                     </span>
                     <span v-else />
                     <span
-                        class="inline-flex items-center gap-1 text-navy-500 tabular-nums"
-                        :title="
-                            t(':count marta yuklab olingan', {
-                                count: formatNumber(article.downloads),
-                            })
-                        "
+                        class="inline-flex items-center gap-3 text-navy-500 tabular-nums"
                     >
-                        <Eye class="size-3.5" />
-                        {{ formatNumber(article.views) }}
+                        <span
+                            class="inline-flex items-center gap-1"
+                            :title="t('Ko\'rishlar')"
+                        >
+                            <Eye class="size-3.5" aria-hidden="true" />
+                            <span class="sr-only">{{ t("Ko'rishlar") }}:</span>
+                            {{ formatNumber(article.views) }}
+                        </span>
+                        <span
+                            class="inline-flex items-center gap-1"
+                            :title="
+                                t(':count marta yuklab olingan', {
+                                    count: formatNumber(article.downloads),
+                                })
+                            "
+                        >
+                            <Download class="size-3.5" aria-hidden="true" />
+                            <span class="sr-only"
+                                >{{ t('Yuklab olishlar') }}:</span
+                            >
+                            {{ formatNumber(article.downloads) }}
+                        </span>
                     </span>
                 </div>
             </div>

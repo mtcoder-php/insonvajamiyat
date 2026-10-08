@@ -180,18 +180,7 @@ const stats = computed(() => [
 </script>
 
 <template>
-    <Head :title="t('Maqolalar katalogi')">
-        <meta
-            head-key="description"
-            name="description"
-            :content="
-                t(
-                    '«:name» jurnalida nashr etilgan ilmiy maqolalar: mavzu, muallif, yil va kalit so\'z bo\'yicha qidiruv.',
-                    { name: $page.props.journal.name },
-                )
-            "
-        />
-    </Head>
+    <Head :title="t('Maqolalar katalogi')" />
 
     <WebHero
         :title="t('Maqolalar katalogi')"
@@ -383,7 +372,10 @@ const stats = computed(() => [
                 </div>
 
                 <div v-if="articles.meta.last_page > 1" class="mt-6">
-                    <Pagination :meta="articles.meta" />
+                    <Pagination
+                        :meta="articles.meta"
+                        :preserve-scroll="false"
+                    />
                 </div>
             </section>
 
@@ -413,6 +405,7 @@ const stats = computed(() => [
                                         : 'border-brand-100 bg-brand-50/60 text-brand-800 hover:border-brand-300',
                                 )
                             "
+                            :aria-pressed="filters.keyword === word"
                             @click="
                                 visit({
                                     keyword:

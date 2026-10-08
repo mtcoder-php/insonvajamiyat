@@ -13,6 +13,8 @@ const props = defineProps<{
     number: number;
     year: number;
     class?: HTMLAttributes['class'];
+    /** Ekranning yuqorisida (LCP) — darhol va ustuvor yuklanadi */
+    priority?: boolean;
 }>();
 </script>
 
@@ -29,7 +31,8 @@ const props = defineProps<{
             v-if="src"
             :src="src"
             :alt="t('Jurnal muqovasi: №:number/:year', { number, year })"
-            loading="lazy"
+            :loading="priority ? 'eager' : 'lazy'"
+            :fetchpriority="priority ? 'high' : 'auto'"
             class="size-full object-cover"
         />
         <div

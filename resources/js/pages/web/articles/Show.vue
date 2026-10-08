@@ -124,12 +124,6 @@ const references = computed(() =>
 
 <template>
     <Head :title="article.title">
-        <meta
-            v-if="article.abstract"
-            head-key="description"
-            name="description"
-            :content="article.abstract.slice(0, 300)"
-        />
         <!-- citation_* (Google Scholar) teglari serverda chiqadi: App\Support\Seo\SeoMeta -->
     </Head>
 
@@ -219,7 +213,9 @@ const references = computed(() =>
                                 @click="copyLink"
                             >
                                 <Link2 class="size-4" />
-                                {{ linkCopied ? t('Nusxalandi') : t('Havola') }}
+                                <span aria-live="polite">{{
+                                    linkCopied ? t('Nusxalandi') : t('Havola')
+                                }}</span>
                             </button>
                         </div>
                     </div>
@@ -374,7 +370,13 @@ const references = computed(() =>
                                             <Link
                                                 v-for="word in article.keywords"
                                                 :key="word"
-                                                :href="articlesIndex()"
+                                                :href="
+                                                    articlesIndex({
+                                                        query: {
+                                                            keyword: word,
+                                                        },
+                                                    })
+                                                "
                                                 class="rounded-md border border-brand-100 bg-brand-50/60 px-2.5 py-1 text-xs font-medium text-brand-800 transition-colors hover:border-brand-300 hover:bg-brand-100"
                                                 >{{ word }}</Link
                                             >
@@ -562,7 +564,7 @@ const references = computed(() =>
                             <Link :href="item.url" class="group flex gap-3">
                                 <ArticleCover
                                     :src="item.coverUrl"
-                                    :alt="item.title"
+                                    alt=""
                                     :subject-slug="item.subject?.slug"
                                     class="aspect-square w-20 shrink-0 rounded-lg transition-transform duration-300 group-hover:scale-[1.04]"
                                 />

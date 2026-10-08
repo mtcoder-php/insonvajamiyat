@@ -108,6 +108,7 @@ const groupHeader =
             <button
                 type="button"
                 :class="groupHeader"
+                :aria-expanded="open.subjects"
                 @click="open.subjects = !open.subjects"
             >
                 {{ t("Fan yo'nalishi") }}
@@ -155,6 +156,7 @@ const groupHeader =
                     <button
                         type="button"
                         class="mt-1 text-xs font-semibold text-brand-700 hover:underline"
+                        :aria-expanded="showAllSubjects"
                         @click="showAllSubjects = !showAllSubjects"
                     >
                         {{
@@ -174,6 +176,7 @@ const groupHeader =
             <button
                 type="button"
                 :class="groupHeader"
+                :aria-expanded="open.issue"
                 @click="open.issue = !open.issue"
             >
                 {{ t('Jurnal soni / Yil') }}
@@ -218,6 +221,7 @@ const groupHeader =
             <button
                 type="button"
                 :class="groupHeader"
+                :aria-expanded="open.author"
                 @click="open.author = !open.author"
             >
                 {{ t('Muallif') }}
@@ -249,6 +253,7 @@ const groupHeader =
             <button
                 type="button"
                 :class="groupHeader"
+                :aria-expanded="open.keyword"
                 @click="open.keyword = !open.keyword"
             >
                 {{ t("Teglar / Kalit so'zlar") }}
