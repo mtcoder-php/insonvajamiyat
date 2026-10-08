@@ -54,6 +54,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read Collection<int, Article> $submittedArticles
  * @property-read Collection<int, Payment> $payments
  * @property-read Collection<int, Subject> $subjects
+ * @property-read Collection<int, SocialAccount> $socialAccounts
  */
 #[Fillable(['name', 'email', 'password', 'phone', 'locale'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
@@ -95,6 +96,22 @@ class User extends Authenticatable implements HasLocalePreference, MustVerifyEma
     public function submittedArticles(): HasMany
     {
         return $this->hasMany(Article::class, 'submitter_id');
+    }
+
+    /**
+     * Google / ORCID orqali kirish uchun bog'langan akkauntlar.
+     *
+     * @return HasMany<SocialAccount, $this>
+     */
+    public function socialAccounts(): HasMany
+    {
+        return $this->hasMany(SocialAccount::class);
+    }
+
+    /** Parol o'rnatilganmi (Google/ORCID orqali ro'yxatdan o'tganlarda bo'lmasligi mumkin) */
+    public function hasPassword(): bool
+    {
+        return $this->password !== null && $this->password !== '';
     }
 
     /** @return HasMany<Payment, $this> */

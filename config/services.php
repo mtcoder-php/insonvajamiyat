@@ -35,6 +35,25 @@ return [
         ],
     ],
 
+    /*
+    | Google / ORCID orqali kirish (Laravel Socialite). client_id bo'sh bo'lsa — tugma ko'rinmaydi.
+    | Callback manzillari provayder konsolida aynan shunday ro'yxatdan o'tkaziladi:
+    |   {APP_URL}/auth/google/callback, {APP_URL}/auth/orcid/callback
+    */
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT_URI', '/auth/google/callback'),
+    ],
+
+    'orcid' => [
+        'client_id' => env('ORCID_CLIENT_ID'),
+        'client_secret' => env('ORCID_CLIENT_SECRET'),
+        'redirect' => env('ORCID_REDIRECT_URI', '/auth/orcid/callback'),
+        // Sinov muhiti: https://sandbox.orcid.org
+        'sandbox' => (bool) env('ORCID_SANDBOX', false),
+    ],
+
     // To'lov tizimlari (Click, Payme) — config/payments.php
 
     // AI xizmatlari (Anthropic Claude API) — config/ai.php

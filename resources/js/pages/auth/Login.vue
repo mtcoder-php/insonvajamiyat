@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { Form, Head } from '@inertiajs/vue3';
-import { ArrowRight, Lock, LogIn, Mail } from '@lucide/vue';
+import { Form, Head, usePage } from '@inertiajs/vue3';
+import { ArrowRight, CircleAlert, Lock, LogIn, Mail } from '@lucide/vue';
+import { computed } from 'vue';
+import SocialLoginButtons from '@/components/auth/SocialLoginButtons.vue';
 import InputIcon from '@/components/form/InputIcon.vue';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
@@ -14,6 +16,7 @@ import { register } from '@/routes';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
 import { t } from '@/lib/i18n';
+import type { SocialProviderOption } from '@/types';
 
 /**
  * Tizimga kirish (dizayn: register_login.png, "Tizimga kirish" kartasi).
@@ -27,10 +30,19 @@ defineOptions({
     },
 });
 
-defineProps<{
-    status?: string;
-    canResetPassword: boolean;
-}>();
+withDefaults(
+    defineProps<{
+        status?: string;
+        canResetPassword: boolean;
+        /** Google / ORCID (sozlanganlari) */
+        socialProviders?: SocialProviderOption[];
+    }>(),
+    { socialProviders: () => [] },
+);
+
+// Google / ORCID'dan qaytgandagi xato (SocialAuthController::fail)
+const page = usePage();
+const socialError = computed(() => page.props.errors?.social);
 </script>
 
 <template>
@@ -41,6 +53,15 @@ defineProps<{
         class="mb-6 rounded-lg border border-success/30 bg-success-soft px-4 py-3 text-sm font-medium text-success-ink"
     >
         {{ status }}
+    </div>
+
+    <div
+        v-if="socialError"
+        role="alert"
+        class="mb-6 flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700"
+    >
+        <CircleAlert class="mt-0.5 size-4 shrink-0" />
+        {{ socialError }}
     </div>
 
     <Form
@@ -115,6 +136,8 @@ defineProps<{
                 <LogIn v-else class="size-4" />
                 {{ t('Tizimga kirish') }}
             </Button>
+
+            <SocialLoginButtons :providers="socialProviders" />
         </div>
 
         <p class="text-center text-sm text-muted-foreground">

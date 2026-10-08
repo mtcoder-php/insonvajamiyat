@@ -7,16 +7,22 @@ import SectionCard from '@/components/admin/ui/SectionCard.vue';
 import type { Props as ManageTwoFactorProps } from '@/components/ManageTwoFactor.vue';
 import ManageTwoFactor from '@/components/ManageTwoFactor.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
+import SocialAccountsCard from '@/components/settings/SocialAccountsCard.vue';
 import { inputClass, primaryButtonClass } from '@/lib/formStyles';
 import { edit } from '@/routes/security';
 import { t } from '@/lib/i18n';
+import type { SocialAccountItem } from '@/types';
 
 /**
- * Xavfsizlik: parolni almashtirish va ikki bosqichli himoya (2FA).
+ * Xavfsizlik: parol, bog'langan akkauntlar (Google / ORCID) va ikki bosqichli himoya (2FA).
+ * Google / ORCID orqali ro'yxatdan o'tgan foydalanuvchida parol bo'lmasligi mumkin —
+ * u holda parol joriy parolsiz o'rnatiladi, 2FA esa paroldan keyin ochiladi.
  */
 // oxfmt-ignore
 type Props = {
     passwordRules: string;
+    hasPassword: boolean;
+    socialAccounts: SocialAccountItem[];
 } &
     ManageTwoFactorProps;
 
@@ -34,11 +40,17 @@ defineOptions({
 
     <div class="grid items-start gap-5 xl:grid-cols-2">
         <SectionCard
-            :title="t('Parolni almashtirish')"
+            :title="
+                hasPassword ? t('Parolni almashtirish') : t('Parol o\'rnatish')
+            "
             :description="
-                t(
-                    'Kamida 8 belgi: katta-kichik harf, raqam va belgi aralash bo\'lgani ma\'qul',
-                )
+                hasPassword
+                    ? t(
+                          'Kamida 8 belgi: katta-kichik harf, raqam va belgi aralash bo\'lgani ma\'qul',
+                      )
+                    : t(
+                          'Siz Google / ORCID orqali kirasiz. Parol o\'rnatsangiz, email va parol bilan ham kira olasiz.',
+                      )
             "
             :icon="KeyRound"
         >
@@ -55,6 +67,7 @@ defineOptions({
                 v-slot="{ errors, processing, recentlySuccessful }"
             >
                 <FormField
+                    v-if="hasPassword"
                     :label="t('Joriy parol')"
                     for="current_password"
                     :error="errors.current_password"
@@ -110,11 +123,21 @@ defineOptions({
                             class="size-4 animate-spin"
                         />
                         <Save v-else class="size-4" />
-                        {{ t('Parolni saqlash') }}
+                        {{
+                            hasPassword
+                                ? t('Parolni saqlash')
+                                : t("Parolni o'rnatish")
+                        }}
                     </button>
                 </div>
             </Form>
         </SectionCard>
+
+        <SocialAccountsCard
+            v-if="socialAccounts.length"
+            :accounts="socialAccounts"
+            :has-password="hasPassword"
+        />
 
         <SectionCard
             v-if="canManageTwoFactor"
@@ -124,7 +147,18 @@ defineOptions({
             "
             :icon="ShieldCheck"
         >
+            <p
+                v-if="!hasPassword"
+                class="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800"
+            >
+                {{
+                    t(
+                        "Ikki bosqichli himoyani yoqish uchun avval parol o'rnating.",
+                    )
+                }}
+            </p>
             <ManageTwoFactor
+                v-else
                 :canManageTwoFactor="canManageTwoFactor"
                 :requiresConfirmation="requiresConfirmation"
                 :twoFactorEnabled="twoFactorEnabled"

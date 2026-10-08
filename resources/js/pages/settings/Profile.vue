@@ -38,6 +38,8 @@ const props = defineProps<{
     profile: UserDetail;
     mustVerifyEmail: boolean;
     status?: string | null;
+    /** Google / ORCID orqali ro'yxatdan o'tganlarda parol bo'lmasligi mumkin */
+    hasPassword?: boolean;
 }>();
 
 defineOptions({
@@ -372,7 +374,7 @@ const fieldClass = (error?: string) =>
                 </div>
             </form>
 
-            <DeleteUser />
+            <DeleteUser :has-password="props.hasPassword !== false" />
         </div>
     </div>
 </template>
