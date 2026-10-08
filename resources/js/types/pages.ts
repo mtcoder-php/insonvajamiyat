@@ -45,9 +45,23 @@ export type AboutPageProps = {
     };
 };
 
+/** Mualliflar uchun yuklab olinadigan fayl — JournalDocumentService::public */
+export type PublicDocument = {
+    id: number;
+    kind: 'template' | 'guide' | 'form' | 'other';
+    kindLabel: string;
+    title: string;
+    description: string | null;
+    extension: string;
+    size: number;
+    url: string;
+    updatedAt: string | null;
+};
+
 export type GuidelinesPageProps = {
     page: StaticPage;
     template: string | null;
+    documents: PublicDocument[];
     types: {
         id: number;
         name: string;

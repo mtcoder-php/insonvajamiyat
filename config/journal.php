@@ -57,6 +57,14 @@ return [
     // Fayl topilmasa tugma ko'rsatilmaydi.
     'article_template' => env('JOURNAL_ARTICLE_TEMPLATE', 'downloads/maqola-shablon.docx'),
 
+    // To'lov eslatmalari (TZ 4.2.8): "To'lov kutilmoqda" holatidagi maqola muallifiga
+    // yuborilgandan keyin shu kunlarda avtomatik eslatma (har kuni app:payment-reminders).
+    // Tahririyat qo'lda ham yuborishi mumkin; ikki eslatma orasida kamida cooldown_hours soat.
+    'payment_reminders' => [
+        'days' => [3, 7, 14],
+        'cooldown_hours' => 24,
+    ],
+
     'contact' => [
         'email' => env('JOURNAL_EMAIL', 'info@insonvajamiyat.uz'),
         'phone' => env('JOURNAL_PHONE', '+998 71 234 56 78'),

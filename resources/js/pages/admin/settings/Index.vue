@@ -5,6 +5,7 @@ import {
     BookOpen,
     CalendarDays,
     FileText,
+    FolderDown,
     FolderTree,
     GalleryHorizontalEnd,
     Handshake,
@@ -16,6 +17,7 @@ import type { Component } from 'vue';
 import ArticleTypesPanel from '@/components/admin/settings/ArticleTypesPanel.vue';
 import BannersPanel from '@/components/admin/settings/BannersPanel.vue';
 import BoardPanel from '@/components/admin/settings/BoardPanel.vue';
+import DocumentsPanel from '@/components/admin/settings/DocumentsPanel.vue';
 import BooksPanel from '@/components/admin/settings/BooksPanel.vue';
 import EventsPanel from '@/components/admin/settings/EventsPanel.vue';
 import PagesPanel from '@/components/admin/settings/PagesPanel.vue';
@@ -69,6 +71,11 @@ const meta: Record<
         label: t('Tahririyat kengashi'),
         hint: t("A'zolar va rollar"),
         icon: UsersRound,
+    },
+    documents: {
+        label: t('Fayllar'),
+        hint: t("Shablon, yo'riqnoma, shakllar"),
+        icon: FolderDown,
     },
     banners: {
         label: t('Bannerlar'),
@@ -128,7 +135,7 @@ function go(tab: SettingsTab): void {
         </PageHeader>
 
         <nav
-            class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5"
+            class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
             role="tablist"
         >
             <button
@@ -186,6 +193,18 @@ function go(tab: SettingsTab): void {
             :board="board"
             :roles="boardRoles"
             :store-url="urls.board"
+        />
+        <DocumentsPanel
+            v-else-if="
+                tab === 'documents' &&
+                documents &&
+                documentKinds &&
+                documentLimits
+            "
+            :documents="documents"
+            :kinds="documentKinds"
+            :limits="documentLimits"
+            :store-url="urls.documents"
         />
         <BannersPanel
             v-else-if="tab === 'banners' && banners"

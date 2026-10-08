@@ -12,7 +12,8 @@ import {
 import { computed } from 'vue';
 import WebPageHeader from '@/components/web/WebPageHeader.vue';
 import ContentSection from '@/components/web/content/ContentSection.vue';
-import { formatNumber, formatSum } from '@/lib/format';
+import FileBadge from '@/components/web/content/FileBadge.vue';
+import { formatFileSize, formatNumber, formatSum } from '@/lib/format';
 import { t, tc } from '@/lib/i18n';
 import type { GuidelinesPageProps } from '@/types';
 
@@ -87,6 +88,50 @@ function price(value: number, currency: string): string {
                     :heading="section.heading"
                     :body="section.body"
                 />
+
+                <!-- Yuklab olinadigan fayllar (admin → Sozlamalar → Fayllar) -->
+                <ContentSection
+                    v-if="documents.length"
+                    id="downloads"
+                    :heading="t('Yuklab olinadigan fayllar')"
+                >
+                    <ul class="grid gap-3 sm:grid-cols-2">
+                        <li v-for="doc in documents" :key="doc.id">
+                            <a
+                                :href="doc.url"
+                                class="group flex h-full items-center gap-3.5 rounded-xl border border-line bg-[#fafbfd] p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-brand-200 hover:bg-white hover:shadow-[0_16px_34px_-22px_rgba(0,36,66,0.45)]"
+                            >
+                                <FileBadge
+                                    :extension="doc.extension"
+                                    class="transition-transform duration-300 group-hover:-rotate-3"
+                                />
+                                <span class="min-w-0 flex-1">
+                                    <span
+                                        class="block text-[15px] leading-snug font-semibold text-navy-950 transition-colors group-hover:text-brand-700"
+                                        >{{ doc.title }}</span
+                                    >
+                                    <span
+                                        v-if="doc.description"
+                                        class="mt-0.5 block text-[13px] leading-relaxed text-navy-600"
+                                        >{{ doc.description }}</span
+                                    >
+                                    <span
+                                        class="mt-1 block text-xs text-navy-400 uppercase"
+                                        >{{ doc.extension }} ·
+                                        {{ formatFileSize(doc.size) }}</span
+                                    >
+                                </span>
+                                <span
+                                    class="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-brand-600 ring-1 ring-line transition-all duration-300 group-hover:bg-brand-600 group-hover:text-white group-hover:ring-brand-600"
+                                >
+                                    <Download
+                                        class="size-4 transition-transform duration-300 group-hover:translate-y-0.5"
+                                    />
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                </ContentSection>
 
                 <!-- Maqola turlari va narxlar (admin → Sozlamalar → Maqola turlari) -->
                 <ContentSection

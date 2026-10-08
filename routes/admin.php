@@ -23,6 +23,7 @@ use App\Http\Controllers\Admin\Settings\ArticleTypeController;
 use App\Http\Controllers\Admin\Settings\BannerController;
 use App\Http\Controllers\Admin\Settings\EditorialBoardController;
 use App\Http\Controllers\Admin\Settings\EventController;
+use App\Http\Controllers\Admin\Settings\JournalDocumentController;
 use App\Http\Controllers\Admin\Settings\PageController;
 use App\Http\Controllers\Admin\Settings\PartnerController;
 use App\Http\Controllers\Admin\Settings\PostController;
@@ -193,7 +194,7 @@ Route::prefix('reviews')->name('reviews.')->group(function () {
 });
 
 /*
-| To'lovlar (TZ 4.2.8): ro'yxat, qo'lda tasdiqlash, to'lovdan ozod qilish
+| To'lovlar (TZ 4.2.8): ro'yxat, qo'lda tasdiqlash, to'lovdan ozod qilish, eslatmalar
 */
 Route::middleware('permission:'.AdminSection::Payments->permission()->value)
     ->prefix('payments')
@@ -201,6 +202,14 @@ Route::middleware('permission:'.AdminSection::Payments->permission()->value)
     ->group(function () {
         Route::get('/', [PaymentController::class, 'index'])->name('index');
         Route::get('{payment:uuid}/proof', [PaymentController::class, 'proof'])->name('proof');
+
+        // To'lov eslatmasi: bitta maqola yoki barcha kutilayotganlar (24 soatda bir marta)
+        Route::post('articles/{article:uuid}/remind', [PaymentController::class, 'remind'])
+            ->middleware('throttle:30,1')
+            ->name('remind');
+        Route::post('remind-all', [PaymentController::class, 'remindAll'])
+            ->middleware('throttle:5,1')
+            ->name('remind-all');
 
         Route::middleware('permission:'.PermissionName::PaymentsConfirmManually->value)->group(function () {
             Route::post('articles/{article:uuid}/confirm', [PaymentController::class, 'confirm'])->name('confirm');
@@ -311,6 +320,11 @@ Route::middleware('permission:'.AdminSection::Settings->permission()->value)
         Route::post('board', [EditorialBoardController::class, 'store'])->name('board.store');
         Route::put('board/{member}', [EditorialBoardController::class, 'update'])->name('board.update');
         Route::delete('board/{member}', [EditorialBoardController::class, 'destroy'])->name('board.destroy');
+
+        // Mualliflar uchun fayllar: maqola shabloni, yo'riqnoma, shakllar (TZ 4.2.5)
+        Route::post('documents', [JournalDocumentController::class, 'store'])->name('documents.store');
+        Route::put('documents/{document}', [JournalDocumentController::class, 'update'])->name('documents.update');
+        Route::delete('documents/{document}', [JournalDocumentController::class, 'destroy'])->name('documents.destroy');
     });
 
 /*

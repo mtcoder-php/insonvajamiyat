@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Article;
+use App\Services\Content\JournalDocumentService;
 use App\Services\Web\ArticleDailyStats;
 use App\Services\Web\ArticlePageService;
-use App\Support\MediaUrl;
 use App\Support\Seo\SeoMeta;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -31,7 +31,7 @@ class ArticleController extends Controller
             'article' => $page->show($article),
             'links' => [
                 'guidelines' => route('guidelines'),
-                'template' => MediaUrl::publicAsset(config('journal.article_template')),
+                'template' => app(JournalDocumentService::class)->templateUrl(),
                 'about' => route('about'),
             ],
         ]);

@@ -162,7 +162,8 @@ async function copy(key: string, value: string): Promise<void> {
 <template>
     <section
         v-if="payment.awaiting"
-        class="relative isolate overflow-hidden rounded-xl border border-amber-200 bg-gradient-to-br from-amber-50 via-white to-white p-5 shadow-[0_1px_2px_rgba(0,30,60,0.05)]"
+        id="payment"
+        class="relative isolate scroll-mt-24 overflow-hidden rounded-xl border border-amber-200 bg-gradient-to-br from-amber-50 via-white to-white p-5 shadow-[0_1px_2px_rgba(0,30,60,0.05)]"
     >
         <h2
             class="flex items-center gap-2 font-sans text-[15px] font-bold text-navy-950"
@@ -369,7 +370,8 @@ async function copy(key: string, value: string): Promise<void> {
 
     <section
         v-else
-        class="rounded-xl border border-emerald-200 bg-emerald-50/50 p-5 shadow-[0_1px_2px_rgba(0,30,60,0.05)]"
+        id="payment"
+        class="scroll-mt-24 rounded-xl border border-emerald-200 bg-emerald-50/50 p-5 shadow-[0_1px_2px_rgba(0,30,60,0.05)]"
     >
         <h2
             class="flex items-center gap-2 font-sans text-[15px] font-bold text-navy-950"

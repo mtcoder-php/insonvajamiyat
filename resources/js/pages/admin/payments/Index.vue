@@ -2,9 +2,11 @@
 import { Head, router } from '@inertiajs/vue3';
 import {
     BadgeCheck,
+    BellRing,
     Eye,
     HandCoins,
     Hourglass,
+    LoaderCircle,
     Search,
     Wallet,
     X,
@@ -32,7 +34,7 @@ import type {
     PaymentListItem,
     PaymentTab,
 } from '@/types';
-import { t, tk } from '@/lib/i18n';
+import { t, tc, tk } from '@/lib/i18n';
 
 /**
  * Admin → To'lovlar (supper admin payments.png): statistika, dinamika,
@@ -110,6 +112,40 @@ function confirmPayment(article: AwaitingPaymentItem): void {
 function waivePayment(article: AwaitingPaymentItem): void {
     selected.value = article;
     waiveOpen.value = true;
+}
+
+// To'lov eslatmalari (muallifga kabinet bildirishnomasi + email)
+const reminding = ref<string | null>(null);
+
+function remind(article: AwaitingPaymentItem): void {
+    router.post(
+        article.urls.remind,
+        {},
+        {
+            preserveScroll: true,
+            onStart: () => (reminding.value = article.uuid),
+            onFinish: () => (reminding.value = null),
+        },
+    );
+}
+
+function remindAll(): void {
+    router.post(
+        props.remindAllUrl,
+        {},
+        {
+            preserveScroll: true,
+            onStart: () => (reminding.value = '*'),
+            onFinish: () => (reminding.value = null),
+        },
+    );
+}
+
+function reminderBlocked(article: AwaitingPaymentItem): boolean {
+    return (
+        article.reminders.availableAt !== null &&
+        new Date(article.reminders.availableAt).getTime() > Date.now()
+    );
 }
 
 const detail = ref<PaymentListItem | null>(null);
@@ -223,10 +259,41 @@ function showDetail(payment: PaymentListItem): void {
             </div>
 
             <!-- To'lov kutilayotgan maqolalar -->
+            <div
+                v-if="awaiting && awaiting.data.length"
+                class="flex flex-wrap items-center justify-between gap-3 border-b border-line bg-amber-50/40 px-5 py-3"
+            >
+                <p class="flex items-center gap-2 text-xs text-navy-600">
+                    <BellRing class="size-4 shrink-0 text-amber-600" />
+                    {{
+                        reminderDays.length
+                            ? t(
+                                  "Avtomatik eslatma: maqola yuborilganidan :days kun o'tib. Qo'lda ham yuborish mumkin — sutkada bir marta.",
+                                  { days: reminderDays.join(', ') },
+                              )
+                            : t(
+                                  "Eslatmani qo'lda yuborish mumkin — sutkada bir marta.",
+                              )
+                    }}
+                </p>
+                <button
+                    type="button"
+                    :disabled="reminding !== null"
+                    class="inline-flex h-8 items-center gap-1.5 rounded-lg bg-navy-900 px-3 text-xs font-semibold whitespace-nowrap text-white shadow-[0_8px_18px_-12px_rgba(0,30,60,0.9)] transition-all hover:-translate-y-px hover:bg-navy-800 disabled:pointer-events-none disabled:opacity-60"
+                    @click="remindAll"
+                >
+                    <LoaderCircle
+                        v-if="reminding === '*'"
+                        class="size-3.5 animate-spin"
+                    />
+                    <BellRing v-else class="size-3.5 text-gold-300" />
+                    {{ t('Hammasiga eslatma') }}
+                </button>
+            </div>
             <div v-if="awaiting" class="overflow-x-auto">
                 <table
                     v-if="awaiting.data.length"
-                    class="w-full min-w-[980px] text-left text-[13px]"
+                    class="w-full min-w-[1120px] text-left text-[13px]"
                 >
                     <thead>
                         <tr
@@ -239,6 +306,7 @@ function showDetail(payment: PaymentListItem): void {
                                 {{ t('Summa') }}
                             </th>
                             <th class="py-3 pr-4">{{ t('Yuborilgan') }}</th>
+                            <th class="py-3 pr-4">{{ t('Eslatma') }}</th>
                             <th class="py-3 pr-5 text-right">
                                 {{ t('Amallar') }}
                             </th>
@@ -303,12 +371,66 @@ function showDetail(payment: PaymentListItem): void {
                                     <Hourglass class="size-3" />
                                     {{
                                         article.waitingDays === 0
-                                            ? 'bugun'
+                                            ? t('bugun')
                                             : t(':waitingDays kun kutmoqda', {
                                                   waitingDays:
                                                       article.waitingDays,
                                               })
                                     }}
+                                </p>
+                            </td>
+                            <td class="py-3.5 pr-4 whitespace-nowrap">
+                                <button
+                                    type="button"
+                                    :disabled="
+                                        reminding !== null ||
+                                        reminderBlocked(article)
+                                    "
+                                    :title="
+                                        reminderBlocked(article)
+                                            ? t('Keyingi eslatma: :time', {
+                                                  time: formatDateTime(
+                                                      article.reminders
+                                                          .availableAt,
+                                                  ),
+                                              })
+                                            : t('Muallifga eslatma yuborish')
+                                    "
+                                    class="group/remind inline-flex h-8 items-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-2.5 text-xs font-semibold whitespace-nowrap text-amber-800 transition-all hover:-translate-y-px hover:border-amber-300 hover:bg-amber-100 disabled:pointer-events-none disabled:border-line disabled:bg-white disabled:text-navy-400"
+                                    @click="remind(article)"
+                                >
+                                    <LoaderCircle
+                                        v-if="reminding === article.uuid"
+                                        class="size-3.5 animate-spin"
+                                    />
+                                    <BellRing
+                                        v-else
+                                        class="size-3.5 transition-transform group-hover/remind:-rotate-12"
+                                    />
+                                    {{
+                                        reminderBlocked(article)
+                                            ? t('Eslatildi')
+                                            : t('Eslatish')
+                                    }}
+                                </button>
+                                <p
+                                    class="mt-1 text-[11px] text-navy-400 tabular-nums"
+                                >
+                                    <template v-if="article.reminders.lastAt">
+                                        {{
+                                            tc(
+                                                ':count marta',
+                                                article.reminders.count,
+                                            )
+                                        }}
+                                        ·
+                                        {{
+                                            formatDate(article.reminders.lastAt)
+                                        }}
+                                    </template>
+                                    <template v-else>{{
+                                        t('Hali yuborilmagan')
+                                    }}</template>
                                 </p>
                             </td>
                             <td class="py-3.5 pr-5">
@@ -318,7 +440,7 @@ function showDetail(payment: PaymentListItem): void {
                                 >
                                     <button
                                         type="button"
-                                        class="inline-flex h-8 items-center gap-1.5 rounded-lg bg-emerald-600 px-3 text-xs font-semibold text-white shadow-[0_6px_14px_-8px_rgba(5,150,105,0.9)] transition-all hover:-translate-y-px hover:bg-emerald-500"
+                                        class="inline-flex h-8 items-center gap-1.5 rounded-lg bg-emerald-600 px-3 text-xs font-semibold whitespace-nowrap text-white shadow-[0_6px_14px_-8px_rgba(5,150,105,0.9)] transition-all hover:-translate-y-px hover:bg-emerald-500"
                                         @click="confirmPayment(article)"
                                     >
                                         <BadgeCheck class="size-4" />
@@ -326,7 +448,7 @@ function showDetail(payment: PaymentListItem): void {
                                     </button>
                                     <button
                                         type="button"
-                                        class="inline-flex h-8 items-center gap-1.5 rounded-lg border border-line px-3 text-xs font-semibold text-navy-700 transition-all hover:-translate-y-px hover:border-brand-200 hover:text-brand-700"
+                                        class="inline-flex h-8 items-center gap-1.5 rounded-lg border border-line px-3 text-xs font-semibold whitespace-nowrap text-navy-700 transition-all hover:-translate-y-px hover:border-brand-200 hover:text-brand-700"
                                         @click="waivePayment(article)"
                                     >
                                         <HandCoins class="size-4" />

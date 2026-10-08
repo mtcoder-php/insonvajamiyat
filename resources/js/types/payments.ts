@@ -48,7 +48,13 @@ export type AwaitingPaymentItem = {
     author: { name: string; email: string };
     submittedAt: string | null;
     waitingDays: number | null;
-    urls: { confirm: string; waive: string };
+    /** To'lov eslatmalari: soni, oxirgisi, keyingisi qachondan mumkin (null — hozir) */
+    reminders: {
+        count: number;
+        lastAt: string | null;
+        availableAt: string | null;
+    };
+    urls: { remind: string; confirm: string; waive: string };
 };
 
 type ProviderStat = { amount: number; count: number; share: number | null };
@@ -81,4 +87,6 @@ export type AdminPaymentsProps = {
     awaiting: Paginated<AwaitingPaymentItem> | null;
     payments: Paginated<PaymentListItem> | null;
     can: { confirm: boolean };
+    remindAllUrl: string;
+    reminderDays: number[];
 };

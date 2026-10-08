@@ -41,6 +41,7 @@ use Spatie\Translatable\HasTranslations;
  * @property string|null $search_text
  * @property ArticleStatus $status
  * @property ArticlePaymentStatus $payment_status
+ * @property int $payment_reminders_count
  * @property int $review_round
  * @property bool $is_blind_review
  * @property string|null $slug
@@ -56,6 +57,7 @@ use Spatie\Translatable\HasTranslations;
  * @property Carbon|null $chief_editor_approved_at
  * @property Carbon|null $submitted_at
  * @property Carbon|null $paid_at
+ * @property Carbon|null $payment_reminded_at
  * @property Carbon|null $accepted_at
  * @property Carbon|null $rejected_at
  * @property Carbon|null $published_at
@@ -151,6 +153,8 @@ class Article extends Model
             'plagiarism_percent' => 'decimal:2',
             'submitted_at' => 'datetime',
             'paid_at' => 'datetime',
+            'payment_reminded_at' => 'datetime',
+            'payment_reminders_count' => 'integer',
             'accepted_at' => 'datetime',
             'rejected_at' => 'datetime',
             'published_at' => 'datetime',
