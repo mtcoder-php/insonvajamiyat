@@ -1,12 +1,6 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import {
-    ArrowRight,
-    ChevronLeft,
-    ChevronRight,
-    Pause,
-    Play,
-} from '@lucide/vue';
+import { ArrowRight, ChevronLeft, ChevronRight } from '@lucide/vue';
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import type { HeroSlide } from '@/types';
 import { t } from '@/lib/i18n';
@@ -19,7 +13,8 @@ import { t } from '@/lib/i18n';
  * Rasm yo'q slayd brend fonida chiqadi.
  *
  * Qulaylik: sahifaning h1 sarlavhasi Home.vue'da (slayd sarlavhalari — h2, almashganda yo'qolmaydi);
- * avtomatik almashishni to'xtatish tugmasi bor (WCAG 2.2.2); fokusda ko'rinadigan halqa.
+ * sichqoncha ustida yoki klaviatura fokusida slayder to'xtaydi; "harakatni kamaytirish"
+ * sozlamasi yoqilgan qurilmalarda avtomatik almashmaydi; fokusda ko'rinadigan halqa.
  */
 const props = defineProps<{
     slides: HeroSlide[];
@@ -49,18 +44,12 @@ function isExternal(url: string): boolean {
 
 const active = ref(0);
 const paused = ref(false);
-/** Foydalanuvchi o'zi to'xtatgan (hover/fokusdan farqli — doimiy) */
-const stopped = ref(false);
 const reduceMotion = ref(false);
 let timer: ReturnType<typeof setTimeout> | undefined;
 
 const count = computed(() => items.value.length);
 const autoplay = computed(
-    () =>
-        count.value > 1 &&
-        !paused.value &&
-        !stopped.value &&
-        !reduceMotion.value,
+    () => count.value > 1 && !paused.value && !reduceMotion.value,
 );
 
 function go(index: number): void {
@@ -269,21 +258,6 @@ onBeforeUnmount(() => clearTimeout(timer));
                 role="group"
                 :aria-label="t('Slaydlar')"
             >
-                <button
-                    v-if="!reduceMotion"
-                    type="button"
-                    class="mr-1 flex size-7 items-center justify-center rounded-full border border-white/60 text-white transition-colors hover:bg-white hover:text-navy-900 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
-                    :aria-label="
-                        stopped
-                            ? t('Slaydlarni avtomatik almashtirish')
-                            : t('Avtomatik almashishni to\'xtatish')
-                    "
-                    :aria-pressed="stopped"
-                    @click="stopped = !stopped"
-                >
-                    <Play v-if="stopped" class="size-3.5" />
-                    <Pause v-else class="size-3.5" />
-                </button>
                 <button
                     v-for="(item, index) in items"
                     :key="item.key"
