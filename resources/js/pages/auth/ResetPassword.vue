@@ -58,7 +58,9 @@ const inputEmail = ref(props.email);
                     autocomplete="new-password"
                     class="mt-1 block h-11 w-full"
                     autofocus
-                    :placeholder="t('Kamida 8 ta belgi')"
+                    :placeholder="
+                        t('Kamida 12 belgi: katta-kichik harf, raqam va belgi')
+                    "
                     :passwordrules="passwordRules"
                 />
                 <InputError :message="errors.password" />

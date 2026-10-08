@@ -57,6 +57,18 @@ class AuthorProfile extends Model
         ];
     }
 
+    /**
+     * Maqola yuborish uchun asosiy ilmiy ma'lumotlar to'ldirilganmi
+     * (kabinet bosh sahifasidagi "Profilingizni to'ldiring" eslatmasi shunga qarab yo'qoladi).
+     */
+    public function isComplete(): bool
+    {
+        $filled = fn (?string $value): bool => $value !== null && trim($value) !== '';
+
+        return $filled($this->organization)
+            && ($filled($this->position) || $filled($this->academic_degree));
+    }
+
     /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {

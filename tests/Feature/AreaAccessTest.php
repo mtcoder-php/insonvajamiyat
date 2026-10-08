@@ -55,6 +55,21 @@ class AreaAccessTest extends TestCase
             );
     }
 
+    public function test_profile_reminder_disappears_once_academic_details_are_filled()
+    {
+        $author = User::factory()->author()->create();
+        $profile = $author->authorProfile()->firstOrNew([], ['last_name' => 'Karimov', 'first_name' => 'Akmal']);
+        $profile->forceFill(['organization' => null, 'position' => null, 'academic_degree' => null])->save();
+
+        $this->actingAs($author)->get(route('cabinet.dashboard'))
+            ->assertInertia(fn (Assert $page) => $page->where('profileCompleted', false));
+
+        $profile->forceFill(['organization' => "O'zMU", 'academic_degree' => 'PhD'])->save();
+
+        $this->actingAs($author->fresh())->get(route('cabinet.dashboard'))
+            ->assertInertia(fn (Assert $page) => $page->where('profileCompleted', true));
+    }
+
     public function test_author_cannot_open_admin_panel()
     {
         $author = User::factory()->author()->create();

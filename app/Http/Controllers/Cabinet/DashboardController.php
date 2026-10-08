@@ -23,7 +23,7 @@ class DashboardController extends Controller
         $user->loadMissing('authorProfile');
 
         return Inertia::render('cabinet/Dashboard', [
-            'profileCompleted' => $user->authorProfile?->onboarding_completed_at !== null,
+            'profileCompleted' => $user->authorProfile?->isComplete() ?? false,
             'cards' => fn () => $dashboard->cards($user),
             'articles' => fn () => $dashboard->latest($user),
             'focus' => fn () => $dashboard->focus($user),

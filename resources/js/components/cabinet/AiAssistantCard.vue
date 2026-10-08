@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { Link } from '@inertiajs/vue3';
 import { ArrowRight, Bot, Sparkles } from '@lucide/vue';
 import { t } from '@/lib/i18n';
+import { index as aiIndex } from '@/routes/cabinet/ai';
 
 /**
- * "AI yordamchi" — AI laboratoriya moduli tayyor bo'lgach havolaga aylanadi.
+ * "AI yordamchi" — AI Studio (imlo/uslub tekshiruvi, ilmiy tarjima, tahlil) ga havola.
  */
 </script>
 
@@ -34,18 +36,14 @@ import { t } from '@/lib/i18n';
                 </p>
             </div>
         </div>
-        <button
-            type="button"
-            disabled
-            :title="t('Tez orada')"
-            class="mt-4 inline-flex w-full cursor-not-allowed items-center justify-center gap-1.5 rounded-lg border border-brand-200 bg-white px-3 py-2 text-xs font-semibold text-brand-700"
+        <Link
+            :href="aiIndex()"
+            class="group/link mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-brand-200 bg-white px-3 py-2 text-xs font-semibold text-brand-700 transition-all duration-200 hover:border-brand-600 hover:bg-brand-600 hover:text-white"
         >
-            {{ t('AI laboratoriya') }}
-            <span
-                class="rounded bg-brand-50 px-1.5 py-0.5 text-[10px] font-medium"
-                >{{ t('tez orada') }}</span
-            >
-            <ArrowRight class="size-3.5" />
-        </button>
+            {{ t("AI Studio'ni ochish") }}
+            <ArrowRight
+                class="size-3.5 transition-transform duration-200 group-hover/link:translate-x-0.5"
+            />
+        </Link>
     </section>
 </template>

@@ -58,7 +58,7 @@ onUnmounted(() => clearTwoFactorAuthData());
                     {{
                         twoFactorEnabled
                             ? t('Himoya yoqilgan')
-                            : "Himoya o'chirilgan"
+                            : t("Himoya o'chirilgan")
                     }}
                 </p>
                 <p class="mt-0.5 text-xs leading-relaxed text-navy-600">

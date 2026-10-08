@@ -150,6 +150,7 @@ class DashboardService
                     'statusGroup' => self::groupOf($article->status),
                     'statusLabel' => $article->status->label(),
                     'coverUrl' => MediaUrl::from($article->cover_image_path),
+                    'url' => route('admin.articles.index', ['queue' => 'all', 'article' => $article->uuid]),
                 ];
             })
             ->all();

@@ -149,7 +149,11 @@ defineOptions({
                             :tabindex="5"
                             autocomplete="new-password"
                             name="password"
-                            :placeholder="t('Kamida 8 ta belgi')"
+                            :placeholder="
+                                t(
+                                    'Kamida 12 belgi: katta-kichik harf, raqam va belgi',
+                                )
+                            "
                             :passwordrules="passwordRules"
                             class="h-11 pl-10"
                         />

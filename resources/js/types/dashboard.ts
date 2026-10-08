@@ -37,6 +37,8 @@ export type LatestSubmission = {
     statusGroup: StatusGroupKey | 'other';
     statusLabel: string;
     coverUrl: string | null;
+    /** Maqolalar bo'limida ochish (ruxsat bo'lmasa null) */
+    url: string | null;
 };
 
 export type PaymentsMonthly = {

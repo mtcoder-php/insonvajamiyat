@@ -105,5 +105,6 @@ php artisan test
 
 ## Hujjatlar
 
+- [`docs/`](docs/README.md) — admin va muallif qo'llanmalari, serverga joylashtirish hujjati, test hisoboti
 - Texnik topshiriq: loyiha papkasidagi TZ (v1.0, 2026-yil sentyabr)
 - DB sxemasi: `database/migrations/2026_09_29_*`
