@@ -2,6 +2,7 @@
 import { Check, Copy, Quote } from '@lucide/vue';
 import { ref } from 'vue';
 import { cn } from '@/lib/utils';
+import { t } from '@/lib/i18n';
 
 /**
  * Iqtibos formatlari: APA va GOST, bir bosishda nusxalash.
@@ -29,7 +30,8 @@ async function copy(): Promise<void> {
         <p
             class="mb-2 flex items-center gap-2 text-[13px] font-bold text-navy-950"
         >
-            <Quote class="size-4 text-brand-600" /> Iqtibos formatlari
+            <Quote class="size-4 text-brand-600" />
+            {{ t('Iqtibos formatlari') }}
         </p>
         <div
             class="mb-2 inline-flex rounded-lg bg-[#f2f5fa] p-1"
@@ -66,7 +68,7 @@ async function copy(): Promise<void> {
         >
             <Check v-if="copied === format" class="size-3.5 text-emerald-600" />
             <Copy v-else class="size-3.5" />
-            {{ copied === format ? 'Nusxalandi' : 'Nusxalash' }}
+            {{ copied === format ? t('Nusxalandi') : t('Nusxalash') }}
         </button>
     </div>
 </template>

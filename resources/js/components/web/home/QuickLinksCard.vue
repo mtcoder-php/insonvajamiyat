@@ -6,6 +6,7 @@ import { computed } from 'vue';
 import HomeCard from '@/components/web/home/HomeCard.vue';
 import { usePermissions } from '@/composables/usePermissions';
 import { about, contact, dashboard, guidelines, register } from '@/routes';
+import { t } from '@/lib/i18n';
 
 /**
  * "Tez havolalar" (home.png).
@@ -15,22 +16,25 @@ const { auth } = usePermissions();
 const links = computed<{ title: string; href: InertiaLinkProps['href'] }[]>(
     () => [
         {
-            title: 'Maqola yuborish',
+            title: t('Maqola yuborish'),
             href: auth.value.user ? dashboard() : register(),
         },
-        { title: "Maqola yozish bo'yicha ko'rsatmalar", href: guidelines() },
-        { title: 'Peer-review jarayoni', href: guidelines() },
-        { title: 'Etika va siyosat', href: about() },
-        { title: "Tahrir hay'ati", href: about() },
-        { title: 'Aloqa', href: contact() },
+        {
+            title: t("Maqola yozish bo'yicha ko'rsatmalar"),
+            href: guidelines(),
+        },
+        { title: t('Peer-review jarayoni'), href: guidelines() },
+        { title: t('Etika va siyosat'), href: about() },
+        { title: t("Tahrir hay'ati"), href: about() },
+        { title: t('Aloqa'), href: contact() },
     ],
 );
 </script>
 
 <template>
-    <HomeCard title="Tez havolalar">
+    <HomeCard :title="t('Tez havolalar')">
         <ul class="-mx-2">
-            <li v-for="link in links" :key="link.title">
+            <li v-for="(link, i) in links" :key="i">
                 <Link
                     :href="link.href"
                     class="group flex items-center gap-2.5 rounded-lg px-2 py-2 text-sm text-navy-800 transition-colors hover:bg-white hover:text-brand-700"

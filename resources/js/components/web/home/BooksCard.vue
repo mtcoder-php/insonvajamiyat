@@ -2,6 +2,7 @@
 import { BookOpen } from '@lucide/vue';
 import HomeCard from '@/components/web/home/HomeCard.vue';
 import type { RecommendedBook } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * "Tavsiya etilgan kitoblar" (home.png): muqova, nom, muallif, yil.
@@ -11,7 +12,7 @@ defineProps<{ books: RecommendedBook[] }>();
 </script>
 
 <template>
-    <HomeCard v-if="books.length" title="Tavsiya etilgan kitoblar">
+    <HomeCard v-if="books.length" :title="t('Tavsiya etilgan kitoblar')">
         <ul class="-mx-2 divide-y divide-[#e8e4db]">
             <li v-for="book in books" :key="book.id">
                 <component
@@ -40,7 +41,7 @@ defineProps<{ books: RecommendedBook[] }>();
                             {{ book.title }}
                         </span>
                         <span class="mt-1.5 block text-[13px] text-navy-500">
-                            Muallif: {{ book.author }}
+                            {{ t('Muallif: :name', { name: book.author }) }}
                         </span>
                         <span
                             v-if="book.year"

@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from '@lucide/vue';
 import { computed } from 'vue';
 import { cn } from '@/lib/utils';
 import type { Paginated } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Laravel paginator havolalari: "1–15 / 128" va sahifa raqamlari.
@@ -25,10 +26,16 @@ const itemClass =
     <nav
         v-if="meta.total > 0"
         class="flex flex-col items-center justify-between gap-3 sm:flex-row"
-        aria-label="Sahifalar"
+        :aria-label="t('Sahifalar')"
     >
         <p class="text-xs text-navy-500 tabular-nums">
-            {{ meta.from }}–{{ meta.to }} / {{ meta.total }} ta
+            {{
+                t(':from–:to / :total ta', {
+                    from: meta.from,
+                    to: meta.to,
+                    total: meta.total,
+                })
+            }}
         </p>
         <div
             v-if="meta.last_page > 1"
@@ -47,7 +54,7 @@ const itemClass =
                             : 'text-navy-300',
                     )
                 "
-                aria-label="Oldingi sahifa"
+                :aria-label="t('Oldingi sahifa')"
             >
                 <ChevronLeft class="size-4" />
             </component>
@@ -87,7 +94,7 @@ const itemClass =
                             : 'text-navy-300',
                     )
                 "
-                aria-label="Keyingi sahifa"
+                :aria-label="t('Keyingi sahifa')"
             >
                 <ChevronRight class="size-4" />
             </component>

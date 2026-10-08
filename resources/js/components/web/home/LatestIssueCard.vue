@@ -8,6 +8,7 @@ import IssueCover from '@/components/web/IssueCover.vue';
 import { cn } from '@/lib/utils';
 import { index as issuesIndex } from '@/routes/issues';
 import type { LatestIssue } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * "So'nggi son" (home.png): katta muqova, son raqami, nomi,
@@ -34,13 +35,13 @@ const resources = computed<Resource[]>(() => {
     const items: Resource[] = [
         {
             key: 'toc',
-            label: 'Mundarija (PDF)',
+            label: t('Mundarija (PDF)'),
             href: issue.tocUrl,
             icon: FileText,
         },
         {
             key: 'pdf',
-            label: "To'liq son (PDF)",
+            label: t("To'liq son (PDF)"),
             href: issue.pdfUrl,
             icon: Files,
         },
@@ -60,12 +61,7 @@ const resources = computed<Resource[]>(() => {
 </script>
 
 <template>
-    <HomeCard
-        size="lg"
-        title="So'nggi son"
-        :href="issuesIndex()"
-        link-text="Barchasini ko'rish"
-    >
+    <HomeCard size="lg" :title="t('So\'nggi son')" :href="issuesIndex()">
         <div
             v-if="issue"
             class="flex flex-col gap-7 sm:flex-row sm:items-start"
@@ -74,7 +70,7 @@ const resources = computed<Resource[]>(() => {
             <Link
                 :href="issue.url"
                 class="group relative mx-auto block w-52 shrink-0 sm:mx-0 sm:w-56 xl:w-64"
-                :aria-label="`${issue.label} sonini ochish`"
+                :aria-label="t(':label sonini ochish', { label: issue.label })"
             >
                 <span
                     class="absolute inset-x-4 -bottom-3 h-6 rounded-full bg-navy-950/25 blur-xl transition-all duration-500 group-hover:inset-x-2 group-hover:bg-navy-950/35"
@@ -102,7 +98,12 @@ const resources = computed<Resource[]>(() => {
                         :href="issue.url"
                         class="transition-colors hover:text-brand-700"
                     >
-                        {{ issue.title || '"Inson va Jamiyat" ilmiy jurnali' }}
+                        {{
+                            issue.title ||
+                            t('«:name» ilmiy jurnali', {
+                                name: $page.props.journal.name,
+                            })
+                        }}
                     </Link>
                 </h3>
 
@@ -122,7 +123,7 @@ const resources = computed<Resource[]>(() => {
                             :title="
                                 item.href
                                     ? undefined
-                                    : 'Fayl tez orada yuklanadi'
+                                    : t('Fayl tez orada yuklanadi')
                             "
                             :class="
                                 cn(
@@ -163,7 +164,7 @@ const resources = computed<Resource[]>(() => {
                         :href="issue.url"
                         class="group inline-flex h-11 items-center gap-2 rounded-full bg-navy-900 px-7 text-sm font-semibold text-white shadow-md shadow-navy-900/20 transition-all hover:-translate-y-0.5 hover:bg-navy-800 hover:shadow-lg hover:shadow-navy-900/25"
                     >
-                        Sonni ko'rish
+                        {{ t("Sonni ko'rish") }}
                         <ArrowRight
                             class="size-4 transition-transform group-hover:translate-x-0.5"
                         />
@@ -177,7 +178,7 @@ const resources = computed<Resource[]>(() => {
             class="flex flex-col items-center gap-2 py-10 text-center text-sm text-navy-500"
         >
             <BookOpen class="size-8 text-navy-300" />
-            Hozircha chop etilgan son yo'q.
+            {{ t("Hozircha chop etilgan son yo'q.") }}
         </div>
     </HomeCard>
 </template>

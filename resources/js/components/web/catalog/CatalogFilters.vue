@@ -12,6 +12,7 @@ import SelectInput from '@/components/admin/ui/SelectInput.vue';
 import { inputClass } from '@/lib/formStyles';
 import { cn } from '@/lib/utils';
 import type { CatalogFilters, CatalogProps } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Chap panel: yo'nalishlar (sonlar bilan), yil va son, muallif, kalit so'z.
@@ -90,14 +91,15 @@ const groupHeader =
             <h2
                 class="flex items-center gap-2 font-serif text-base font-bold text-navy-950"
             >
-                <Filter class="size-4 text-brand-600" /> Qidiruv filtrlari
+                <Filter class="size-4 text-brand-600" />
+                {{ t('Qidiruv filtrlari') }}
             </h2>
             <button
                 type="button"
                 class="inline-flex items-center gap-1 text-xs font-semibold text-brand-700 hover:underline"
                 @click="emit('reset')"
             >
-                <RotateCcw class="size-3.5" /> Tozalash
+                <RotateCcw class="size-3.5" /> {{ t('Tozalash') }}
             </button>
         </header>
 
@@ -108,7 +110,7 @@ const groupHeader =
                 :class="groupHeader"
                 @click="open.subjects = !open.subjects"
             >
-                Fan yo'nalishi
+                {{ t("Fan yo'nalishi") }}
                 <ChevronDown
                     :class="
                         cn(
@@ -157,8 +159,10 @@ const groupHeader =
                     >
                         {{
                             showAllSubjects
-                                ? "Kamroq ko'rsatish"
-                                : `Barchasini ko'rish (${facets.subjects.length})`
+                                ? t("Kamroq ko'rsatish")
+                                : t("Barchasini ko'rish (:count)", {
+                                      count: facets.subjects.length,
+                                  })
                         }}
                     </button>
                 </li>
@@ -172,7 +176,7 @@ const groupHeader =
                 :class="groupHeader"
                 @click="open.issue = !open.issue"
             >
-                Jurnal soni / Yil
+                {{ t('Jurnal soni / Yil') }}
                 <ChevronDown
                     :class="
                         cn(
@@ -185,16 +189,19 @@ const groupHeader =
             <div v-show="open.issue" class="mt-2 grid gap-2">
                 <SelectInput
                     v-model="state.year"
-                    aria-label="Yil"
+                    :aria-label="t('Yil')"
                     class="text-[13px]"
                 >
-                    <option :value="null">Barcha yillar</option>
+                    <option :value="null">{{ t('Barcha yillar') }}</option>
                     <option v-for="y in facets.years" :key="y" :value="y">
                         {{ y }}
                     </option>
                 </SelectInput>
-                <SelectInput v-model="state.issue" aria-label="Jurnal soni">
-                    <option :value="null">Barcha sonlar</option>
+                <SelectInput
+                    v-model="state.issue"
+                    :aria-label="t('Jurnal soni')"
+                >
+                    <option :value="null">{{ t('Barcha sonlar') }}</option>
                     <option
                         v-for="i in facets.issues"
                         :key="i.slug"
@@ -213,7 +220,7 @@ const groupHeader =
                 :class="groupHeader"
                 @click="open.author = !open.author"
             >
-                Muallif
+                {{ t('Muallif') }}
                 <ChevronDown
                     :class="
                         cn(
@@ -224,14 +231,14 @@ const groupHeader =
                 />
             </button>
             <label v-show="open.author" class="relative mt-2 block">
-                <span class="sr-only">Muallif</span>
+                <span class="sr-only">{{ t('Muallif') }}</span>
                 <Search
                     class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-navy-400"
                 />
                 <input
                     v-model="state.author"
                     type="search"
-                    placeholder="Muallif ismi bo'yicha..."
+                    :placeholder="t('Muallif ismi bo\'yicha...')"
                     :class="cn(inputClass, 'h-9 pl-9 text-[13px]')"
                 />
             </label>
@@ -244,7 +251,7 @@ const groupHeader =
                 :class="groupHeader"
                 @click="open.keyword = !open.keyword"
             >
-                Teglar / Kalit so'zlar
+                {{ t("Teglar / Kalit so'zlar") }}
                 <ChevronDown
                     :class="
                         cn(
@@ -258,8 +265,8 @@ const groupHeader =
                 v-show="open.keyword"
                 v-model="state.keyword"
                 type="search"
-                placeholder="Kalit so'zni kiriting..."
-                aria-label="Kalit so'z"
+                :placeholder="t('Kalit so\'zni kiriting...')"
+                :aria-label="t('Kalit so\'z')"
                 :class="cn(inputClass, 'mt-2 h-9 text-[13px]')"
             />
         </section>
@@ -268,7 +275,8 @@ const groupHeader =
             type="submit"
             class="mt-2 flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-navy-900 text-sm font-semibold text-white shadow-[0_10px_22px_-12px_rgba(0,30,60,0.9)] transition-all hover:-translate-y-px hover:bg-brand-700"
         >
-            <SlidersHorizontal class="size-4" /> Filtrlarni qo'llash
+            <SlidersHorizontal class="size-4" />
+            {{ t("Filtrlarni qo'llash") }}
         </button>
     </form>
 </template>

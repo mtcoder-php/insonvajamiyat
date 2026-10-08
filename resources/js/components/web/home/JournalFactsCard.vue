@@ -3,6 +3,7 @@ import { usePage } from '@inertiajs/vue3';
 import { BookMarked, CalendarClock, Fingerprint, Unlock } from '@lucide/vue';
 import { computed } from 'vue';
 import HomeCard from '@/components/web/home/HomeCard.vue';
+import { t } from '@/lib/i18n';
 
 /**
  * "Jurnal ma'lumotlari" (home.png): ISSN, e-ISSN, DOI, davriylik, Open Access.
@@ -12,7 +13,7 @@ const journal = computed(() => usePage().props.journal);
 </script>
 
 <template>
-    <HomeCard title="Jurnal ma'lumotlari">
+    <HomeCard :title="t('Jurnal ma\'lumotlari')">
         <dl class="space-y-4 text-sm">
             <div v-if="journal.issn || journal.eissn" class="flex gap-3">
                 <BookMarked
@@ -55,7 +56,9 @@ const journal = computed(() => usePage().props.journal);
                     <dd class="font-serif font-bold text-navy-950">
                         {{ journal.frequency }}
                     </dd>
-                    <dt class="text-xs text-navy-500">Chop etish davriyligi</dt>
+                    <dt class="text-xs text-navy-500">
+                        {{ t('Chop etish davriyligi') }}
+                    </dt>
                 </div>
             </div>
             <div class="flex gap-3">
@@ -64,7 +67,9 @@ const journal = computed(() => usePage().props.journal);
                     :stroke-width="1.5"
                 />
                 <div class="flex flex-col-reverse">
-                    <dd class="text-navy-700">Barcha maqolalar ochiq</dd>
+                    <dd class="text-navy-700">
+                        {{ t('Barcha maqolalar ochiq') }}
+                    </dd>
                     <dt class="text-xs text-navy-500">Open Access</dt>
                 </div>
             </div>

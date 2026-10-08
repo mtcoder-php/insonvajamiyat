@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 import { mainNavigation } from '@/navigation/web';
 import { home } from '@/routes';
 import type { NavItem } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Sayt header'i.
@@ -26,7 +27,7 @@ const props = withDefaults(
 
 const { isCurrentUrl, isCurrentOrParentUrl } = useCurrentUrl();
 
-const navItems = mainNavigation();
+const navItems = computed(() => mainNavigation());
 const isDark = computed(() => props.variant === 'dark');
 
 // Bosh sahifa faqat aniq mos kelganda faol, qolganlari ichki sahifalarda ham
@@ -59,11 +60,11 @@ const isActive = (item: NavItem, index: number): boolean =>
 
             <nav
                 class="hidden items-center gap-1 lg:flex"
-                aria-label="Asosiy menyu"
+                :aria-label="t('Asosiy menyu')"
             >
                 <Link
                     v-for="(item, index) in navItems"
-                    :key="item.title"
+                    :key="index"
                     :href="item.href"
                     :aria-current="isActive(item, index) ? 'page' : undefined"
                     :class="

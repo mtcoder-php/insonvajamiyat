@@ -3,6 +3,8 @@ import { Link } from '@inertiajs/vue3';
 import { BookOpenText, Cpu, Globe, Handshake } from '@lucide/vue';
 import BrandLogo from '@/components/brand/BrandLogo.vue';
 import { home } from '@/routes';
+import { computed } from 'vue';
+import { t } from '@/lib/i18n';
 
 /**
  * Login / ro'yxatdan o'tish / parol tiklash sahifalari layouti
@@ -10,6 +12,9 @@ import { home } from '@/routes';
  *
  * Chapda — brend paneli (faqat lg va undan katta ekranlarda),
  * o'ngda — forma kartasi. `wide` — keng forma (ro'yxatdan o'tish).
+ *
+ * title/description — sahifaning defineOptions({ layout }) qiymatlari (o'zbekcha kalit),
+ * shu yerda tarjima qilinadi.
  */
 withDefaults(
     defineProps<{
@@ -24,12 +29,12 @@ withDefaults(
     },
 );
 
-const features = [
-    { icon: BookOpenText, text: 'Ilmiy maqolalar nashri' },
-    { icon: Globe, text: 'Ochiq ilmiy platforma' },
-    { icon: Handshake, text: 'Xalqaro hamkorlik' },
-    { icon: Cpu, text: 'Zamonaviy texnologiyalar' },
-];
+const features = computed(() => [
+    { icon: BookOpenText, text: t('Ilmiy maqolalar nashri') },
+    { icon: Globe, text: t('Ochiq ilmiy platforma') },
+    { icon: Handshake, text: t('Xalqaro hamkorlik') },
+    { icon: Cpu, text: t('Zamonaviy texnologiyalar') },
+]);
 
 const year = new Date().getFullYear();
 </script>
@@ -64,7 +69,11 @@ const year = new Date().getFullYear();
                 <blockquote
                     class="max-w-md font-serif text-3xl leading-snug text-white/95 italic xl:text-4xl"
                 >
-                    “Ilm — insonni yuksaltiradi, jamiyatni rivojlantiradi.”
+                    “{{
+                        t(
+                            'Ilm — insonni yuksaltiradi, jamiyatni rivojlantiradi.',
+                        )
+                    }}”
                 </blockquote>
                 <div class="mt-6 gold-rule w-48" />
             </div>
@@ -74,7 +83,7 @@ const year = new Date().getFullYear();
             <ul class="relative z-10 space-y-4">
                 <li
                     v-for="feature in features"
-                    :key="feature.text"
+                    :key="feature.icon.name"
                     class="flex items-center gap-4"
                 >
                     <span
@@ -92,8 +101,13 @@ const year = new Date().getFullYear();
             </ul>
 
             <p class="relative z-10 mt-12 text-xs text-white/55">
-                © {{ year }} "Inson va Jamiyat" ilmiy jurnali. Barcha huquqlar
-                himoyalangan.
+                ©
+                {{
+                    t(
+                        ':year «:name» ilmiy jurnali. Barcha huquqlar himoyalangan.',
+                        { year, name: $page.props.journal.name },
+                    )
+                }}
             </p>
         </aside>
 
@@ -111,13 +125,13 @@ const year = new Date().getFullYear();
                             v-if="title"
                             class="text-2xl leading-tight md:text-[1.75rem]"
                         >
-                            {{ title }}
+                            {{ t(title) }}
                         </h1>
                         <p
                             v-if="description"
                             class="text-sm text-muted-foreground"
                         >
-                            {{ description }}
+                            {{ t(description) }}
                         </p>
                     </div>
 

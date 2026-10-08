@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/input-otp';
 import { store } from '@/routes/two-factor/login';
 import type { TwoFactorConfigContent } from '@/types';
+import { t } from '@/lib/i18n';
 
 const showRecoveryInput = ref<boolean>(false);
 const code = ref<string>('');
@@ -18,17 +19,18 @@ const code = ref<string>('');
 const authConfigContent = computed<TwoFactorConfigContent>(() => {
     if (showRecoveryInput.value) {
         return {
-            title: 'Zaxira kod',
-            description:
+            title: t('Zaxira kod'),
+            description: t(
                 'Hisobingizga kirish uchun zaxira kodlaringizdan birini kiriting.',
-            buttonText: 'autentifikatsiya kodi bilan kirish',
+            ),
+            buttonText: t('autentifikatsiya kodi bilan kirish'),
         };
     }
 
     return {
-        title: 'Tasdiqlash kodi',
-        description: 'Autentifikator ilovangizdagi 6 xonali kodni kiriting.',
-        buttonText: 'zaxira kod bilan kirish',
+        title: t('Tasdiqlash kodi'),
+        description: t('Autentifikator ilovangizdagi 6 xonali kodni kiriting.'),
+        buttonText: t('zaxira kod bilan kirish'),
     };
 });
 
@@ -47,7 +49,7 @@ const toggleRecoveryMode = (clearErrors: () => void): void => {
 </script>
 
 <template>
-    <Head title="Ikki bosqichli tasdiqlash" />
+    <Head :title="t('Ikki bosqichli tasdiqlash')" />
 
     <div class="space-y-6">
         <template v-if="!showRecoveryInput">
@@ -81,11 +83,11 @@ const toggleRecoveryMode = (clearErrors: () => void): void => {
                     </div>
                     <InputError :message="errors.code" />
                 </div>
-                <Button type="submit" class="w-full" :disabled="processing"
-                    >Davom etish</Button
-                >
+                <Button type="submit" class="w-full" :disabled="processing">{{
+                    t('Davom etish')
+                }}</Button>
                 <div class="text-center text-sm text-muted-foreground">
-                    <span>yoki </span>
+                    <span>{{ t('yoki') }} </span>
                     <button
                         type="button"
                         class="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
@@ -107,17 +109,17 @@ const toggleRecoveryMode = (clearErrors: () => void): void => {
                 <Input
                     name="recovery_code"
                     type="text"
-                    placeholder="Zaxira kodni kiriting"
+                    :placeholder="t('Zaxira kodni kiriting')"
                     v-focus
                     required
                 />
                 <InputError :message="errors.recovery_code" />
-                <Button type="submit" class="w-full" :disabled="processing"
-                    >Davom etish</Button
-                >
+                <Button type="submit" class="w-full" :disabled="processing">{{
+                    t('Davom etish')
+                }}</Button>
 
                 <div class="text-center text-sm text-muted-foreground">
-                    <span>yoki </span>
+                    <span>{{ t('yoki') }} </span>
                     <button
                         type="button"
                         class="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"

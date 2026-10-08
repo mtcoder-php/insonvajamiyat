@@ -5,6 +5,7 @@ import HomeCard from '@/components/web/home/HomeCard.vue';
 import { formatDate } from '@/lib/format';
 import { index as newsIndex } from '@/routes/news';
 import type { PostItem } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * "Yangiliklar" (home.png): sana + sarlavha, har biri yangilik sahifasiga havola.
@@ -14,9 +15,9 @@ defineProps<{ items: PostItem[] }>();
 
 <template>
     <HomeCard
-        title="Yangiliklar"
+        :title="t('Yangiliklar')"
         :href="newsIndex()"
-        link-text="Barcha yangiliklar"
+        :link-text="t('Barcha yangiliklar')"
     >
         <ul v-if="items.length" class="-mx-2 divide-y divide-[#ece8df]">
             <li v-for="item in items" :key="item.id">
@@ -47,7 +48,7 @@ defineProps<{ items: PostItem[] }>();
             class="flex flex-col items-center gap-2 py-8 text-center text-sm text-navy-500"
         >
             <Newspaper class="size-7 text-navy-300" />
-            Hozircha yangiliklar yo'q.
+            {{ t("Hozircha yangiliklar yo'q.") }}
         </div>
     </HomeCard>
 </template>

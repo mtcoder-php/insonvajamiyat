@@ -6,6 +6,7 @@ import WebPageHeader from '@/components/web/WebPageHeader.vue';
 import { formatDate, formatDateLong } from '@/lib/format';
 import { index } from '@/routes/news';
 import type { PostDetail, PostItem } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Yangilik / e'lon sahifasi: to'liq matn va boshqa xabarlar.
@@ -30,8 +31,11 @@ const paragraphs = computed(() =>
     <WebPageHeader
         :title="post.title"
         :crumbs="[
-            { title: 'Yangiliklar', href: index() },
-            { title: post.type === 'announcement' ? 'E\'lon' : 'Yangilik' },
+            { title: t('Yangiliklar'), href: index() },
+            {
+                title:
+                    post.type === 'announcement' ? t('E\'lon') : t('Yangilik'),
+            },
         ]"
     >
         <div
@@ -45,7 +49,7 @@ const paragraphs = computed(() =>
                     class="size-4 text-gold-600"
                 />
                 <Newspaper v-else class="size-4 text-brand-600" />
-                {{ post.type === 'announcement' ? "E'lon" : 'Yangilik' }}
+                {{ post.type === 'announcement' ? t("E'lon") : t('Yangilik') }}
             </span>
             <span
                 v-if="post.publishedAt"
@@ -94,7 +98,7 @@ const paragraphs = computed(() =>
                     <ArrowLeft
                         class="size-4 transition-transform group-hover:-translate-x-1"
                     />
-                    Barcha yangiliklar
+                    {{ t('Barcha yangiliklar') }}
                 </Link>
             </article>
 
@@ -106,7 +110,7 @@ const paragraphs = computed(() =>
                     class="rounded-xl border border-[#ebe8e1] bg-[#f8f7f4] p-5"
                 >
                     <h2 class="font-serif text-lg font-bold text-navy-900">
-                        Boshqa xabarlar
+                        {{ t('Boshqa xabarlar') }}
                     </h2>
                     <ul class="mt-3 divide-y divide-[#ece8df]">
                         <li v-for="item in others" :key="item.id">

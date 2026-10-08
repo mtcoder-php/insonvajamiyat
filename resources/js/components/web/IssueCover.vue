@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from 'vue';
 import { cn } from '@/lib/utils';
+import { t } from '@/lib/i18n';
 
 /**
  * Jurnal soni muqovasi. Muqova yuklanmagan bo'lsa — jurnal uslubidagi
@@ -27,7 +28,7 @@ const props = defineProps<{
         <img
             v-if="src"
             :src="src"
-            :alt="`Jurnal muqovasi: №${number}/${year}`"
+            :alt="t('Jurnal muqovasi: №:number/:year', { number, year })"
             loading="lazy"
             class="size-full object-cover"
         />
@@ -35,7 +36,7 @@ const props = defineProps<{
             v-else
             class="flex size-full flex-col bg-navy-gradient p-[8cqw] text-white"
             role="img"
-            :aria-label="`Jurnal muqovasi: №${number}/${year}`"
+            :aria-label="t('Jurnal muqovasi: №:number/:year', { number, year })"
         >
             <div class="absolute inset-0 bg-girih opacity-[0.07]" />
 

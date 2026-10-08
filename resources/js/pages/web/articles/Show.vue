@@ -30,6 +30,7 @@ import { cn } from '@/lib/utils';
 import { home } from '@/routes';
 import { index as articlesIndex } from '@/routes/articles';
 import type { ArticlePageProps } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Nashr etilgan maqola sahifasi (web maqola view page.png).
@@ -41,11 +42,36 @@ const journal = computed(() => page.props.journal);
 
 const meta = computed(() =>
     [
-        { icon: BookOpen, label: 'Jurnal', value: journal.value.name },
-        { icon: Hash, label: 'Son', value: props.article.issue?.label },
-        { icon: FileText, label: 'Sahifa', value: props.article.pages },
-        { icon: ScrollText, label: 'UDK', value: props.article.udc },
-        { icon: Fingerprint, label: 'DOI', value: props.article.doi },
+        {
+            key: 'journal',
+            icon: BookOpen,
+            label: t('Jurnal'),
+            value: journal.value.name,
+        },
+        {
+            key: 'issue',
+            icon: Hash,
+            label: t('Son'),
+            value: props.article.issue?.label,
+        },
+        {
+            key: 'pages',
+            icon: FileText,
+            label: t('Sahifa'),
+            value: props.article.pages,
+        },
+        {
+            key: 'udc',
+            icon: ScrollText,
+            label: t('UDK'),
+            value: props.article.udc,
+        },
+        {
+            key: 'doi',
+            icon: Fingerprint,
+            label: 'DOI',
+            value: props.article.doi,
+        },
     ].filter((m) => m.value),
 );
 
@@ -53,22 +79,26 @@ const about = computed(() =>
     [
         {
             icon: CalendarPlus,
-            label: 'Yuborilgan',
+            label: t('Yuborilgan'),
             value: formatDate(props.article.submittedAt),
         },
         {
             icon: CalendarCheck,
-            label: 'Qabul qilingan',
+            label: t('Qabul qilingan'),
             value: formatDate(props.article.acceptedAt),
         },
         {
             icon: CalendarDays,
-            label: 'Nashr etilgan',
+            label: t('Nashr etilgan'),
             value: formatDate(props.article.publishedAt),
         },
-        { icon: FileText, label: 'Maqola turi', value: props.article.type },
-        { icon: Languages, label: 'Til', value: props.article.language },
-        { icon: Hash, label: 'Sahifalar', value: props.article.pages },
+        {
+            icon: FileText,
+            label: t('Maqola turi'),
+            value: props.article.type,
+        },
+        { icon: Languages, label: t('Til'), value: props.article.language },
+        { icon: Hash, label: t('Sahifalar'), value: props.article.pages },
     ].filter((m) => m.value),
 );
 
@@ -100,25 +130,7 @@ const references = computed(() =>
             name="description"
             :content="article.abstract.slice(0, 300)"
         />
-        <meta name="citation_title" :content="article.title" />
-        <meta
-            v-for="author in article.authors"
-            :key="author.name"
-            name="citation_author"
-            :content="author.name"
-        />
-        <meta
-            v-if="article.publishedAt"
-            name="citation_publication_date"
-            :content="article.publishedAt.slice(0, 10)"
-        />
-        <meta name="citation_journal_title" :content="journal.name" />
-        <meta v-if="article.doi" name="citation_doi" :content="article.doi" />
-        <meta
-            v-if="article.pdf"
-            name="citation_pdf_url"
-            :content="article.pdf.viewUrl"
-        />
+        <!-- citation_* (Google Scholar) teglari serverda chiqadi: App\Support\Seo\SeoMeta -->
     </Head>
 
     <div class="bg-[#f6f8fb]">
@@ -132,21 +144,21 @@ const references = computed(() =>
                 >
                     <nav
                         class="mb-4 flex flex-wrap items-center gap-1 text-xs text-navy-500"
-                        aria-label="Non-yo'l"
+                        :aria-label="t('Non-yo\'l')"
                     >
                         <Link
                             :href="home()"
                             class="transition-colors hover:text-brand-700"
-                            >Bosh sahifa</Link
+                            >{{ t('Bosh sahifa') }}</Link
                         >
                         <ChevronRight class="size-3.5 text-navy-300" />
                         <Link
                             :href="articlesIndex()"
                             class="transition-colors hover:text-brand-700"
-                            >Maqolalar katalogi</Link
+                            >{{ t('Maqolalar katalogi') }}</Link
                         >
                         <ChevronRight class="size-3.5 text-navy-300" />
-                        <span class="text-navy-800">Maqola</span>
+                        <span class="text-navy-800">{{ t('Maqola') }}</span>
                     </nav>
 
                     <div
@@ -185,9 +197,9 @@ const references = computed(() =>
                                     <b class="block text-sm tabular-nums">{{
                                         formatNumber(article.views)
                                     }}</b>
-                                    <span class="text-[11px] text-navy-500"
-                                        >Ko'rishlar</span
-                                    >
+                                    <span class="text-[11px] text-navy-500">{{
+                                        t("Ko'rishlar")
+                                    }}</span>
                                 </span>
                             </span>
                             <span class="flex items-center gap-2">
@@ -196,9 +208,9 @@ const references = computed(() =>
                                     <b class="block text-sm tabular-nums">{{
                                         formatNumber(article.downloads)
                                     }}</b>
-                                    <span class="text-[11px] text-navy-500"
-                                        >Yuklab olishlar</span
-                                    >
+                                    <span class="text-[11px] text-navy-500">{{
+                                        t('Yuklab olishlar')
+                                    }}</span>
                                 </span>
                             </span>
                             <button
@@ -207,7 +219,7 @@ const references = computed(() =>
                                 @click="copyLink"
                             >
                                 <Link2 class="size-4" />
-                                {{ linkCopied ? 'Nusxalandi' : 'Havola' }}
+                                {{ linkCopied ? t('Nusxalandi') : t('Havola') }}
                             </button>
                         </div>
                     </div>
@@ -237,7 +249,9 @@ const references = computed(() =>
                                     <Mail
                                         v-if="author.isCorresponding"
                                         class="size-3.5 text-gold-500"
-                                        aria-label="Aloqa uchun mas'ul muallif"
+                                        :aria-label="
+                                            t('Aloqa uchun mas\'ul muallif')
+                                        "
                                     />
                                 </span>
                                 <a
@@ -279,7 +293,7 @@ const references = computed(() =>
                     >
                         <div
                             v-for="item in meta"
-                            :key="item.label"
+                            :key="item.key"
                             class="flex items-center gap-1.5"
                         >
                             <component
@@ -289,9 +303,7 @@ const references = computed(() =>
                             <dt class="text-navy-500">{{ item.label }}:</dt>
                             <dd class="font-semibold text-navy-800">
                                 <a
-                                    v-if="
-                                        item.label === 'DOI' && article.doiUrl
-                                    "
+                                    v-if="item.key === 'doi' && article.doiUrl"
                                     :href="article.doiUrl"
                                     target="_blank"
                                     rel="noopener"
@@ -300,7 +312,7 @@ const references = computed(() =>
                                 >
                                 <Link
                                     v-else-if="
-                                        item.label === 'Son' && article.issue
+                                        item.key === 'issue' && article.issue
                                     "
                                     :href="article.issue.url"
                                     class="hover:text-brand-700 hover:underline"
@@ -340,21 +352,21 @@ const references = computed(() =>
                                     <h2
                                         class="font-serif text-lg font-bold text-navy-950"
                                     >
-                                        Annotatsiya
+                                        {{ t('Annotatsiya') }}
                                     </h2>
                                     <p
                                         class="mt-2 text-[15px] leading-relaxed whitespace-pre-line text-navy-700"
                                     >
                                         {{
                                             article.abstract ??
-                                            'Annotatsiya kiritilmagan.'
+                                            t('Annotatsiya kiritilmagan.')
                                         }}
                                     </p>
                                     <template v-if="article.keywords.length">
                                         <h3
                                             class="mt-5 font-serif text-base font-bold text-navy-950"
                                         >
-                                            Kalit so'zlar
+                                            {{ t("Kalit so'zlar") }}
                                         </h3>
                                         <div
                                             class="mt-2 flex flex-wrap gap-1.5"
@@ -380,7 +392,7 @@ const references = computed(() =>
                             <h2
                                 class="font-serif text-lg font-bold text-navy-950"
                             >
-                                Foydalanilgan adabiyotlar
+                                {{ t('Foydalanilgan adabiyotlar') }}
                             </h2>
                             <ol
                                 class="mt-3 list-decimal space-y-1.5 pl-5 text-sm leading-relaxed text-navy-700 marker:text-navy-400"
@@ -402,7 +414,7 @@ const references = computed(() =>
                                 article.neighbours.next
                             "
                             class="grid gap-3 sm:grid-cols-2"
-                            aria-label="Sondagi boshqa maqolalar"
+                            :aria-label="t('Sondagi boshqa maqolalar')"
                         >
                             <Link
                                 v-if="article.neighbours.prev"
@@ -415,7 +427,7 @@ const references = computed(() =>
                                     <ArrowLeft
                                         class="size-3.5 transition-transform group-hover:-translate-x-0.5"
                                     />
-                                    Oldingi maqola
+                                    {{ t('Oldingi maqola') }}
                                 </span>
                                 <span
                                     class="mt-1 line-clamp-2 block text-sm font-semibold text-navy-900"
@@ -431,7 +443,7 @@ const references = computed(() =>
                                 <span
                                     class="flex items-center justify-end gap-1 text-xs font-semibold text-brand-700"
                                 >
-                                    Keyingi maqola
+                                    {{ t('Keyingi maqola') }}
                                     <ArrowRight
                                         class="size-3.5 transition-transform group-hover:translate-x-0.5"
                                     />
@@ -457,7 +469,7 @@ const references = computed(() =>
                                     class="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-brand-600 text-sm font-semibold text-white shadow-[0_10px_24px_-12px_rgba(0,108,246,0.9)] transition-all hover:-translate-y-px hover:bg-brand-500"
                                 >
                                     <Download class="size-4" />
-                                    PDF yuklab olish
+                                    {{ t('PDF yuklab olish') }}
                                     <span
                                         v-if="article.pdf.size"
                                         class="font-normal opacity-80"
@@ -472,15 +484,15 @@ const references = computed(() =>
                                     rel="noopener"
                                     class="mt-2 flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-brand-200 text-sm font-semibold text-brand-700 transition-all hover:-translate-y-px hover:bg-brand-50"
                                 >
-                                    <ExternalLink class="size-4" /> Onlayn
-                                    ko'rish
+                                    <ExternalLink class="size-4" />
+                                    {{ t("Onlayn ko'rish") }}
                                 </a>
                             </template>
                             <p
                                 v-else
                                 class="rounded-xl bg-[#f5f8fc] px-4 py-3 text-center text-xs text-navy-500"
                             >
-                                PDF versiya tez orada joylanadi.
+                                {{ t('PDF versiya tez orada joylanadi.') }}
                             </p>
                             <div class="mt-5 border-t border-line pt-5">
                                 <CitationBox :citations="article.citations" />
@@ -493,7 +505,7 @@ const references = computed(() =>
                             <h2
                                 class="mb-3 font-serif text-base font-bold text-navy-950"
                             >
-                                Maqola haqida
+                                {{ t('Maqola haqida') }}
                             </h2>
                             <dl class="grid gap-3">
                                 <div
@@ -536,13 +548,13 @@ const references = computed(() =>
                         <h2
                             class="font-serif text-base font-bold text-navy-950"
                         >
-                            Tegishli maqolalar
+                            {{ t('Tegishli maqolalar') }}
                         </h2>
                         <Link
                             :href="articlesIndex()"
                             class="inline-flex items-center gap-1 text-xs font-semibold text-brand-700 hover:underline"
                         >
-                            Barchasi <ArrowRight class="size-3.5" />
+                            {{ t('Barchasi') }} <ArrowRight class="size-3.5" />
                         </Link>
                     </header>
                     <ul class="grid gap-4">
@@ -611,7 +623,7 @@ const references = computed(() =>
                             :href="links.about"
                             class="mt-4 inline-flex items-center gap-1 rounded-lg border border-line px-3 py-1.5 text-xs font-semibold text-brand-700 transition-all hover:-translate-y-px hover:border-brand-300"
                         >
-                            Batafsil <ArrowRight class="size-3.5" />
+                            {{ t('Batafsil') }} <ArrowRight class="size-3.5" />
                         </Link>
                     </div>
                 </section>
@@ -622,7 +634,7 @@ const references = computed(() =>
                     <h2
                         class="mb-3 font-serif text-base font-bold text-navy-950"
                     >
-                        Foydali havolalar
+                        {{ t('Foydali havolalar') }}
                     </h2>
                     <ul class="grid gap-1">
                         <li>
@@ -631,7 +643,7 @@ const references = computed(() =>
                                 class="flex items-center gap-3 rounded-lg px-2 py-2 text-[13px] text-navy-700 transition-colors hover:bg-brand-50 hover:text-brand-700"
                             >
                                 <FileText class="size-4 text-navy-400" />
-                                Maqola tayyorlash bo'yicha yo'riqnoma
+                                {{ t("Maqola tayyorlash bo'yicha yo'riqnoma") }}
                             </Link>
                         </li>
                         <li v-if="links.template">
@@ -640,7 +652,7 @@ const references = computed(() =>
                                 class="flex items-center gap-3 rounded-lg px-2 py-2 text-[13px] text-navy-700 transition-colors hover:bg-brand-50 hover:text-brand-700"
                             >
                                 <Download class="size-4 text-navy-400" />
-                                Word shabloni (yuklab olish)
+                                {{ t('Word shabloni (yuklab olish)') }}
                             </a>
                         </li>
                         <li v-if="article.issue">
@@ -649,7 +661,11 @@ const references = computed(() =>
                                 class="flex items-center gap-3 rounded-lg px-2 py-2 text-[13px] text-navy-700 transition-colors hover:bg-brand-50 hover:text-brand-700"
                             >
                                 <BookOpen class="size-4 text-navy-400" />
-                                {{ article.issue.label }} soni
+                                {{
+                                    t(':label soni', {
+                                        label: article.issue.label,
+                                    })
+                                }}
                             </Link>
                         </li>
                     </ul>

@@ -2,6 +2,7 @@
 import { FileText } from '@lucide/vue';
 import ArticleCard from '@/components/web/ArticleCard.vue';
 import HomeCard from '@/components/web/home/HomeCard.vue';
+import { t } from '@/lib/i18n';
 import { index as articlesIndex } from '@/routes/articles';
 import type { ArticleCard as ArticleCardData } from '@/types';
 
@@ -13,9 +14,9 @@ defineProps<{ articles: ArticleCardData[] }>();
 
 <template>
     <HomeCard
-        title="So'nggi maqolalar"
+        :title="t('So\'nggi maqolalar')"
         :href="articlesIndex()"
-        link-text="Barcha maqolalar"
+        :link-text="t('Barcha maqolalar')"
     >
         <div
             v-if="articles.length"
@@ -32,7 +33,7 @@ defineProps<{ articles: ArticleCardData[] }>();
             class="flex flex-col items-center gap-2 py-10 text-center text-sm text-navy-500"
         >
             <FileText class="size-8 text-navy-300" />
-            Hozircha nashr etilgan maqolalar yo'q.
+            {{ t("Hozircha nashr etilgan maqolalar yo'q.") }}
         </div>
     </HomeCard>
 </template>

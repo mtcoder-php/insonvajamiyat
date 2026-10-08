@@ -12,6 +12,7 @@ import {
 import { cn } from '@/lib/utils';
 import { update } from '@/routes/locale';
 import type { LocaleCode } from '@/types';
+import { loadLocale, t } from '@/lib/i18n';
 
 /**
  * Til tanlagich: bayroq + UZ ▾ → O'zbekcha / Русский / English (bayroqlar bilan).
@@ -30,11 +31,13 @@ const page = usePage();
 const current = computed(() => page.props.locale);
 const locales = computed(() => page.props.locales);
 
-function select(code: LocaleCode): void {
+async function select(code: LocaleCode): Promise<void> {
     if (code === current.value) {
         return;
     }
 
+    // Lug'at oldindan yuklanadi — sahifa yangi tilda darhol chiziladi
+    await loadLocale(code);
     router.post(update.url(), { locale: code }, { preserveScroll: true });
 }
 </script>
@@ -55,7 +58,9 @@ function select(code: LocaleCode): void {
                             'h-10 gap-2 rounded-lg border border-white/25 bg-white/5 px-3 text-sm text-white backdrop-blur-sm hover:-translate-y-px hover:border-white/50 hover:bg-white/10 hover:shadow-[0_8px_20px_-10px_rgba(0,0,0,0.6)] focus-visible:ring-white/40 data-[state=open]:bg-white/15',
                     )
                 "
-                :aria-label="`Sayt tili: ${current.toUpperCase()}`"
+                :aria-label="
+                    t('Sayt tili: :code', { code: current.toUpperCase() })
+                "
             >
                 <LocaleFlag
                     :code="current"

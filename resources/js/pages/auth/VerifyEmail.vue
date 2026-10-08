@@ -7,6 +7,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { logout } from '@/routes';
 import { edit as editProfile } from '@/routes/profile';
 import { send } from '@/routes/verification';
+import { t } from '@/lib/i18n';
 
 /**
  * Elektron pochtani tasdiqlash. Havola yuborilgan manzil ko'rsatiladi;
@@ -28,7 +29,7 @@ defineProps<{
 </script>
 
 <template>
-    <Head title="Pochtani tasdiqlash" />
+    <Head :title="t('Pochtani tasdiqlash')" />
 
     <div
         v-if="email"
@@ -40,7 +41,9 @@ defineProps<{
             <MailCheck class="size-4" />
         </span>
         <div class="min-w-0 flex-1">
-            <p class="text-xs text-navy-500">Havola yuborilgan manzil</p>
+            <p class="text-xs text-navy-500">
+                {{ t('Havola yuborilgan manzil') }}
+            </p>
             <p class="truncate text-sm font-semibold text-navy-900">
                 {{ email }}
             </p>
@@ -48,10 +51,10 @@ defineProps<{
         <Link
             :href="editProfile()"
             class="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-brand-700 hover:text-brand-600"
-            title="Manzil xato bo'lsa, profilda o'zgartiring"
+            :title="t('Manzil xato bo\'lsa, profilda o\'zgartiring')"
         >
             <PenLine class="size-3.5" />
-            O'zgartirish
+            {{ t("O'zgartirish") }}
         </Link>
     </div>
 
@@ -60,8 +63,11 @@ defineProps<{
         class="mb-6 flex items-start gap-2 rounded-lg border border-success/30 bg-success-soft px-4 py-3 text-sm font-medium text-success-ink"
     >
         <CircleCheck class="mt-0.5 size-4 shrink-0" />
-        Yangi tasdiqlash havolasi yuborildi. Pochtangizni (va "Spam" papkasini)
-        tekshiring.
+        {{
+            t(
+                'Yangi tasdiqlash havolasi yuborildi. Pochtangizni (va "Spam" papkasini) tekshiring.',
+            )
+        }}
     </div>
 
     <Form
@@ -71,11 +77,11 @@ defineProps<{
     >
         <Button :disabled="processing" variant="secondary">
             <Spinner v-if="processing" />
-            Havolani qayta yuborish
+            {{ t('Havolani qayta yuborish') }}
         </Button>
 
         <TextLink :href="logout()" as="button" class="mx-auto block text-sm">
-            Tizimdan chiqish
+            {{ t('Tizimdan chiqish') }}
         </TextLink>
     </Form>
 </template>

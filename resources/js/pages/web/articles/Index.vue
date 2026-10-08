@@ -31,6 +31,7 @@ import type {
     CatalogProps,
     CatalogSort,
 } from '@/types';
+import { t, tc } from '@/lib/i18n';
 
 /**
  * Maqolalar katalogi (web maqola katalogi.png).
@@ -88,13 +89,13 @@ function reset(): void {
     router.get(index.url(), {}, { preserveScroll: true });
 }
 
-const sorts: { value: CatalogSort; label: string }[] = [
-    { value: 'newest', label: 'Eng yangi avval' },
-    { value: 'oldest', label: 'Eng eski avval' },
-    { value: 'popular', label: "Ko'p o'qilgan" },
-    { value: 'downloads', label: "Ko'p yuklab olingan" },
-    { value: 'title', label: 'Sarlavha (A–Z)' },
-];
+const sorts = computed<{ value: CatalogSort; label: string }[]>(() => [
+    { value: 'newest', label: t('Eng yangi avval') },
+    { value: 'oldest', label: t('Eng eski avval') },
+    { value: 'popular', label: t("Ko'p o'qilgan") },
+    { value: 'downloads', label: t("Ko'p yuklab olingan") },
+    { value: 'title', label: t('Sarlavha (A–Z)') },
+]);
 
 const sort = computed({
     get: () => props.filters.sort,
@@ -123,7 +124,7 @@ const chips = computed(() => {
     if (f.year) {
         list.push({
             key: 'year',
-            label: `${f.year}-yil`,
+            label: t(':year-yil', { year: f.year }),
             clear: { year: null },
         });
     }
@@ -138,7 +139,7 @@ const chips = computed(() => {
     if (f.author) {
         list.push({
             key: 'author',
-            label: `Muallif: ${f.author}`,
+            label: t('Muallif: :name', { name: f.author }),
             clear: { author: null },
         });
     }
@@ -158,40 +159,49 @@ const stats = computed(() => [
     {
         icon: BookCopy,
         value: props.sidebar.stats.articles,
-        label: 'Jami maqolalar',
+        label: t('Jami maqolalar'),
     },
     {
         icon: BookOpen,
         value: props.sidebar.stats.issues,
-        label: 'Nashr etilgan sonlar',
+        label: t('Nashr etilgan sonlar'),
     },
     {
         icon: UsersRound,
         value: props.sidebar.stats.authors,
-        label: 'Mualliflar',
+        label: t('Mualliflar'),
     },
     {
         icon: Shapes,
         value: props.sidebar.stats.subjects,
-        label: "Yo'nalishlar",
+        label: t("Yo'nalishlar"),
     },
 ]);
 </script>
 
 <template>
-    <Head title="Maqolalar katalogi">
+    <Head :title="t('Maqolalar katalogi')">
         <meta
             head-key="description"
             name="description"
-            content="Inson va Jamiyat jurnalida nashr etilgan ilmiy maqolalar: mavzu, muallif, yil va kalit so'z bo'yicha qidiruv."
+            :content="
+                t(
+                    '«:name» jurnalida nashr etilgan ilmiy maqolalar: mavzu, muallif, yil va kalit so\'z bo\'yicha qidiruv.',
+                    { name: $page.props.journal.name },
+                )
+            "
         />
     </Head>
 
     <WebHero
-        title="Maqolalar katalogi"
-        description="Ilm-fan, ta'lim, madaniyat va jamiyat sohalariga oid ilmiy maqolalar bazasi. Maqolalarni mavzu, muallif, yil va boshqa mezonlar bo'yicha qidirishingiz mumkin."
+        :title="t('Maqolalar katalogi')"
+        :description="
+            t(
+                'Ilm-fan, ta\'lim, madaniyat va jamiyat sohalariga oid ilmiy maqolalar bazasi. Maqolalarni mavzu, muallif, yil va boshqa mezonlar bo\'yicha qidirishingiz mumkin.',
+            )
+        "
         :image="hero"
-        :crumbs="[{ title: 'Maqolalar katalogi' }]"
+        :crumbs="[{ title: t('Maqolalar katalogi') }]"
     >
         <template #search>
             <form
@@ -199,14 +209,18 @@ const stats = computed(() => [
                 @submit.prevent="visit({ q: query.trim() || null })"
             >
                 <label class="relative flex-1">
-                    <span class="sr-only">Qidirish</span>
+                    <span class="sr-only">{{ t('Qidirish') }}</span>
                     <Search
                         class="pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-navy-400"
                     />
                     <input
                         v-model="query"
                         type="search"
-                        placeholder="Maqola nomi, muallif, kalit so'z yoki DOI bo'yicha qidirish..."
+                        :placeholder="
+                            t(
+                                'Maqola nomi, muallif, kalit so\'z yoki DOI bo\'yicha qidirish...',
+                            )
+                        "
                         class="h-12 w-full rounded-xl border border-line bg-white pr-4 pl-12 text-[15px] text-navy-900 outline-none placeholder:text-navy-400 focus:border-brand-400 focus:ring-4 focus:ring-brand-100"
                     />
                 </label>
@@ -214,7 +228,7 @@ const stats = computed(() => [
                     type="submit"
                     class="h-12 rounded-xl bg-brand-600 px-8 text-sm font-semibold text-white shadow-[0_10px_24px_-12px_rgba(0,108,246,0.9)] transition-all hover:-translate-y-px hover:bg-brand-500"
                 >
-                    Qidirish
+                    {{ t('Qidirish') }}
                 </button>
             </form>
         </template>
@@ -232,7 +246,7 @@ const stats = computed(() => [
                 @click="showFilters = !showFilters"
             >
                 <SlidersHorizontal class="size-4" />
-                {{ showFilters ? 'Filtrlarni yopish' : 'Filtrlar' }}
+                {{ showFilters ? t('Filtrlarni yopish') : t('Filtrlar') }}
                 <span
                     v-if="chips.length"
                     class="rounded-full bg-brand-600 px-1.5 text-[10px] text-white"
@@ -259,7 +273,7 @@ const stats = computed(() => [
                     class="mb-4 flex flex-wrap items-center justify-between gap-3"
                 >
                     <p class="text-sm text-navy-600">
-                        Jami topilgan maqolalar:
+                        {{ t('Jami topilgan maqolalar:') }}
                         <b class="text-navy-950 tabular-nums">{{
                             formatNumber(articles.meta.total)
                         }}</b>
@@ -268,7 +282,7 @@ const stats = computed(() => [
                         <SelectInput
                             v-model="sort"
                             class="w-52"
-                            aria-label="Saralash"
+                            :aria-label="t('Saralash')"
                         >
                             <option
                                 v-for="s in sorts"
@@ -283,7 +297,7 @@ const stats = computed(() => [
                         >
                             <button
                                 type="button"
-                                aria-label="Ro'yxat ko'rinishi"
+                                :aria-label="t('Ro\'yxat ko\'rinishi')"
                                 :aria-pressed="layout === 'list'"
                                 :class="
                                     cn(
@@ -299,7 +313,7 @@ const stats = computed(() => [
                             </button>
                             <button
                                 type="button"
-                                aria-label="Katak ko'rinishi"
+                                :aria-label="t('Katak ko\'rinishi')"
                                 :aria-pressed="layout === 'grid'"
                                 :class="
                                     cn(
@@ -350,17 +364,21 @@ const stats = computed(() => [
                 >
                     <FileSearch class="size-10 text-navy-300" />
                     <p class="text-sm font-semibold text-navy-800">
-                        Hech narsa topilmadi
+                        {{ t('Hech narsa topilmadi') }}
                     </p>
                     <p class="text-xs text-navy-500">
-                        Qidiruv so'zini yoki filtrlarni o'zgartirib ko'ring.
+                        {{
+                            t(
+                                "Qidiruv so'zini yoki filtrlarni o'zgartirib ko'ring.",
+                            )
+                        }}
                     </p>
                     <button
                         type="button"
                         class="text-xs font-semibold text-brand-700 hover:underline"
                         @click="reset"
                     >
-                        Filtrlarni tozalash
+                        {{ t('Filtrlarni tozalash') }}
                     </button>
                 </div>
 
@@ -380,7 +398,7 @@ const stats = computed(() => [
                     <h2
                         class="mb-3 font-serif text-base font-bold text-navy-950"
                     >
-                        Mashhur kalit so'zlar
+                        {{ t("Mashhur kalit so'zlar") }}
                     </h2>
                     <div class="flex flex-wrap gap-2">
                         <button
@@ -413,12 +431,12 @@ const stats = computed(() => [
                     <h2
                         class="mb-3 font-serif text-base font-bold text-navy-950"
                     >
-                        Jurnal statistikasi
+                        {{ t('Jurnal statistikasi') }}
                     </h2>
                     <dl class="grid grid-cols-2 gap-3">
                         <div
                             v-for="stat in stats"
-                            :key="stat.label"
+                            :key="stat.icon.name"
                             class="flex items-center gap-2.5 rounded-xl bg-[#f5f8fc] p-3 transition-colors hover:bg-brand-50"
                         >
                             <component
@@ -446,7 +464,7 @@ const stats = computed(() => [
                     <h2
                         class="mb-3 font-serif text-base font-bold text-navy-950"
                     >
-                        So'nggi nashr
+                        {{ t("So'nggi nashr") }}
                     </h2>
                     <Link
                         :href="sidebar.latestIssue.url"
@@ -466,15 +484,16 @@ const stats = computed(() => [
                             <span class="mt-1 block text-xs text-navy-500">{{
                                 formatDate(sidebar.latestIssue.publishedAt)
                             }}</span>
-                            <span class="mt-1 block text-xs text-navy-500"
-                                >{{
-                                    sidebar.latestIssue.articlesCount
-                                }}
-                                maqola</span
-                            >
+                            <span class="mt-1 block text-xs text-navy-500">{{
+                                tc(
+                                    ':count maqola',
+                                    sidebar.latestIssue.articlesCount ?? 0,
+                                )
+                            }}</span>
                             <span
                                 class="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-brand-700"
-                                >Sonni ochish <ArrowRight class="size-3.5"
+                                >{{ t('Sonni ochish') }}
+                                <ArrowRight class="size-3.5"
                             /></span>
                         </span>
                     </Link>
@@ -487,7 +506,8 @@ const stats = computed(() => [
                     <h2
                         class="mb-3 flex items-center gap-2 font-serif text-base font-bold text-navy-950"
                     >
-                        <Megaphone class="size-4 text-brand-600" /> E'lonlar
+                        <Megaphone class="size-4 text-brand-600" />
+                        {{ t("E'lonlar") }}
                     </h2>
                     <ul class="grid gap-2">
                         <li
@@ -526,16 +546,21 @@ const stats = computed(() => [
                         </span>
                         <div>
                             <p class="font-serif text-lg font-bold">
-                                Maqola yuborish
+                                {{ t('Maqola yuborish') }}
                             </p>
                             <p class="mt-1 text-xs text-white/75">
-                                Ilmiy maqolangizni biz bilan baham ko'ring.
+                                {{
+                                    t(
+                                        "Ilmiy maqolangizni biz bilan baham ko'ring.",
+                                    )
+                                }}
                             </p>
                             <Link
                                 :href="create()"
                                 class="mt-3 inline-flex items-center gap-1 rounded-lg bg-white px-3 py-1.5 text-xs font-semibold text-navy-900 transition-all hover:-translate-y-px hover:bg-gold-100"
                             >
-                                Maqola yuborish <ArrowRight class="size-3.5" />
+                                {{ t('Maqola yuborish') }}
+                                <ArrowRight class="size-3.5" />
                             </Link>
                         </div>
                     </div>

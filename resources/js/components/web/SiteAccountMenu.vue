@@ -15,6 +15,7 @@ import { usePermissions } from '@/composables/usePermissions';
 import { cn } from '@/lib/utils';
 import { dashboard, login } from '@/routes';
 import type { User } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Header'dagi hisob tugmasi: kirgan foydalanuvchi menyusi yoki
@@ -30,7 +31,7 @@ const { getInitials } = useInitials();
 const isDark = computed(() => props.tone === 'dark');
 const user = computed(() => auth.value.user as User | null);
 const accountLabel = computed(() =>
-    isStaff.value ? 'Admin panel' : 'Muallif kabineti',
+    isStaff.value ? t('Admin panel') : t('Muallif kabineti'),
 );
 </script>
 
@@ -99,6 +100,6 @@ const accountLabel = computed(() =>
                 class="size-4 transition-transform duration-300 group-hover:scale-110"
             />
         </span>
-        <span class="relative">Kirish / Ro'yxatdan o'tish</span>
+        <span class="relative">{{ t("Kirish / Ro'yxatdan o'tish") }}</span>
     </Link>
 </template>

@@ -8,6 +8,7 @@ import SocialIcon from '@/components/web/SocialIcon.vue';
 import { footerQuickLinks, footerUsefulLinks } from '@/navigation/web';
 import { cn } from '@/lib/utils';
 import type { JournalSocialNetwork } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Sayt footer'i (dizayn: home_2.png): brend, havolalar, aloqa, obuna formasi.
@@ -33,8 +34,8 @@ const phoneHref = computed(
     () => `tel:${(journal.value.contact.phone ?? '').replace(/[^\d+]/g, '')}`,
 );
 
-const quickLinks = footerQuickLinks();
-const usefulLinks = footerUsefulLinks();
+const quickLinks = computed(() => footerQuickLinks());
+const usefulLinks = computed(() => footerUsefulLinks());
 const year = new Date().getFullYear();
 </script>
 
@@ -60,14 +61,14 @@ const year = new Date().getFullYear();
                 </p>
             </div>
 
-            <nav aria-label="Tezkor havolalar">
+            <nav :aria-label="t('Tezkor havolalar')">
                 <h2
                     class="mb-4 font-sans text-sm font-semibold tracking-wide text-white"
                 >
-                    Tezkor havolalar
+                    {{ t('Tezkor havolalar') }}
                 </h2>
                 <ul class="space-y-2.5 text-sm">
-                    <li v-for="item in quickLinks" :key="item.title">
+                    <li v-for="(item, i) in quickLinks" :key="i">
                         <Link
                             :href="item.href"
                             class="transition-colors hover:text-white"
@@ -78,14 +79,14 @@ const year = new Date().getFullYear();
                 </ul>
             </nav>
 
-            <nav aria-label="Foydali havolalar">
+            <nav :aria-label="t('Foydali havolalar')">
                 <h2
                     class="mb-4 font-sans text-sm font-semibold tracking-wide text-white"
                 >
-                    Foydali havolalar
+                    {{ t('Foydali havolalar') }}
                 </h2>
                 <ul class="space-y-2.5 text-sm">
-                    <li v-for="item in usefulLinks" :key="item.title">
+                    <li v-for="(item, i) in usefulLinks" :key="i">
                         <Link
                             :href="item.href"
                             class="transition-colors hover:text-white"
@@ -100,7 +101,7 @@ const year = new Date().getFullYear();
                 <h2
                     class="mb-4 font-sans text-sm font-semibold tracking-wide text-white"
                 >
-                    Biz bilan bog'laning
+                    {{ t("Biz bilan bog'laning") }}
                 </h2>
                 <ul class="space-y-3 text-sm">
                     <li v-if="journal.contact.email">
@@ -152,11 +153,14 @@ const year = new Date().getFullYear();
                 <h2
                     class="mb-2 font-sans text-sm font-semibold tracking-wide text-white"
                 >
-                    Yangiliklardan xabardor bo'ling
+                    {{ t("Yangiliklardan xabardor bo'ling") }}
                 </h2>
                 <p class="mb-4 text-sm text-white/65">
-                    Jurnal yangiliklari va yangi sonlar haqida birinchilardan
-                    bo'lib xabar oling.
+                    {{
+                        t(
+                            "Jurnal yangiliklari va yangi sonlar haqida birinchilardan bo'lib xabar oling.",
+                        )
+                    }}
                 </p>
                 <NewsletterForm id="footer-newsletter-email" />
             </div>
@@ -172,8 +176,13 @@ const year = new Date().getFullYear();
                 "
             >
                 <p>
-                    © {{ year }} "{{ journal.name }}" ilmiy jurnali. Barcha
-                    huquqlar himoyalangan.
+                    ©
+                    {{
+                        t(
+                            ':year «:name» ilmiy jurnali. Barcha huquqlar himoyalangan.',
+                            { year, name: journal.name },
+                        )
+                    }}
                 </p>
                 <p v-if="journal.issn">ISSN {{ journal.issn }}</p>
             </div>

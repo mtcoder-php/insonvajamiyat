@@ -19,6 +19,7 @@ use App\Models\Post;
 use App\Models\RecommendedBook;
 use App\Models\Subject;
 use App\Support\MediaUrl;
+use App\Support\Translations;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -177,15 +178,15 @@ class HomePageService
 
         return array_map(fn (array $slide, int $index): array => [
             'key' => "default-{$index}",
-            'title' => $slide['title'],
-            'subtitle' => $slide['subtitle'] ?? null,
+            'title' => Translations::line($slide['title']),
+            'subtitle' => Translations::line($slide['subtitle'] ?? null),
             'imageUrl' => isset($slide['image']) && is_file(public_path($slide['image']))
                 ? asset($slide['image'])
                 : null,
             'linkUrl' => isset($slide['route']) && Route::has($slide['route'])
                 ? route($slide['route'])
                 : null,
-            'buttonText' => $slide['button_text'] ?? null,
+            'buttonText' => Translations::line($slide['button_text'] ?? null),
         ], $defaults, array_keys($defaults));
     }
 }

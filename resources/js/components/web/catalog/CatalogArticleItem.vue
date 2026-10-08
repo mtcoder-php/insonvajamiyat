@@ -13,6 +13,7 @@ import { formatDate, formatFileSize, formatNumber } from '@/lib/format';
 import { subjectTone } from '@/lib/subjects';
 import { cn } from '@/lib/utils';
 import type { CatalogArticle } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Katalog kartochkasi: "list" — gorizontal (dizayndagi asosiy ko'rinish), "grid" — vertikal.
@@ -123,7 +124,11 @@ withDefaults(
                         <Link
                             :href="article.issue.url"
                             class="hover:text-brand-700 hover:underline"
-                            >Jurnal {{ article.issue.label }}</Link
+                            >{{
+                                t('Jurnal :label', {
+                                    label: article.issue.label,
+                                })
+                            }}</Link
                         >
                     </li>
                     <li
@@ -157,13 +162,18 @@ withDefaults(
                             :href="article.pdf.downloadUrl"
                             class="inline-flex items-center gap-1 rounded-md border border-line px-2 py-1 font-semibold text-brand-700 transition-all hover:-translate-y-px hover:border-brand-300"
                         >
-                            <Download class="size-3.5" /> Yuklab olish
+                            <Download class="size-3.5" />
+                            {{ t('Yuklab olish') }}
                         </a>
                     </span>
                     <span v-else />
                     <span
                         class="inline-flex items-center gap-1 text-navy-500 tabular-nums"
-                        :title="`${formatNumber(article.downloads)} marta yuklab olingan`"
+                        :title="
+                            t(':count marta yuklab olingan', {
+                                count: formatNumber(article.downloads),
+                            })
+                        "
                     >
                         <Eye class="size-3.5" />
                         {{ formatNumber(article.views) }}

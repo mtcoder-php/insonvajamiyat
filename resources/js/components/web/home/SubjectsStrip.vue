@@ -4,6 +4,7 @@ import SubjectIcon from '@/components/web/SubjectIcon.vue';
 import { index as articlesIndex } from '@/routes/articles';
 import { computed } from 'vue';
 import type { SubjectSummary } from '@/types';
+import { t, useLocale } from '@/lib/i18n';
 
 /**
  * Slayder ostidagi ilmiy yo'nalishlar qatori (home.png):
@@ -18,13 +19,15 @@ const MAX_ITEMS = 6;
 const props = defineProps<{ subjects: SubjectSummary[] }>();
 
 const visible = computed(() => props.subjects.slice(0, MAX_ITEMS));
+// Inglizcha nom ingliz tilida takrorlanmaydi
+const locale = useLocale();
 </script>
 
 <template>
     <nav
         v-if="visible.length"
         class="relative border-b border-[#e6e3dc] bg-[#f9f8f6]"
-        aria-label="Ilmiy yo'nalishlar"
+        :aria-label="t('Ilmiy yo\'nalishlar')"
     >
         <ul
             class="mx-auto grid max-w-7xl grid-cols-2 gap-1 px-3 py-3 sm:grid-cols-3 sm:px-6 lg:flex lg:items-center lg:gap-0 lg:px-8 lg:py-4"
@@ -61,7 +64,7 @@ const visible = computed(() => props.subjects.slice(0, MAX_ITEMS));
                                 {{ subject.name }}
                             </span>
                             <span
-                                v-if="subject.nameEn"
+                                v-if="subject.nameEn && locale !== 'en'"
                                 class="mt-0.5 block font-serif text-[13px] text-navy-500 italic transition-colors duration-300 group-hover:text-navy-700"
                             >
                                 {{ subject.nameEn }}

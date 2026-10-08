@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { store } from '@/routes/password/confirm';
+import { t } from '@/lib/i18n';
 
 defineOptions({
     layout: {
@@ -17,7 +18,7 @@ defineOptions({
 </script>
 
 <template>
-    <Head title="Parolni tasdiqlash" />
+    <Head :title="t('Parolni tasdiqlash')" />
 
     <Form
         v-bind="store.form()"
@@ -26,7 +27,7 @@ defineOptions({
     >
         <div class="space-y-6">
             <div class="grid gap-2">
-                <Label for="password">Parol</Label>
+                <Label for="password">{{ t('Parol') }}</Label>
                 <PasswordInput
                     id="password"
                     name="password"
@@ -46,7 +47,7 @@ defineOptions({
                     data-test="confirm-password-button"
                 >
                     <Spinner v-if="processing" />
-                    Tasdiqlash
+                    {{ t('Tasdiqlash') }}
                 </Button>
             </div>
         </div>

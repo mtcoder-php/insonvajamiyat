@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { update } from '@/routes/password';
+import { t } from '@/lib/i18n';
 
 defineOptions({
     layout: {
@@ -26,7 +27,7 @@ const inputEmail = ref(props.email);
 </script>
 
 <template>
-    <Head title="Yangi parol" />
+    <Head :title="t('Yangi parol')" />
 
     <Form
         v-bind="update.form()"
@@ -36,7 +37,7 @@ const inputEmail = ref(props.email);
     >
         <div class="grid gap-6">
             <div class="grid gap-2">
-                <Label for="email">Elektron pochta</Label>
+                <Label for="email">{{ t('Elektron pochta') }}</Label>
                 <Input
                     id="email"
                     type="email"
@@ -50,27 +51,29 @@ const inputEmail = ref(props.email);
             </div>
 
             <div class="grid gap-2">
-                <Label for="password">Yangi parol</Label>
+                <Label for="password">{{ t('Yangi parol') }}</Label>
                 <PasswordInput
                     id="password"
                     name="password"
                     autocomplete="new-password"
                     class="mt-1 block h-11 w-full"
                     autofocus
-                    placeholder="Kamida 8 ta belgi"
+                    :placeholder="t('Kamida 8 ta belgi')"
                     :passwordrules="passwordRules"
                 />
                 <InputError :message="errors.password" />
             </div>
 
             <div class="grid gap-2">
-                <Label for="password_confirmation">Parolni tasdiqlang</Label>
+                <Label for="password_confirmation">{{
+                    t('Parolni tasdiqlang')
+                }}</Label>
                 <PasswordInput
                     id="password_confirmation"
                     name="password_confirmation"
                     autocomplete="new-password"
                     class="mt-1 block h-11 w-full"
-                    placeholder="Parolni qayta kiriting"
+                    :placeholder="t('Parolni qayta kiriting')"
                     :passwordrules="passwordRules"
                 />
                 <InputError :message="errors.password_confirmation" />
@@ -83,7 +86,7 @@ const inputEmail = ref(props.email);
                 data-test="reset-password-button"
             >
                 <Spinner v-if="processing" />
-                Parolni saqlash
+                {{ t('Parolni saqlash') }}
             </Button>
         </div>
     </Form>

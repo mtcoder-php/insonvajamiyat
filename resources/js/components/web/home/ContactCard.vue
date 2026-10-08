@@ -5,6 +5,7 @@ import { computed } from 'vue';
 import HomeCard from '@/components/web/home/HomeCard.vue';
 import SocialIcon from '@/components/web/SocialIcon.vue';
 import type { JournalSocialNetwork } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * "Biz bilan bog'laning" — oltin tusli karta (home.png).
@@ -25,7 +26,7 @@ const phoneHref = computed(
 </script>
 
 <template>
-    <HomeCard tone="cream" title="Biz bilan bog'laning">
+    <HomeCard tone="cream" :title="t('Biz bilan bog\'laning')">
         <ul class="space-y-2.5 text-sm text-navy-800">
             <li v-if="journal.contact.email">
                 <a

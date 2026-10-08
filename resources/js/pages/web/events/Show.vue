@@ -13,6 +13,7 @@ import WebPageHeader from '@/components/web/WebPageHeader.vue';
 import { eventDateParts, formatDateLong } from '@/lib/format';
 import { index } from '@/routes/events';
 import type { EventDetail, EventItem } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Tadbir sahifasi: sana, vaqt, joy, tavsif va ro'yxatdan o'tish havolasi.
@@ -48,7 +49,10 @@ const paragraphs = computed(() =>
 
     <WebPageHeader
         :title="event.title"
-        :crumbs="[{ title: 'Tadbirlar', href: index() }, { title: 'Tadbir' }]"
+        :crumbs="[
+            { title: t('Tadbirlar'), href: index() },
+            { title: t('Tadbir') },
+        ]"
     >
         <div
             class="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-navy-600"
@@ -73,7 +77,7 @@ const paragraphs = computed(() =>
                 class="inline-flex items-center gap-1.5 rounded-full bg-navy-50 px-3 py-1 text-xs font-semibold text-navy-600"
             >
                 <History class="size-3.5" />
-                Tadbir o'tib ketgan
+                {{ t("Tadbir o'tib ketgan") }}
             </span>
         </div>
     </WebPageHeader>
@@ -113,8 +117,11 @@ const paragraphs = computed(() =>
                             {{ paragraph }}
                         </p>
                         <p v-if="!paragraphs.length" class="text-navy-500">
-                            Tadbir haqida batafsil ma'lumot tez orada e'lon
-                            qilinadi.
+                            {{
+                                t(
+                                    "Tadbir haqida batafsil ma'lumot tez orada e'lon qilinadi.",
+                                )
+                            }}
                         </p>
                     </div>
                 </div>
@@ -127,7 +134,7 @@ const paragraphs = computed(() =>
                         rel="noopener noreferrer"
                         class="group inline-flex h-11 items-center gap-2 rounded-full bg-navy-900 px-7 text-sm font-semibold text-white shadow-md shadow-navy-900/20 transition-all hover:-translate-y-0.5 hover:bg-navy-800 hover:shadow-lg"
                     >
-                        Ro'yxatdan o'tish
+                        {{ t("Ro'yxatdan o'tish") }}
                         <ExternalLink class="size-4" />
                     </a>
                     <Link
@@ -137,7 +144,7 @@ const paragraphs = computed(() =>
                         <ArrowLeft
                             class="size-4 transition-transform group-hover:-translate-x-1"
                         />
-                        Barcha tadbirlar
+                        {{ t('Barcha tadbirlar') }}
                     </Link>
                 </div>
             </article>
@@ -150,7 +157,7 @@ const paragraphs = computed(() =>
                     class="rounded-xl border border-[#ebe8e1] bg-[#f8f7f4] p-5"
                 >
                     <h2 class="font-serif text-lg font-bold text-navy-900">
-                        Yaqinlashayotgan tadbirlar
+                        {{ t('Yaqinlashayotgan tadbirlar') }}
                     </h2>
                     <ul class="mt-3 divide-y divide-[#ece8df]">
                         <li v-for="item in others" :key="item.id">

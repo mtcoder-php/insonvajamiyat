@@ -5,6 +5,7 @@ import HomeCard from '@/components/web/home/HomeCard.vue';
 import { eventDateParts } from '@/lib/format';
 import { index as eventsIndex } from '@/routes/events';
 import type { EventItem } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * "Tadbirlar" (home.png): kun raqami ramkada, oy va yil, nomi, joyi —
@@ -15,9 +16,9 @@ defineProps<{ events: EventItem[] }>();
 
 <template>
     <HomeCard
-        title="Tadbirlar"
+        :title="t('Tadbirlar')"
         :href="eventsIndex()"
-        link-text="Barcha tadbirlar"
+        :link-text="t('Barcha tadbirlar')"
     >
         <ul v-if="events.length" class="-mx-2 divide-y divide-[#ece8df]">
             <li v-for="event in events" :key="event.id">
@@ -57,7 +58,7 @@ defineProps<{ events: EventItem[] }>();
             class="flex flex-col items-center gap-2 py-8 text-center text-sm text-navy-500"
         >
             <CalendarDays class="size-7 text-navy-300" />
-            Yaqin kunlarda tadbirlar rejalashtirilmagan.
+            {{ t('Yaqin kunlarda tadbirlar rejalashtirilmagan.') }}
         </div>
     </HomeCard>
 </template>

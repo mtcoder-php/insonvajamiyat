@@ -3,6 +3,7 @@ import { ArrowUpRight, Database, Handshake } from '@lucide/vue';
 import { computed } from 'vue';
 import { cn } from '@/lib/utils';
 import type { PartnerItem } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Bosh sahifa pastidagi "Hamkorlar va indekslash bazalari" qatori.
@@ -15,12 +16,12 @@ const groups = computed(() =>
     [
         {
             key: 'indexing' as const,
-            title: 'Indekslash bazalari',
+            title: t('Indekslash bazalari'),
             icon: Database,
         },
         {
             key: 'partner' as const,
-            title: 'Hamkor tashkilotlar',
+            title: t('Hamkor tashkilotlar'),
             icon: Handshake,
         },
     ]
@@ -46,13 +47,13 @@ const groups = computed(() =>
                     <p
                         class="text-[11px] font-bold tracking-[0.18em] text-gold-700 uppercase"
                     >
-                        Ishonchli manbalar
+                        {{ t('Ishonchli manbalar') }}
                     </p>
                     <h2
                         id="partners-title"
                         class="mt-1 font-serif text-2xl font-bold text-navy-900"
                     >
-                        Hamkorlar va indekslash bazalari
+                        {{ t('Hamkorlar va indekslash bazalari') }}
                     </h2>
                 </div>
             </div>

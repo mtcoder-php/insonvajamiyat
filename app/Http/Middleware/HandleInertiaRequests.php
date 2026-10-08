@@ -6,6 +6,7 @@ use App\Enums\Language;
 use App\Models\User;
 use App\Services\Admin\NavigationBadges;
 use App\Services\Notifications\NotificationCenter;
+use App\Support\Translations;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -75,14 +76,31 @@ class HandleInertiaRequests extends Middleware
         return [
             'name' => config('journal.name'),
             'subtitle' => config('journal.subtitle'),
-            'description' => config('journal.description'),
+            'description' => Translations::line(config('journal.description')),
             'issn' => config('journal.issn'),
             'eissn' => config('journal.eissn'),
             'doiPrefix' => config('journal.doi_prefix'),
-            'frequency' => config('journal.frequency'),
-            'contact' => config('journal.contact'),
+            'frequency' => Translations::line(config('journal.frequency')),
+            'contact' => $this->contactPayload(),
             'socials' => array_filter((array) config('journal.socials')),
         ];
+    }
+
+    /**
+     * Aloqa ma'lumotlari: manzil joriy tilga tarjima qilinadi (lug'atda bo'lsa).
+     *
+     * @return array<string, mixed>
+     */
+    private function contactPayload(): array
+    {
+        /** @var array<string, mixed> $contact */
+        $contact = (array) config('journal.contact');
+
+        if (isset($contact['address'])) {
+            $contact['address'] = Translations::line($contact['address']);
+        }
+
+        return $contact;
     }
 
     /**
