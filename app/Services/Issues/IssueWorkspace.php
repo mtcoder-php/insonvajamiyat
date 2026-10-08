@@ -13,6 +13,7 @@ use App\Models\IssueArticle;
 use App\Models\JournalIssue;
 use App\Models\User;
 use App\Services\Editorial\EditorialWorkspace;
+use App\Services\Indexing\CrossrefDeposit;
 use App\Services\Publishing\PublishService;
 use App\Support\MediaUrl;
 use Illuminate\Database\Eloquent\Builder;
@@ -158,6 +159,12 @@ class IssueWorkspace
                 'toc' => $this->file($issue->toc_file_path),
             ],
             'pdfBuild' => $this->pdfBuild($issue, $canManage),
+            // Crossref DOI deposit: chop etilgan sondagi DOI'li maqolalar
+            'crossref' => $isDraft ? null : [
+                'count' => app(CrossrefDeposit::class)->articles($issue)->count(),
+                'total' => $total,
+                'url' => route('admin.issues.crossref', $issue->slug),
+            ],
             'articles' => $articles,
             'problems' => $problems,
             'publicUrl' => $isDraft ? null : route('issues.show', $issue->slug),

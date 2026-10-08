@@ -146,6 +146,7 @@ Route::middleware('permission:'.AdminSection::Issues->permission()->value)
         Route::put('{issue}', [IssueController::class, 'update'])->name('update');
         Route::delete('{issue}', [IssueController::class, 'destroy'])->name('destroy');
         Route::get('{issue}/toc', [IssueController::class, 'toc'])->name('toc');
+        Route::get('{issue}/crossref.xml', [IssueController::class, 'crossref'])->name('crossref');
         Route::post('{issue}/publish', [IssueController::class, 'publish'])
             ->middleware('permission:'.PermissionName::IssuesPublish->value)
             ->name('publish');

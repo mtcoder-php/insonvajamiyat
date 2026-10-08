@@ -96,6 +96,8 @@ export type IssueDetail = {
     hasOwnCover: boolean;
     files: { pdf: IssueFileInfo | null; toc: IssueFileInfo | null };
     pdfBuild: IssuePdfBuild;
+    /** Crossref DOI deposit XML (faqat chop etilgan son) — App\\Services\\Indexing\\CrossrefDeposit */
+    crossref: { count: number; total: number; url: string } | null;
     articles: IssueArticleRow[];
     /** Chop etishga to'sqinlik qilayotgan sabablar (qoralama son uchun) */
     problems: string[];

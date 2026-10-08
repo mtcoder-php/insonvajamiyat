@@ -16,6 +16,7 @@ import {
     LoaderCircle,
     PenLine,
     Printer,
+    FileCode2,
     Send,
     Trash2,
     TriangleAlert,
@@ -339,6 +340,36 @@ const checks = computed(() => [
                         <Printer class="size-4" />
                         {{ t('Mundarijani chop etish') }}
                     </a>
+                    <a
+                        v-if="issue.crossref && issue.crossref.count > 0"
+                        :href="issue.crossref.url"
+                        download
+                        :title="
+                            t(
+                                'Crossref kabinetiga yuklash uchun DOI deposit fayli',
+                            )
+                        "
+                        :class="cn(secondaryButtonClass, 'h-9 text-[13px]')"
+                        data-test="crossref-xml"
+                    >
+                        <FileCode2 class="size-4" />
+                        {{
+                            t('Crossref XML (:count/:total)', {
+                                count: issue.crossref.count,
+                                total: issue.crossref.total,
+                            })
+                        }}
+                    </a>
+                    <span
+                        v-else-if="issue.crossref"
+                        class="max-w-52 text-[11px] leading-snug text-navy-500"
+                    >
+                        {{
+                            t(
+                                "Crossref XML uchun maqolalarga DOI kiriting («Nashr jarayoni» → nashr ma'lumotlari)",
+                            )
+                        }}
+                    </span>
                     <button
                         v-if="issue.hasOwnCover"
                         type="button"
