@@ -143,6 +143,37 @@ Xato bo'lsa sayt avtomatik qayta yoqiladi.
 - [ ] Click / Payme kabinetida URL'lar: `/payments/click/prepare`, `/payments/click/complete`, `/payments/payme`
 - [ ] Google Search Console'ga `sitemap.xml` ni qo'shing; Google Scholar uchun maqola sahifasida `citation_*` teglari bor
 - [ ] `public/images/og-default.png` (1200×630) — ijtimoiy tarmoqlar uchun standart rasm; xohlasangiz o'zingiznikiga almashtiring
+- [ ] Google / ORCID orqali kirish — quyidagi 7.1-bo'lim (kalitlar bo'lmasa tugmalar ko'rinmaydi)
+
+### 7.1. Google va ORCID orqali kirish
+
+**Google** — [Google Cloud Console](https://console.cloud.google.com/apis/credentials) → _Create credentials → OAuth client ID_:
+
+- Application type: **Web application**
+- Authorized JavaScript origins: `https://insonvajamiyat.uz`
+- Authorized redirect URIs: `https://insonvajamiyat.uz/auth/google/callback`
+- _OAuth consent screen_: ilova nomi, logotip, `insonvajamiyat.uz` domeni; scope'lar — `openid`, `email`, `profile`; holatni **In production** ga o'tkazing
+
+**ORCID** — [orcid.org](https://orcid.org) → hisobingiz → _Developer tools_ → **Register for the free ORCID public API**:
+
+- Website: `https://insonvajamiyat.uz`
+- Redirect URI: `https://insonvajamiyat.uz/auth/orcid/callback`
+- Sinov uchun avval [sandbox.orcid.org](https://sandbox.orcid.org) da ro'yxatdan o'tib, `ORCID_SANDBOX=true` bilan tekshirish mumkin
+
+`.env` ga yozing va konfiguratsiya keshini yangilang:
+
+```bash
+GOOGLE_CLIENT_ID=...apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=...
+ORCID_CLIENT_ID=APP-XXXXXXXXXXXXXXXX
+ORCID_CLIENT_SECRET=...
+ORCID_SANDBOX=false
+
+php artisan config:cache
+```
+
+Tugmalardagi rasmiy belgilar (ixtiyoriy): Google va ORCID brend sahifalaridan SVG yuklab olib,
+`public/images/social/google.svg` va `public/images/social/orcid.svg` nomi bilan qo'ying — fayl bo'lmasa umumiy ikonka chiqadi.
 
 ## 8. Zaxira nusxalar
 

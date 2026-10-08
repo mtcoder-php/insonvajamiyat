@@ -18,6 +18,8 @@ enum AuditEvent: string
     case LoginFailed = 'auth.failed';
     case Lockout = 'auth.lockout';
     case PasswordReset = 'auth.password_reset';
+    case SocialLinked = 'auth.social_linked';
+    case SocialUnlinked = 'auth.social_unlinked';
 
     // Maqolalar
     case ArticleStatusChanged = 'article.status';
@@ -88,6 +90,8 @@ enum AuditEvent: string
             self::LoginFailed => 'Muvaffaqiyatsiz kirish urinishi',
             self::Lockout => 'Kirish vaqtincha bloklandi',
             self::PasswordReset => 'Parolni tikladi',
+            self::SocialLinked => "Tashqi akkaunt bog'landi (Google / ORCID)",
+            self::SocialUnlinked => 'Tashqi akkaunt uzildi (Google / ORCID)',
             self::ArticleStatusChanged => "Maqola holati o'zgardi",
             self::ArticleEditorAssigned => "Mas'ul muharrir tayinlandi",
             self::ReviewInvited => 'Taqrizchi taklif qilindi',
@@ -148,7 +152,7 @@ enum AuditEvent: string
             self::AiSettingsUpdated, self::AiPromptUpdated, self::AiLimitUpdated,
             self::PriceChanged, self::ContentDeleted, self::ReviewerRemoved,
             self::RolePermissionsUpdated, self::SettingsUpdated, self::BroadcastSent,
-            self::BackupDownloaded, self::BackupDeleted => 'warning',
+            self::BackupDownloaded, self::BackupDeleted, self::SocialUnlinked => 'warning',
             default => 'info',
         };
     }

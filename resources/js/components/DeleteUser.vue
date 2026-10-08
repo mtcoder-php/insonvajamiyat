@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Form } from '@inertiajs/vue3';
-import { TriangleAlert, Trash2 } from '@lucide/vue';
+import { Form, Link } from '@inertiajs/vue3';
+import { KeyRound, TriangleAlert, Trash2 } from '@lucide/vue';
 import { useTemplateRef } from 'vue';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import InputError from '@/components/InputError.vue';
@@ -20,11 +20,15 @@ import {
 } from '@/lib/formStyles';
 import { cn } from '@/lib/utils';
 import { t } from '@/lib/i18n';
+import { edit as securityEdit } from '@/routes/security';
 
 /**
  * Akkauntni o'chirish (parol bilan tasdiqlanadi). Akkaunt yumshoq o'chiriladi —
  * administrator kerak bo'lsa tiklashi mumkin.
+ * Parolsiz (Google / ORCID) foydalanuvchi avval Xavfsizlik bo'limida parol o'rnatadi.
  */
+withDefaults(defineProps<{ hasPassword?: boolean }>(), { hasPassword: true });
+
 const passwordInput = useTemplateRef('passwordInput');
 </script>
 
@@ -50,7 +54,15 @@ const passwordInput = useTemplateRef('passwordInput');
                     }}
                 </p>
             </div>
-            <Dialog>
+            <Link
+                v-if="!hasPassword"
+                :href="securityEdit()"
+                :class="cn(secondaryButtonClass, 'h-9')"
+            >
+                <KeyRound class="size-4" />
+                {{ t("Avval parol o'rnating") }}
+            </Link>
+            <Dialog v-else>
                 <DialogTrigger as-child>
                     <button
                         type="button"

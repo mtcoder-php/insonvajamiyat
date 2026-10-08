@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Settings;
 
 use App\Concerns\PasswordValidationRules;
+use App\Models\User;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -17,6 +18,13 @@ class PasswordUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
+        $user = $this->user();
+
+        // Google / ORCID orqali ro'yxatdan o'tgan foydalanuvchi parolni birinchi marta o'rnatadi
+        if ($user instanceof User && ! $user->hasPassword()) {
+            return ['password' => $this->passwordRules()];
+        }
+
         return [
             'current_password' => $this->currentPasswordRules(),
             'password' => $this->passwordRules(),

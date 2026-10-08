@@ -4,6 +4,7 @@ import { Lock, Mail, Phone, User, UserPlus } from '@lucide/vue';
 import InputIcon from '@/components/form/InputIcon.vue';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
+import SocialLoginButtons from '@/components/auth/SocialLoginButtons.vue';
 import TextLink from '@/components/TextLink.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,15 +13,21 @@ import { Spinner } from '@/components/ui/spinner';
 import { login } from '@/routes';
 import { store } from '@/routes/register';
 import { t } from '@/lib/i18n';
+import type { SocialProviderOption } from '@/types';
 
 /**
  * Ro'yxatdan o'tish (dizayn: register_login.png, "Ro'yxatdan o'tish" kartasi).
  * Faqat mualliflar uchun — xodim hisoblarini Super Admin yaratadi.
  * Tashkilot, ilmiy daraja va yo'nalishlar keyin profil onboarding'ida to'ldiriladi.
  */
-defineProps<{
-    passwordRules: string;
-}>();
+withDefaults(
+    defineProps<{
+        passwordRules: string;
+        /** Google / ORCID (sozlanganlari) */
+        socialProviders?: SocialProviderOption[];
+    }>(),
+    { socialProviders: () => [] },
+);
 
 defineOptions({
     layout: {
@@ -192,6 +199,8 @@ defineOptions({
             <UserPlus v-else class="size-4" />
             {{ t('Hisob yaratish') }}
         </Button>
+
+        <SocialLoginButtons :providers="socialProviders" mode="register" />
 
         <p class="text-center text-sm text-muted-foreground">
             {{ t('Hisobingiz bormi?') }}

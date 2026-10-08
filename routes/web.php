@@ -66,3 +66,4 @@ Route::middleware(['auth', 'verified'])->prefix('notifications')->name('notifica
 });
 
 require __DIR__.'/settings.php';
+require __DIR__.'/social.php';

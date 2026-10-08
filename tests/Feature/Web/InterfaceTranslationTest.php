@@ -90,7 +90,8 @@ class InterfaceTranslationTest extends TestCase
             $files = File::allFiles($path);
 
             foreach ($files as $file) {
-                preg_match_all('/__\(\s*([\'"])((?:\\\\.|(?!\1).)*)\1/s', (string) file_get_contents($file->getPathname()), $matches);
+                // __('...') va OAuthException::translated('...')
+                preg_match_all('/(?:__|::translated)\(\s*([\'"])((?:\\\\.|(?!\1).)*)\1/s', (string) file_get_contents($file->getPathname()), $matches);
 
                 foreach ($matches[2] as $i => $key) {
                     // Guruh kalitlari (validation.required, passwords.sent) — lang/*/*.php da

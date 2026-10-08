@@ -34,6 +34,8 @@ class ProfileController extends Controller
             'profile' => UserDetailResource::make($user)->resolve(),
             // User MustVerifyEmail'ni amalga oshiradi — tasdiqlash doim talab qilinadi
             'mustVerifyEmail' => true,
+            // Google / ORCID orqali ro'yxatdan o'tganlarda parol bo'lmasligi mumkin (o'chirish parol talab qiladi)
+            'hasPassword' => $user->hasPassword(),
             'status' => $request->session()->get('status'),
         ]);
     }
