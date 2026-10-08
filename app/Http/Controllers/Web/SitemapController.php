@@ -55,7 +55,9 @@ class SitemapController extends Controller
             ->get(['id', 'slug', 'published_at', 'updated_at'])
             ->each(fn (JournalIssue $issue) => $add(route('issues.show', $issue), $issue->updated_at ?? $issue->published_at, 'monthly', '0.7'));
 
-        Article::query()->published()->orderByDesc('published_at')
+        // lazyById o'zi id bo'yicha sahifalaydi — boshqa tartiblash (orderBy) qo'shilsa,
+        // 500 tadan keyin maqolalar tushib qoladi yoki takrorlanadi
+        Article::query()->published()
             ->select(['id', 'slug', 'published_at', 'updated_at'])
             ->lazyById(500)
             ->each(fn (Article $article) => $add(route('articles.show', $article), $article->updated_at ?? $article->published_at, 'monthly', '0.8'));

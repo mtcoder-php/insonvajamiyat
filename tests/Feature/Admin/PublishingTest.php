@@ -197,9 +197,14 @@ class PublishingTest extends TestCase
         $this->actingAs($this->chief)->post(route('admin.issues.publish', $issue->slug));
         $article->refresh();
         auth()->logout();
+        $article->forceFill(['updated_at' => now()->subWeek()])->saveQuietly();
+        $updatedAt = $article->refresh()->updated_at?->toIso8601String();
 
+        $this->travel(1)->minutes();
         $this->get(route('articles.show', $article->slug))->assertOk();
         $this->assertSame(1, $article->refresh()->views_count);
+        // Ko'rish hisoblagichi updated_at'ni (sitemap lastmod) o'zgartirmaydi
+        $this->assertSame($updatedAt, $article->updated_at?->toIso8601String());
 
         // Shu sessiyada qayta ko'rish hisoblanmaydi
         $this->withSession(['viewed_articles.'.$article->id => now()->getTimestamp()])

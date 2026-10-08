@@ -31,7 +31,7 @@ class ArticlePdfController extends Controller
 
         if ($request->session()->get($key) !== now()->toDateString()) {
             $request->session()->put($key, now()->toDateString());
-            $article->increment('downloads_count');
+            $article->bumpCounter('downloads_count');
             $stats->record($article, ArticleDailyStats::DOWNLOADS);
         }
 

@@ -12,6 +12,7 @@ use App\Models\JournalIssue;
 use App\Models\Post;
 use App\Models\Subject;
 use App\Support\MediaUrl;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
@@ -23,6 +24,9 @@ use Illuminate\Support\Facades\DB;
  */
 class CatalogService
 {
+    /** @var array<int, array{slug: string, name: string, count: int}>|null */
+    private ?array $subjects = null;
+
     public const PER_PAGE = 10;
 
     public const SORTS = ['newest', 'oldest', 'popular', 'downloads', 'title'];
@@ -52,7 +56,11 @@ class CatalogService
         }
 
         if ($filters['year'] !== null) {
-            $query->whereYear('published_at', $filters['year']);
+            // whereYear indeksni ishlatmaydi — yil chegaralari bilan
+            $query->whereBetween('published_at', [
+                CarbonImmutable::create((int) $filters['year'])->startOfYear(),
+                CarbonImmutable::create((int) $filters['year'])->endOfYear(),
+            ]);
         }
 
         if ($filters['issue'] !== null) {
@@ -122,7 +130,8 @@ class CatalogService
      */
     public function subjects(): array
     {
-        return Subject::query()
+        // Bitta so'rovda filtr va statistika ikkalasi uchun ishlatiladi
+        return $this->subjects ??= Subject::query()
             ->withCount(['articles' => fn ($q) => $q->published()])
             ->orderByDesc('articles_count')
             ->get()
@@ -141,11 +150,19 @@ class CatalogService
      */
     public function years(): array
     {
+        // Barcha sanalarni emas, faqat noyob yillarni bazadan olamiz
+        $year = match (DB::connection()->getDriverName()) {
+            'sqlite' => "strftime('%Y', published_at)",
+            'pgsql' => 'extract(year from published_at)',
+            default => 'year(published_at)',
+        };
+
         return Article::query()
             ->published()
-            ->pluck('published_at')
-            ->map(fn (mixed $date): int => (int) substr((string) $date, 0, 4))
-            ->unique()
+            ->selectRaw($year.' as y')
+            ->distinct()
+            ->pluck('y')
+            ->map(fn (mixed $y): int => (int) $y)
             ->sortDesc()
             ->values()
             ->all();

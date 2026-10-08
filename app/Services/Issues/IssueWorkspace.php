@@ -36,12 +36,12 @@ class IssueWorkspace
         return JournalIssue::query()
             ->when($year !== null, fn (Builder $q) => $q->where('year', $year))
             ->when($status !== null, fn (Builder $q) => $q->where('status', $status))
-            ->withCount('articles')
+            // Tayyorlik va sahifalar uchun faqat kerakli ustunlar — bitta so'rovda (N+1 emas)
+            ->with(['articles' => fn ($q) => $q->select(['articles.id', 'articles.status', 'articles.chief_editor_approved_at'])])
             ->orderByDesc('year')
             ->orderByDesc('number')
             ->get()
             ->map(function (JournalIssue $issue): array {
-                $placements = IssueArticle::query()->where('journal_issue_id', $issue->id)->with('article')->get();
 
                 return [
                     'slug' => $issue->slug,
@@ -55,9 +55,9 @@ class IssueWorkspace
                     'statusLabel' => $issue->status->label(),
                     'publishedAt' => $issue->published_at?->toIso8601String(),
                     'coverUrl' => $this->coverUrl($issue),
-                    'articles' => (int) $issue->getAttribute('articles_count'),
-                    'ready' => $placements->filter(fn (IssueArticle $p): bool => $this->isReady($p->article))->count(),
-                    'pages' => (int) $placements->max('page_to'),
+                    'articles' => $issue->articles->count(),
+                    'ready' => $issue->articles->filter(fn (Article $article): bool => $this->isReady($article))->count(),
+                    'pages' => (int) $issue->articles->max(fn (Article $article): int => (int) $article->getRelationValue('pivot')?->getAttribute('page_to')),
                     'hasPdf' => filled($issue->full_pdf_path),
                     'url' => route('admin.issues.show', $issue->slug),
                 ];

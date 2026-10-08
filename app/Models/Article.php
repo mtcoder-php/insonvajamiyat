@@ -317,6 +317,20 @@ class Article extends Model
             ->whereDoesntHave('authors', fn (Builder $a) => $a->where('user_id', $user->id));
     }
 
+    /**
+     * Hisoblagich (ko'rishlar / yuklab olishlar) — updated_at o'zgarmaydi:
+     * aks holda har ko'rish sitemap lastmod'ini "yangilab" yuboradi va qatorni ortiqcha yozadi.
+     *
+     * @param  'views_count'|'downloads_count'  $column
+     */
+    public function bumpCounter(string $column): void
+    {
+        static::query()->whereKey($this->getKey())->toBase()->increment($column);
+
+        $this->setAttribute($column, (int) $this->getAttribute($column) + 1);
+        $this->syncOriginalAttribute($column);
+    }
+
     public function isPublished(): bool
     {
         return $this->status === ArticleStatus::Published && $this->slug !== null;

@@ -28,7 +28,8 @@ class ArticlePageService
      */
     public function show(Article $article): array
     {
-        $article->load(['authors', 'subject', 'articleType', 'placement.issue']);
+        // SeoMeta::forArticle oldinroq yuklagan bo'lishi mumkin — qayta so'rov yubormaymiz
+        $article->loadMissing(['authors', 'subject', 'articleType', 'placement.issue']);
         $placement = $article->placement;
         $issue = $placement?->issue;
         $pdf = $this->finalPdf($article);
@@ -195,7 +196,8 @@ class ArticlePageService
         $siblings = IssueArticle::query()
             ->where('journal_issue_id', $placement->journal_issue_id)
             ->whereHas('article', fn (Builder $q) => $q->published())
-            ->with('article')
+            // Faqat sarlavha va havola kerak (annotatsiya, adabiyotlar yuklanmaydi)
+            ->with('article:id,title,slug')
             ->orderBy('position')
             ->get()
             ->values();
@@ -227,7 +229,7 @@ class ArticlePageService
             ->published()
             ->whereKeyNot($article->id)
             ->when($article->subject_id !== null, fn (Builder $q) => $q->where('subject_id', $article->subject_id))
-            ->with(['authors', 'subject', 'placement.issue'])
+            ->with(['authors', 'subject'])
             ->latest('published_at')
             ->limit(self::RELATED)
             ->get();

@@ -4,6 +4,8 @@ namespace App\Notifications;
 
 use App\Models\Article;
 use App\Models\User;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Str;
@@ -19,9 +21,18 @@ use Illuminate\Support\Str;
  *   payment     — nashr to'lovi qabul qilindi (Click / Payme).
  *
  * Qabul qiluvchi muallif bo'lsa havola kabinetga, xodim bo'lsa admin panelga olib boradi.
+ *
+ * Bazadagi bildirishnoma darhol (sync) yoziladi — qo'ng'iroqcha kechikmaydi; email esa
+ * navbat orqali ketadi: SMTP sekin bo'lsa ham sahifa va Click/Payme webhook'lari kutmaydi.
+ * Tranzaksiya tugagandan keyingina navbatga qo'yiladi (afterCommit).
  */
-class ArticleUpdateNotification extends Notification
+class ArticleUpdateNotification extends Notification implements ShouldQueue
 {
+    use Queueable;
+
+    /** Maqola o'chirilgan bo'lsa — navbatdagi xat jimgina tashlab yuboriladi */
+    public bool $deleteWhenMissingModels = true;
+
     public const MESSAGE = 'message';
 
     public const DECISION = 'decision';
@@ -50,6 +61,15 @@ class ArticleUpdateNotification extends Notification
         public readonly ?string $link = null,
     ) {
         $this->headline = is_string($headline) ? $headline : '';
+        $this->afterCommit();
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function viaConnections(): array
+    {
+        return ['database' => 'sync'];
     }
 
     /**
