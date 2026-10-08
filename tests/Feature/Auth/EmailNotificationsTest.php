@@ -54,6 +54,7 @@ class EmailNotificationsTest extends TestCase
             'first_name' => 'Ali',
             'email' => 'yangi@example.com',
             'locale' => 'uz',
+            'current_password' => 'password',
         ])->assertSessionHasNoErrors();
 
         $this->assertFalse($user->refresh()->hasVerifiedEmail());

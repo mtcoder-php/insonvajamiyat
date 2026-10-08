@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin\Articles;
 
-use App\Enums\PermissionName;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Articles\InviteReviewersRequest;
 use App\Models\Article;
@@ -11,6 +10,7 @@ use App\Models\User;
 use App\Services\Reviews\ReviewService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 /**
@@ -37,7 +37,7 @@ class ReviewerAssignmentController extends Controller
 
     public function destroy(Request $request, Article $article, Review $review): RedirectResponse
     {
-        abort_unless($request->user()?->can(PermissionName::ArticlesAssignReviewer->value), 403);
+        Gate::authorize('manageReviews', $article);
         abort_unless($review->article_id === $article->id, 404);
 
         $this->reviews->cancel($review);

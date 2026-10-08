@@ -13,6 +13,7 @@ import FormField from '@/components/admin/ui/FormField.vue';
 import SectionCard from '@/components/admin/ui/SectionCard.vue';
 import SelectInput from '@/components/admin/ui/SelectInput.vue';
 import DeleteUser from '@/components/DeleteUser.vue';
+import PasswordInput from '@/components/PasswordInput.vue';
 import AvatarUploader from '@/components/users/AvatarUploader.vue';
 import RoleBadges from '@/components/users/RoleBadges.vue';
 import { formatDate, formatPhone } from '@/lib/format';
@@ -65,10 +66,24 @@ const form = useForm({
     orcid: props.profile.orcid ?? '',
     city: props.profile.city ?? '',
     bio: props.profile.bio ?? '',
+    // Email o'zgarsa — joriy parol bilan tasdiqlanadi (sessiya o'g'irlansa ham hisobni egallab bo'lmasin)
+    current_password: '',
 });
 
+const emailChanged = computed(
+    () =>
+        form.email.trim().toLowerCase() !==
+        (props.profile.email ?? '').toLowerCase(),
+);
+const needsPassword = computed(
+    () => emailChanged.value && props.hasPassword !== false,
+);
+
 function submit(): void {
-    form.patch(update.url(), { preserveScroll: true });
+    form.patch(update.url(), {
+        preserveScroll: true,
+        onFinish: () => form.reset('current_password'),
+    });
 }
 
 const fieldClass = (error?: string) =>
@@ -205,6 +220,28 @@ const fieldClass = (error?: string) =>
                                 type="email"
                                 :class="fieldClass(form.errors.email)"
                                 autocomplete="email"
+                            />
+                        </FormField>
+                        <FormField
+                            v-if="needsPassword"
+                            :label="t('Joriy parol')"
+                            for="current_password"
+                            required
+                            :error="form.errors.current_password"
+                            :hint="
+                                t(
+                                    'Emailni o\'zgartirish uchun joriy parolingizni kiriting',
+                                )
+                            "
+                            class="sm:col-span-2"
+                        >
+                            <PasswordInput
+                                id="current_password"
+                                v-model="form.current_password"
+                                :class="
+                                    fieldClass(form.errors.current_password)
+                                "
+                                autocomplete="current-password"
                             />
                         </FormField>
                         <FormField

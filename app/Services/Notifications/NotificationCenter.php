@@ -90,7 +90,8 @@ class NotificationCenter
      */
     public static function safeUrl(mixed $url): ?string
     {
-        if (! is_string($url) || $url === '') {
+        // "\\evil.com" va "/\\evil.com" brauzerda "//evil.com" deb talqin qilinadi
+        if (! is_string($url) || $url === '' || str_contains($url, '\\') || preg_match('/[\x00-\x1F]/', $url) === 1) {
             return null;
         }
 

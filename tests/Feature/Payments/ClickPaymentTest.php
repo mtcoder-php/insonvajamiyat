@@ -171,6 +171,23 @@ class ClickPaymentTest extends TestCase
         $this->assertSame(1, PaymentLog::query()->where('signature_valid', false)->count());
     }
 
+    public function test_empty_secret_or_disabled_click_rejects_every_signature(): void
+    {
+        $article = $this->awaitingArticle();
+        $payment = $this->startPayment($article);
+
+        // Bo'sh maxfiy kalit bilan imzoni istalgan odam hisoblay olardi — qabul qilinmaydi
+        config(['payments.click.secret_key' => '']);
+        $this->post(route('payments.click.prepare'), $this->prepareData($payment))
+            ->assertJson(['error' => ClickMerchantService::SIGN_FAILED]);
+
+        config(['payments.click.secret_key' => 'click-secret', 'payments.click.enabled' => false]);
+        $this->post(route('payments.click.prepare'), $this->prepareData($payment))
+            ->assertJson(['error' => ClickMerchantService::SIGN_FAILED]);
+
+        $this->assertSame(PaymentStatus::Pending, $payment->refresh()->status);
+    }
+
     public function test_click_error_cancels_transaction_and_releases_article(): void
     {
         $article = $this->awaitingArticle();

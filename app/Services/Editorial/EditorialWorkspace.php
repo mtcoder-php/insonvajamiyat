@@ -57,7 +57,7 @@ class EditorialWorkspace
      */
     public function counts(User $user): array
     {
-        $byStatus = $this->base()
+        $byStatus = $this->base($user)
             ->selectRaw('status, count(*) as aggregate')
             ->groupBy('status')
             ->pluck('aggregate', 'status');
@@ -84,7 +84,7 @@ class EditorialWorkspace
         $counts = $this->counts($user);
         $since = now()->startOfMonth();
 
-        $month = fn (?array $statuses, string $column): int => $this->base()
+        $month = fn (?array $statuses, string $column): int => $this->base($user)
             ->when($statuses !== null, fn (Builder $q) => $q->whereIn('status', $this->values($statuses ?? [])))
             ->where($column, '>=', $since)
             ->count();
@@ -161,12 +161,13 @@ class EditorialWorkspace
         ]);
 
         $canDecide = Gate::forUser($user)->allows('decide', $article);
+        $canManageReviews = Gate::forUser($user)->allows('manageReviews', $article);
         $canMessage = Gate::forUser($user)->allows('message', $article)
             && $user->can(PermissionName::ArticlesMessageAuthor->value);
 
         // Muallif xabarlari muharrir maqolani ochganda o'qilgan hisoblanadi
         $this->messages->markRead($article, $user);
-        $canInvite = $user->can(PermissionName::ArticlesAssignReviewer->value)
+        $canInvite = $canManageReviews
             && in_array($article->status, ReviewService::INVITABLE, true);
 
         return [
@@ -255,7 +256,7 @@ class EditorialWorkspace
                 'attachmentUrl' => $review->attachment_path !== null && $review->status === ReviewStatus::Completed
                     ? route('admin.reviews.attachment', $review->id)
                     : null,
-                'cancelUrl' => $review->status->isActive() && $user->can(PermissionName::ArticlesAssignReviewer->value)
+                'cancelUrl' => $review->status->isActive() && $canManageReviews
                     ? route('admin.articles.reviews.destroy', [$article->uuid, $review->id])
                     : null,
             ])->all(),
@@ -370,7 +371,7 @@ class EditorialWorkspace
      */
     public function queueQuery(string $queue, User $user): Builder
     {
-        $query = $this->base();
+        $query = $this->base($user);
 
         return match ($queue) {
             'all' => $query,
@@ -382,13 +383,15 @@ class EditorialWorkspace
     }
 
     /**
-     * Qoralamalar tahririyatga ko'rinmaydi.
+     * Qoralamalar tahririyatga ko'rinmaydi; xodimning o'z maqolalari ham (manfaatlar to'qnashuvi).
      *
      * @return Builder<Article>
      */
-    private function base(): Builder
+    private function base(User $user): Builder
     {
-        return Article::query()->where('status', '!=', ArticleStatus::Draft->value);
+        return Article::query()
+            ->where('status', '!=', ArticleStatus::Draft->value)
+            ->notAuthoredBy($user);
     }
 
     /**

@@ -50,7 +50,14 @@ class AppServiceProvider extends ServiceProvider
      */
     protected function configureAuthorization(): void
     {
-        Gate::before(function (User $user, string $ability): ?bool {
+        // Manfaatlar to'qnashuvi qoidalari Super Admin'ga ham tegishli — policy o'zi hal qiladi
+        $conflictChecked = ['decide', 'manageReviews'];
+
+        Gate::before(function (User $user, string $ability) use ($conflictChecked): ?bool {
+            if (in_array($ability, $conflictChecked, true)) {
+                return null;
+            }
+
             return $user->hasRole(RoleName::SuperAdmin) ? true : null;
         });
     }

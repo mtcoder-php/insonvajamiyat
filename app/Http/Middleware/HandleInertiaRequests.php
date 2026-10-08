@@ -115,11 +115,21 @@ class HandleInertiaRequests extends Middleware
             return ['user' => null, 'roles' => [], 'permissions' => [], 'isStaff' => false];
         }
 
-        // Profil rasmi URL'i header va menyularda ishlatiladi (author_profiles.avatar_path)
-        $userData = $user->toArray();
-        $userData['avatar'] = $user->avatarUrl();
-        // Kabinet sidebaridagi profil kartasi uchun (author_profiles.position)
-        $userData['position'] = $user->authorProfile?->position;
+        // Faqat interfeysga kerakli maydonlar (toArray() emas: IP, bloklash sababi, limitlar sahifaga chiqmasin)
+        $userData = [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'phone' => $user->phone,
+            'locale' => $user->locale,
+            'email_verified_at' => $user->email_verified_at?->toIso8601String(),
+            'two_factor_enabled' => $user->hasEnabledTwoFactorAuthentication(),
+            'created_at' => $user->created_at?->toIso8601String(),
+            'updated_at' => $user->updated_at?->toIso8601String(),
+            // Profil rasmi (header, menyular) va lavozim (kabinet sidebari) — author_profiles
+            'avatar' => $user->avatarUrl(),
+            'position' => $user->authorProfile?->position,
+        ];
 
         return [
             'user' => $userData,

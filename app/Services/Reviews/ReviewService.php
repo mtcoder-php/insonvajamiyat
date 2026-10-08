@@ -2,6 +2,7 @@
 
 namespace App\Services\Reviews;
 
+use App\Enums\ArticleFileType;
 use App\Enums\ArticleStatus;
 use App\Enums\AuditEvent;
 use App\Enums\EditorialDecisionType;
@@ -227,17 +228,33 @@ class ReviewService
         ]);
     }
 
+    /** Taqrizchiga ko'rinadigan fayl turlari (yakuniy PDF va tarjimalar emas) */
+    public const REVIEWER_FILE_TYPES = [ArticleFileType::Manuscript, ArticleFileType::Revision, ArticleFileType::Supplementary];
+
     /**
      * Taqrizchi uchun maqola fayli: PDF — brauzerda ko'rish, boshqalari — yuklab olish.
+     * Blind review: asl fayl nomi (unda muallif ismi bo'lishi mumkin) o'rniga neytral nom.
      */
     public function articleFile(ArticleFile $file, bool $inline): StreamedResponse
     {
+        abort_unless(in_array($file->type, self::REVIEWER_FILE_TYPES, true), 404);
+
         $disk = Storage::disk($file->disk);
         abort_unless($disk->exists($file->path), 404);
 
+        $name = self::anonymousName($file);
+
         return $inline && $file->extension() === 'pdf'
-            ? $disk->response($file->path, $file->original_name)
-            : $disk->download($file->path, $file->original_name);
+            ? $disk->response($file->path, $name)
+            : $disk->download($file->path, $name);
+    }
+
+    /** "manuscript-12.docx" — taqrizchi ko'radigan fayl nomi */
+    public static function anonymousName(ArticleFile $file): string
+    {
+        $extension = $file->extension();
+
+        return $file->type->value.'-'.$file->id.($extension !== '' ? '.'.$extension : '');
     }
 
     public function attachment(Review $review): StreamedResponse

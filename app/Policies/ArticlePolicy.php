@@ -34,7 +34,16 @@ class ArticlePolicy
     /** Tahririyat qarori: ko'rib chiqishga olish, muharrir biriktirish, tuzatish / qabul / rad */
     public function decide(User $user, Article $article): bool
     {
-        return $user->can(PermissionName::ArticlesDecide->value) && $article->status !== ArticleStatus::Draft;
+        return $user->can(PermissionName::ArticlesDecide->value)
+            && $article->status !== ArticleStatus::Draft
+            && ! $this->isAuthor($user, $article);
+    }
+
+    /** Taqrizchi taklif qilish / taklifni bekor qilish — o'z maqolasiga emas (manfaatlar to'qnashuvi) */
+    public function manageReviews(User $user, Article $article): bool
+    {
+        return $user->can(PermissionName::ArticlesAssignReviewer->value)
+            && ! $this->isAuthor($user, $article);
     }
 
     /** Yangi maqola formasini davom ettirish (faqat yuboruvchi, faqat qoralama) */

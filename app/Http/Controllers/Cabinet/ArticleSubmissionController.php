@@ -17,6 +17,7 @@ use App\Services\Cabinet\SubmissionWizardData;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -40,9 +41,27 @@ class ArticleSubmissionController extends Controller
         ));
     }
 
+    /** Bir muallifda bir vaqtda ochiq qoralamalar soni (disk va bazani to'ldirib yuborishdan himoya) */
+    public const MAX_OPEN_DRAFTS = 10;
+
     public function store(ArticleDetailsRequest $request): RedirectResponse
     {
-        $article = $this->submission->createDraft($this->user($request), $request->details());
+        $user = $this->user($request);
+
+        $drafts = Article::query()
+            ->where('submitter_id', $user->id)
+            ->where('status', ArticleStatus::Draft->value)
+            ->count();
+
+        if ($drafts >= self::MAX_OPEN_DRAFTS) {
+            throw ValidationException::withMessages([
+                'title' => __('Sizda :count ta tugallanmagan qoralama bor. Avval ularni yuboring yoki o\'chiring.', [
+                    'count' => $drafts,
+                ]),
+            ]);
+        }
+
+        $article = $this->submission->createDraft($user, $request->details());
 
         return $this->saved($request, $article, SubmissionStep::Details);
     }

@@ -305,6 +305,18 @@ class Article extends Model
             ->orWhereHas('authors', fn (Builder $a) => $a->where('user_id', $user->id)));
     }
 
+    /**
+     * Manfaatlar to'qnashuvi: foydalanuvchi muallif bo'lmagan maqolalar
+     * (xodim o'z maqolasini tahririyat ish joyida ko'rmaydi va unga qaror chiqarmaydi).
+     *
+     * @param  Builder<Article>  $query
+     */
+    public function scopeNotAuthoredBy(Builder $query, User $user): void
+    {
+        $query->where('submitter_id', '!=', $user->id)
+            ->whereDoesntHave('authors', fn (Builder $a) => $a->where('user_id', $user->id));
+    }
+
     public function isPublished(): bool
     {
         return $this->status === ArticleStatus::Published && $this->slug !== null;
