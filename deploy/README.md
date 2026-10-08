@@ -179,6 +179,26 @@ php artisan config:cache
 Tugmalardagi rasmiy belgilar (ixtiyoriy): Google va ORCID brend sahifalaridan SVG yuklab olib,
 `public/images/social/google.svg` va `public/images/social/orcid.svg` nomi bilan qo'ying — fayl bo'lmasa umumiy ikonka chiqadi.
 
+### 7.2. Ilmiy bazalarda indekslash (OAI-PMH, Crossref)
+
+**OAI-PMH** manzili: `https://insonvajamiyat.uz/oai` (admin → Tizim sozlamalari → Jurnal bo'limida ham ko'rsatilgan).
+Tekshirish: `https://insonvajamiyat.uz/oai?verb=Identify` — XML javob qaytishi kerak.
+
+| Baza           | Qayerda ro'yxatdan o'tiladi                                    | Nima kiritiladi            |
+| -------------- | -------------------------------------------------------------- | -------------------------- |
+| BASE           | https://www.base-search.net → _Suggest repository_             | OAI-PMH base URL           |
+| OpenAIRE       | https://provide.openaire.eu → _Register a repository_          | OAI-PMH base URL, `oai_dc` |
+| CyberLeninka   | jurnal tahririyati sifatida murojaat                           | OAI-PMH base URL           |
+| Google Scholar | avtomatik (maqola sahifasidagi `citation_*` teglari + sitemap) | —                          |
+
+- Format: Dublin Core (`oai_dc`); to'plamlar: `subject:{slug}` va `issue:{slug}`
+- Saytdan olib tashlangan maqola `status="deleted"` bilan qaytadi (`deletedRecord=transient`)
+- `APP_URL` to'g'ri bo'lishi shart — OAI identifikatorlari shu domendan tuziladi (`oai:insonvajamiyat.uz:article/ID`)
+
+**Crossref (DOI):** maqolalarga DOI "Nashr jarayoni" sahifasida kiritiladi. Son chop etilgach,
+admin → Jurnallar → son sahifasida **Crossref XML** tugmasi — faylni https://doi.crossref.org
+(_Submissions → Upload → Metadata_) ga yuklang. Fayl Crossref sxemasi 5.4.0 bo'yicha tuzilgan.
+
 ## 8. Zaxira nusxalar
 
 Zaxiralar `storage/app/private/backups/` da saqlanadi (admin panel → Zaxira nusxa).

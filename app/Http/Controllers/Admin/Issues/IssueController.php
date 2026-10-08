@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Admin\Issues;
 
+use App\Enums\AuditEvent;
 use App\Enums\IssueStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Issues\IssueRequest;
 use App\Models\JournalIssue;
 use App\Models\User;
+use App\Services\Audit\AuditLogger;
+use App\Services\Indexing\CrossrefDeposit;
 use App\Services\Issues\IssuePdfBuilder;
 use App\Services\Issues\IssueService;
 use App\Services\Issues\IssueWorkspace;
@@ -14,9 +17,11 @@ use App\Services\Publishing\PublishService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response as HttpResponse;
 use Illuminate\Http\UploadedFile;
 use Inertia\Inertia;
 use Inertia\Response;
+use RuntimeException;
 
 /**
  * Jurnallar (TZ 4.2.3): sonlar ro'yxati, son yaratish va tahrirlash, fayllar, mundarija.
@@ -26,6 +31,7 @@ class IssueController extends Controller
     public function __construct(
         private readonly IssueService $issues,
         private readonly IssueWorkspace $workspace,
+        private readonly AuditLogger $audit,
     ) {}
 
     public function index(Request $request): Response
@@ -130,6 +136,29 @@ class IssueController extends Controller
         $this->issues->removeFile($issue, $type);
 
         return $this->done(__("Fayl o'chirildi."));
+    }
+
+    /**
+     * Crossref DOI deposit XML (chop etilgan son) — Crossref kabinetiga yuklash uchun.
+     */
+    public function crossref(JournalIssue $issue, CrossrefDeposit $crossref): HttpResponse|RedirectResponse
+    {
+        abort_if($issue->status === IssueStatus::Draft, 404);
+
+        try {
+            $xml = $crossref->build($issue);
+        } catch (RuntimeException) {
+            Inertia::flash('toast', ['type' => 'error', 'message' => __('Sonda DOI\'si bor nashr etilgan maqola yo\'q.')]);
+
+            return back();
+        }
+
+        $this->audit->log(AuditEvent::ReportExported, $issue, ['format' => 'crossref', 'articles' => $crossref->articles($issue)->count()], 'Crossref XML');
+
+        return response($xml, 200, [
+            'Content-Type' => 'application/xml; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="crossref-'.$issue->slug.'.xml"',
+        ]);
     }
 
     /** Mundarija — chop etish uchun sahifa (brauzerda "PDF sifatida saqlash") */

@@ -35,6 +35,10 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->name('payments.')
                 ->group(base_path('routes/payments.php'));
 
+            // OAI-PMH (ilmiy bazalar uchun metadata) — /oai (sessiya va CSRF'siz)
+            Route::middleware('throttle:120,1')
+                ->group(base_path('routes/oai.php'));
+
             // Admin panel — /admin/* (faqat xodimlar)
             Route::middleware(['web', 'auth', 'verified', 'staff'])
                 ->prefix('admin')

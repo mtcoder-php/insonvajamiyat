@@ -10,6 +10,7 @@ import {
 } from '@lucide/vue';
 import type { Component } from 'vue';
 import { ref, watch } from 'vue';
+import IndexingCard from '@/components/admin/system/IndexingCard.vue';
 import JournalPanel from '@/components/admin/system/JournalPanel.vue';
 import MailPanel from '@/components/admin/system/MailPanel.vue';
 import StatusPanel from '@/components/admin/system/StatusPanel.vue';
@@ -165,6 +166,7 @@ const tabs: { key: SystemTab; label: string; hint: string; icon: Component }[] =
             "
             :url="urls.journal"
         />
+        <IndexingCard v-if="tab === 'journal'" />
         <MailPanel
             v-show="tab === 'mail'"
             :mail="mailForm"
