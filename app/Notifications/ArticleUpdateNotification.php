@@ -18,7 +18,8 @@ use Illuminate\Support\Str;
  *   proof       — korrektura (yakuniy PDF) tayyor / muallif javobi;
  *   submitted   — tahririyatga yangi maqola keldi (muharrirlar);
  *   review      — taqriz taklifi / taqrizchi javobi / taqriz topshirildi;
- *   payment     — nashr to'lovi qabul qilindi (Click / Payme).
+ *   payment     — nashr to'lovi qabul qilindi (Click / Payme);
+ *   payment_reminder — to'lov kutilmoqda: muallifga eslatma (avtomatik yoki tahririyatdan).
  *
  * Qabul qiluvchi muallif bo'lsa havola kabinetga, xodim bo'lsa admin panelga olib boradi.
  *
@@ -46,6 +47,8 @@ class ArticleUpdateNotification extends Notification implements ShouldQueue
     public const REVIEW = 'review';
 
     public const PAYMENT = 'payment';
+
+    public const PAYMENT_REMINDER = 'payment_reminder';
 
     public readonly string $headline;
 

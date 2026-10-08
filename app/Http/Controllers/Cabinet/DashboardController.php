@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Cabinet;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\Cabinet\AuthorDashboardService;
-use App\Support\MediaUrl;
+use App\Services\Content\JournalDocumentService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -41,7 +41,7 @@ class DashboardController extends Controller
     public static function links(): array
     {
         return [
-            'template' => MediaUrl::publicAsset(config('journal.article_template')),
+            'template' => app(JournalDocumentService::class)->templateUrl(),
             'guidelines' => route('guidelines'),
         ];
     }

@@ -38,7 +38,7 @@ class SettingsContentTest extends TestCase
             ->get(route('admin.settings.index', ['tab' => 'partners']))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
-                ->where('tabs', ['subjects', 'pages', 'board', 'banners', 'posts', 'events', 'books', 'partners'])
+                ->where('tabs', ['subjects', 'pages', 'board', 'documents', 'banners', 'posts', 'events', 'books', 'partners'])
                 ->where('tab', 'partners')
                 ->has('partners', 0)
                 ->has('partnerTypes', 2)

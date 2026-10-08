@@ -9,6 +9,7 @@ use App\Http\Controllers\Web\ContactMessageController;
 use App\Http\Controllers\Web\EventController;
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\IssueController;
+use App\Http\Controllers\Web\JournalDocumentController;
 use App\Http\Controllers\Web\LocaleController;
 use App\Http\Controllers\Web\NewsController;
 use App\Http\Controllers\Web\NewsletterSubscriptionController;
@@ -43,6 +44,11 @@ Route::get('events', [EventController::class, 'index'])->name('events.index');
 Route::get('events/{event:slug}', [EventController::class, 'show'])->name('events.show');
 Route::get('guidelines', [StaticPageController::class, 'guidelines'])->name('guidelines');
 Route::get('contact', [StaticPageController::class, 'contact'])->name('contact');
+// Mualliflar uchun fayllar (shablon, yo'riqnoma, shakllar) — asl nom bilan yuklab olish
+Route::get('documents/{document}', JournalDocumentController::class)
+    ->whereNumber('document')
+    ->middleware('throttle:60,1')
+    ->name('documents.download');
 Route::post('contact', [ContactMessageController::class, 'store'])
     ->middleware('throttle:10,1')
     ->name('contact.send');

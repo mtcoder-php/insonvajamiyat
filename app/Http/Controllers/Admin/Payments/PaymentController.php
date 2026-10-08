@@ -14,6 +14,7 @@ use App\Models\User;
 use App\Services\Admin\DashboardService;
 use App\Services\Admin\PaymentsOverview;
 use App\Services\Payments\ManualPaymentService;
+use App\Services\Payments\PaymentReminderService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -23,10 +24,13 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * Admin → To'lovlar (TZ 4.2.8): statistika, to'lov kutilayotgan maqolalar,
- * to'lovlar ro'yxati, qo'lda tasdiqlash va to'lovdan ozod qilish.
+ * to'lovlar ro'yxati, qo'lda tasdiqlash, to'lovdan ozod qilish va mualliflarga eslatma.
  */
 class PaymentController extends Controller
 {
+    /** Admin ko'radigan vaqt (tahririyat Toshkentda) */
+    private const TIMEZONE = 'Asia/Tashkent';
+
     public function __construct(
         private readonly PaymentsOverview $overview,
         private readonly ManualPaymentService $manual,
@@ -61,6 +65,8 @@ class PaymentController extends Controller
             'can' => [
                 'confirm' => $user->can(PermissionName::PaymentsConfirmManually->value),
             ],
+            'remindAllUrl' => route('admin.payments.remind-all'),
+            'reminderDays' => PaymentReminderService::days(),
         ]);
     }
 
@@ -93,6 +99,48 @@ class PaymentController extends Controller
         $this->manual->waive($article, $admin, $request->string('reason')->trim()->toString());
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __("Maqola to'lovdan ozod qilindi.")]);
+
+        return back();
+    }
+
+    public function remind(Request $request, Article $article, PaymentReminderService $reminders): RedirectResponse
+    {
+        /** @var User $admin */
+        $admin = $request->user();
+
+        if (! PaymentReminderService::isAwaiting($article)) {
+            Inertia::flash('toast', ['type' => 'error', 'message' => __("Maqola to'lov kutilayotganlar ro'yxatida emas.")]);
+
+            return back();
+        }
+
+        $next = PaymentReminderService::availableAt($article);
+
+        if ($next !== null || ! $reminders->remind($article, $admin)) {
+            Inertia::flash('toast', [
+                'type' => 'error',
+                'message' => __('Eslatma yaqinda yuborilgan. Keyingisini :time dan keyin yuborish mumkin.', [
+                    'time' => ($next ?? now())->timezone(self::TIMEZONE)->format('d.m.Y H:i'),
+                ]),
+            ]);
+
+            return back();
+        }
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('Muallifga eslatma yuborildi.')]);
+
+        return back();
+    }
+
+    public function remindAll(Request $request, PaymentReminderService $reminders): RedirectResponse
+    {
+        /** @var User $admin */
+        $admin = $request->user();
+        $sent = $reminders->remindAll($admin);
+
+        Inertia::flash('toast', $sent > 0
+            ? ['type' => 'success', 'message' => __('Eslatma yuborildi: :count ta muallif.', ['count' => $sent])]
+            : ['type' => 'info', 'message' => __("Barcha mualliflarga so'nggi kunda eslatma yuborilgan — hozircha yangi eslatma kerak emas.")]);
 
         return back();
     }

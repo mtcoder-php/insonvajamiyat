@@ -8,6 +8,7 @@ export type SettingsTab =
     | 'subjects'
     | 'types'
     | 'pages'
+    | 'documents'
     | 'board'
     | 'banners'
     | 'posts'
@@ -162,6 +163,9 @@ export type SettingsPageProps = {
     pages: SettingsPage[] | null;
     board: SettingsBoardMember[] | null;
     boardRoles: { value: SettingsBoardRole; label: string }[] | null;
+    documents: SettingsDocument[] | null;
+    documentKinds: { value: SettingsDocumentKind; label: string }[] | null;
+    documentLimits: { extensions: string[]; maxKb: number } | null;
     urls: {
         index: string;
         subjects: string;
@@ -172,6 +176,7 @@ export type SettingsPageProps = {
         books: string;
         partners: string;
         board: string;
+        documents: string;
     };
 };
 
@@ -217,4 +222,24 @@ export type SettingsBoardMember = {
     isActive: boolean;
     sortOrder: number;
     urls: { update: string; destroy: string };
+};
+
+export type SettingsDocumentKind = 'template' | 'guide' | 'form' | 'other';
+
+/** Mualliflar uchun fayl — App\\Services\\Content\\JournalDocumentService::admin */
+export type SettingsDocument = {
+    id: number;
+    kind: SettingsDocumentKind;
+    kindLabel: string;
+    name: string;
+    translations: { title: Translated; description: Translated };
+    originalName: string;
+    extension: string;
+    size: number;
+    downloads: number;
+    isActive: boolean;
+    sortOrder: number;
+    updatedAt: string | null;
+    updatedBy: string | null;
+    urls: { download: string; update: string; destroy: string };
 };

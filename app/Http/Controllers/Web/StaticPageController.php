@@ -9,6 +9,7 @@ use App\Models\ArticleType;
 use App\Models\Partner;
 use App\Models\Subject;
 use App\Services\Content\EditorialBoardService;
+use App\Services\Content\JournalDocumentService;
 use App\Services\Content\PageService;
 use App\Services\Web\CatalogService;
 use App\Support\MediaUrl;
@@ -48,13 +49,14 @@ class StaticPageController extends Controller
         ]);
     }
 
-    public function guidelines(Request $request): Response
+    public function guidelines(Request $request, JournalDocumentService $documents): Response
     {
         $page = $this->page(PageSlug::Guidelines);
 
         return Inertia::render('web/Guidelines', [
             'page' => $page,
-            'template' => MediaUrl::publicAsset(config('journal.article_template')),
+            'template' => $documents->templateUrl(),
+            'documents' => $documents->public(),
             'types' => ArticleType::query()->where('is_active', true)->orderBy('sort_order')->orderBy('id')->get()
                 ->map(fn (ArticleType $type): array => [
                     'id' => $type->id,

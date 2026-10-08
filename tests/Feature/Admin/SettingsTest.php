@@ -36,7 +36,7 @@ class SettingsTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->component('admin/settings/Index')
                 ->where('tab', 'subjects')
-                ->where('tabs', ['subjects', 'pages', 'board', 'banners', 'posts', 'events', 'books', 'partners'])
+                ->where('tabs', ['subjects', 'pages', 'board', 'documents', 'banners', 'posts', 'events', 'books', 'partners'])
                 ->where('urls.types', null)
             );
 

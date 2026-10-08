@@ -50,6 +50,7 @@ enum AuditEvent: string
     case PaymentConfirmed = 'payment.confirmed';
     case PaymentWaived = 'payment.waived';
     case PaymentPaidOnline = 'payment.paid_online';
+    case PaymentReminded = 'payment.reminded';
 
     // Sayt kontenti va sozlamalar
     case ContentSaved = 'content.saved';
@@ -112,6 +113,7 @@ enum AuditEvent: string
             self::PaymentConfirmed => "To'lov qo'lda tasdiqlandi",
             self::PaymentWaived => "To'lovdan ozod qilindi",
             self::PaymentPaidOnline => "Onlayn to'lov qabul qilindi",
+            self::PaymentReminded => "To'lov eslatmasi yuborildi",
             self::ContentSaved => 'Kontent saqlandi',
             self::ContentDeleted => "Kontent o'chirildi",
             self::PriceChanged => "Maqola turi narxi o'zgartirildi",
