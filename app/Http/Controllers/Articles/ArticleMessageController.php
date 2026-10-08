@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Articles;
 
+use App\Enums\MessageChannel;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Articles\SendMessageRequest;
 use App\Models\Article;
@@ -43,6 +44,8 @@ class ArticleMessageController extends Controller
     public function attachment(Article $article, Message $message): StreamedResponse
     {
         Gate::authorize('message', $article);
+        // Faqat muallif ↔ tahririyat yozishmasi fayllari (muharrir ↔ taqrizchi kanali emas)
+        abort_unless($message->channel === MessageChannel::AuthorEditor, 404);
 
         return $this->messages->attachment($message);
     }

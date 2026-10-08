@@ -33,7 +33,7 @@ return [
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/private'),
-            'serve' => true,
+            'serve' => false, // maxfiy fayllar faqat controller + policy orqali beriladi
             'throw' => false,
             'report' => false,
         ],

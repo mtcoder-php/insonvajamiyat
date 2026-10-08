@@ -2,10 +2,11 @@
 
 namespace App\Http\Requests\Admin\Articles;
 
-use App\Enums\PermissionName;
+use App\Models\Article;
 use App\Services\Reviews\ReviewService;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * Maqolaga taqrizchilarni taklif qilish (muddat bilan).
@@ -14,7 +15,9 @@ class InviteReviewersRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->can(PermissionName::ArticlesAssignReviewer->value) ?? false;
+        $article = $this->route('article');
+
+        return $article instanceof Article && Gate::allows('manageReviews', $article);
     }
 
     /**

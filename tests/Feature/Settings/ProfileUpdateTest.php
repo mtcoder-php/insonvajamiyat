@@ -39,6 +39,7 @@ class ProfileUpdateTest extends TestCase
                 'locale' => 'ru',
                 'organization' => 'Yangi Asr universiteti',
                 'orcid' => '0000-0002-1825-009x',
+                'current_password' => 'password',
             ]);
 
         $response

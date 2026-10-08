@@ -33,9 +33,15 @@ class ProfileUpdateRequest extends FormRequest
         /** @var User $user */
         $user = $this->user();
 
+        // Email o'zgarsa — joriy parol talab qilinadi (parol o'rnatilgan bo'lsa)
+        $emailChanged = mb_strtolower(trim($this->string('email')->toString())) !== mb_strtolower($user->email);
+
         return [
             ...$this->personalRules($user->id),
             ...$this->academicRules($user->authorProfile),
+            'current_password' => $emailChanged && $user->hasPassword()
+                ? ['required', 'string', 'current_password']
+                : ['nullable'],
         ];
     }
 
@@ -44,7 +50,7 @@ class ProfileUpdateRequest extends FormRequest
      */
     public function attributes(): array
     {
-        return $this->profileAttributeNames();
+        return [...$this->profileAttributeNames(), 'current_password' => __('Joriy parol')];
     }
 
     /**

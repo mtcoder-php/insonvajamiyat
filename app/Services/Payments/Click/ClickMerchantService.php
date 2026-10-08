@@ -193,6 +193,14 @@ class ClickMerchantService
      */
     private function validSignature(array $data, int $action): bool
     {
+        // O'chirilgan yoki to'liq sozlanmagan Click — hech qanday so'rov qabul qilinmaydi
+        // (bo'sh maxfiy kalit bilan imzoni istalgan odam hisoblay olardi)
+        if (! config('payments.click.enabled')
+            || self::s(config('payments.click.secret_key')) === ''
+            || self::s(config('payments.click.service_id')) === '') {
+            return false;
+        }
+
         if (self::s($data['service_id']) !== self::s(config('payments.click.service_id'))) {
             return false;
         }

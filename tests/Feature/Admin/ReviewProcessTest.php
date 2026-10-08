@@ -233,11 +233,28 @@ class ReviewProcessTest extends TestCase
             ->get(route('admin.reviews.show', $review->id))
             ->assertInertia(fn (Assert $page) => $page
                 ->has('review.article.files', 1)
-                ->where('review.article.files.0.name', 'maqola.pdf')
+                // Blind review: asl nom (muallif ismi bo'lishi mumkin) o'rniga neytral nom
+                ->where('review.article.files.0.name', 'manuscript-'.$file->id.'.pdf')
             );
+
+        $this->actingAs($reviewer)->get($url.'?download=1')
+            ->assertDownload('manuscript-'.$file->id.'.pdf');
 
         // Boshqa taqrizchi bu faylni ocha olmaydi
         $this->actingAs($this->reviewer())->get($url)->assertForbidden();
+
+        // Yakuniy PDF taqrizchiga berilmaydi
+        $final = $review->article->files()->create([
+            'type' => ArticleFileType::FinalPdf,
+            'disk' => 'local',
+            'path' => 'articles/test/manuscript.pdf',
+            'original_name' => 'final.pdf',
+            'mime_type' => 'application/pdf',
+            'size' => 13,
+        ]);
+        $this->actingAs($reviewer)
+            ->get(route('admin.reviews.files', [$review->id, $final->uuid]))
+            ->assertNotFound();
     }
 
     public function test_draft_is_saved_and_submission_is_validated(): void

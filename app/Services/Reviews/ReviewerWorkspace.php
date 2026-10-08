@@ -2,7 +2,6 @@
 
 namespace App\Services\Reviews;
 
-use App\Enums\ArticleFileType;
 use App\Enums\ArticleVersionType;
 use App\Enums\EditorialDecisionType;
 use App\Enums\Language;
@@ -143,12 +142,12 @@ class ReviewerWorkspace
                     : null,
                 'files' => $canSeeFiles
                     ? $article->files
-                        ->filter(fn (ArticleFile $file): bool => in_array($file->type, [ArticleFileType::Manuscript, ArticleFileType::Revision, ArticleFileType::Supplementary], true))
+                        ->filter(fn (ArticleFile $file): bool => in_array($file->type, ReviewService::REVIEWER_FILE_TYPES, true))
                         ->sortByDesc('id')
                         ->values()
                         ->map(fn (ArticleFile $file): array => [
                             'uuid' => $file->uuid,
-                            'name' => $file->original_name,
+                            'name' => ReviewService::anonymousName($file),
                             'typeLabel' => $file->type->label(),
                             'extension' => $file->extension(),
                             'size' => $file->size,

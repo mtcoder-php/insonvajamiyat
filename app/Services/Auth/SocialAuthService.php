@@ -13,6 +13,7 @@ use App\Services\Auth\OAuth\OAuthException;
 use App\Services\Auth\OAuth\OAuthUser;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 /**
  * Google / ORCID orqali kirish: akkauntni topish, bog'lash, uzish va yangi muallifni ro'yxatdan o'tkazish.
@@ -63,12 +64,20 @@ class SocialAuthService
         }
 
         $this->ensureCanSignIn($user);
-        $this->link($user, $provider, $oauth);
 
-        // Provayder shu emailni tasdiqlagan
-        if ($user->email_verified_at === null) {
-            $user->forceFill(['email_verified_at' => now()])->save();
+        // Xodim hisoblari email bo'yicha avtomatik bog'lanmaydi: parol bilan kirib,
+        // «Sozlamalar → Xavfsizlik» bo'limida bog'lanadi
+        if ($user->isStaff()) {
+            throw OAuthException::translated('Xodim hisobiga :provider ni avtomatik bog\'lab bo\'lmaydi. Parol bilan kiring va «Sozlamalar → Xavfsizlik» bo\'limida bog\'lang.', [
+                'provider' => $provider->label(),
+            ]);
         }
+
+        if ($user->email_verified_at === null) {
+            $this->claimUnverifiedAccount($user);
+        }
+
+        $this->link($user, $provider, $oauth);
 
         return $user;
     }
@@ -203,6 +212,38 @@ class SocialAuthService
         if ($user->is_blocked) {
             throw OAuthException::translated('Hisobingiz bloklangan. Tahririyat bilan bog\'laning.');
         }
+    }
+
+    /**
+     * Tasdiqlanmagan hisob: emailni hech kim tasdiqlamagan, demak parolni boshqa odam (masalan,
+     * shu email bilan oldindan ro'yxatdan o'tgan begona) qo'ygan bo'lishi mumkin. Email egasi
+     * provayder orqali kelganda — begona parol, "eslab qolish" tokeni, 2FA va boshqa sessiyalar bekor qilinadi.
+     */
+    private function claimUnverifiedAccount(User $user): void
+    {
+        $user->forceFill([
+            'email_verified_at' => now(),
+            'password' => null,
+            'remember_token' => Str::random(60),
+            'two_factor_secret' => null,
+            'two_factor_recovery_codes' => null,
+            'two_factor_confirmed_at' => null,
+        ])->save();
+
+        if (config('session.driver') === 'database') {
+            DB::connection(config('session.connection'))
+                ->table((string) config('session.table', 'sessions'))
+                ->where('user_id', $user->id)
+                ->delete();
+        }
+
+        $this->audit->log(
+            AuditEvent::UserPasswordChanged,
+            $user,
+            ['reason' => 'social_claim'],
+            'Tasdiqlanmagan hisob tashqi akkaunt orqali tasdiqlandi, eski parol bekor qilindi',
+            $user,
+        );
     }
 
     /** ORCID orqali tasdiqlangan iD — profil bo'sh bo'lsa va boshqa profilda bo'lmasa yoziladi */
