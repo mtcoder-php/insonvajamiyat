@@ -93,18 +93,7 @@ function openIssue(event: Event): void {
 </script>
 
 <template>
-    <Head :title="t('Jurnal sonlari arxivi')">
-        <meta
-            head-key="description"
-            name="description"
-            :content="
-                t(
-                    '«:name» ilmiy jurnalining barcha sonlari: maqolalar ro\'yxati va elektron versiyalar.',
-                    { name: $page.props.journal.name },
-                )
-            "
-        />
-    </Head>
+    <Head :title="t('Jurnal sonlari arxivi')" />
 
     <WebHero
         :title="t('Jurnal sonlari arxivi')"
@@ -371,6 +360,7 @@ function openIssue(event: Event): void {
                                             : 'bg-white text-navy-600 ring-1 ring-line hover:text-brand-700 hover:ring-brand-200',
                                     )
                                 "
+                                :aria-pressed="filters.year === y.year"
                                 @click="setYear(y.year)"
                             >
                                 {{ y.year }}

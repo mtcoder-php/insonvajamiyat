@@ -27,6 +27,8 @@ declare module '@inertiajs/core' {
             auth: Auth;
             journal: Journal;
             locale: LocaleCode;
+            /** Meta description (SeoMeta) — SeoDescription komponenti */
+            seoDescription?: string;
             locales: LocaleOption[];
             notifications: NotificationSummary | null;
             sidebarOpen: boolean;

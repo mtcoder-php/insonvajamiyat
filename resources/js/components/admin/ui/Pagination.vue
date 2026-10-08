@@ -9,9 +9,14 @@ import { t } from '@/lib/i18n';
 /**
  * Laravel paginator havolalari: "1–15 / 128" va sahifa raqamlari.
  */
-const props = defineProps<{
-    meta: Paginated<unknown>['meta'];
-}>();
+const props = withDefaults(
+    defineProps<{
+        meta: Paginated<unknown>['meta'];
+        /** Admin jadvallarida joyida qoladi; ommaviy katalogda yangi sahifa tepadan ochiladi */
+        preserveScroll?: boolean;
+    }>(),
+    { preserveScroll: true },
+);
 
 // Birinchi va oxirgi element — "oldingi"/"keyingi"
 const pages = computed(() => props.meta.links.slice(1, -1));
@@ -44,7 +49,7 @@ const itemClass =
             <component
                 :is="prev?.url ? Link : 'span'"
                 :href="prev?.url ?? undefined"
-                preserve-scroll
+                :preserve-scroll="preserveScroll"
                 preserve-state
                 :class="
                     cn(
@@ -65,7 +70,7 @@ const itemClass =
                 <Link
                     v-else
                     :href="page.url"
-                    preserve-scroll
+                    :preserve-scroll="preserveScroll"
                     preserve-state
                     :class="
                         cn(
@@ -84,7 +89,7 @@ const itemClass =
             <component
                 :is="next?.url ? Link : 'span'"
                 :href="next?.url ?? undefined"
-                preserve-scroll
+                :preserve-scroll="preserveScroll"
                 preserve-state
                 :class="
                     cn(

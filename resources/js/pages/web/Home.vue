@@ -35,6 +35,11 @@ defineProps<HomePageProps>();
 <template>
     <Head :title="t('Bosh sahifa')" />
 
+    <!-- Sahifaning yagona h1 sarlavhasi (slayd sarlavhalari — h2, almashganda yo'qolmaydi) -->
+    <h1 class="sr-only">
+        {{ $page.props.journal.name }} — {{ t('Ilmiy-nazariy jurnal') }}
+    </h1>
+
     <HeroSlider :slides="heroSlides" />
     <SubjectsStrip :subjects="subjects" />
 

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Services\Web\CatalogService;
 use App\Support\MediaUrl;
+use App\Support\Seo\SeoMeta;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -19,6 +20,7 @@ class ArticleCatalogController extends Controller
     {
         $filters = $this->filters($request);
         $articles = $catalog->search($filters);
+        app(SeoMeta::class)->describe('«:name» jurnalida nashr etilgan ilmiy maqolalar: mavzu, muallif, yil va kalit so\'z bo\'yicha qidiruv.');
 
         return Inertia::render('web/articles/Index', [
             'filters' => $filters,

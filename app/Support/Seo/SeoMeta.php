@@ -60,6 +60,24 @@ class SeoMeta
         return $this;
     }
 
+    /**
+     * Faqat tavsif (sahifa sarlavhasi PAGE_TITLES'dan olinadi). Kalit — o'zbekcha matn,
+     * joriy tilga tarjima qilinadi; :name — jurnal nomi.
+     */
+    public function describe(string $key): static
+    {
+        $text = __($key, ['name' => self::journal()]);
+        $this->description = self::clean(is_string($text) ? $text : $key);
+
+        return $this;
+    }
+
+    /** Yakuniy meta description (Blade va Inertia uchun bir xil) */
+    public function description(): string
+    {
+        return Str::limit($this->description ?? (Translations::line(config('journal.description')) ?? ''), 300);
+    }
+
     public function noindex(bool $value = true): static
     {
         $this->noindex = $value;
@@ -202,7 +220,6 @@ class SeoMeta
     public function resolve(string $component = ''): array
     {
         $journal = self::journal();
-        $default = config('journal.description');
         $public = $component === '' || str_starts_with($component, 'web/');
         $url = request()->url();
         $page = $this->title ?? Translations::line(self::PAGE_TITLES[$component] ?? null);
@@ -212,7 +229,7 @@ class SeoMeta
 
         return [
             'title' => $title,
-            'description' => Str::limit($this->description ?? (Translations::line($default) ?? ''), 300),
+            'description' => $this->description(),
             'image' => $image,
             'type' => $this->type,
             'url' => $url,

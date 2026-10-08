@@ -71,6 +71,7 @@ const isActive = (item: NavItem, index: number): boolean =>
                     v-for="(item, index) in navItems"
                     :key="index"
                     :href="item.href"
+                    :aria-current="isActive(item, index) ? 'page' : undefined"
                     :class="
                         cn(
                             'rounded-md px-3 py-2.5 text-sm font-medium hover:bg-accent',

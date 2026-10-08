@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import SeoDescription from '@/components/seo/SeoDescription.vue';
 import AuthBrandLayout from '@/layouts/auth/AuthBrandLayout.vue';
 
 /**
@@ -17,6 +18,7 @@ const {
 </script>
 
 <template>
+    <SeoDescription />
     <AuthBrandLayout :title="title" :description="description" :wide="wide">
         <slot />
     </AuthBrandLayout>

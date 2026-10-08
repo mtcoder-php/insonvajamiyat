@@ -26,6 +26,7 @@ class IssueController extends Controller
             ? $request->integer('year')
             : ($years[0] ?? (int) now()->year);
         $sort = $request->string('sort')->toString() === 'oldest' ? 'oldest' : 'newest';
+        app(SeoMeta::class)->describe('«:name» ilmiy jurnalining barcha sonlari: maqolalar ro\'yxati va elektron versiyalar.');
 
         return Inertia::render('web/issues/Index', [
             'filters' => ['year' => $year, 'sort' => $sort],

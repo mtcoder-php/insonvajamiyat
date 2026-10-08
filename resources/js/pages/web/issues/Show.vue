@@ -28,14 +28,7 @@ defineProps<IssuePageProps>();
 </script>
 
 <template>
-    <Head :title="t(':label — jurnal soni', { label: issue.label })">
-        <meta
-            v-if="issue.description"
-            head-key="description"
-            name="description"
-            :content="issue.description.slice(0, 300)"
-        />
-    </Head>
+    <Head :title="t(':label — jurnal soni', { label: issue.label })" />
 
     <section
         class="relative isolate overflow-hidden bg-navy-gradient text-white"
@@ -51,6 +44,7 @@ defineProps<IssuePageProps>();
                 :src="issue.coverUrl"
                 :number="issue.number"
                 :year="issue.year"
+                priority
                 class="w-44 shrink-0 shadow-[0_30px_60px_-30px_rgba(0,0,0,0.9)] md:w-52"
             />
             <div class="min-w-0 flex-1">

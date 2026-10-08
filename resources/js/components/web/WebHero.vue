@@ -19,13 +19,17 @@ defineProps<{
 
 <template>
     <section class="relative isolate overflow-hidden bg-[#f9f8f6]">
-        <img
-            v-if="image"
-            :src="image"
-            alt=""
-            aria-hidden="true"
-            class="absolute inset-y-0 right-0 -z-20 hidden h-full w-[62%] object-cover md:block"
-        />
+        <!-- Rasm faqat md+ ekranda ko'rinadi — mobil qurilma uni yuklab olmaydi (1px placeholder) -->
+        <picture v-if="image">
+            <source media="(min-width: 768px)" :srcset="image" />
+            <img
+                src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
+                alt=""
+                aria-hidden="true"
+                fetchpriority="high"
+                class="absolute inset-y-0 right-0 -z-20 hidden h-full w-[62%] object-cover md:block"
+            />
+        </picture>
         <div
             class="absolute inset-0 -z-10 bg-gradient-to-r from-[#f9f8f6] from-38% via-[#f9f8f6]/85 via-55% to-[#001e3c]/10"
             aria-hidden="true"

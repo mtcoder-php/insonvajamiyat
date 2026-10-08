@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { socialLabel } from '@/lib/social';
 import { Link, usePage } from '@inertiajs/vue3';
 import { Mail, MapPin, Phone } from '@lucide/vue';
 import { computed } from 'vue';
@@ -107,7 +108,7 @@ const year = new Date().getFullYear();
                     <li v-if="journal.contact.email">
                         <a
                             :href="`mailto:${journal.contact.email}`"
-                            class="flex items-start gap-2.5 whitespace-nowrap transition-colors hover:text-white"
+                            class="flex items-start gap-2.5 break-all transition-colors hover:text-white"
                         >
                             <Mail
                                 class="mt-0.5 size-4 shrink-0 text-gold-300"
@@ -141,7 +142,7 @@ const year = new Date().getFullYear();
                         :href="url"
                         target="_blank"
                         rel="noopener noreferrer"
-                        :aria-label="network"
+                        :aria-label="socialLabel(network)"
                         class="flex size-9 items-center justify-center rounded-full border border-white/15 transition-colors hover:border-white/40 hover:text-white"
                     >
                         <SocialIcon :network="network" />

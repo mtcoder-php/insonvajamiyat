@@ -67,6 +67,7 @@ const toggleRecoveryMode = (clearErrors: () => void): void => {
                     <div class="flex w-full items-center justify-center">
                         <InputOTP
                             id="otp"
+                            :aria-label="t('Tasdiqlash kodi')"
                             v-model="code"
                             :maxlength="6"
                             :disabled="processing"
