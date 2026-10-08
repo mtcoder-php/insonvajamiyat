@@ -3,6 +3,7 @@ import { ImagePlus, LoaderCircle, Trash2, Undo2 } from '@lucide/vue';
 import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { prepareImage } from '@/lib/image';
 import { cn } from '@/lib/utils';
+import { t } from '@/lib/i18n';
 
 /**
  * Rasm tanlash maydoni (yangilik, tadbir, kitob muqovasi, hamkor logosi):
@@ -128,7 +129,7 @@ function clear(): void {
                     />
                     <ImagePlus v-else class="size-6" />
                     <span class="font-semibold">{{
-                        preview ? 'Rasmni almashtirish' : 'Rasm tanlang'
+                        preview ? t('Rasmni almashtirish') : t('Rasm tanlang')
                     }}</span>
                     <span>{{ hint }}</span>
                 </span>
@@ -137,7 +138,7 @@ function clear(): void {
                 v-if="removable && preview"
                 type="button"
                 class="absolute top-2 right-2 inline-flex size-8 items-center justify-center rounded-lg bg-white/95 text-navy-600 shadow-sm ring-1 ring-black/5 transition-all hover:scale-105 hover:bg-red-50 hover:text-red-600"
-                aria-label="Rasmni olib tashlash"
+                :aria-label="t('Rasmni olib tashlash')"
                 @click.stop="clear"
             >
                 <Trash2 class="size-4" />
@@ -148,7 +149,7 @@ function clear(): void {
                 class="absolute top-2 right-2 inline-flex h-8 items-center gap-1.5 rounded-lg bg-white px-2.5 text-xs font-semibold text-navy-700 shadow-sm ring-1 ring-black/5 transition-colors hover:text-brand-700"
                 @click.stop="removed = false"
             >
-                <Undo2 class="size-3.5" /> Qaytarish
+                <Undo2 class="size-3.5" /> {{ t('Qaytarish') }}
             </button>
         </div>
         <p v-if="error" class="text-xs font-medium text-red-600">

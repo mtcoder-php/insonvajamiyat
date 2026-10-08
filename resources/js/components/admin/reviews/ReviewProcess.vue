@@ -4,6 +4,7 @@ import { computed } from 'vue';
 import { formatDate } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { ReviewDetail } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Taqrizlash jarayoni: taklif → qabul → taqriz → muharrir qarori.
@@ -19,16 +20,16 @@ const steps = computed<Step[]>(() => {
 
     return [
         {
-            title: 'Taklif yuborildi',
+            title: t('Taklif yuborildi'),
             hint: formatDate(r.invitedAt),
             state: 'done',
         },
         {
-            title: 'Taklif qabul qilindi',
+            title: t('Taklif qabul qilindi'),
             hint: accepted
                 ? formatDate(r.respondedAt)
                 : r.status === 'invited'
-                  ? 'Javobingiz kutilmoqda'
+                  ? t('Javobingiz kutilmoqda')
                   : r.statusLabel,
             state: accepted
                 ? 'done'
@@ -37,7 +38,7 @@ const steps = computed<Step[]>(() => {
                   : 'todo',
         },
         {
-            title: 'Taqriz jarayoni',
+            title: t('Taqriz jarayoni'),
             hint: completed
                 ? formatDate(r.completedAt)
                 : r.dueAt
@@ -50,8 +51,8 @@ const steps = computed<Step[]>(() => {
                   : 'todo',
         },
         {
-            title: 'Muharrir qarori',
-            hint: r.decisionMade ? 'Qaror qabul qilindi' : 'Kutilmoqda',
+            title: t('Muharrir qarori'),
+            hint: r.decisionMade ? t('Qaror qabul qilindi') : t('Kutilmoqda'),
             state: r.decisionMade ? 'done' : completed ? 'current' : 'todo',
         },
     ];
@@ -67,7 +68,7 @@ const dueChip = computed(() => {
     return d < 0
         ? `${Math.abs(d)} kun kechikdi`
         : d === 0
-          ? 'Bugun tugaydi'
+          ? t('Bugun tugaydi')
           : `${d} kun qoldi`;
 });
 </script>
@@ -78,7 +79,7 @@ const dueChip = computed(() => {
     >
         <div class="mb-4 flex items-center justify-between gap-3">
             <h2 class="font-sans text-[15px] font-bold text-navy-950">
-                Taqrizlash jarayoni
+                {{ t('Taqrizlash jarayoni') }}
             </h2>
             <span
                 v-if="dueChip"

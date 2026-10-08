@@ -4,6 +4,7 @@ import DashCard from '@/components/admin/dashboard/DashCard.vue';
 import { formatDateTime } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { LatestSubmission } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * "Yangi kelgan maqolalar" jadvali. Amal tugmalari admin maqola sahifalari
@@ -21,14 +22,14 @@ const pill: Record<LatestSubmission['statusGroup'], string> = {
 };
 
 const actions = [
-    { key: 'view', label: "Ko'rish", icon: Eye },
-    { key: 'edit', label: 'Tahrirlash', icon: PenLine },
-    { key: 'more', label: 'Boshqa amallar', icon: MoreHorizontal },
+    { key: 'view', label: t("Ko'rish"), icon: Eye },
+    { key: 'edit', label: t('Tahrirlash'), icon: PenLine },
+    { key: 'more', label: t('Boshqa amallar'), icon: MoreHorizontal },
 ];
 </script>
 
 <template>
-    <DashCard title="Yangi kelgan maqolalar">
+    <DashCard :title="t('Yangi kelgan maqolalar')">
         <div v-if="items.length" class="-mx-5 overflow-x-auto">
             <table class="w-full min-w-[720px] text-left text-[13px]">
                 <thead>
@@ -36,12 +37,14 @@ const actions = [
                         class="border-y border-line bg-[#f8fafc] text-[11px] font-semibold tracking-wide text-navy-500 uppercase"
                     >
                         <th class="w-12 py-2.5 pr-2 pl-5">№</th>
-                        <th class="py-2.5 pr-4">Maqola nomi</th>
-                        <th class="py-2.5 pr-4">Muallif</th>
-                        <th class="py-2.5 pr-4">Jurnal soni</th>
-                        <th class="py-2.5 pr-4">Yuborilgan sana</th>
-                        <th class="py-2.5 pr-4">Holati</th>
-                        <th class="py-2.5 pr-5 text-right">Amallar</th>
+                        <th class="py-2.5 pr-4">{{ t('Maqola nomi') }}</th>
+                        <th class="py-2.5 pr-4">{{ t('Muallif') }}</th>
+                        <th class="py-2.5 pr-4">{{ t('Jurnal soni') }}</th>
+                        <th class="py-2.5 pr-4">{{ t('Yuborilgan sana') }}</th>
+                        <th class="py-2.5 pr-4">{{ t('Holati') }}</th>
+                        <th class="py-2.5 pr-5 text-right">
+                            {{ t('Amallar') }}
+                        </th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-line">
@@ -103,7 +106,11 @@ const actions = [
                                     :key="action.key"
                                     type="button"
                                     disabled
-                                    :title="`${action.label} — tez orada`"
+                                    :title="
+                                        t(':label — tez orada', {
+                                            label: action.label,
+                                        })
+                                    "
                                     :aria-label="action.label"
                                     class="flex size-8 cursor-not-allowed items-center justify-center rounded-lg border border-line text-navy-500 transition-colors group-hover:border-brand-200 group-hover:text-brand-600"
                                 >
@@ -119,7 +126,7 @@ const actions = [
             </table>
         </div>
         <p v-else class="py-10 text-center text-sm text-navy-500">
-            Hozircha yangi maqolalar yo'q
+            {{ t("Hozircha yangi maqolalar yo'q") }}
         </p>
     </DashCard>
 </template>

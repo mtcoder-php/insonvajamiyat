@@ -4,6 +4,7 @@ import { ArrowRight } from '@lucide/vue';
 import type { InertiaLinkProps } from '@inertiajs/vue3';
 import type { HTMLAttributes } from 'vue';
 import { cn } from '@/lib/utils';
+import { t } from '@/lib/i18n';
 
 /**
  * Dashboard kartasi: oq fon, ingichka chegara, sarlavha va "Barchasi →".
@@ -38,7 +39,7 @@ const props = defineProps<{
                     :href="href"
                     class="group inline-flex items-center gap-1 text-xs font-medium text-brand-700 hover:text-brand-600"
                 >
-                    {{ linkText ?? 'Barchasi' }}
+                    {{ linkText ?? t('Barchasi') }}
                     <ArrowRight
                         class="size-3.5 transition-transform group-hover:translate-x-0.5"
                     />

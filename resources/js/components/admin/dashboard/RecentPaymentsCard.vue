@@ -4,6 +4,7 @@ import DashCard from '@/components/admin/dashboard/DashCard.vue';
 import { formatDateTime, formatSum } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { RecentPayment } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * "So'nggi to'lovlar": provayder belgisi, summa, holat va sana.
@@ -16,7 +17,7 @@ const provider: Record<
 > = {
     click: { label: 'Click', mark: 'C', class: 'bg-[#e8f3ff] text-[#0b6bd3]' },
     payme: { label: 'Payme', mark: 'P', class: 'bg-[#e6f7f3] text-[#0a7d61]' },
-    manual: { label: "Qo'lda", mark: '', class: 'bg-navy-50 text-navy-700' },
+    manual: { label: t("Qo'lda"), mark: '', class: 'bg-navy-50 text-navy-700' },
 };
 
 const statusClass: Record<string, string> = {
@@ -29,7 +30,7 @@ const statusClass: Record<string, string> = {
 </script>
 
 <template>
-    <DashCard title="So'nggi to'lovlar">
+    <DashCard :title="t('So\'nggi to\'lovlar')">
         <ul v-if="items.length" class="-mx-2 space-y-1">
             <li
                 v-for="item in items"
@@ -82,7 +83,7 @@ const statusClass: Record<string, string> = {
             </li>
         </ul>
         <p v-else class="py-8 text-center text-sm text-navy-500">
-            Hozircha to'lovlar yo'q
+            {{ t("Hozircha to'lovlar yo'q") }}
         </p>
     </DashCard>
 </template>

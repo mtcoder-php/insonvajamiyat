@@ -13,6 +13,7 @@ import { computed } from 'vue';
 import { formatNumber } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { StatCardData } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Statistika kartasi: rangli ikonka, nom, qiymat va o'tgan davrga nisbatan o'zgarish.
@@ -24,27 +25,27 @@ const meta: Record<
     { label: string; icon: Component; tint: string }
 > = {
     total: {
-        label: 'Jami maqolalar',
+        label: t('Jami maqolalar'),
         icon: FileText,
         tint: 'bg-brand-50 text-brand-600',
     },
     reviewing: {
-        label: "Ko'rib chiqilayotganlar",
+        label: t("Ko'rib chiqilayotganlar"),
         icon: Clock3,
         tint: 'bg-amber-50 text-amber-600',
     },
     revision: {
-        label: 'Tuzatish talab qilinganlar',
+        label: t('Tuzatish talab qilinganlar'),
         icon: FilePenLine,
         tint: 'bg-red-50 text-red-600',
     },
     accepted: {
-        label: 'Qabul qilinganlar',
+        label: t('Qabul qilinganlar'),
         icon: CircleCheck,
         tint: 'bg-emerald-50 text-emerald-600',
     },
     published: {
-        label: 'Nashr etilganlar',
+        label: t('Nashr etilganlar'),
         icon: BookOpenCheck,
         tint: 'bg-violet-50 text-violet-600',
     },
@@ -53,8 +54,8 @@ const meta: Record<
 const info = computed(() => meta[props.card.key]);
 const periodText = computed(() =>
     props.card.period === 'week'
-        ? "o'tgan haftaga nisbatan"
-        : "o'tgan oyga nisbatan",
+        ? t("o'tgan haftaga nisbatan")
+        : t("o'tgan oyga nisbatan"),
 );
 const trendUp = computed(() => (props.card.trend ?? 0) >= 0);
 </script>

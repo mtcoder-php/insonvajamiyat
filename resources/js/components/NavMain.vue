@@ -11,6 +11,7 @@ import {
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { usePermissions } from '@/composables/usePermissions';
 import type { NavItem } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Sidebar menyu guruhi (super admin dashboard.png):
@@ -62,7 +63,7 @@ function badgeOf(item: NavItem): string | null {
             <SidebarGroupLabel
                 class="text-[11px] font-semibold tracking-wider text-sidebar-foreground/50 uppercase"
             >
-                {{ label }}
+                {{ t(label) }}
             </SidebarGroupLabel>
         </template>
         <SidebarMenu class="gap-1">
@@ -70,7 +71,7 @@ function badgeOf(item: NavItem): string | null {
                 <SidebarMenuButton
                     as-child
                     :is-active="isActive(item)"
-                    :tooltip="item.title"
+                    :tooltip="t(item.title)"
                     class="group/nav h-10 text-sidebar-foreground/85 transition-all duration-200 hover:bg-white/[0.06] hover:text-white data-[active=true]:bg-gradient-to-r data-[active=true]:from-brand-600 data-[active=true]:to-brand-500 data-[active=true]:text-white data-[active=true]:shadow-[0_8px_20px_-10px_rgba(0,108,246,0.9)] [&>svg]:size-[18px]"
                 >
                     <Link :href="item.href">
@@ -81,7 +82,7 @@ function badgeOf(item: NavItem): string | null {
                         <span
                             class="transition-transform duration-200 group-hover/nav:translate-x-0.5"
                         >
-                            {{ item.title }}
+                            {{ t(item.title) }}
                         </span>
                         <span
                             v-if="badgeOf(item)"

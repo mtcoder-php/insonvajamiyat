@@ -17,6 +17,7 @@ import DecisionDialog from '@/components/admin/articles/DecisionDialog.vue';
 import SelectInput from '@/components/admin/ui/SelectInput.vue';
 import { cn } from '@/lib/utils';
 import type { EditorialArticle, EditorialDecisionKey } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * O'ng ustun "Amallar": mas'ul muharrir, ko'rib chiqishga olish, qarorlar.
@@ -69,13 +70,13 @@ const item =
 </script>
 
 <template>
-    <DashCard title="Amallar">
+    <DashCard :title="t('Amallar')">
         <div class="grid gap-2">
             <div v-if="article.can.assign" class="mb-2 grid gap-1.5">
                 <label
                     for="handling-editor"
                     class="text-[11px] font-semibold tracking-wide text-navy-500 uppercase"
-                    >Mas'ul muharrir</label
+                    >{{ t("Mas'ul muharrir") }}</label
                 >
                 <div class="flex gap-2">
                     <SelectInput
@@ -83,7 +84,9 @@ const item =
                         v-model="editorForm.editor_id"
                         class="flex-1"
                     >
-                        <option :value="null">— Biriktirilmagan —</option>
+                        <option :value="null">
+                            {{ t('— Biriktirilmagan —') }}
+                        </option>
                         <option
                             v-for="editor in editors"
                             :key="editor.id"
@@ -102,7 +105,7 @@ const item =
                         "
                         @click="assign"
                     >
-                        Saqlash
+                        {{ t('Saqlash') }}
                     </button>
                 </div>
             </div>
@@ -110,7 +113,7 @@ const item =
                 v-else-if="article.handlingEditor"
                 class="mb-2 text-xs text-navy-500"
             >
-                Mas'ul muharrir:
+                {{ t("Mas'ul muharrir:") }}
                 <span class="font-semibold text-navy-800">{{
                     article.handlingEditor.name
                 }}</span>
@@ -133,7 +136,7 @@ const item =
                     class="size-[18px] animate-spin"
                 />
                 <PlayCircle v-else class="size-[18px]" />
-                Ko'rib chiqishga olish
+                {{ t("Ko'rib chiqishga olish") }}
             </button>
 
             <button
@@ -142,7 +145,9 @@ const item =
                 :title="
                     article.can.invite
                         ? undefined
-                        : 'Taqrizchi faqat ko\'rib chiqilayotgan maqolaga tayinlanadi'
+                        : t(
+                              'Taqrizchi faqat ko\'rib chiqilayotgan maqolaga tayinlanadi',
+                          )
                 "
                 :class="
                     cn(
@@ -153,7 +158,9 @@ const item =
                 @click="emit('invite')"
             >
                 <UsersRound class="size-[18px] text-brand-600" />
-                <span class="flex-1 text-left">Taqrizchilarni tayinlash</span>
+                <span class="flex-1 text-left">{{
+                    t('Taqrizchilarni tayinlash')
+                }}</span>
                 <span
                     v-if="article.reviews.length"
                     class="rounded-full bg-brand-50 px-1.5 text-[10px] font-semibold text-brand-700 tabular-nums"
@@ -181,7 +188,9 @@ const item =
                 @click="emit('message')"
             >
                 <MessageCircle class="size-[18px] text-brand-600" />
-                <span class="flex-1 text-left">Muallifga xabar yuborish</span>
+                <span class="flex-1 text-left">{{
+                    t('Muallifga xabar yuborish')
+                }}</span>
                 <span
                     v-if="article.messages.length"
                     class="rounded-full bg-brand-50 px-1.5 text-[10px] font-semibold text-brand-700"
@@ -200,7 +209,7 @@ const item =
                 "
             >
                 <BookCheck class="size-[18px] text-teal-600" />
-                Nashr jarayonida ochish
+                {{ t('Nashr jarayonida ochish') }}
             </Link>
 
             <template v-if="article.can.decide">
@@ -216,7 +225,7 @@ const item =
                     @click="open('request_revision')"
                 >
                     <FilePenLine class="size-[18px] text-amber-600" />
-                    Tuzatish talab qilish
+                    {{ t('Tuzatish talab qilish') }}
                 </button>
                 <button
                     type="button"
@@ -230,7 +239,7 @@ const item =
                     @click="open('reject')"
                 >
                     <CircleX class="size-[18px]" />
-                    Maqolani rad etish
+                    {{ t('Maqolani rad etish') }}
                 </button>
                 <button
                     type="button"
@@ -244,7 +253,7 @@ const item =
                     @click="open('accept')"
                 >
                     <CircleCheck class="size-[18px]" />
-                    Qabul qilish (nashrga)
+                    {{ t('Qabul qilish (nashrga)') }}
                 </button>
             </template>
 
@@ -256,8 +265,14 @@ const item =
                 "
                 class="mt-1 text-xs leading-relaxed text-navy-500"
             >
-                Maqolaning hozirgi holatida («{{ article.statusLabel }}») qaror
-                berilmaydi.
+                {{
+                    t(
+                        'Maqolaning hozirgi holatida («:status») qaror berilmaydi.',
+                        {
+                            status: article.statusLabel,
+                        },
+                    )
+                }}
             </p>
         </div>
 
@@ -265,8 +280,11 @@ const item =
             class="mt-4 flex items-start gap-3 rounded-lg bg-[#f5f8fc] p-3 text-xs leading-relaxed text-navy-600"
         >
             <ShieldCheck class="mt-0.5 size-5 shrink-0 text-brand-600" />
-            Ichki izohlar va taqrizchilar ma'lumotlari muallifga ko'rinmaydi
-            (blind review).
+            {{
+                t(
+                    "Ichki izohlar va taqrizchilar ma'lumotlari muallifga ko'rinmaydi (blind review).",
+                )
+            }}
         </div>
 
         <DecisionDialog

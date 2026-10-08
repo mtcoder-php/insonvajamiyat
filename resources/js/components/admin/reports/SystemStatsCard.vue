@@ -15,6 +15,7 @@ import Sparkline from '@/components/admin/reports/Sparkline.vue';
 import { formatNumber } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { ReportSystem } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * "Tizim statistikasi" va davrdagi ro'yxatdan o'tishlar trendi.
@@ -25,17 +26,17 @@ const meta: Record<
     ReportSystem['items'][number]['key'],
     { label: string; icon: Component }
 > = {
-    users: { label: 'Jami foydalanuvchilar', icon: Users },
-    new_users: { label: "Davrda ro'yxatdan o'tgan", icon: UserPlus },
-    online: { label: 'Faol (24 soat)', icon: Wifi },
-    issues: { label: 'Chop etilgan sonlar', icon: BookCopy },
-    archive: { label: 'Maqolalar arxivi', icon: LibraryBig },
-    tokens: { label: 'AI tokenlar (davr)', icon: Coins },
+    users: { label: t('Jami foydalanuvchilar'), icon: Users },
+    new_users: { label: t("Davrda ro'yxatdan o'tgan"), icon: UserPlus },
+    online: { label: t('Faol (24 soat)'), icon: Wifi },
+    issues: { label: t('Chop etilgan sonlar'), icon: BookCopy },
+    archive: { label: t('Maqolalar arxivi'), icon: LibraryBig },
+    tokens: { label: t('AI tokenlar (davr)'), icon: Coins },
 };
 </script>
 
 <template>
-    <DashCard title="Tizim statistikasi">
+    <DashCard :title="t('Tizim statistikasi')">
         <ul class="space-y-0.5">
             <li
                 v-for="item in data.items"
@@ -72,11 +73,11 @@ const meta: Record<
         </ul>
         <div class="mt-3 border-t border-line pt-3">
             <p class="mb-1 text-[11px] font-medium text-navy-400">
-                Ro'yxatdan o'tishlar dinamikasi
+                {{ t("Ro'yxatdan o'tishlar dinamikasi") }}
             </p>
             <Sparkline
                 :values="data.registrations"
-                label="Ro'yxatdan o'tishlar dinamikasi"
+                :label="t('Ro\'yxatdan o\'tishlar dinamikasi')"
             />
         </div>
     </DashCard>

@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue';
 import { formatNumber } from '@/lib/format';
 import type { ReportShareItem } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Halqa diagramma: markazda jami, yonida qiymat va ulushli legenda.
@@ -15,7 +16,7 @@ const props = withDefaults(
         centerValue?: number;
         emptyText?: string;
     }>(),
-    { centerValue: undefined, emptyText: "Tanlangan davrda ma'lumot yo'q" },
+    { centerValue: undefined, emptyText: undefined },
 );
 
 const PALETTE = ['#1a82f7', '#0fa37f', '#f59e0b', '#8b5cf6', '#e5487a'];
@@ -66,7 +67,7 @@ const active = computed(
             v-if="items.length === 0"
             class="py-10 text-center text-sm text-navy-400"
         >
-            {{ emptyText }}
+            {{ emptyText ?? t("Tanlangan davrda ma'lumot yo'q") }}
         </p>
         <div v-else class="flex flex-col items-center gap-5 @md:flex-row">
             <div class="relative size-36 shrink-0">

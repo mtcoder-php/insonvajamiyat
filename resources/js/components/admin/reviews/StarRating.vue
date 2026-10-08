@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Star } from '@lucide/vue';
 import { cn } from '@/lib/utils';
+import { t } from '@/lib/i18n';
 
 /**
  * Yulduzli baho (1–5, 0.5 qadam). Har bir yulduzning chap yarmi — x.5, o'ng yarmi — butun.
@@ -32,7 +33,7 @@ function set(value: number): void {
     <div
         class="flex items-center gap-1"
         role="radiogroup"
-        aria-label="Umumiy baho"
+        :aria-label="t('Umumiy baho')"
     >
         <span
             v-for="index in 5"
@@ -62,13 +63,13 @@ function set(value: number): void {
                 <button
                     type="button"
                     class="absolute inset-y-0 left-0 w-1/2 cursor-pointer"
-                    :aria-label="`${index - 0.5} ball`"
+                    :aria-label="t(':score ball', { score: index - 0.5 })"
                     @click="set(index - 0.5)"
                 />
                 <button
                     type="button"
                     class="absolute inset-y-0 right-0 w-1/2 cursor-pointer"
-                    :aria-label="`${index} ball`"
+                    :aria-label="t(':score ball', { score: index })"
                     @click="set(index)"
                 />
             </template>

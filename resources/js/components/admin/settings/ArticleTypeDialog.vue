@@ -9,6 +9,7 @@ import { formatSum } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { SettingsArticleType, Translated } from '@/types';
 import TranslatableField from './TranslatableField.vue';
+import { t } from '@/lib/i18n';
 
 /** Maqola turi va nashr narxi (0 — bepul) */
 const props = defineProps<{
@@ -82,10 +83,14 @@ function submit(): void {
 <template>
     <ActionDialog
         v-model:open="open"
-        :title="type ? 'Maqola turini tahrirlash' : 'Yangi maqola turi'"
-        description="Muallif maqola yuborishda turni tanlaydi; narx nashr to'lovi summasi bo'ladi."
+        :title="type ? t('Maqola turini tahrirlash') : t('Yangi maqola turi')"
+        :description="
+            t(
+                'Muallif maqola yuborishda turni tanlaydi; narx nashr to\'lovi summasi bo\'ladi.',
+            )
+        "
         :icon="type ? BadgeDollarSign : FilePlus2"
-        :confirm-text="type ? 'Saqlash' : 'Qo\'shish'"
+        :confirm-text="type ? t('Saqlash') : t('Qo\'shish')"
         :processing="form.processing"
         size="lg"
         @confirm="submit"
@@ -93,32 +98,32 @@ function submit(): void {
         <div class="grid gap-4">
             <TranslatableField
                 v-model="form.name"
-                label="Nomi"
+                :label="t('Nomi')"
                 field="name"
                 :errors="errors"
                 required
                 :maxlength="150"
-                placeholder="Masalan: Ilmiy maqola"
+                :placeholder="t('Masalan: Ilmiy maqola')"
             />
             <TranslatableField
                 v-model="form.description"
-                label="Tavsif"
+                :label="t('Tavsif')"
                 field="description"
                 :errors="errors"
                 multiline
                 :maxlength="1000"
-                placeholder="Hajmi, talablar, muddat…"
+                :placeholder="t('Hajmi, talablar, muddat…')"
             />
             <div class="grid gap-3 sm:grid-cols-3">
                 <FormField
-                    label="Narx (so'm)"
+                    :label="t('Narx (so\'m)')"
                     for="type-price"
                     required
                     :error="errors.price"
                     :hint="
                         Number(form.price) > 0
                             ? formatSum(Number(form.price))
-                            : 'Bepul — to\'lovsiz'
+                            : t('Bepul — to\'lovsiz')
                     "
                 >
                     <input
@@ -131,10 +136,10 @@ function submit(): void {
                     />
                 </FormField>
                 <FormField
-                    label="Ko'rib chiqish (kun)"
+                    :label="t('Ko\'rib chiqish (kun)')"
                     for="type-days"
                     :error="errors.review_days"
-                    hint="Taxminiy muddat"
+                    :hint="t('Taxminiy muddat')"
                 >
                     <input
                         id="type-days"
@@ -146,7 +151,7 @@ function submit(): void {
                     />
                 </FormField>
                 <FormField
-                    label="Tartib"
+                    :label="t('Tartib')"
                     for="type-order"
                     :error="errors.sort_order"
                 >
@@ -163,8 +168,11 @@ function submit(): void {
                 v-if="priceChanged"
                 class="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900"
             >
-                Yangi narx faqat bundan keyin yuboriladigan maqolalarga tatbiq
-                etiladi; o'zgarish audit logga yoziladi.
+                {{
+                    t(
+                        "Yangi narx faqat bundan keyin yuboriladigan maqolalarga tatbiq etiladi; o'zgarish audit logga yoziladi.",
+                    )
+                }}
             </p>
             <label
                 class="flex cursor-pointer items-center gap-2 text-[13px] text-navy-800"
@@ -174,7 +182,7 @@ function submit(): void {
                     type="checkbox"
                     class="size-4 accent-brand-600"
                 />
-                Faol (maqola yuborish formasida tanlash mumkin)
+                {{ t('Faol (maqola yuborish formasida tanlash mumkin)') }}
             </label>
         </div>
     </ActionDialog>

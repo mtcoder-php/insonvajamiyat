@@ -3,6 +3,7 @@ import { router } from '@inertiajs/vue3';
 import { Trash2 } from '@lucide/vue';
 import { ref } from 'vue';
 import ActionDialog from '@/components/admin/ui/ActionDialog.vue';
+import { t } from '@/lib/i18n';
 
 /** O'chirishni tasdiqlash (server xatosi — masalan, maqolasi bor yo'nalish — shu yerda ko'rsatiladi) */
 const props = defineProps<{
@@ -26,7 +27,7 @@ function confirm(): void {
         preserveScroll: true,
         onSuccess: () => (open.value = false),
         onError: (errors) =>
-            (error.value = Object.values(errors)[0] ?? "O'chirib bo'lmadi."),
+            (error.value = Object.values(errors)[0] ?? t("O'chirib bo'lmadi.")),
         onFinish: () => (processing.value = false),
     });
 }
@@ -39,7 +40,7 @@ function confirm(): void {
         :description="description"
         :icon="Trash2"
         tone="danger"
-        confirm-text="O'chirish"
+        :confirm-text="t('O\'chirish')"
         :processing="processing"
         @confirm="confirm"
     >

@@ -12,6 +12,7 @@ import DashCard from '@/components/admin/dashboard/DashCard.vue';
 import { formatNumber, formatSum } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { ReportQuickItem } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * "Tezkor ma'lumotlar": bugungi ko'rsatkichlar (kechagiga nisbatan) va kutilayotgan taqrizlar.
@@ -23,23 +24,23 @@ const meta: Record<
     { label: string; icon: Component; tint: string; sum?: boolean }
 > = {
     submitted: {
-        label: 'Bugungi maqolalar',
+        label: t('Bugungi maqolalar'),
         icon: FilePlus2,
         tint: 'bg-brand-50 text-brand-600',
     },
     reviews: {
-        label: 'Kutilayotgan taqrizlar',
+        label: t('Kutilayotgan taqrizlar'),
         icon: ClipboardPen,
         tint: 'bg-amber-50 text-amber-600',
     },
     payments: {
-        label: "To'lovlar (bugun)",
+        label: t("To'lovlar (bugun)"),
         icon: Wallet,
         tint: 'bg-emerald-50 text-emerald-600',
         sum: true,
     },
     ai: {
-        label: "AI so'rovlari (bugun)",
+        label: t("AI so'rovlari (bugun)"),
         icon: BrainCircuit,
         tint: 'bg-violet-50 text-violet-600',
     },
@@ -47,7 +48,7 @@ const meta: Record<
 </script>
 
 <template>
-    <DashCard title="Tezkor ma'lumotlar">
+    <DashCard :title="t('Tezkor ma\'lumotlar')">
         <ul class="space-y-1">
             <li
                 v-for="item in items"
@@ -76,7 +77,9 @@ const meta: Record<
                         {{
                             meta[item.key].sum
                                 ? formatSum(item.value)
-                                : `${formatNumber(item.value)} ta`
+                                : t(':value ta', {
+                                      value: formatNumber(item.value),
+                                  })
                         }}
                     </p>
                     <p v-if="item.hint" class="text-[11px] text-red-600">
@@ -93,7 +96,7 @@ const meta: Record<
                                 : 'text-red-600',
                         )
                     "
-                    title="Kechagiga nisbatan"
+                    :title="t('Kechagiga nisbatan')"
                 >
                     <ArrowUp v-if="item.trend >= 0" class="size-3.5" />
                     <ArrowDown v-else class="size-3.5" />

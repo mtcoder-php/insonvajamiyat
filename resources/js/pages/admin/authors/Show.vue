@@ -26,6 +26,7 @@ import { cn } from '@/lib/utils';
 import { dashboard } from '@/routes/admin';
 import { index } from '@/routes/admin/authors';
 import type { AuthorShowProps } from '@/types';
+import { t, tk } from '@/lib/i18n';
 
 /**
  * Muallif sahifasi: profil, ko'rsatkichlar, holatlar taqsimoti, maqolalar va to'lovlar.
@@ -35,20 +36,20 @@ const props = defineProps<AuthorShowProps>();
 defineOptions({
     layout: {
         breadcrumbs: [
-            { title: 'Admin panel', href: dashboard() },
-            { title: 'Mualliflar', href: index() },
-            { title: 'Muallif' },
+            { title: tk('Admin panel'), href: dashboard() },
+            { title: tk('Mualliflar'), href: index() },
+            { title: tk('Muallif') },
         ],
     },
 });
 
 const groups = [
-    { key: 'new', label: 'Yangi', bar: 'bg-brand-500' },
-    { key: 'reviewing', label: "Ko'rib chiqilmoqda", bar: 'bg-sky-500' },
-    { key: 'revision', label: 'Tuzatishda', bar: 'bg-amber-500' },
-    { key: 'accepted', label: 'Qabul qilingan', bar: 'bg-emerald-500' },
-    { key: 'published', label: 'Nashr etilgan', bar: 'bg-violet-500' },
-    { key: 'closed', label: 'Rad / qaytarilgan', bar: 'bg-red-400' },
+    { key: 'new', label: t('Yangi'), bar: 'bg-brand-500' },
+    { key: 'reviewing', label: t("Ko'rib chiqilmoqda"), bar: 'bg-sky-500' },
+    { key: 'revision', label: t('Tuzatishda'), bar: 'bg-amber-500' },
+    { key: 'accepted', label: t('Qabul qilingan'), bar: 'bg-emerald-500' },
+    { key: 'published', label: t('Nashr etilgan'), bar: 'bg-violet-500' },
+    { key: 'closed', label: t('Rad / qaytarilgan'), bar: 'bg-red-400' },
 ] as const;
 
 type GroupKey = (typeof groups)[number]['key'];
@@ -88,7 +89,7 @@ const visiblePayments = computed(() =>
 const tiles = computed(() => [
     {
         key: 'articles',
-        label: 'Maqolalar',
+        label: t('Maqolalar'),
         value: formatNumber(props.stats.articles),
         hint:
             props.stats.coauthored > 0
@@ -101,7 +102,7 @@ const tiles = computed(() => [
     },
     {
         key: 'published',
-        label: 'Nashr etilgan',
+        label: t('Nashr etilgan'),
         value: formatNumber(props.stats.groups.published),
         hint: props.stats.articles
             ? `${Math.round((props.stats.groups.published / props.stats.articles) * 100)}% maqolalar`
@@ -111,7 +112,7 @@ const tiles = computed(() => [
     },
     {
         key: 'views',
-        label: "Ko'rishlar",
+        label: t("Ko'rishlar"),
         value: formatNumber(props.stats.views),
         hint: `${formatNumber(props.stats.downloads)} yuklab olish`,
         icon: Eye,
@@ -121,7 +122,7 @@ const tiles = computed(() => [
         ? [
               {
                   key: 'paid',
-                  label: "To'langan",
+                  label: t("To'langan"),
                   value: formatSum(props.stats.paid),
                   hint: `${props.payments?.length ?? 0} ta to'lov`,
                   icon: Wallet,
@@ -154,7 +155,7 @@ const paymentTone: Record<string, string> = {
             <ArrowLeft
                 class="size-3.5 transition-transform group-hover:-translate-x-0.5"
             />
-            Mualliflar ro'yxati
+            {{ t("Mualliflar ro'yxati") }}
         </Link>
 
         <PersonHeader :profile="profile">
@@ -162,13 +163,13 @@ const paymentTone: Record<string, string> = {
                 <span
                     class="inline-flex items-center gap-1 rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-semibold text-brand-700 ring-1 ring-brand-200 ring-inset"
                 >
-                    <PenTool class="size-3" /> Muallif
+                    <PenTool class="size-3" /> {{ t('Muallif') }}
                 </span>
                 <span
                     v-if="urls.reviewer"
                     class="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-semibold text-amber-700 ring-1 ring-amber-200 ring-inset"
                 >
-                    <NotebookPen class="size-3" /> Taqrizchi ham
+                    <NotebookPen class="size-3" /> {{ t('Taqrizchi ham') }}
                 </span>
             </template>
             <template #actions>
@@ -177,14 +178,14 @@ const paymentTone: Record<string, string> = {
                     :href="urls.reviewer"
                     :class="secondaryButtonClass"
                 >
-                    <NotebookPen class="size-4" /> Taqrizchi profili
+                    <NotebookPen class="size-4" /> {{ t('Taqrizchi profili') }}
                 </Link>
                 <Link
                     v-if="urls.user"
                     :href="urls.user"
                     :class="secondaryButtonClass"
                 >
-                    <ShieldCheck class="size-4" /> Hisobni boshqarish
+                    <ShieldCheck class="size-4" /> {{ t('Hisobni boshqarish') }}
                 </Link>
             </template>
         </PersonHeader>
@@ -210,8 +211,12 @@ const paymentTone: Record<string, string> = {
                 </section>
 
                 <SectionCard
-                    title="Maqolalar"
-                    description="O'zi yuborgan va hammuallif bo'lgan maqolalar (qoralamalarsiz)"
+                    :title="t('Maqolalar')"
+                    :description="
+                        t(
+                            'O\'zi yuborgan va hammuallif bo\'lgan maqolalar (qoralamalarsiz)',
+                        )
+                    "
                     :icon="FileText"
                 >
                     <!-- Holatlar taqsimoti -->
@@ -248,7 +253,7 @@ const paymentTone: Record<string, string> = {
                                 "
                                 @click="filter = ''"
                             >
-                                Hammasi
+                                {{ t('Hammasi') }}
                                 <span class="tabular-nums opacity-70">{{
                                     stats.articles
                                 }}</span>
@@ -302,7 +307,8 @@ const paymentTone: Record<string, string> = {
                                             v-if="!article.isSubmitter"
                                             class="inline-flex items-center gap-0.5 rounded bg-navy-50 px-1 font-semibold text-navy-600"
                                         >
-                                            <Users class="size-3" /> hammuallif
+                                            <Users class="size-3" />
+                                            {{ t('hammuallif') }}
                                         </span>
                                     </p>
                                     <p
@@ -349,7 +355,7 @@ const paymentTone: Record<string, string> = {
                                         target="_blank"
                                         rel="noopener"
                                         class="inline-flex size-7 items-center justify-center rounded-md text-navy-400 transition-colors hover:bg-white hover:text-brand-700"
-                                        aria-label="Saytda ko'rish"
+                                        :aria-label="t('Saytda ko\'rish')"
                                         @click.stop
                                     >
                                         <ExternalLink class="size-3.5" />
@@ -362,7 +368,7 @@ const paymentTone: Record<string, string> = {
                         v-else
                         class="rounded-lg border border-dashed border-line px-4 py-8 text-center text-sm text-navy-400"
                     >
-                        Maqolalar yo'q
+                        {{ t("Maqolalar yo'q") }}
                     </p>
                     <button
                         v-if="filtered.length > LIMIT"
@@ -372,16 +378,18 @@ const paymentTone: Record<string, string> = {
                     >
                         {{
                             allArticles
-                                ? 'Qisqartirish'
-                                : `Barchasini ko'rsatish (${filtered.length})`
+                                ? t('Qisqartirish')
+                                : t("Barchasini ko'rsatish (:count)", {
+                                      count: filtered.length,
+                                  })
                         }}
                     </button>
                 </SectionCard>
 
                 <SectionCard
                     v-if="canPayments && payments"
-                    title="To'lovlar"
-                    description="So'nggi 30 ta to'lov"
+                    :title="t('To\'lovlar')"
+                    :description="t('So\'nggi 30 ta to\'lov')"
                     :icon="CreditCard"
                 >
                     <div
@@ -395,13 +403,17 @@ const paymentTone: Record<string, string> = {
                                 <tr
                                     class="border-b border-line bg-[#f8fafc] text-[11px] font-semibold tracking-wide text-navy-500 uppercase"
                                 >
-                                    <th class="py-2.5 pl-5">Maqsad</th>
-                                    <th class="py-2.5 pr-4">Usul</th>
-                                    <th class="py-2.5 pr-4 text-right">
-                                        Summa
+                                    <th class="py-2.5 pl-5">
+                                        {{ t('Maqsad') }}
                                     </th>
-                                    <th class="py-2.5 pr-4">Holat</th>
-                                    <th class="py-2.5 pr-5">Sana</th>
+                                    <th class="py-2.5 pr-4">{{ t('Usul') }}</th>
+                                    <th class="py-2.5 pr-4 text-right">
+                                        {{ t('Summa') }}
+                                    </th>
+                                    <th class="py-2.5 pr-4">
+                                        {{ t('Holat') }}
+                                    </th>
+                                    <th class="py-2.5 pr-5">{{ t('Sana') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-line">
@@ -459,8 +471,10 @@ const paymentTone: Record<string, string> = {
                         >
                             {{
                                 allPayments
-                                    ? 'Qisqartirish'
-                                    : `Barchasini ko'rsatish (${payments.length})`
+                                    ? t('Qisqartirish')
+                                    : t("Barchasini ko'rsatish (:count)", {
+                                          count: payments.length,
+                                      })
                             }}
                         </button>
                     </div>
@@ -468,7 +482,7 @@ const paymentTone: Record<string, string> = {
                         v-else
                         class="rounded-lg border border-dashed border-line px-4 py-8 text-center text-sm text-navy-400"
                     >
-                        To'lovlar yo'q
+                        {{ t("To'lovlar yo'q") }}
                     </p>
                 </SectionCard>
             </div>

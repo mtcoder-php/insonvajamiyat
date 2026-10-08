@@ -9,6 +9,7 @@ import { prepareImage } from '@/lib/image';
 import { cn } from '@/lib/utils';
 import type { SettingsBanner, Translated } from '@/types';
 import TranslatableField from './TranslatableField.vue';
+import { t } from '@/lib/i18n';
 
 /**
  * Bosh sahifa banneri: rasm (kamida 1200×400, keng format), sarlavha, izoh, tugma, havola, muddat.
@@ -128,10 +129,14 @@ function submit(): void {
 <template>
     <ActionDialog
         v-model:open="open"
-        :title="banner ? 'Bannerni tahrirlash' : 'Yangi banner'"
-        description="Bosh sahifadagi slayderda ko'rinadi. Faol bannerlar bo'lsa, standart slaydlar o'rnini egallaydi."
+        :title="banner ? t('Bannerni tahrirlash') : t('Yangi banner')"
+        :description="
+            t(
+                'Bosh sahifadagi slayderda ko\'rinadi. Faol bannerlar bo\'lsa, standart slaydlar o\'rnini egallaydi.',
+            )
+        "
         :icon="banner ? PenLine : ImagePlus"
-        :confirm-text="banner ? 'Saqlash' : 'Qo\'shish'"
+        :confirm-text="banner ? t('Saqlash') : t('Qo\'shish')"
         :processing="form.processing || preparing"
         size="lg"
         @confirm="submit"
@@ -172,12 +177,15 @@ function submit(): void {
                         />
                         <ImagePlus v-else class="size-6" />
                         <span class="font-semibold">{{
-                            preview ? 'Rasmni almashtirish' : 'Rasm tanlang'
+                            preview
+                                ? t('Rasmni almashtirish')
+                                : t('Rasm tanlang')
                         }}</span>
-                        <span
-                            >JPG, PNG, WEBP · kamida 1200×400 · tavsiya
-                            1920×720</span
-                        >
+                        <span>{{
+                            t(
+                                'JPG, PNG, WEBP · kamida 1200×400 · tavsiya 1920×720',
+                            )
+                        }}</span>
                     </span>
                 </button>
                 <p
@@ -197,7 +205,7 @@ function submit(): void {
 
             <TranslatableField
                 v-model="form.title"
-                label="Sarlavha"
+                :label="t('Sarlavha')"
                 field="title"
                 :errors="errors"
                 required
@@ -205,7 +213,7 @@ function submit(): void {
             />
             <TranslatableField
                 v-model="form.subtitle"
-                label="Izoh"
+                :label="t('Izoh')"
                 field="subtitle"
                 :errors="errors"
                 multiline
@@ -215,17 +223,17 @@ function submit(): void {
             <div class="grid gap-3 sm:grid-cols-2">
                 <TranslatableField
                     v-model="form.button_text"
-                    label="Tugma matni"
+                    :label="t('Tugma matni')"
                     field="button_text"
                     :errors="errors"
                     :maxlength="40"
-                    placeholder="Batafsil"
+                    :placeholder="t('Batafsil')"
                 />
                 <FormField
-                    label="Havola"
+                    :label="t('Havola')"
                     for="banner-link"
                     :error="errors.link_url"
-                    hint="https://… yoki /articles"
+                    :hint="t('https://… yoki /articles')"
                 >
                     <input
                         id="banner-link"
@@ -240,7 +248,7 @@ function submit(): void {
 
             <div class="grid gap-3 sm:grid-cols-3">
                 <FormField
-                    label="Ko'rsatish boshlanishi"
+                    :label="t('Ko\'rsatish boshlanishi')"
                     for="banner-from"
                     :error="errors.starts_at"
                 >
@@ -252,7 +260,7 @@ function submit(): void {
                     />
                 </FormField>
                 <FormField
-                    label="Tugashi"
+                    :label="t('Tugashi')"
                     for="banner-to"
                     :error="errors.ends_at"
                 >
@@ -264,7 +272,7 @@ function submit(): void {
                     />
                 </FormField>
                 <FormField
-                    label="Tartib"
+                    :label="t('Tartib')"
                     for="banner-order"
                     :error="errors.sort_order"
                 >
@@ -285,7 +293,7 @@ function submit(): void {
                     type="checkbox"
                     class="size-4 accent-brand-600"
                 />
-                Faol (muddat bo'sh bo'lsa — doim ko'rinadi)
+                {{ t("Faol (muddat bo'sh bo'lsa — doim ko'rinadi)") }}
             </label>
         </div>
     </ActionDialog>

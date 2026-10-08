@@ -3,6 +3,7 @@ import { computed, ref } from 'vue';
 import DashCard from '@/components/admin/dashboard/DashCard.vue';
 import { formatNumber } from '@/lib/format';
 import type { PaymentProviderKey, ProviderBreakdown } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * "To'lov usullari bo'yicha": muvaffaqiyatli to'lovlar soni (halqa diagramma, markazda jami).
@@ -45,7 +46,7 @@ const hovered = ref<string | null>(null);
 </script>
 
 <template>
-    <DashCard title="To'lov usullari bo'yicha">
+    <DashCard :title="t('To\'lov usullari bo\'yicha')">
         <div
             class="flex flex-col items-center gap-5 sm:flex-row xl:flex-col 2xl:flex-row"
         >
@@ -83,7 +84,9 @@ const hovered = ref<string | null>(null);
                     >
                         {{ formatNumber(data.total) }}
                     </span>
-                    <span class="text-[11px] text-navy-500">jami to'lov</span>
+                    <span class="text-[11px] text-navy-500">{{
+                        t("jami to'lov")
+                    }}</span>
                 </div>
             </div>
             <ul class="grid w-full gap-2.5">

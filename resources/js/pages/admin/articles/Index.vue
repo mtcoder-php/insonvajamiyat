@@ -13,6 +13,7 @@ import StatusTimeline from '@/components/cabinet/StatusTimeline.vue';
 import { dashboard } from '@/routes/admin';
 import { index } from '@/routes/admin/articles';
 import type { EditorialPageProps, EditorialQueue } from '@/types';
+import { t, tk } from '@/lib/i18n';
 
 /**
  * Muharrir ish joyi (admin muharir.png): chapda navbat va ro'yxat, o'rtada maqola,
@@ -23,22 +24,22 @@ const props = defineProps<EditorialPageProps>();
 defineOptions({
     layout: {
         breadcrumbs: [
-            { title: 'Admin panel', href: dashboard() },
-            { title: 'Maqolalar', href: index() },
+            { title: tk('Admin panel'), href: dashboard() },
+            { title: tk('Maqolalar'), href: index() },
         ],
     },
 });
 
 const titles: Record<EditorialQueue, string> = {
-    new: 'Yangi maqolalar',
-    reviewing: "Ko'rib chiqilayotganlar",
-    revision: 'Tuzatish talab qilinganlar',
-    accepted: 'Nashrga tayyorlar',
-    payment: "To'lov kutilmoqda",
-    published: 'Nashr etilganlar',
-    closed: 'Rad etilgan va qaytarib olinganlar',
-    mine: 'Mening vazifalarim',
-    all: 'Barcha maqolalar',
+    new: t('Yangi maqolalar'),
+    reviewing: t("Ko'rib chiqilayotganlar"),
+    revision: t('Tuzatish talab qilinganlar'),
+    accepted: t('Nashrga tayyorlar'),
+    payment: t("To'lov kutilmoqda"),
+    published: t('Nashr etilganlar'),
+    closed: t('Rad etilgan va qaytarib olinganlar'),
+    mine: t('Mening vazifalarim'),
+    all: t('Barcha maqolalar'),
 };
 
 const form = reactive({
@@ -129,12 +130,16 @@ function page(url: string): void {
 </script>
 
 <template>
-    <Head :title="`Maqolalar — ${titles[filters.queue]}`" />
+    <Head :title="t('Maqolalar — :queue', { queue: titles[filters.queue] })" />
 
     <div class="flex flex-1 flex-col gap-5 bg-[#f5f7fb] p-4 md:p-6">
         <PageHeader
-            :title="`Maqolalar — ${titles[filters.queue]}`"
-            description="Yuborilgan maqolalarni ko'rib chiqish, mas'ul muharrir biriktirish va qaror qabul qilish"
+            :title="t('Maqolalar — :queue', { queue: titles[filters.queue] })"
+            :description="
+                t(
+                    'Yuborilgan maqolalarni ko\'rib chiqish, mas\'ul muharrir biriktirish va qaror qabul qilish',
+                )
+            "
         />
 
         <EditorialStatCards
@@ -178,7 +183,7 @@ function page(url: string): void {
                             class="mb-4 flex items-center gap-2 font-sans text-[15px] font-bold text-navy-950"
                         >
                             <Route class="size-[18px] text-brand-600" />
-                            Maqola jarayoni
+                            {{ t('Maqola jarayoni') }}
                         </h2>
                         <StatusTimeline :steps="selected.steps" />
                     </DashCard>
@@ -196,10 +201,10 @@ function page(url: string): void {
             >
                 <FileSearch class="size-10 text-navy-300" />
                 <p class="text-sm font-semibold text-navy-900">
-                    Maqola tanlanmagan
+                    {{ t('Maqola tanlanmagan') }}
                 </p>
                 <p class="text-xs text-navy-500">
-                    Chapdagi ro'yxatdan maqolani tanlang.
+                    {{ t("Chapdagi ro'yxatdan maqolani tanlang.") }}
                 </p>
             </div>
         </div>

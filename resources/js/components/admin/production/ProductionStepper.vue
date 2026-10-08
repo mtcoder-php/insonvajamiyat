@@ -14,6 +14,7 @@ import type { Component } from 'vue';
 import { formatDate } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { ProductionStep } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Nashr jarayoni bosqichlari: Qabul → Maket → PDF → Muallif → Son → Bosh muharrir → Nashr.
@@ -76,7 +77,7 @@ const icons: Record<string, Component> = {
                         step.date
                             ? formatDate(step.date)
                             : step.state === 'current'
-                              ? 'Hozir'
+                              ? t('Hozir')
                               : ''
                     }}
                 </span>

@@ -12,6 +12,7 @@ import type {
     ProductionArticle,
     ProductionMetadataForm,
 } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Nashr meta ma'lumotlari: DOI, UDK, plagiat foizi, jurnal soni va sahifalar.
@@ -64,10 +65,14 @@ function submit(): void {
 <template>
     <ActionDialog
         v-model:open="open"
-        title="Nashr ma'lumotlari"
-        description="O'zgartirilsa bosh muharrir tasdig'i bekor bo'ladi va qayta tasdiqlash kerak bo'ladi."
+        :title="t('Nashr ma\'lumotlari')"
+        :description="
+            t(
+                'O\'zgartirilsa bosh muharrir tasdig\'i bekor bo\'ladi va qayta tasdiqlash kerak bo\'ladi.',
+            )
+        "
         :icon="PenLine"
-        confirm-text="Saqlash"
+        :confirm-text="t('Saqlash')"
         :processing="form.processing"
         @confirm="submit"
     >
@@ -75,7 +80,7 @@ function submit(): void {
             <FormField
                 label="DOI"
                 for="doi"
-                hint="Masalan: 10.5281/insonvajamiyat.2026.0048"
+                :hint="t('Masalan: 10.5281/insonvajamiyat.2026.0048')"
                 :error="errors.doi"
             >
                 <input
@@ -95,9 +100,11 @@ function submit(): void {
                     />
                 </FormField>
                 <FormField
-                    label="Plagiat, %"
+                    :label="t('Plagiat, %')"
                     for="plagiarism"
-                    :hint="`Chegara: ${article.plagiarismMax}%`"
+                    :hint="
+                        t('Chegara: :value%', { value: article.plagiarismMax })
+                    "
                     :error="errors.plagiarism_percent"
                 >
                     <input
@@ -112,17 +119,21 @@ function submit(): void {
                 </FormField>
             </div>
             <FormField
-                label="Jurnal soni"
+                :label="t('Jurnal soni')"
                 for="issue"
                 :error="errors.issue_id"
                 :hint="
                     issues.length
                         ? undefined
-                        : 'Jurnal sonlari hali yo\'q — «Jurnallar» bo\'limida yaratiladi.'
+                        : t(
+                              'Jurnal sonlari hali yo\'q — «Jurnallar» bo\'limida yaratiladi.',
+                          )
                 "
             >
                 <SelectInput id="issue" v-model="form.issue_id">
-                    <option :value="null">— Biriktirilmagan —</option>
+                    <option :value="null">
+                        {{ t('— Biriktirilmagan —') }}
+                    </option>
                     <option
                         v-for="issue in issues"
                         :key="issue.id"
@@ -136,13 +147,16 @@ function submit(): void {
                 v-if="pdfPages"
                 class="-mb-1 rounded-lg bg-brand-50 px-3 py-2 text-xs text-brand-800"
             >
-                Yakuniy PDF da {{ pdfPages }} bet. Odatda sahifalarni
-                «Jurnallar» bo'limida son bo'yicha avtomatik hisoblash yetarli —
-                bu yerda faqat istisno holatda boshlang'ich betni kiriting.
+                {{
+                    t(
+                        "Yakuniy PDF da :pages bet. Odatda sahifalarni «Jurnallar» bo'limida son bo'yicha avtomatik hisoblash yetarli — bu yerda faqat istisno holatda boshlang'ich betni kiriting.",
+                        { pages: pdfPages },
+                    )
+                }}
             </p>
             <div class="grid grid-cols-2 gap-4">
                 <FormField
-                    label="Boshlang'ich bet"
+                    :label="t('Boshlang\'ich bet')"
                     for="page-from"
                     :error="errors.page_from"
                 >
@@ -156,14 +170,16 @@ function submit(): void {
                     />
                 </FormField>
                 <FormField
-                    label="Oxirgi bet"
+                    :label="t('Oxirgi bet')"
                     for="page-to"
                     :error="errors.page_to"
                     :hint="
                         pdfPages
-                            ? `PDF dan avtomatik: ${pdfPages} bet`
+                            ? t('PDF dan avtomatik: :pdfPages bet', {
+                                  pdfPages: pdfPages,
+                              })
                             : pages
-                              ? `${pages} bet`
+                              ? t(':pages bet', { pages: pages })
                               : undefined
                     "
                 >

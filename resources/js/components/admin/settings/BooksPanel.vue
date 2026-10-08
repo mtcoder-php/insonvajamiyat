@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import type { SettingsBook } from '@/types';
 import BookDialog from './BookDialog.vue';
 import DeleteDialog from './DeleteDialog.vue';
+import { t } from '@/lib/i18n';
 
 /** Tavsiya etilgan kitoblar: muqovali kartochkalar, bosh sahifada ko'rinadiganlari belgilangan */
 const props = defineProps<{ books: SettingsBook[]; storeUrl: string }>();
@@ -43,11 +44,15 @@ function remove(book: SettingsBook): void {
         <header class="mb-4 flex flex-wrap items-center justify-between gap-3">
             <div>
                 <h2 class="font-sans text-[15px] font-bold text-navy-950">
-                    Tavsiya etilgan kitoblar
+                    {{ t('Tavsiya etilgan kitoblar') }}
                 </h2>
                 <p class="text-xs text-navy-500">
-                    Bosh sahifada tartib bo'yicha birinchi {{ HOME_LIMIT }} ta
-                    faol kitob chiqadi
+                    {{
+                        t(
+                            "Bosh sahifada tartib bo'yicha birinchi :count ta faol kitob chiqadi",
+                            { count: HOME_LIMIT },
+                        )
+                    }}
                 </p>
             </div>
             <button
@@ -55,7 +60,7 @@ function remove(book: SettingsBook): void {
                 class="inline-flex h-9 items-center gap-2 rounded-lg bg-brand-600 px-4 text-[13px] font-semibold text-white shadow-[0_8px_18px_-10px_rgba(0,108,246,0.9)] transition-all hover:-translate-y-px hover:bg-brand-500"
                 @click="open(null)"
             >
-                <Plus class="size-4" /> Kitob qo'shish
+                <Plus class="size-4" /> {{ t("Kitob qo'shish") }}
             </button>
         </header>
 
@@ -94,12 +99,12 @@ function remove(book: SettingsBook): void {
                         <span
                             v-if="onHome.has(book.id)"
                             class="rounded-md bg-emerald-50 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700"
-                            >Bosh sahifada</span
+                            >{{ t('Bosh sahifada') }}</span
                         >
                         <span
                             v-else-if="!book.isActive"
                             class="rounded-md bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold text-slate-600"
-                            >Nofaol</span
+                            >{{ t('Nofaol') }}</span
                         >
                     </div>
                     <h3
@@ -124,14 +129,14 @@ function remove(book: SettingsBook): void {
                                 target="_blank"
                                 rel="noopener"
                                 class="inline-flex size-8 items-center justify-center rounded-lg text-navy-500 transition-colors hover:bg-brand-50 hover:text-brand-700"
-                                aria-label="Havolani ochish"
+                                :aria-label="t('Havolani ochish')"
                             >
                                 <ExternalLink class="size-4" />
                             </a>
                             <button
                                 type="button"
                                 class="inline-flex size-8 items-center justify-center rounded-lg text-navy-500 transition-colors hover:bg-brand-50 hover:text-brand-700"
-                                aria-label="Tahrirlash"
+                                :aria-label="t('Tahrirlash')"
                                 @click="open(book)"
                             >
                                 <PenLine class="size-4" />
@@ -139,7 +144,7 @@ function remove(book: SettingsBook): void {
                             <button
                                 type="button"
                                 class="inline-flex size-8 items-center justify-center rounded-lg text-navy-500 transition-colors hover:bg-red-50 hover:text-red-600"
-                                aria-label="O'chirish"
+                                :aria-label="t('O\'chirish')"
                                 @click="remove(book)"
                             >
                                 <Trash2 class="size-4" />
@@ -153,7 +158,7 @@ function remove(book: SettingsBook): void {
             v-if="!books.length"
             class="rounded-xl border border-dashed border-line bg-white px-4 py-10 text-center text-sm text-navy-400"
         >
-            Kitoblar yo'q — bosh sahifadagi blok yashirin
+            {{ t("Kitoblar yo'q — bosh sahifadagi blok yashirin") }}
         </p>
 
         <BookDialog
@@ -164,8 +169,12 @@ function remove(book: SettingsBook): void {
         <DeleteDialog
             v-model:open="deleteOpen"
             :url="removing?.urls.destroy ?? null"
-            title="Kitobni o'chirish"
-            :description="`«${removing?.title ?? ''}» va uning muqovasi o'chiriladi.`"
+            :title="t('Kitobni o\'chirish')"
+            :description="
+                t('«:title» va uning muqovasi o\'chiriladi.', {
+                    title: removing?.title ?? '',
+                })
+            "
         />
     </section>
 </template>

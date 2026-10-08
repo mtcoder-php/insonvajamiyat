@@ -4,6 +4,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { usePermissions } from '@/composables/usePermissions';
 import { formatDate } from '@/lib/format';
 import { primaryRoleLabel } from '@/lib/roles';
+import { t } from '@/lib/i18n';
 
 /**
  * "Assalomu alaykum" banneri (super admin dashboard.png).
@@ -48,7 +49,9 @@ const bannerUrl = '/images/admin/banner.png';
             class="flex flex-col gap-6 p-6 sm:flex-row sm:items-start sm:justify-between lg:p-7"
         >
             <div class="max-w-md">
-                <p class="text-sm text-white/80">Assalomu alaykum,</p>
+                <p class="text-sm text-white/80">
+                    {{ t('Assalomu alaykum,') }}
+                </p>
                 <h1
                     class="mt-1 font-sans text-2xl font-bold text-white sm:text-[1.75rem]"
                 >
@@ -56,9 +59,11 @@ const bannerUrl = '/images/admin/banner.png';
                 </h1>
                 <p class="mt-1 text-sm font-medium text-white/85">{{ role }}</p>
                 <p class="mt-5 text-sm leading-relaxed text-white/75">
-                    Tizim orqali jurnal faoliyati, maqolalar, to'lovlar va
-                    foydalanuvchilar bilan bog'liq barcha jarayonlarni
-                    boshqarishingiz mumkin.
+                    {{
+                        t(
+                            "Tizim orqali jurnal faoliyati, maqolalar, to'lovlar va foydalanuvchilar bilan bog'liq barcha jarayonlarni boshqarishingiz mumkin.",
+                        )
+                    }}
                 </p>
             </div>
 
@@ -68,7 +73,9 @@ const bannerUrl = '/images/admin/banner.png';
                 >
                     <CalendarDays class="mt-0.5 size-6 text-white/85" />
                     <div class="leading-tight">
-                        <p class="text-[11px] text-white/65">Bugun</p>
+                        <p class="text-[11px] text-white/65">
+                            {{ t('Bugun') }}
+                        </p>
                         <p class="text-sm font-semibold">
                             {{ formatDate(now) }}
                         </p>
@@ -80,7 +87,11 @@ const bannerUrl = '/images/admin/banner.png';
                 <blockquote
                     class="hidden max-w-60 text-right font-serif text-sm leading-snug text-white/90 italic sm:block"
                 >
-                    “Ilm — insonni yuksaltiradi, jamiyatni rivojlantiradi.”
+                    {{
+                        t(
+                            '“Ilm — insonni yuksaltiradi, jamiyatni rivojlantiradi.”',
+                        )
+                    }}
                 </blockquote>
             </div>
         </div>

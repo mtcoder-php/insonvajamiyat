@@ -15,6 +15,7 @@ import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { formatDateTime, formatFileSize } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { IssueFileInfo, IssuePdfBuild } from '@/types';
+import { t, tc } from '@/lib/i18n';
 
 /**
  * "To'liq son PDF": muqova + mundarija + maqolalarning yakuniy PDF lari bitta faylga
@@ -57,7 +58,7 @@ function buildPdf(): void {
             preserveScroll: true,
             only: ['issue'],
             onError: (errors) =>
-                (error.value = errors.pdf ?? "Yig'ishni boshlab bo'lmadi."),
+                (error.value = errors.pdf ?? t("Yig'ishni boshlab bo'lmadi.")),
             onFinish: () => (starting.value = false),
         },
     );
@@ -80,12 +81,14 @@ function buildPdf(): void {
             >
                 <BookCopy class="size-4" />
             </span>
-            To'liq son PDF
+            {{ t("To'liq son PDF") }}
         </h2>
         <p class="mt-2 text-xs leading-relaxed text-navy-600">
-            Muqova, mundarija va maqolalarning yakuniy PDF lari son tartibida
-            bitta faylga yig'iladi — xatcho'plar va jurnal sahifa raqamlari
-            bilan.
+            {{
+                t(
+                    "Muqova, mundarija va maqolalarning yakuniy PDF lari son tartibida bitta faylga yig'iladi — xatcho'plar va jurnal sahifa raqamlari bilan.",
+                )
+            }}
         </p>
 
         <!-- Holat -->
@@ -98,11 +101,17 @@ function buildPdf(): void {
             <div class="text-xs text-navy-700">
                 <p class="font-semibold text-navy-900">
                     {{
-                        build.status === 'queued' ? 'Navbatda…' : "Yig'ilmoqda…"
+                        build.status === 'queued'
+                            ? t('Navbatda…')
+                            : "Yig'ilmoqda…"
                     }}
                 </p>
                 <p>
-                    Bir necha soniya — tayyor bo'lgach shu yerda paydo bo'ladi.
+                    {{
+                        t(
+                            "Bir necha soniya — tayyor bo'lgach shu yerda paydo bo'ladi.",
+                        )
+                    }}
                 </p>
             </div>
         </div>
@@ -111,7 +120,9 @@ function buildPdf(): void {
             class="mt-4 flex items-start gap-2 rounded-lg border border-red-100 bg-red-50/70 px-3 py-2.5 text-xs text-red-800"
         >
             <CircleAlert class="mt-0.5 size-4 shrink-0 text-red-500" />
-            <span><b>Yig'ilmadi:</b> {{ build.error }}</span>
+            <span
+                ><b>{{ t("Yig'ilmadi:") }}</b> {{ build.error }}</span
+            >
         </div>
         <div
             v-else-if="file"
@@ -139,7 +150,9 @@ function buildPdf(): void {
                 }}
             </p>
             <p class="mt-0.5 text-navy-600">
-                <template v-if="build.pages">{{ build.pages }} bet · </template>
+                <template v-if="build.pages"
+                    >{{ tc(':count bet', build.pages) }} ·
+                </template>
                 <template v-if="file.size"
                     >{{ formatFileSize(file.size) }} ·
                 </template>
@@ -154,7 +167,7 @@ function buildPdf(): void {
                 rel="noopener"
                 class="mt-2 inline-flex items-center gap-1 font-semibold text-brand-700 hover:text-brand-600"
             >
-                <Download class="size-3.5" /> Ochish
+                <Download class="size-3.5" /> {{ t('Ochish') }}
             </a>
         </div>
 
@@ -214,14 +227,14 @@ function buildPdf(): void {
             />
             <RefreshCw v-else-if="file" class="size-4" />
             <Sparkles v-else class="size-4" />
-            {{ file ? "Qayta yig'ish" : "Son PDF ini yig'ish" }}
+            {{ file ? t("Qayta yig'ish") : t("Son PDF ini yig'ish") }}
         </button>
         <p v-if="error" class="mt-2 text-xs text-red-600">{{ error }}</p>
         <p
             v-if="canManage && file && !build.auto"
             class="mt-2 text-[11px] text-navy-400"
         >
-            Qayta yig'ilsa, qo'lda yuklangan fayl almashtiriladi.
+            {{ t("Qayta yig'ilsa, qo'lda yuklangan fayl almashtiriladi.") }}
         </p>
     </section>
 </template>

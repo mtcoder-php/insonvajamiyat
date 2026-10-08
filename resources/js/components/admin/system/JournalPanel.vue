@@ -21,6 +21,7 @@ import {
 } from '@/lib/formStyles';
 import { cn } from '@/lib/utils';
 import type { JournalSettings, JournalSocialNetwork } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Jurnal rekvizitlari (settings → "journal" guruhi): nom, ISSN, DOI, aloqa, ijtimoiy tarmoqlar,
@@ -100,13 +101,17 @@ const accountPreview = computed(() =>
         <!-- Jurnal -->
         <SectionCard
             v-show="section === 'journal'"
-            title="Jurnal rekvizitlari"
-            description="Sayt sarlavhasi, footer, «Jurnal haqida», maqola sahifalari va xatlarda ishlatiladi"
+            :title="t('Jurnal rekvizitlari')"
+            :description="
+                t(
+                    'Sayt sarlavhasi, footer, «Jurnal haqida», maqola sahifalari va xatlarda ishlatiladi',
+                )
+            "
             :icon="Building2"
         >
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <FormField
-                    label="Jurnal nomi"
+                    :label="t('Jurnal nomi')"
                     for="j-name"
                     required
                     :error="errors.name"
@@ -119,10 +124,12 @@ const accountPreview = computed(() =>
                     />
                 </FormField>
                 <FormField
-                    label="Qo'shimcha nom"
+                    :label="t('Qo\'shimcha nom')"
                     for="j-subtitle"
                     :error="errors.subtitle"
-                    hint="Logotip ostidagi yozuv, masalan: Scientific Journal"
+                    :hint="
+                        t('Logotip ostidagi yozuv, masalan: Scientific Journal')
+                    "
                 >
                     <input
                         id="j-subtitle"
@@ -132,11 +139,15 @@ const accountPreview = computed(() =>
                     />
                 </FormField>
                 <FormField
-                    label="Qisqa tavsif"
+                    :label="t('Qisqa tavsif')"
                     for="j-description"
                     :error="errors.description"
                     class="md:col-span-2"
-                    hint="SEO va «Jurnal haqida» kartasi uchun (500 belgigacha)"
+                    :hint="
+                        t(
+                            'SEO va «Jurnal haqida» kartasi uchun (500 belgigacha)',
+                        )
+                    "
                 >
                     <textarea
                         id="j-description"
@@ -147,7 +158,7 @@ const accountPreview = computed(() =>
                     />
                 </FormField>
                 <FormField
-                    label="ISSN (bosma)"
+                    :label="t('ISSN (bosma)')"
                     for="j-issn"
                     :error="errors.issn"
                 >
@@ -160,7 +171,7 @@ const accountPreview = computed(() =>
                     />
                 </FormField>
                 <FormField
-                    label="e-ISSN (elektron)"
+                    :label="t('e-ISSN (elektron)')"
                     for="j-eissn"
                     :error="errors.eissn"
                 >
@@ -173,10 +184,10 @@ const accountPreview = computed(() =>
                     />
                 </FormField>
                 <FormField
-                    label="DOI prefiksi"
+                    :label="t('DOI prefiksi')"
                     for="j-doi"
                     :error="errors.doi_prefix"
-                    hint="Masalan: 10.5281/zenodo yoki 10.12345"
+                    :hint="t('Masalan: 10.5281/zenodo yoki 10.12345')"
                 >
                     <input
                         id="j-doi"
@@ -186,22 +197,26 @@ const accountPreview = computed(() =>
                     />
                 </FormField>
                 <FormField
-                    label="Davriylik"
+                    :label="t('Davriylik')"
                     for="j-frequency"
                     :error="errors.frequency"
                 >
                     <input
                         id="j-frequency"
                         v-model="form.frequency"
-                        placeholder="Yiliga 4 marta (kvartal)"
+                        :placeholder="t('Yiliga 4 marta (kvartal)')"
                         :class="inputClass"
                     />
                 </FormField>
                 <FormField
-                    label="Plagiat chegarasi (%)"
+                    :label="t('Plagiat chegarasi (%)')"
                     for="j-plagiarism"
                     :error="errors.plagiarism_max"
-                    hint="Nashr oldidan tekshiruvda o'xshashlik shundan oshmasligi kerak"
+                    :hint="
+                        t(
+                            'Nashr oldidan tekshiruvda o\'xshashlik shundan oshmasligi kerak',
+                        )
+                    "
                 >
                     <input
                         id="j-plagiarism"
@@ -219,13 +234,15 @@ const accountPreview = computed(() =>
         <!-- Aloqa va tarmoqlar -->
         <div v-show="section === 'contacts'" class="grid grid-cols-1 gap-5">
             <SectionCard
-                title="Aloqa ma'lumotlari"
-                description="Footer, «Aloqa» kartasi va xatlar pastida ko'rsatiladi"
+                :title="t('Aloqa ma\'lumotlari')"
+                :description="
+                    t('Footer, «Aloqa» kartasi va xatlar pastida ko\'rsatiladi')
+                "
                 :icon="AtSign"
             >
                 <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <FormField
-                        label="Email"
+                        :label="t('Email')"
                         for="j-email"
                         :error="errors.contact_email"
                     >
@@ -243,7 +260,7 @@ const accountPreview = computed(() =>
                         </div>
                     </FormField>
                     <FormField
-                        label="Telefon"
+                        :label="t('Telefon')"
                         for="j-phone"
                         :error="errors.contact_phone"
                     >
@@ -260,7 +277,7 @@ const accountPreview = computed(() =>
                         </div>
                     </FormField>
                     <FormField
-                        label="Manzil"
+                        :label="t('Manzil')"
                         for="j-address"
                         :error="errors.contact_address"
                         class="md:col-span-2"
@@ -273,7 +290,7 @@ const accountPreview = computed(() =>
                                 id="j-address"
                                 v-model="form.contact_address"
                                 :class="cn(inputClass, 'pl-9')"
-                                placeholder="Toshkent sh., …"
+                                :placeholder="t('Toshkent sh., …')"
                             />
                         </div>
                     </FormField>
@@ -281,8 +298,10 @@ const accountPreview = computed(() =>
             </SectionCard>
 
             <SectionCard
-                title="Ijtimoiy tarmoqlar"
-                description="Bo'sh qoldirilgan tarmoqlar footer'da ko'rsatilmaydi"
+                :title="t('Ijtimoiy tarmoqlar')"
+                :description="
+                    t('Bo\'sh qoldirilgan tarmoqlar footer\'da ko\'rsatilmaydi')
+                "
                 :icon="Send"
             >
                 <div class="grid grid-cols-1 gap-3">
@@ -330,13 +349,17 @@ const accountPreview = computed(() =>
         <!-- To'lov rekvizitlari -->
         <SectionCard
             v-show="section === 'payment'"
-            title="Bank rekvizitlari"
-            description="Muallif kabinetida «To'lov kutilmoqda» holatida ko'rsatiladi (bank orqali to'lov, admin qo'lda tasdiqlaydi). Bo'sh maydonlar ko'rsatilmaydi."
+            :title="t('Bank rekvizitlari')"
+            :description="
+                t(
+                    'Muallif kabinetida «To\'lov kutilmoqda» holatida ko\'rsatiladi (bank orqali to\'lov, admin qo\'lda tasdiqlaydi). Bo\'sh maydonlar ko\'rsatilmaydi.',
+                )
+            "
             :icon="Landmark"
         >
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <FormField
-                    label="Qabul qiluvchi tashkilot"
+                    :label="t('Qabul qiluvchi tashkilot')"
                     for="j-recipient"
                     :error="errors.payment_recipient"
                     class="md:col-span-2"
@@ -345,11 +368,11 @@ const accountPreview = computed(() =>
                         id="j-recipient"
                         v-model="form.payment_recipient"
                         :class="inputClass"
-                        placeholder="«Inson va Jamiyat» MChJ"
+                        :placeholder="t('«Inson va Jamiyat» MChJ')"
                     />
                 </FormField>
                 <FormField
-                    label="Bank"
+                    :label="t('Bank')"
                     for="j-bank"
                     :error="errors.payment_bank"
                     class="md:col-span-2"
@@ -358,16 +381,16 @@ const accountPreview = computed(() =>
                         id="j-bank"
                         v-model="form.payment_bank"
                         :class="inputClass"
-                        placeholder="ATB «…» Toshkent filiali"
+                        :placeholder="t('ATB «…» Toshkent filiali')"
                     />
                 </FormField>
                 <FormField
-                    label="Hisob raqami"
+                    :label="t('Hisob raqami')"
                     for="j-account"
                     :error="errors.payment_account"
                     class="md:col-span-2"
                     :hint="
-                        form.payment_account ? accountPreview : '20 ta raqam'
+                        form.payment_account ? accountPreview : t('20 ta raqam')
                     "
                 >
                     <input
@@ -409,10 +432,14 @@ const accountPreview = computed(() =>
             class="sticky bottom-3 z-10 flex flex-wrap items-center justify-end gap-3 rounded-xl border border-line bg-white/95 px-4 py-3 shadow-[0_12px_30px_-18px_rgba(0,36,66,0.45)] backdrop-blur"
         >
             <p v-if="form.hasErrors" class="mr-auto text-xs text-red-600">
-                Xatolarni tuzating (boshqa tablarda ham bo'lishi mumkin).
+                {{
+                    t(
+                        "Xatolarni tuzating (boshqa tablarda ham bo'lishi mumkin).",
+                    )
+                }}
             </p>
             <p v-else-if="form.isDirty" class="mr-auto text-xs text-gold-700">
-                Saqlanmagan o'zgarishlar bor
+                {{ t("Saqlanmagan o'zgarishlar bor") }}
             </p>
             <button
                 type="submit"
@@ -424,7 +451,7 @@ const accountPreview = computed(() =>
                     class="size-4 animate-spin"
                 />
                 <Save v-else class="size-4" />
-                Saqlash
+                {{ t('Saqlash') }}
             </button>
         </div>
     </form>

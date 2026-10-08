@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import type { HTMLAttributes } from 'vue';
 import { cn } from '@/lib/utils';
+import { t } from '@/lib/i18n';
 
 /**
  * Jurnal logotipi: ikonka (rasm) + nom (HTML matn, serif).
@@ -86,7 +87,7 @@ const isLight = computed(() => props.tone === 'light');
                     )
                 "
             >
-                Ilm, tafakkur va taraqqiyot yo'lida
+                {{ t("Ilm, tafakkur va taraqqiyot yo'lida") }}
             </span>
         </span>
     </span>

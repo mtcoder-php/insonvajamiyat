@@ -10,6 +10,7 @@ import {
 } from '@lucide/vue';
 import type { Component } from 'vue';
 import type { ReportExportLink } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * "Hisobotlar" tabi: tanlangan davr va yo'nalish bo'yicha yuklab olinadigan hisobotlar.
@@ -23,22 +24,26 @@ defineProps<{
 const meta: Record<string, { icon: Component; text: string; tint: string }> = {
     articles: {
         icon: FileText,
-        text: "Kod, sarlavha, mualliflar, holat, sanalar, DOI, ko'rishlar va yuklab olishlar",
+        text: t(
+            "Kod, sarlavha, mualliflar, holat, sanalar, DOI, ko'rishlar va yuklab olishlar",
+        ),
         tint: 'bg-brand-50 text-brand-600',
     },
     payments: {
         icon: ReceiptText,
-        text: "Kvitansiya, to'lov tizimi, summa, to'lovchi, maqola va sana",
+        text: t("Kvitansiya, to'lov tizimi, summa, to'lovchi, maqola va sana"),
         tint: 'bg-emerald-50 text-emerald-600',
     },
     reviewers: {
         icon: UserCheck,
-        text: "Takliflar, topshirilgan xulosalar, rad etishlar, o'rtacha muddat",
+        text: t(
+            "Takliflar, topshirilgan xulosalar, rad etishlar, o'rtacha muddat",
+        ),
         tint: 'bg-amber-50 text-amber-600',
     },
     authors: {
         icon: UsersRound,
-        text: 'Mualliflar, tashkilot, mamlakat, ORCID va maqolalar soni',
+        text: t('Mualliflar, tashkilot, mamlakat, ORCID va maqolalar soni'),
         tint: 'bg-violet-50 text-violet-600',
     },
 };
@@ -47,9 +52,9 @@ const meta: Record<string, { icon: Component; text: string; tint: string }> = {
 <template>
     <div class="flex flex-col gap-5">
         <p class="text-sm text-navy-500">
-            Hisobotlar <b class="text-navy-900">{{ period }}</b> davri uchun
-            tuziladi. CSV fayllar Excel'da to'g'ridan-to'g'ri ochiladi (UTF-8,
-            ";" ajratgich).
+            {{ t('Hisobotlar') }}
+            <b class="text-navy-900">{{ period }}</b> davri uchun tuziladi. CSV
+            fayllar Excel'da to'g'ridan-to'g'ri ochiladi (UTF-8, ";" ajratgich).
         </p>
 
         <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -74,7 +79,7 @@ const meta: Record<string, { icon: Component; text: string; tint: string }> = {
                     <span
                         class="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold tracking-wide text-emerald-700 uppercase"
                     >
-                        Excel · CSV
+                        {{ t('Excel · CSV') }}
                     </span>
                 </span>
                 <span class="mt-4 text-[15px] font-bold text-navy-950">
@@ -89,7 +94,7 @@ const meta: Record<string, { icon: Component; text: string; tint: string }> = {
                     <Download
                         class="size-4 transition-transform group-hover:translate-y-0.5"
                     />
-                    Yuklab olish
+                    {{ t('Yuklab olish') }}
                 </span>
             </a>
 
@@ -112,17 +117,19 @@ const meta: Record<string, { icon: Component; text: string; tint: string }> = {
                     </span>
                 </span>
                 <span class="mt-4 text-[15px] font-bold text-navy-950">
-                    Umumiy statistik hisobot
+                    {{ t('Umumiy statistik hisobot') }}
                 </span>
                 <span class="mt-1 flex-1 text-[13px] text-navy-500">
-                    Ko'rsatkichlar, yo'nalishlar, mamlakatlar, daromad, faol
-                    mualliflar va taqrizchilar — A4 sahifa, brauzerda PDF
-                    sifatida saqlanadi.
+                    {{
+                        t(
+                            "Ko'rsatkichlar, yo'nalishlar, mamlakatlar, daromad, faol mualliflar va taqrizchilar — A4 sahifa, brauzerda PDF sifatida saqlanadi.",
+                        )
+                    }}
                 </span>
                 <span
                     class="mt-4 inline-flex items-center gap-1.5 text-[13px] font-semibold text-red-700"
                 >
-                    <Printer class="size-4" /> Ochish va chop etish
+                    <Printer class="size-4" /> {{ t('Ochish va chop etish') }}
                 </span>
             </a>
         </section>

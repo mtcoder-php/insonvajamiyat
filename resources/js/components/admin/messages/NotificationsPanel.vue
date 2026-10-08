@@ -5,6 +5,7 @@ import SimplePager from '@/components/admin/ui/SimplePager.vue';
 import { formatDate, formatTime } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { NotificationItem, SimpleMeta } from '@/types';
+import { t } from '@/lib/i18n';
 
 /** Xodimning bildirishnomalari: barchasi / o'qilmaganlar, hammasini o'qilgan deb belgilash */
 defineProps<{
@@ -31,8 +32,8 @@ function markAll(url: string): void {
             <div class="flex gap-1">
                 <button
                     v-for="opt in [
-                        { unread: false, label: 'Barchasi' },
-                        { unread: true, label: `O'qilmaganlar` },
+                        { unread: false, label: t('Barchasi') },
+                        { unread: true, label: t('O\'qilmaganlar') },
                     ]"
                     :key="opt.label"
                     type="button"
@@ -55,7 +56,8 @@ function markAll(url: string): void {
                 class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold text-brand-700 transition-colors hover:bg-brand-50"
                 @click="markAll(readAllUrl)"
             >
-                <CheckCheck class="size-4" /> Hammasini o'qilgan deb belgilash
+                <CheckCheck class="size-4" />
+                {{ t("Hammasini o'qilgan deb belgilash") }}
             </button>
         </header>
 

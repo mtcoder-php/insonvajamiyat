@@ -22,6 +22,7 @@ import {
 import { formatDate } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { ReviewDetail, ReviewOptions } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Taqrizlash formasi (o'ng ustun): taklifga javob, baholash, tavsiya va izohlar.
@@ -146,7 +147,7 @@ const recommendationLabel = computed(
     >
         <header class="border-b border-line px-5 py-4">
             <h2 class="font-sans text-base font-bold text-navy-950">
-                Taqrizlash formasi
+                {{ t('Taqrizlash formasi') }}
             </h2>
         </header>
 
@@ -161,10 +162,13 @@ const recommendationLabel = computed(
                 </span>
                 <div class="text-xs leading-relaxed text-navy-600">
                     <p class="text-[13px] font-semibold text-navy-900">
-                        Blind Review
+                        {{ t('Blind Review') }}
                     </p>
-                    Taqrizingizni faqat muharrir ko'radi. Muallif esa sizning
-                    shaxsingizni bilmaydi.
+                    {{
+                        t(
+                            "Taqrizingizni faqat muharrir ko'radi. Muallif esa sizning shaxsingizni bilmaydi.",
+                        )
+                    }}
                 </div>
             </div>
 
@@ -172,15 +176,17 @@ const recommendationLabel = computed(
             <template v-if="review.can.respond">
                 <div class="grid gap-3 text-sm leading-relaxed text-navy-700">
                     <p>
-                        Sizni ushbu maqolaga taqrizchi sifatida taklif qilishdi.
-                        Taklifni qabul qilsangiz, maqola fayllari ochiladi va
-                        taqriz formasi faollashadi.
+                        {{
+                            t(
+                                'Sizni ushbu maqolaga taqrizchi sifatida taklif qilishdi. Taklifni qabul qilsangiz, maqola fayllari ochiladi va taqriz formasi faollashadi.',
+                            )
+                        }}
                     </p>
                     <p
                         v-if="review.dueAt"
                         class="rounded-lg bg-[#f5f8fc] px-3 py-2 text-xs text-navy-600"
                     >
-                        Taqriz muddati:
+                        {{ t('Taqriz muddati:') }}
                         <b class="text-navy-900">{{
                             formatDate(review.dueAt)
                         }}</b>
@@ -198,7 +204,7 @@ const recommendationLabel = computed(
                             class="size-4 animate-spin"
                         />
                         <CircleCheck v-else class="size-4" />
-                        Taklifni qabul qilish
+                        {{ t('Taklifni qabul qilish') }}
                     </button>
                     <button
                         type="button"
@@ -210,7 +216,7 @@ const recommendationLabel = computed(
                         "
                         @click="declineOpen = true"
                     >
-                        <CircleX class="size-4" /> Rad etish
+                        <CircleX class="size-4" /> {{ t('Rad etish') }}
                     </button>
                 </div>
             </template>
@@ -230,7 +236,7 @@ const recommendationLabel = computed(
 
                 <div>
                     <h3 class="mb-2 text-sm font-bold text-navy-900">
-                        1. Umumiy baho
+                        {{ t('1. Umumiy baho') }}
                     </h3>
                     <div class="flex items-center justify-between gap-3">
                         <StarRating v-model="form.score" />
@@ -242,7 +248,7 @@ const recommendationLabel = computed(
                         </span>
                     </div>
                     <p class="mt-1 text-[11px] text-navy-500">
-                        Tanlanmasa, mezonlar o'rtachasi olinadi.
+                        {{ t("Tanlanmasa, mezonlar o'rtachasi olinadi.") }}
                     </p>
                     <p v-if="errors.score" class="mt-1 text-xs text-red-600">
                         {{ errors.score }}
@@ -251,7 +257,7 @@ const recommendationLabel = computed(
 
                 <div>
                     <h3 class="mb-3 text-sm font-bold text-navy-900">
-                        2. Baholash mezonlari
+                        {{ t('2. Baholash mezonlari') }}
                     </h3>
                     <div class="grid gap-3.5">
                         <label
@@ -303,13 +309,17 @@ const recommendationLabel = computed(
 
                 <div>
                     <h3 class="mb-2 text-sm font-bold text-navy-900">
-                        3. Taqriz va izohlar
+                        {{ t('3. Taqriz va izohlar') }}
                     </h3>
                     <textarea
                         v-model="form.comments_to_author"
                         rows="6"
                         maxlength="5000"
-                        placeholder="Taqrizingizni yozing: maqolaning kuchli va zaif tomonlari, tavsiyalar... (muallifga anonim ko'rsatiladi)"
+                        :placeholder="
+                            t(
+                                'Taqrizingizni yozing: maqolaning kuchli va zaif tomonlari, tavsiyalar... (muallifga anonim ko\'rsatiladi)',
+                            )
+                        "
                         :aria-invalid="!!errors.comments_to_author"
                         :class="textareaClass"
                     />
@@ -332,13 +342,13 @@ const recommendationLabel = computed(
                         <span
                             class="mb-1 block text-xs font-semibold text-navy-700"
                         >
-                            Muharrir uchun maxfiy izoh
+                            {{ t('Muharrir uchun maxfiy izoh') }}
                         </span>
                         <textarea
                             v-model="form.comments_to_editor"
                             rows="3"
                             maxlength="2000"
-                            placeholder="Faqat muharrir ko'radi..."
+                            :placeholder="t('Faqat muharrir ko\'radi...')"
                             :class="cn(textareaClass, 'min-h-20')"
                         />
                     </label>
@@ -352,7 +362,7 @@ const recommendationLabel = computed(
                             {{
                                 form.attachment
                                     ? form.attachment.name
-                                    : 'Taqriz faylini biriktirish'
+                                    : t('Taqriz faylini biriktirish')
                             }}
                         </button>
                         <a
@@ -360,7 +370,8 @@ const recommendationLabel = computed(
                             :href="review.form.attachmentUrl"
                             class="inline-flex items-center gap-1 text-xs font-semibold text-brand-700 hover:underline"
                         >
-                            <Download class="size-3.5" /> Yuklangan fayl
+                            <Download class="size-3.5" />
+                            {{ t('Yuklangan fayl') }}
                         </a>
                         <input
                             ref="fileInput"
@@ -380,7 +391,7 @@ const recommendationLabel = computed(
 
                 <div>
                     <h3 class="mb-2 text-sm font-bold text-navy-900">
-                        4. Qaror
+                        {{ t('4. Qaror') }}
                     </h3>
                     <div class="grid gap-2" role="radiogroup">
                         <label
@@ -443,7 +454,7 @@ const recommendationLabel = computed(
                             class="size-4 animate-spin"
                         />
                         <Send v-else class="size-4" />
-                        Taqrizni yuborish
+                        {{ t('Taqrizni yuborish') }}
                     </button>
                     <button
                         type="button"
@@ -451,15 +462,18 @@ const recommendationLabel = computed(
                         :disabled="form.processing"
                         @click="save(false)"
                     >
-                        <Save class="size-4" /> Qoralama saqlash
+                        <Save class="size-4" /> {{ t('Qoralama saqlash') }}
                     </button>
                     <p
                         v-if="!ready"
                         class="text-center text-[11px] text-navy-500"
                     >
-                        Yuborish uchun barcha mezonlarni baholang, qarorni
-                        tanlang va kamida {{ MIN_AUTHOR }} belgili taqriz
-                        yozing.
+                        {{
+                            t(
+                                'Yuborish uchun barcha mezonlarni baholang, qarorni tanlang va kamida :min belgili taqriz yozing.',
+                                { min: MIN_AUTHOR },
+                            )
+                        }}
                     </p>
                 </div>
             </form>
@@ -470,7 +484,11 @@ const recommendationLabel = computed(
                     class="flex items-center gap-2 rounded-lg bg-emerald-50 px-3 py-2 text-[13px] font-semibold text-emerald-800"
                 >
                     <CircleCheck class="size-4" />
-                    Taqriz {{ formatDate(review.completedAt) }} da topshirilgan
+                    {{
+                        t('Taqriz :date da topshirilgan', {
+                            date: formatDate(review.completedAt),
+                        })
+                    }}
                 </div>
                 <div class="flex items-center justify-between">
                     <StarRating
@@ -499,7 +517,7 @@ const recommendationLabel = computed(
                     </div>
                 </dl>
                 <p class="text-[13px]">
-                    <span class="mr-1 text-navy-500">Qaror:</span>
+                    <span class="mr-1 text-navy-500">{{ t('Qaror:') }}</span>
                     <b class="text-navy-900"> {{ recommendationLabel }}</b>
                 </p>
                 <p
@@ -512,7 +530,7 @@ const recommendationLabel = computed(
                     :href="review.form.attachmentUrl"
                     :class="cn(secondaryButtonClass, 'h-9 text-xs')"
                 >
-                    <Download class="size-4" /> Taqriz fayli
+                    <Download class="size-4" /> {{ t('Taqriz fayli') }}
                 </a>
             </div>
 
@@ -522,18 +540,22 @@ const recommendationLabel = computed(
                 class="flex flex-col items-center gap-2 py-6 text-center text-sm text-navy-500"
             >
                 <Lock class="size-8 text-navy-300" />
-                Taqriz holati:
+                {{ t('Taqriz holati:') }}
                 <b class="text-navy-800">{{ review.statusLabel }}</b>
             </div>
         </div>
 
         <ActionDialog
             v-model:open="declineOpen"
-            title="Taklifni rad etish"
-            description="Sababni muharrirga ko'rsatish ixtiyoriy (masalan, mavzu sohangizga mos emas yoki manfaatlar to'qnashuvi)."
+            :title="t('Taklifni rad etish')"
+            :description="
+                t(
+                    'Sababni muharrirga ko\'rsatish ixtiyoriy (masalan, mavzu sohangizga mos emas yoki manfaatlar to\'qnashuvi).',
+                )
+            "
             :icon="CircleX"
             tone="danger"
-            confirm-text="Rad etish"
+            :confirm-text="t('Rad etish')"
             :processing="declineForm.processing"
             @confirm="decline"
         >
@@ -541,7 +563,7 @@ const recommendationLabel = computed(
                 v-model="declineForm.reason"
                 rows="3"
                 maxlength="1000"
-                placeholder="Sabab (ixtiyoriy)"
+                :placeholder="t('Sabab (ixtiyoriy)')"
                 :class="textareaClass"
             />
         </ActionDialog>

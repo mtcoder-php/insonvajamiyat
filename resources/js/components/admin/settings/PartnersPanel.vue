@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils';
 import type { SettingsPartner, SettingsPartnerType } from '@/types';
 import DeleteDialog from './DeleteDialog.vue';
 import PartnerDialog from './PartnerDialog.vue';
+import { t } from '@/lib/i18n';
 
 /** Hamkorlar va indekslash bazalari — tur bo'yicha guruhlangan logo kartochkalari */
 const props = defineProps<{
@@ -23,8 +24,16 @@ const props = defineProps<{
 const groups = computed(() =>
     (
         [
-            { key: 'indexing', title: 'Indekslash bazalari', icon: Database },
-            { key: 'partner', title: 'Hamkor tashkilotlar', icon: Handshake },
+            {
+                key: 'indexing',
+                title: t('Indekslash bazalari'),
+                icon: Database,
+            },
+            {
+                key: 'partner',
+                title: t('Hamkor tashkilotlar'),
+                icon: Handshake,
+            },
         ] as const
     ).map((group) => ({
         ...group,
@@ -66,10 +75,14 @@ function host(url: string): string {
         <header class="flex flex-wrap items-center justify-between gap-3">
             <div>
                 <h2 class="font-sans text-[15px] font-bold text-navy-950">
-                    Hamkorlar va indekslash bazalari
+                    {{ t('Hamkorlar va indekslash bazalari') }}
                 </h2>
                 <p class="text-xs text-navy-500">
-                    Bosh sahifa pastida logolar qatori sifatida ko'rinadi
+                    {{
+                        t(
+                            "Bosh sahifa pastida logolar qatori sifatida ko'rinadi",
+                        )
+                    }}
                 </p>
             </div>
             <button
@@ -77,7 +90,7 @@ function host(url: string): string {
                 class="inline-flex h-9 items-center gap-2 rounded-lg bg-brand-600 px-4 text-[13px] font-semibold text-white shadow-[0_8px_18px_-10px_rgba(0,108,246,0.9)] transition-all hover:-translate-y-px hover:bg-brand-500"
                 @click="open(null)"
             >
-                <Plus class="size-4" /> Hamkor qo'shish
+                <Plus class="size-4" /> {{ t("Hamkor qo'shish") }}
             </button>
         </header>
 
@@ -98,7 +111,7 @@ function host(url: string): string {
                     class="inline-flex items-center gap-1 text-xs font-semibold text-brand-700 transition-colors hover:text-brand-500"
                     @click="open(null, group.key)"
                 >
-                    <Plus class="size-3.5" /> Qo'shish
+                    <Plus class="size-3.5" /> {{ t("Qo'shish") }}
                 </button>
             </div>
 
@@ -133,7 +146,7 @@ function host(url: string): string {
                         <span
                             v-if="!partner.isActive"
                             class="absolute top-2 left-2 rounded-md bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold text-slate-600"
-                            >Nofaol</span
+                            >{{ t('Nofaol') }}</span
                         >
                     </div>
                     <div class="flex items-start gap-2 px-3.5 py-3">
@@ -157,14 +170,14 @@ function host(url: string): string {
                                 target="_blank"
                                 rel="noopener"
                                 class="inline-flex size-8 items-center justify-center rounded-lg text-navy-500 transition-colors hover:bg-brand-50 hover:text-brand-700"
-                                aria-label="Saytni ochish"
+                                :aria-label="t('Saytni ochish')"
                             >
                                 <ExternalLink class="size-4" />
                             </a>
                             <button
                                 type="button"
                                 class="inline-flex size-8 items-center justify-center rounded-lg text-navy-500 transition-colors hover:bg-brand-50 hover:text-brand-700"
-                                aria-label="Tahrirlash"
+                                :aria-label="t('Tahrirlash')"
                                 @click="open(partner)"
                             >
                                 <PenLine class="size-4" />
@@ -172,7 +185,7 @@ function host(url: string): string {
                             <button
                                 type="button"
                                 class="inline-flex size-8 items-center justify-center rounded-lg text-navy-500 transition-colors hover:bg-red-50 hover:text-red-600"
-                                aria-label="O'chirish"
+                                :aria-label="t('O\'chirish')"
                                 @click="remove(partner)"
                             >
                                 <Trash2 class="size-4" />
@@ -185,7 +198,7 @@ function host(url: string): string {
                 v-if="!group.items.length"
                 class="rounded-xl border border-dashed border-line bg-white px-4 py-6 text-center text-sm text-navy-400"
             >
-                Hali qo'shilmagan
+                {{ t("Hali qo'shilmagan") }}
             </p>
         </div>
 
@@ -199,8 +212,12 @@ function host(url: string): string {
         <DeleteDialog
             v-model:open="deleteOpen"
             :url="removing?.urls.destroy ?? null"
-            title="Hamkorni o'chirish"
-            :description="`«${removing?.name ?? ''}» va uning logosi o'chiriladi.`"
+            :title="t('Hamkorni o\'chirish')"
+            :description="
+                t('«:name» va uning logosi o\'chiriladi.', {
+                    name: removing?.name ?? '',
+                })
+            "
         />
     </section>
 </template>

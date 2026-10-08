@@ -10,6 +10,7 @@ import type { SettingsPartner, SettingsPartnerType, Translated } from '@/types';
 import CheckCard from './CheckCard.vue';
 import ImagePicker from './ImagePicker.vue';
 import TranslatableField from './TranslatableField.vue';
+import { t } from '@/lib/i18n';
 
 /** Hamkor tashkilot yoki indekslash bazasi: tur, logo (shaffof PNG tavsiya), nom, izoh, sayt */
 const props = defineProps<{
@@ -94,10 +95,14 @@ function submit(): void {
 <template>
     <ActionDialog
         v-model:open="open"
-        :title="partner ? 'Hamkorni tahrirlash' : 'Yangi hamkor'"
-        description="Bosh sahifa pastidagi «Hamkorlar va indekslash bazalari» qatorida ko'rinadi."
+        :title="partner ? t('Hamkorni tahrirlash') : t('Yangi hamkor')"
+        :description="
+            t(
+                'Bosh sahifa pastidagi «Hamkorlar va indekslash bazalari» qatorida ko\'rinadi.',
+            )
+        "
         :icon="partner ? PenLine : Handshake"
-        :confirm-text="partner ? 'Saqlash' : 'Qo\'shish'"
+        :confirm-text="partner ? t('Saqlash') : t('Qo\'shish')"
         :processing="form.processing"
         size="lg"
         @confirm="submit"
@@ -106,7 +111,7 @@ function submit(): void {
             <div
                 class="grid grid-cols-2 gap-1 rounded-xl bg-[#eef3fa] p-1"
                 role="radiogroup"
-                aria-label="Turi"
+                :aria-label="t('Turi')"
             >
                 <button
                     v-for="item in types"
@@ -140,12 +145,12 @@ function submit(): void {
                     aspect-class="aspect-[3/2]"
                     fit="contain"
                     :prepare="null"
-                    hint="Logo · PNG/WEBP · 2 MB gacha"
+                    :hint="t('Logo · PNG/WEBP · 2 MB gacha')"
                 />
                 <div class="grid min-w-0 grid-cols-1 content-start gap-4">
                     <TranslatableField
                         v-model="form.name"
-                        label="Nomi"
+                        :label="t('Nomi')"
                         field="name"
                         :errors="errors"
                         required
@@ -153,19 +158,19 @@ function submit(): void {
                         :placeholder="
                             form.type === 'indexing'
                                 ? 'Google Scholar'
-                                : 'O\'zbekiston Milliy universiteti'
+                                : t('O\'zbekiston Milliy universiteti')
                         "
                     />
                     <TranslatableField
                         v-model="form.subtitle"
-                        label="Izoh"
+                        :label="t('Izoh')"
                         field="subtitle"
                         :errors="errors"
                         :maxlength="150"
                         :placeholder="
                             form.type === 'indexing'
-                                ? 'Indekslangan'
-                                : 'Hamkorlik memorandumi'
+                                ? t('Indekslangan')
+                                : t('Hamkorlik memorandumi')
                         "
                     />
                 </div>
@@ -175,7 +180,7 @@ function submit(): void {
                 class="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_7rem]"
             >
                 <FormField
-                    label="Sayt manzili"
+                    :label="t('Sayt manzili')"
                     for="partner-url"
                     :error="errors.url"
                     hint="https://…"
@@ -190,7 +195,7 @@ function submit(): void {
                     />
                 </FormField>
                 <FormField
-                    label="Tartib"
+                    :label="t('Tartib')"
                     for="partner-order"
                     :error="errors.sort_order"
                 >
@@ -205,8 +210,8 @@ function submit(): void {
             </div>
             <CheckCard
                 v-model="form.is_active"
-                label="Faol"
-                hint="Belgilanmasa — saytda ko'rinmaydi"
+                :label="t('Faol')"
+                :hint="t('Belgilanmasa — saytda ko\'rinmaydi')"
                 :icon="Eye"
             />
         </div>

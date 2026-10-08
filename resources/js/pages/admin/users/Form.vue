@@ -32,6 +32,7 @@ import {
     store as storeAvatar,
 } from '@/routes/admin/users/avatar';
 import type { RoleName, RoleOption, UserDetail } from '@/types';
+import { t, tk } from '@/lib/i18n';
 
 /**
  * Foydalanuvchi qo'shish / tahrirlash.
@@ -46,14 +47,14 @@ const props = defineProps<{
 
 const isEdit = computed(() => props.user !== null);
 const title = computed(() =>
-    props.user ? `${props.user.name} — tahrirlash` : 'Yangi foydalanuvchi',
+    props.user ? `${props.user.name} — tahrirlash` : t('Yangi foydalanuvchi'),
 );
 
 defineOptions({
     layout: {
         breadcrumbs: [
-            { title: 'Admin panel', href: dashboard() },
-            { title: 'Foydalanuvchilar', href: index() },
+            { title: tk('Admin panel'), href: dashboard() },
+            { title: tk('Foydalanuvchilar'), href: index() },
         ],
     },
 });
@@ -141,12 +142,16 @@ const fieldClass = (error?: string) =>
     >
         <PageHeader
             :title="
-                isEdit ? 'Foydalanuvchini tahrirlash' : 'Yangi foydalanuvchi'
+                isEdit
+                    ? t('Foydalanuvchini tahrirlash')
+                    : t('Yangi foydalanuvchi')
             "
             :description="
                 isEdit
                     ? user?.name
-                    : 'Xodim yoki muallif akkauntini yarating va rollarini belgilang'
+                    : t(
+                          'Xodim yoki muallif akkauntini yarating va rollarini belgilang',
+                      )
             "
         >
             <template #before>
@@ -157,7 +162,7 @@ const fieldClass = (error?: string) =>
                     <ArrowLeft
                         class="size-3.5 transition-transform group-hover:-translate-x-0.5"
                     />
-                    {{ user ? 'Profilga qaytish' : "Ro'yxatga qaytish" }}
+                    {{ user ? t('Profilga qaytish') : "Ro'yxatga qaytish" }}
                 </Link>
             </template>
             <template #actions>
@@ -165,7 +170,7 @@ const fieldClass = (error?: string) =>
                     :href="user ? show(user.id) : index()"
                     :class="secondaryButtonClass"
                 >
-                    Bekor qilish
+                    {{ t('Bekor qilish') }}
                 </Link>
                 <button
                     type="submit"
@@ -177,7 +182,7 @@ const fieldClass = (error?: string) =>
                         class="size-4 animate-spin"
                     />
                     <Save v-else class="size-4" />
-                    {{ isEdit ? 'Saqlash' : 'Yaratish' }}
+                    {{ isEdit ? t('Saqlash') : t('Yaratish') }}
                 </button>
             </template>
         </PageHeader>
@@ -185,13 +190,17 @@ const fieldClass = (error?: string) =>
         <div class="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_22rem]">
             <div class="flex min-w-0 flex-col gap-5">
                 <SectionCard
-                    title="Shaxsiy ma'lumotlar"
-                    description="Ism-familiya ilmiy uslubda ko'rsatiladi: Karimov M. A."
+                    :title="t('Shaxsiy ma\'lumotlar')"
+                    :description="
+                        t(
+                            'Ism-familiya ilmiy uslubda ko\'rsatiladi: Karimov M. A.',
+                        )
+                    "
                     :icon="UserRound"
                 >
                     <div class="grid gap-4 sm:grid-cols-3">
                         <FormField
-                            label="Familiya"
+                            :label="t('Familiya')"
                             for="last_name"
                             required
                             :error="form.errors.last_name"
@@ -204,7 +213,7 @@ const fieldClass = (error?: string) =>
                             />
                         </FormField>
                         <FormField
-                            label="Ism"
+                            :label="t('Ism')"
                             for="first_name"
                             required
                             :error="form.errors.first_name"
@@ -217,7 +226,7 @@ const fieldClass = (error?: string) =>
                             />
                         </FormField>
                         <FormField
-                            label="Otasining ismi"
+                            :label="t('Otasining ismi')"
                             for="middle_name"
                             :error="form.errors.middle_name"
                         >
@@ -228,7 +237,7 @@ const fieldClass = (error?: string) =>
                             />
                         </FormField>
                         <FormField
-                            label="Elektron pochta"
+                            :label="t('Elektron pochta')"
                             for="email"
                             required
                             :error="form.errors.email"
@@ -243,7 +252,7 @@ const fieldClass = (error?: string) =>
                             />
                         </FormField>
                         <FormField
-                            label="Telefon"
+                            :label="t('Telefon')"
                             for="phone"
                             :error="form.errors.phone"
                             hint="+998 90 123 45 67"
@@ -257,7 +266,7 @@ const fieldClass = (error?: string) =>
                             />
                         </FormField>
                         <FormField
-                            label="Interfeys tili"
+                            :label="t('Interfeys tili')"
                             for="locale"
                             :error="form.errors.locale"
                         >
@@ -275,13 +284,15 @@ const fieldClass = (error?: string) =>
                 </SectionCard>
 
                 <SectionCard
-                    title="Ilmiy ma'lumotlar"
-                    description="Ixtiyoriy — muallif va taqrizchilar uchun"
+                    :title="t('Ilmiy ma\'lumotlar')"
+                    :description="
+                        t('Ixtiyoriy — muallif va taqrizchilar uchun')
+                    "
                     :icon="GraduationCap"
                 >
                     <div class="grid gap-4 sm:grid-cols-2">
                         <FormField
-                            label="Tashkilot"
+                            :label="t('Tashkilot')"
                             for="organization"
                             :error="form.errors.organization"
                             class="sm:col-span-2"
@@ -290,11 +301,15 @@ const fieldClass = (error?: string) =>
                                 id="organization"
                                 v-model="form.organization"
                                 :class="fieldClass(form.errors.organization)"
-                                placeholder="Masalan: O'zbekiston Milliy universiteti"
+                                :placeholder="
+                                    t(
+                                        'Masalan: O\'zbekiston Milliy universiteti',
+                                    )
+                                "
                             />
                         </FormField>
                         <FormField
-                            label="Kafedra / bo'lim"
+                            :label="t('Kafedra / bo\'lim')"
                             for="department"
                             :error="form.errors.department"
                         >
@@ -305,7 +320,7 @@ const fieldClass = (error?: string) =>
                             />
                         </FormField>
                         <FormField
-                            label="Lavozim"
+                            :label="t('Lavozim')"
                             for="position"
                             :error="form.errors.position"
                         >
@@ -316,7 +331,7 @@ const fieldClass = (error?: string) =>
                             />
                         </FormField>
                         <FormField
-                            label="Ilmiy daraja"
+                            :label="t('Ilmiy daraja')"
                             for="academic_degree"
                             :error="form.errors.academic_degree"
                         >
@@ -324,11 +339,11 @@ const fieldClass = (error?: string) =>
                                 id="academic_degree"
                                 v-model="form.academic_degree"
                                 :class="fieldClass(form.errors.academic_degree)"
-                                placeholder="PhD, DSc"
+                                :placeholder="t('PhD, DSc')"
                             />
                         </FormField>
                         <FormField
-                            label="Ilmiy unvon"
+                            :label="t('Ilmiy unvon')"
                             for="academic_title"
                             :error="form.errors.academic_title"
                         >
@@ -336,7 +351,7 @@ const fieldClass = (error?: string) =>
                                 id="academic_title"
                                 v-model="form.academic_title"
                                 :class="fieldClass(form.errors.academic_title)"
-                                placeholder="Dotsent, professor"
+                                :placeholder="t('Dotsent, professor')"
                             />
                         </FormField>
                         <FormField
@@ -353,7 +368,7 @@ const fieldClass = (error?: string) =>
                             />
                         </FormField>
                         <FormField
-                            label="Shahar"
+                            :label="t('Shahar')"
                             for="city"
                             :error="form.errors.city"
                         >
@@ -364,7 +379,7 @@ const fieldClass = (error?: string) =>
                             />
                         </FormField>
                         <FormField
-                            label="Qisqacha ma'lumot"
+                            :label="t('Qisqacha ma\'lumot')"
                             for="bio"
                             :error="form.errors.bio"
                             class="sm:col-span-2"
@@ -382,8 +397,12 @@ const fieldClass = (error?: string) =>
 
                 <SectionCard
                     v-if="!isEdit"
-                    title="Parol"
-                    description="Foydalanuvchi keyin o'z profilidan almashtirishi mumkin"
+                    :title="t('Parol')"
+                    :description="
+                        t(
+                            'Foydalanuvchi keyin o\'z profilidan almashtirishi mumkin',
+                        )
+                    "
                     :icon="KeyRound"
                 >
                     <template #actions>
@@ -393,12 +412,12 @@ const fieldClass = (error?: string) =>
                             @click="generatePassword"
                         >
                             <Sparkles class="size-3.5" />
-                            Parol yaratish
+                            {{ t('Parol yaratish') }}
                         </button>
                     </template>
                     <div class="grid gap-4 sm:grid-cols-2">
                         <FormField
-                            label="Parol"
+                            :label="t('Parol')"
                             for="password"
                             required
                             :error="form.errors.password"
@@ -412,7 +431,7 @@ const fieldClass = (error?: string) =>
                             />
                         </FormField>
                         <FormField
-                            label="Parolni takrorlang"
+                            :label="t('Parolni takrorlang')"
                             for="password_confirmation"
                             required
                         >
@@ -431,7 +450,7 @@ const fieldClass = (error?: string) =>
                         :href="user ? show(user.id) : index()"
                         :class="secondaryButtonClass"
                     >
-                        Bekor qilish
+                        {{ t('Bekor qilish') }}
                     </Link>
                     <button
                         type="submit"
@@ -446,14 +465,17 @@ const fieldClass = (error?: string) =>
                         {{
                             isEdit
                                 ? "O'zgarishlarni saqlash"
-                                : 'Foydalanuvchini yaratish'
+                                : t('Foydalanuvchini yaratish')
                         }}
                     </button>
                 </div>
             </div>
 
             <aside class="flex flex-col gap-5">
-                <SectionCard title="Profil rasmi" class="xl:sticky xl:top-5">
+                <SectionCard
+                    :title="t('Profil rasmi')"
+                    class="xl:sticky xl:top-5"
+                >
                     <AvatarUploader
                         v-if="user"
                         :name="`${form.last_name} ${form.first_name}`.trim()"
@@ -471,14 +493,14 @@ const fieldClass = (error?: string) =>
                 </SectionCard>
 
                 <SectionCard
-                    title="Rollar"
-                    description="Bir nechta rol berish mumkin"
+                    :title="t('Rollar')"
+                    :description="t('Bir nechta rol berish mumkin')"
                     :icon="ShieldCheck"
                 >
                     <p
                         class="mb-2 text-[11px] font-semibold tracking-wider text-navy-400 uppercase"
                     >
-                        Tahririyat xodimlari
+                        {{ t('Tahririyat xodimlari') }}
                     </p>
                     <div class="grid gap-1.5">
                         <label
@@ -496,7 +518,7 @@ const fieldClass = (error?: string) =>
                             "
                             :title="
                                 roleDisabled(role.value)
-                                    ? 'Faqat Bosh administrator bera oladi'
+                                    ? t('Faqat Bosh administrator bera oladi')
                                     : undefined
                             "
                         >
@@ -514,7 +536,7 @@ const fieldClass = (error?: string) =>
                         <p
                             class="mt-4 mb-2 text-[11px] font-semibold tracking-wider text-navy-400 uppercase"
                         >
-                            Mualliflar
+                            {{ t('Mualliflar') }}
                         </p>
                         <label
                             :class="
@@ -545,7 +567,7 @@ const fieldClass = (error?: string) =>
                     </p>
                 </SectionCard>
 
-                <SectionCard title="Holat">
+                <SectionCard :title="t('Holat')">
                     <label class="flex cursor-pointer items-start gap-3">
                         <input
                             v-model="form.email_verified"
@@ -555,11 +577,14 @@ const fieldClass = (error?: string) =>
                         <span>
                             <span
                                 class="block text-sm font-semibold text-navy-900"
-                                >Email tasdiqlangan</span
+                                >{{ t('Email tasdiqlangan') }}</span
                             >
                             <span class="block text-xs text-navy-500">
-                                Belgilanmasa, foydalanuvchi kirgach emailini
-                                tasdiqlashi kerak bo'ladi
+                                {{
+                                    t(
+                                        "Belgilanmasa, foydalanuvchi kirgach emailini tasdiqlashi kerak bo'ladi",
+                                    )
+                                }}
                             </span>
                         </span>
                     </label>

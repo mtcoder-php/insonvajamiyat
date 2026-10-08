@@ -4,6 +4,7 @@ import DashCard from '@/components/admin/dashboard/DashCard.vue';
 import { niceScale, smoothLine } from '@/lib/chart';
 import { MONTHS_SHORT, formatCompact, formatSum } from '@/lib/format';
 import type { PaymentsMonthly } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * "To'lovlar statistikasi": Click, Payme va qo'lda tasdiqlangan tushumlar oyma-oy (bitta o'q),
@@ -14,7 +15,7 @@ const props = defineProps<{ data: PaymentsMonthly }>();
 const series = [
     { key: 'click', label: 'Click', color: '#1a82f7' },
     { key: 'payme', label: 'Payme', color: '#0fa37f' },
-    { key: 'manual', label: "Qo'lda", color: '#8b5cf6' },
+    { key: 'manual', label: t("Qo'lda"), color: '#8b5cf6' },
 ] as const;
 
 const W = 440;
@@ -68,18 +69,18 @@ const hovered = ref<number | null>(null);
 </script>
 
 <template>
-    <DashCard title="To'lovlar statistikasi">
+    <DashCard :title="t('To\'lovlar statistikasi')">
         <template #actions>
             <span
                 class="rounded-md border border-line px-2 py-1 text-xs text-navy-600"
             >
-                {{ data.year }}-yil
+                {{ t(':year-yil', { year: data.year }) }}
             </span>
         </template>
 
         <div class="mb-3 flex flex-wrap items-end justify-between gap-2">
             <div>
-                <p class="text-xs text-navy-500">Jami tushum</p>
+                <p class="text-xs text-navy-500">{{ t('Jami tushum') }}</p>
                 <p class="text-xl font-bold text-navy-950 tabular-nums">
                     {{ formatSum(data.total) }}
                 </p>
@@ -104,7 +105,9 @@ const hovered = ref<number | null>(null);
                 :viewBox="`0 0 ${W} ${H}`"
                 class="h-auto w-full"
                 role="img"
-                :aria-label="`${data.year}-yil to'lovlar statistikasi`"
+                :aria-label="
+                    t(':year-yil to\'lovlar statistikasi', { year: data.year })
+                "
                 @mouseleave="hovered = null"
             >
                 <defs>

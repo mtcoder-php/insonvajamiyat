@@ -4,6 +4,7 @@ import { computed, ref } from 'vue';
 import { inputClass, textareaClass } from '@/lib/formStyles';
 import { cn } from '@/lib/utils';
 import type { Translated } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Uch tilli maydon (UZ / RU / EN): o'zbekcha majburiy, boshqalari ixtiyoriy.
@@ -102,7 +103,8 @@ function hasError(lang: string): boolean {
                 :placeholder="
                     lang.key === 'uz'
                         ? placeholder
-                        : `${placeholder ? placeholder + ' — ' : ''}${lang.label} (ixtiyoriy)`
+                        : (placeholder ? placeholder + ' — ' : '') +
+                          t(':label (ixtiyoriy)', { label: lang.label })
                 "
                 :class="textareaClass"
                 :aria-invalid="hasError(lang.key)"
@@ -116,7 +118,7 @@ function hasError(lang: string): boolean {
                 :placeholder="
                     lang.key === 'uz'
                         ? placeholder
-                        : `${lang.label} (ixtiyoriy)`
+                        : t(':label (ixtiyoriy)', { label: lang.label })
                 "
                 :class="inputClass"
                 :aria-invalid="hasError(lang.key)"

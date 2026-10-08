@@ -2,6 +2,7 @@
 import { Ban, BadgeCheck } from '@lucide/vue';
 import UserAvatar from '@/components/users/UserAvatar.vue';
 import type { PersonProfile } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Muallif / taqrizchi sahifasi sarlavhasi: banner, avatar, ism, lavozim va tashkilot,
@@ -48,7 +49,7 @@ defineProps<{ profile: PersonProfile }>();
                     <BadgeCheck
                         v-if="profile.orcid"
                         class="size-5 shrink-0 text-emerald-500"
-                        aria-label="ORCID bog'langan"
+                        :aria-label="t('ORCID bog\'langan')"
                     />
                 </h1>
                 <p
@@ -68,7 +69,7 @@ defineProps<{ profile: PersonProfile }>();
                         v-if="profile.isBlocked"
                         class="inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-0.5 text-[11px] font-semibold text-red-700 ring-1 ring-red-200 ring-inset"
                     >
-                        <Ban class="size-3" /> Bloklangan
+                        <Ban class="size-3" /> {{ t('Bloklangan') }}
                     </span>
                     <slot name="badges" />
                 </div>

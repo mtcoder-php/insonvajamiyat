@@ -14,6 +14,7 @@ import type { Component } from 'vue';
 import SectionCard from '@/components/admin/ui/SectionCard.vue';
 import { formatDate, formatPhone, timeAgo } from '@/lib/format';
 import type { PersonProfile, PersonSubject } from '@/types';
+import { t } from '@/lib/i18n';
 
 /** Profil ma'lumotlari: aloqa, ilmiy daraja, tashkilot, ORCID, yo'nalishlar, bio */
 const props = defineProps<{
@@ -28,14 +29,14 @@ const facts = computed<Fact[]>(() => {
     const list: (Fact | null)[] = [
         {
             icon: Mail,
-            label: 'Email',
+            label: t('Email'),
             value: p.email,
             href: `mailto:${p.email}`,
         },
         p.phone
             ? {
                   icon: Phone,
-                  label: 'Telefon',
+                  label: t('Telefon'),
                   value: formatPhone(p.phone),
                   href: `tel:${p.phone}`,
               }
@@ -43,38 +44,38 @@ const facts = computed<Fact[]>(() => {
         p.degree || p.title
             ? {
                   icon: GraduationCap,
-                  label: 'Ilmiy daraja / unvon',
+                  label: t('Ilmiy daraja / unvon'),
                   value: [p.degree, p.title].filter(Boolean).join(', '),
               }
             : null,
         p.organization || p.department
             ? {
                   icon: Building2,
-                  label: 'Tashkilot',
+                  label: t('Tashkilot'),
                   value: [p.organization, p.department]
                       .filter(Boolean)
                       .join(' — '),
               }
             : null,
         p.position
-            ? { icon: UserRound, label: 'Lavozim', value: p.position }
+            ? { icon: UserRound, label: t('Lavozim'), value: p.position }
             : null,
         p.city || p.country
             ? {
                   icon: MapPin,
-                  label: 'Manzil',
+                  label: t('Manzil'),
                   value: [p.city, p.country].filter(Boolean).join(', '),
               }
             : null,
         {
             icon: CalendarDays,
-            label: "Ro'yxatdan o'tgan",
+            label: t("Ro'yxatdan o'tgan"),
             value: formatDate(p.createdAt),
         },
         {
             icon: Clock,
-            label: 'Oxirgi kirish',
-            value: p.lastLoginAt ? timeAgo(p.lastLoginAt) : 'Kirmagan',
+            label: t('Oxirgi kirish'),
+            value: p.lastLoginAt ? timeAgo(p.lastLoginAt) : t('Kirmagan'),
         },
     ];
 
@@ -83,7 +84,7 @@ const facts = computed<Fact[]>(() => {
 </script>
 
 <template>
-    <SectionCard title="Profil" :icon="UserRound">
+    <SectionCard :title="t('Profil')" :icon="UserRound">
         <dl class="grid grid-cols-1 gap-3">
             <div v-for="fact in facts" :key="fact.label" class="flex gap-3">
                 <span
@@ -131,7 +132,7 @@ const facts = computed<Fact[]>(() => {
 
         <div v-if="subjects.length" class="mt-4 border-t border-line pt-4">
             <p class="mb-2 text-[11px] font-medium text-navy-400">
-                Ilmiy yo'nalishlar
+                {{ t("Ilmiy yo'nalishlar") }}
             </p>
             <div class="flex flex-wrap gap-1.5">
                 <span

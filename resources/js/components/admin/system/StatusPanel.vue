@@ -11,6 +11,7 @@ import { computed } from 'vue';
 import SectionCard from '@/components/admin/ui/SectionCard.vue';
 import { cn } from '@/lib/utils';
 import type { SystemStatusRow } from '@/types';
+import { t } from '@/lib/i18n';
 
 /** Server muhiti va xizmatlar holati (faqat ko'rish) */
 const props = defineProps<{ rows: SystemStatusRow[] }>();
@@ -22,18 +23,18 @@ const styles: Record<
     ok: {
         icon: CircleCheck,
         class: 'bg-emerald-50 text-emerald-600',
-        label: 'Joyida',
+        label: t('Joyida'),
     },
     warning: {
         icon: TriangleAlert,
         class: 'bg-amber-50 text-amber-600',
-        label: "E'tibor bering",
+        label: t("E'tibor bering"),
     },
-    error: { icon: CircleX, class: 'bg-red-50 text-red-600', label: 'Xato' },
+    error: { icon: CircleX, class: 'bg-red-50 text-red-600', label: t('Xato') },
     off: {
         icon: CircleMinus,
         class: 'bg-slate-100 text-slate-500',
-        label: "O'chirilgan",
+        label: t("O'chirilgan"),
     },
 };
 
@@ -46,11 +47,11 @@ const issues = computed(
 
 <template>
     <SectionCard
-        title="Tizim holati"
+        :title="t('Tizim holati')"
         :description="
             issues
-                ? `${issues} ta bandga e'tibor bering`
-                : 'Barcha asosiy xizmatlar joyida'
+                ? t(':issues ta bandga e\'tibor bering', { issues: issues })
+                : t('Barcha asosiy xizmatlar joyida')
         "
         :icon="MonitorCog"
     >

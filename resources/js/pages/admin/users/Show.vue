@@ -67,6 +67,7 @@ import {
     update as updatePassword,
 } from '@/routes/admin/users/password';
 import type { UserActivity, UserArticleItem, UserDetail } from '@/types';
+import { t, tk } from '@/lib/i18n';
 
 /**
  * Foydalanuvchi profili (admin ko'rinishi): ma'lumotlar, faoliyat,
@@ -82,8 +83,8 @@ const props = defineProps<{
 defineOptions({
     layout: {
         breadcrumbs: [
-            { title: 'Admin panel', href: dashboard() },
-            { title: 'Foydalanuvchilar', href: index() },
+            { title: tk('Admin panel'), href: dashboard() },
+            { title: tk('Foydalanuvchilar'), href: index() },
         ],
     },
 });
@@ -193,18 +194,18 @@ function submitRestore(): void {
 }
 
 const personal = computed(() => [
-    { label: "To'liq ism", value: props.user.fullName, icon: UserRound },
-    { label: 'Elektron pochta', value: props.user.email, icon: Mail },
-    { label: 'Telefon', value: formatPhone(props.user.phone), icon: Phone },
-    { label: 'Shahar', value: props.user.city, icon: MapPin },
+    { label: t("To'liq ism"), value: props.user.fullName, icon: UserRound },
+    { label: t('Elektron pochta'), value: props.user.email, icon: Mail },
+    { label: t('Telefon'), value: formatPhone(props.user.phone), icon: Phone },
+    { label: t('Shahar'), value: props.user.city, icon: MapPin },
 ]);
 
 const academic = computed(() => [
-    { label: 'Tashkilot', value: props.user.organization },
-    { label: "Kafedra / bo'lim", value: props.user.department },
-    { label: 'Lavozim', value: props.user.position },
-    { label: 'Ilmiy daraja', value: props.user.academicDegree },
-    { label: 'Ilmiy unvon', value: props.user.academicTitle },
+    { label: t('Tashkilot'), value: props.user.organization },
+    { label: t("Kafedra / bo'lim"), value: props.user.department },
+    { label: t('Lavozim'), value: props.user.position },
+    { label: t('Ilmiy daraja'), value: props.user.academicDegree },
+    { label: t('Ilmiy unvon'), value: props.user.academicTitle },
     { label: 'ORCID', value: props.user.orcid },
 ]);
 
@@ -214,13 +215,13 @@ const hasAcademic = computed(
 
 const stats = computed(() => [
     {
-        label: 'Yuborilgan maqolalar',
+        label: t('Yuborilgan maqolalar'),
         value: props.activity ? formatNumber(props.activity.articles) : '—',
         icon: FileText,
         tint: 'bg-brand-50 text-brand-600',
     },
     {
-        label: 'Nashr etilgan',
+        label: t('Nashr etilgan'),
         value: props.activity
             ? formatNumber(props.activity.publishedArticles)
             : '—',
@@ -228,13 +229,13 @@ const stats = computed(() => [
         tint: 'bg-violet-50 text-violet-600',
     },
     {
-        label: "To'lovlar",
+        label: t("To'lovlar"),
         value: props.activity ? formatSum(props.activity.paidTotal) : '—',
         icon: CreditCard,
         tint: 'bg-emerald-50 text-emerald-600',
     },
     {
-        label: "AI so'rovlari",
+        label: t("AI so'rovlari"),
         value: props.activity ? formatNumber(props.activity.aiRequests) : '—',
         icon: Sparkles,
         tint: 'bg-amber-50 text-amber-600',
@@ -265,7 +266,7 @@ const actionButton =
             <ArrowLeft
                 class="size-3.5 transition-transform group-hover:-translate-x-0.5"
             />
-            Foydalanuvchilar ro'yxati
+            {{ t("Foydalanuvchilar ro'yxati") }}
         </Link>
 
         <!-- Profil sarlavhasi -->
@@ -337,8 +338,8 @@ const actionButton =
                             <MailWarning v-else class="size-3" />
                             {{
                                 user.isVerified
-                                    ? 'Email tasdiqlangan'
-                                    : 'Email tasdiqlanmagan'
+                                    ? t('Email tasdiqlangan')
+                                    : t('Email tasdiqlanmagan')
                             }}
                         </span>
                     </div>
@@ -356,13 +357,13 @@ const actionButton =
                             @click="submitRestore"
                         >
                             <RotateCcw class="size-4" />
-                            Tiklash
+                            {{ t('Tiklash') }}
                         </button>
                     </template>
                     <template v-else-if="editable">
                         <Link :href="edit(user.id)" :class="primaryButtonClass">
                             <PenLine class="size-4" />
-                            Tahrirlash
+                            {{ t('Tahrirlash') }}
                         </Link>
                         <button
                             type="button"
@@ -375,7 +376,7 @@ const actionButton =
                             @click="passwordOpen = true"
                         >
                             <KeyRound class="size-4" />
-                            Parol
+                            {{ t('Parol') }}
                         </button>
                         <template v-if="user.can.block">
                             <button
@@ -390,7 +391,7 @@ const actionButton =
                                 @click="unblockOpen = true"
                             >
                                 <LockOpen class="size-4" />
-                                Blokdan chiqarish
+                                {{ t('Blokdan chiqarish') }}
                             </button>
                             <button
                                 v-else
@@ -404,7 +405,7 @@ const actionButton =
                                 @click="blockOpen = true"
                             >
                                 <Ban class="size-4" />
-                                Bloklash
+                                {{ t('Bloklash') }}
                             </button>
                         </template>
                         <button
@@ -419,7 +420,7 @@ const actionButton =
                             @click="deleteOpen = true"
                         >
                             <Trash2 class="size-4" />
-                            O'chirish
+                            {{ t("O'chirish") }}
                         </button>
                     </template>
                 </div>
@@ -434,12 +435,13 @@ const actionButton =
             <CircleAlert class="mt-0.5 size-4 shrink-0" />
             <div>
                 <p class="font-semibold">
-                    Akkaunt bloklangan<span v-if="user.blockedAt">
+                    {{ t('Akkaunt bloklangan')
+                    }}<span v-if="user.blockedAt">
                         — {{ formatDateTime(user.blockedAt) }}</span
                     >
                 </p>
                 <p v-if="user.blockedReason" class="mt-0.5 text-red-700">
-                    Sabab: {{ user.blockedReason }}
+                    {{ t('Sabab: :reason', { reason: user.blockedReason }) }}
                 </p>
             </div>
         </div>
@@ -449,15 +451,18 @@ const actionButton =
         >
             <Trash2 class="mt-0.5 size-4 shrink-0" />
             <p>
-                Bu akkaunt o'chirilgan. Foydalanuvchi tizimga kira olmaydi;
-                ma'lumotlari saqlangan va akkauntni tiklash mumkin.
+                {{
+                    t(
+                        "Bu akkaunt o'chirilgan. Foydalanuvchi tizimga kira olmaydi; ma'lumotlari saqlangan va akkauntni tiklash mumkin.",
+                    )
+                }}
             </p>
         </div>
 
         <!-- Faoliyat -->
         <section
             class="grid grid-cols-2 gap-3 xl:grid-cols-4"
-            aria-label="Faoliyat"
+            :aria-label="t('Faoliyat')"
         >
             <div
                 v-for="stat in stats"
@@ -488,7 +493,10 @@ const actionButton =
 
         <div class="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_22rem]">
             <div class="flex min-w-0 flex-col gap-5">
-                <SectionCard title="Shaxsiy ma'lumotlar" :icon="UserRound">
+                <SectionCard
+                    :title="t('Shaxsiy ma\'lumotlar')"
+                    :icon="UserRound"
+                >
                     <dl class="grid gap-4 sm:grid-cols-2">
                         <div
                             v-for="item in personal"
@@ -514,7 +522,10 @@ const actionButton =
                     </dl>
                 </SectionCard>
 
-                <SectionCard title="Ilmiy ma'lumotlar" :icon="GraduationCap">
+                <SectionCard
+                    :title="t('Ilmiy ma\'lumotlar')"
+                    :icon="GraduationCap"
+                >
                     <template v-if="hasAcademic">
                         <dl class="grid gap-x-6 gap-y-3 sm:grid-cols-2">
                             <div
@@ -554,11 +565,11 @@ const actionButton =
                         class="flex items-center gap-2 text-sm text-navy-500"
                     >
                         <Building2 class="size-4" />
-                        Ilmiy ma'lumotlar kiritilmagan
+                        {{ t("Ilmiy ma'lumotlar kiritilmagan") }}
                     </p>
                 </SectionCard>
 
-                <SectionCard title="So'nggi maqolalar" :icon="FileText">
+                <SectionCard :title="t('So\'nggi maqolalar')" :icon="FileText">
                     <ul
                         v-if="articles?.length"
                         class="-my-1 divide-y divide-line"
@@ -594,37 +605,45 @@ const actionButton =
                             </span>
                         </li>
                     </ul>
-                    <p v-else class="text-sm text-navy-500">Maqolalar yo'q</p>
+                    <p v-else class="text-sm text-navy-500">
+                        {{ t("Maqolalar yo'q") }}
+                    </p>
                 </SectionCard>
             </div>
 
             <aside class="flex flex-col gap-5">
-                <SectionCard title="Kirish ma'lumotlari" :icon="Clock">
+                <SectionCard :title="t('Kirish ma\'lumotlari')" :icon="Clock">
                     <dl class="space-y-3 text-sm">
                         <div class="flex justify-between gap-3">
-                            <dt class="text-navy-500">Oxirgi kirish</dt>
+                            <dt class="text-navy-500">
+                                {{ t('Oxirgi kirish') }}
+                            </dt>
                             <dd class="text-right font-medium text-navy-900">
                                 {{
                                     user.lastLoginAt
                                         ? timeAgo(user.lastLoginAt)
-                                        : 'Kirmagan'
+                                        : t('Kirmagan')
                                 }}
                             </dd>
                         </div>
                         <div class="flex justify-between gap-3">
-                            <dt class="text-navy-500">IP manzil</dt>
+                            <dt class="text-navy-500">{{ t('IP manzil') }}</dt>
                             <dd class="font-mono text-xs text-navy-900">
                                 {{ user.lastLoginIp ?? '—' }}
                             </dd>
                         </div>
                         <div class="flex justify-between gap-3">
-                            <dt class="text-navy-500">Ro'yxatdan o'tgan</dt>
+                            <dt class="text-navy-500">
+                                {{ t("Ro'yxatdan o'tgan") }}
+                            </dt>
                             <dd class="font-medium text-navy-900 tabular-nums">
                                 {{ formatDate(user.createdAt) }}
                             </dd>
                         </div>
                         <div class="flex justify-between gap-3">
-                            <dt class="text-navy-500">Email tasdiqlangan</dt>
+                            <dt class="text-navy-500">
+                                {{ t('Email tasdiqlangan') }}
+                            </dt>
                             <dd class="font-medium text-navy-900 tabular-nums">
                                 {{
                                     user.emailVerifiedAt
@@ -636,7 +655,7 @@ const actionButton =
                     </dl>
                 </SectionCard>
 
-                <SectionCard title="Xavfsizlik" :icon="ShieldCheck">
+                <SectionCard :title="t('Xavfsizlik')" :icon="ShieldCheck">
                     <div
                         :class="
                             cn(
@@ -654,12 +673,12 @@ const actionButton =
                         <ShieldOff v-else class="size-5 text-navy-400" />
                         <div>
                             <p class="text-sm font-semibold text-navy-900">
-                                Ikki bosqichli himoya
+                                {{ t('Ikki bosqichli himoya') }}
                             </p>
                             <p class="text-xs text-navy-500">
                                 {{
                                     user.twoFactorEnabled
-                                        ? 'Yoqilgan'
+                                        ? t('Yoqilgan')
                                         : "O'chirilgan"
                                 }}
                             </p>
@@ -677,7 +696,7 @@ const actionButton =
                             @click="passwordOpen = true"
                         >
                             <KeyRound class="size-4 text-brand-600" />
-                            Yangi parol o'rnatish
+                            {{ t("Yangi parol o'rnatish") }}
                         </button>
                         <button
                             type="button"
@@ -690,7 +709,7 @@ const actionButton =
                             @click="resetOpen = true"
                         >
                             <Send class="size-4 text-brand-600" />
-                            Tiklash havolasini yuborish
+                            {{ t('Tiklash havolasini yuborish') }}
                         </button>
                     </div>
                 </SectionCard>
@@ -703,14 +722,18 @@ const actionButton =
         v-model:open="blockOpen"
         :icon="Ban"
         tone="danger"
-        title="Foydalanuvchini bloklash"
-        :description="`${user.name} tizimdan chiqariladi va qayta kira olmaydi.`"
-        confirm-text="Bloklash"
+        :title="t('Foydalanuvchini bloklash')"
+        :description="
+            t(':name tizimdan chiqariladi va qayta kira olmaydi.', {
+                name: user.name,
+            })
+        "
+        :confirm-text="t('Bloklash')"
         :processing="blockForm.processing"
         @confirm="submitBlock"
     >
         <FormField
-            label="Sabab (ixtiyoriy)"
+            :label="t('Sabab (ixtiyoriy)')"
             for="block-reason"
             :error="blockForm.errors.reason"
         >
@@ -720,7 +743,7 @@ const actionButton =
                 rows="3"
                 maxlength="500"
                 :class="textareaClass"
-                placeholder="Masalan: qoidabuzarlik"
+                :placeholder="t('Masalan: qoidabuzarlik')"
             />
         </FormField>
         <p v-if="blockGuardError" class="mt-2 text-xs font-medium text-red-600">
@@ -731,9 +754,9 @@ const actionButton =
     <ActionDialog
         v-model:open="unblockOpen"
         :icon="LockOpen"
-        title="Blokdan chiqarish"
-        :description="`${user.name} yana tizimga kira oladi.`"
-        confirm-text="Blokdan chiqarish"
+        :title="t('Blokdan chiqarish')"
+        :description="t(':name yana tizimga kira oladi.', { name: user.name })"
+        :confirm-text="t('Blokdan chiqarish')"
         :processing="unblocking"
         @confirm="submitUnblock"
     />
@@ -741,15 +764,17 @@ const actionButton =
     <ActionDialog
         v-model:open="passwordOpen"
         :icon="KeyRound"
-        title="Yangi parol o'rnatish"
-        description="Yangi parolni foydalanuvchiga xavfsiz yo'l bilan yetkazing."
-        confirm-text="Saqlash"
+        :title="t('Yangi parol o\'rnatish')"
+        :description="
+            t('Yangi parolni foydalanuvchiga xavfsiz yo\'l bilan yetkazing.')
+        "
+        :confirm-text="t('Saqlash')"
         :processing="passwordForm.processing"
         @confirm="submitPassword"
     >
         <div class="grid gap-3">
             <FormField
-                label="Yangi parol"
+                :label="t('Yangi parol')"
                 for="new-password"
                 :error="passwordForm.errors.password"
             >
@@ -762,7 +787,7 @@ const actionButton =
                 />
             </FormField>
             <FormField
-                label="Parolni takrorlang"
+                :label="t('Parolni takrorlang')"
                 for="new-password-confirmation"
             >
                 <PasswordInput
@@ -778,7 +803,7 @@ const actionButton =
                 @click="generatePassword"
             >
                 <Sparkles class="size-3.5" />
-                Kuchli parol yaratish
+                {{ t('Kuchli parol yaratish') }}
             </button>
         </div>
     </ActionDialog>
@@ -786,9 +811,9 @@ const actionButton =
     <ActionDialog
         v-model:open="resetOpen"
         :icon="Send"
-        title="Parolni tiklash havolasi"
+        :title="t('Parolni tiklash havolasi')"
         :description="`${user.email} manziliga parolni tiklash havolasi yuboriladi.`"
-        confirm-text="Yuborish"
+        :confirm-text="t('Yuborish')"
         :processing="sendingReset"
         @confirm="submitReset"
     />
@@ -797,9 +822,14 @@ const actionButton =
         v-model:open="deleteOpen"
         :icon="Trash2"
         tone="danger"
-        title="Foydalanuvchini o'chirish"
-        :description="`${user.name} akkaunti o'chiriladi. Ma'lumotlar saqlanadi va keyin tiklash mumkin.`"
-        confirm-text="O'chirish"
+        :title="t('Foydalanuvchini o\'chirish')"
+        :description="
+            t(
+                ':name akkaunti o\'chiriladi. Ma\'lumotlar saqlanadi va keyin tiklash mumkin.',
+                { name: user.name },
+            )
+        "
+        :confirm-text="t('O\'chirish')"
         :processing="deleting"
         @confirm="submitDelete"
     />

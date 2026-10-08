@@ -19,6 +19,7 @@ import ActionDialog from '@/components/admin/ui/ActionDialog.vue';
 import { inputClass } from '@/lib/formStyles';
 import { cn } from '@/lib/utils';
 import type { IssueArticleRow, IssueDetail } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Son tarkibi: tartib (sudrab tashlash yoki ↑↓), rukn, sahifalar, nashrga tayyorlik.
@@ -132,7 +133,8 @@ const pages = (row: IssueArticleRow): string =>
             v-if="saving"
             class="mb-2 flex items-center gap-2 text-xs text-navy-500"
         >
-            <LoaderCircle class="size-3.5 animate-spin" /> Tartib saqlanmoqda...
+            <LoaderCircle class="size-3.5 animate-spin" />
+            {{ t('Tartib saqlanmoqda...') }}
         </div>
 
         <ol v-if="rows.length" class="grid gap-2">
@@ -205,8 +207,8 @@ const pages = (row: IssueArticleRow): string =>
                                 <BadgeCheck class="size-3" />
                                 {{
                                     row.status === 'published'
-                                        ? 'Nashr etilgan'
-                                        : 'Nashrga tayyor'
+                                        ? t('Nashr etilgan')
+                                        : t('Nashrga tayyor')
                                 }}
                             </span>
                             <span
@@ -223,7 +225,7 @@ const pages = (row: IssueArticleRow): string =>
                                 "
                                 class="inline-flex items-center gap-1 rounded-full bg-navy-50 px-2 py-0.5 text-[10px] font-semibold text-navy-500"
                             >
-                                <FileText class="size-3" /> PDF yo'q
+                                <FileText class="size-3" /> {{ t("PDF yo'q") }}
                             </span>
                         </div>
 
@@ -237,16 +239,16 @@ const pages = (row: IssueArticleRow): string =>
                                 v-model="form.section"
                                 type="text"
                                 maxlength="120"
-                                placeholder="Rukn (masalan: Tarix)"
-                                aria-label="Rukn"
+                                :placeholder="t('Rukn (masalan: Tarix)')"
+                                :aria-label="t('Rukn')"
                                 :class="cn(inputClass, 'h-9 text-[13px]')"
                             />
                             <input
                                 v-model.number="form.page_from"
                                 type="number"
                                 min="1"
-                                placeholder="dan"
-                                aria-label="Boshlang'ich sahifa"
+                                :placeholder="t('dan')"
+                                :aria-label="t('Boshlang\'ich sahifa')"
                                 :class="
                                     cn(
                                         inputClass,
@@ -258,8 +260,8 @@ const pages = (row: IssueArticleRow): string =>
                                 v-model.number="form.page_to"
                                 type="number"
                                 min="1"
-                                placeholder="gacha"
-                                aria-label="Oxirgi sahifa"
+                                :placeholder="t('gacha')"
+                                :aria-label="t('Oxirgi sahifa')"
                                 :class="
                                     cn(
                                         inputClass,
@@ -272,14 +274,14 @@ const pages = (row: IssueArticleRow): string =>
                                     type="submit"
                                     :disabled="form.processing"
                                     class="flex size-9 items-center justify-center rounded-lg bg-brand-600 text-white transition-colors hover:bg-brand-500 disabled:opacity-60"
-                                    aria-label="Saqlash"
+                                    :aria-label="t('Saqlash')"
                                 >
                                     <Check class="size-4" />
                                 </button>
                                 <button
                                     type="button"
                                     class="flex size-9 items-center justify-center rounded-lg border border-line text-navy-600 transition-colors hover:bg-white"
-                                    aria-label="Bekor qilish"
+                                    :aria-label="t('Bekor qilish')"
                                     @click="editing = null"
                                 >
                                     <X class="size-4" />
@@ -301,8 +303,10 @@ const pages = (row: IssueArticleRow): string =>
                             class="rounded-lg bg-[#f5f8fc] px-2 py-1 text-xs font-semibold text-navy-800 tabular-nums"
                             :title="
                                 row.pagesCount
-                                    ? `${row.pagesCount} bet`
-                                    : 'Hajmi noma\'lum'
+                                    ? t(':pagesCount bet', {
+                                          pagesCount: row.pagesCount,
+                                      })
+                                    : t('Hajmi noma\'lum')
                             "
                         >
                             {{ pages(row) }}
@@ -313,7 +317,7 @@ const pages = (row: IssueArticleRow): string =>
                                     type="button"
                                     :disabled="index === 0 || saving"
                                     class="rounded-md p-1.5 text-navy-400 transition-colors hover:bg-navy-50 hover:text-navy-800 disabled:opacity-30"
-                                    aria-label="Yuqoriga"
+                                    :aria-label="t('Yuqoriga')"
                                     @click="move(index, -1)"
                                 >
                                     <ArrowUp class="size-3.5" />
@@ -324,7 +328,7 @@ const pages = (row: IssueArticleRow): string =>
                                         index === rows.length - 1 || saving
                                     "
                                     class="rounded-md p-1.5 text-navy-400 transition-colors hover:bg-navy-50 hover:text-navy-800 disabled:opacity-30"
-                                    aria-label="Pastga"
+                                    :aria-label="t('Pastga')"
                                     @click="move(index, 1)"
                                 >
                                     <ArrowDown class="size-3.5" />
@@ -334,7 +338,7 @@ const pages = (row: IssueArticleRow): string =>
                                 v-if="row.editable"
                                 type="button"
                                 class="rounded-md p-1.5 text-navy-500 transition-colors hover:bg-brand-50 hover:text-brand-700"
-                                aria-label="Rukn va sahifalar"
+                                :aria-label="t('Rukn va sahifalar')"
                                 @click="edit(row)"
                             >
                                 <PenLine class="size-3.5" />
@@ -342,7 +346,7 @@ const pages = (row: IssueArticleRow): string =>
                             <Link
                                 :href="row.productionUrl"
                                 class="rounded-md p-1.5 text-navy-500 transition-colors hover:bg-brand-50 hover:text-brand-700"
-                                aria-label="Nashr jarayonida ochish"
+                                :aria-label="t('Nashr jarayonida ochish')"
                             >
                                 <ExternalLink class="size-3.5" />
                             </Link>
@@ -350,7 +354,7 @@ const pages = (row: IssueArticleRow): string =>
                                 v-if="row.editable"
                                 type="button"
                                 class="rounded-md p-1.5 text-navy-400 transition-colors hover:bg-red-50 hover:text-red-600"
-                                aria-label="Sondan chiqarish"
+                                :aria-label="t('Sondan chiqarish')"
                                 @click="askRemove(row)"
                             >
                                 <Trash2 class="size-3.5" />
@@ -366,20 +370,25 @@ const pages = (row: IssueArticleRow): string =>
             class="flex flex-col items-center gap-2 rounded-xl border border-dashed border-navy-200 py-12 text-center"
         >
             <FileText class="size-8 text-navy-300" />
-            <p class="text-sm text-navy-500">Songa hali maqola qo'shilmagan</p>
+            <p class="text-sm text-navy-500">
+                {{ t("Songa hali maqola qo'shilmagan") }}
+            </p>
         </div>
 
         <ActionDialog
             v-model:open="removeOpen"
-            title="Maqolani sondan chiqarish"
+            :title="t('Maqolani sondan chiqarish')"
             :description="
                 removing
-                    ? `«${removing.title}» sondan chiqariladi, sahifalari tozalanadi va bosh muharrir tasdig'i bekor bo'ladi.`
+                    ? t(
+                          '«:title» sondan chiqariladi, sahifalari tozalanadi va bosh muharrir tasdig\'i bekor bo\'ladi.',
+                          { title: removing.title },
+                      )
                     : undefined
             "
             :icon="Trash2"
             tone="danger"
-            confirm-text="Chiqarish"
+            :confirm-text="t('Chiqarish')"
             :processing="removeBusy"
             @confirm="remove"
         />

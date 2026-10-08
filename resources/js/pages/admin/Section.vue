@@ -2,6 +2,7 @@
 import { Head, Link } from '@inertiajs/vue3';
 import { ArrowLeft, CircleDashed, Hammer } from '@lucide/vue';
 import { dashboard } from '@/routes/admin';
+import { t, tk } from '@/lib/i18n';
 
 /**
  * Hali ishlab chiqilmagan admin bo'limi: vazifasi va keyingi bosqich rejasi.
@@ -18,7 +19,7 @@ defineProps<{
 
 defineOptions({
     layout: {
-        breadcrumbs: [{ title: 'Admin panel', href: dashboard() }],
+        breadcrumbs: [{ title: tk('Admin panel'), href: dashboard() }],
     },
 });
 </script>
@@ -45,7 +46,7 @@ defineOptions({
                     class="inline-flex items-center gap-1.5 rounded-full bg-gold-500/15 px-3 py-1 text-xs font-semibold text-gold-300 ring-1 ring-gold-400/30"
                 >
                     <Hammer class="size-3.5" />
-                    Ishlab chiqilmoqda
+                    {{ t('Ishlab chiqilmoqda') }}
                 </span>
                 <h1
                     class="mt-4 font-sans text-2xl font-bold text-white sm:text-3xl"
@@ -59,7 +60,7 @@ defineOptions({
 
             <div class="px-6 py-6 sm:px-8">
                 <h2 class="font-sans text-sm font-bold text-navy-950">
-                    Bu bo'limda bo'ladi
+                    {{ t("Bu bo'limda bo'ladi") }}
                 </h2>
                 <ul class="mt-3 grid gap-2 sm:grid-cols-2">
                     <li
@@ -81,7 +82,7 @@ defineOptions({
                     <ArrowLeft
                         class="size-4 transition-transform group-hover:-translate-x-0.5"
                     />
-                    Bosh sahifaga qaytish
+                    {{ t('Bosh sahifaga qaytish') }}
                 </Link>
             </div>
         </div>

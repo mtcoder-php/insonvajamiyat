@@ -32,6 +32,7 @@ import { cn } from '@/lib/utils';
 import { dashboard } from '@/routes/admin';
 import { index } from '@/routes/admin/production';
 import type { ProductionFile, ProductionShowProps } from '@/types';
+import { t, tc, tk } from '@/lib/i18n';
 
 /**
  * Nashr jarayoni — maqola kartasi (admin publisher page.png).
@@ -41,9 +42,9 @@ const props = defineProps<ProductionShowProps>();
 defineOptions({
     layout: {
         breadcrumbs: [
-            { title: 'Admin panel', href: dashboard() },
-            { title: 'Nashr jarayoni', href: index() },
-            { title: 'Maqola', href: index() },
+            { title: tk('Admin panel'), href: dashboard() },
+            { title: tk('Nashr jarayoni'), href: index() },
+            { title: tk('Maqola'), href: index() },
         ],
     },
 });
@@ -106,30 +107,30 @@ const statusBox = computed(() => {
 
     if (a.status === 'published') {
         return {
-            title: 'Nashr etilgan',
-            text: 'Maqola saytda chop etilgan.',
+            title: t('Nashr etilgan'),
+            text: t('Maqola saytda chop etilgan.'),
             tone: 'emerald',
         };
     }
 
     if (a.production.approvedAt) {
         return {
-            title: 'Nashrga tayyor',
-            text: "Maqola tahrirdan o'tgan va bosh muharrir tasdiqlagan.",
+            title: t('Nashrga tayyor'),
+            text: t("Maqola tahrirdan o'tgan va bosh muharrir tasdiqlagan."),
             tone: 'emerald',
         };
     }
 
     if (a.status === 'accepted') {
         return {
-            title: 'Maketga olinmagan',
-            text: '«Maketga olish» tugmasi bilan jarayonni boshlang.',
+            title: t('Maketga olinmagan'),
+            text: t('«Maketga olish» tugmasi bilan jarayonni boshlang.'),
             tone: 'amber',
         };
     }
 
     return {
-        title: 'Maketlanmoqda',
+        title: t('Maketlanmoqda'),
         text: `${a.checks.filter((c) => c.ok).length}/${a.checks.length} tekshiruv bajarilgan.`,
         tone: 'brand',
     };
@@ -143,38 +144,38 @@ const boxTint: Record<string, string> = {
 
 const info = computed(() =>
     [
-        { label: 'Maqola ID', value: `#IJ-${props.article.code}` },
-        { label: 'Turi', value: props.article.type },
-        { label: "Yo'nalish", value: props.article.subject },
+        { label: t('Maqola ID'), value: `#IJ-${props.article.code}` },
+        { label: t('Turi'), value: props.article.type },
+        { label: t("Yo'nalish"), value: props.article.subject },
         { label: 'UDK', value: props.article.udc },
         { label: 'DOI', value: props.article.doi },
         {
-            label: 'Jild / Son',
+            label: t('Jild / Son'),
             value: props.article.issue
                 ? `${props.article.issue.volume ?? '—'} / ${props.article.issue.number} (${props.article.issue.year})`
                 : null,
         },
         {
-            label: 'Sahifa',
+            label: t('Sahifa'),
             value:
                 props.article.issue?.pageFrom && props.article.issue.pageTo
                     ? `${props.article.issue.pageFrom}–${props.article.issue.pageTo}`
                     : null,
         },
         {
-            label: 'Plagiat',
+            label: t('Plagiat'),
             value:
                 props.article.plagiarism !== null
                     ? `${props.article.plagiarism}%`
                     : null,
         },
-        { label: 'Maketchi', value: props.article.production.layoutEditor },
+        { label: t('Maketchi'), value: props.article.production.layoutEditor },
     ].map((row) => ({ ...row, value: row.value ?? '—' })),
 );
 </script>
 
 <template>
-    <Head :title="`Nashr — ${article.title}`" />
+    <Head :title="t('Nashr — :title', { title: article.title })" />
 
     <div class="flex flex-1 flex-col gap-5 bg-[#f5f7fb] p-4 md:p-6">
         <!-- Sarlavha va bosqichlar -->
@@ -192,7 +193,7 @@ const info = computed(() =>
                         :href="article.urls.index"
                         class="mb-2 inline-flex items-center gap-1 text-xs font-semibold text-navy-500 transition-colors hover:text-brand-700"
                     >
-                        <ArrowLeft class="size-3.5" /> Nashr jarayoni
+                        <ArrowLeft class="size-3.5" /> {{ t('Nashr jarayoni') }}
                     </Link>
                     <h1
                         class="font-serif text-xl leading-snug font-bold text-navy-950 md:text-2xl"
@@ -223,11 +224,19 @@ const info = computed(() =>
                             class="inline-flex items-center gap-1.5"
                         >
                             <BookOpen class="size-4 text-navy-400" />
-                            Jurnal soni: {{ article.issue.label }}
+                            {{
+                                t('Jurnal soni: :label', {
+                                    label: article.issue.label,
+                                })
+                            }}
                         </span>
                         <span class="inline-flex items-center gap-1.5">
                             <CalendarDays class="size-4 text-navy-400" />
-                            Qabul: {{ formatDate(article.acceptedAt) }}
+                            {{
+                                t('Qabul: :date', {
+                                    date: formatDate(article.acceptedAt),
+                                })
+                            }}
                         </span>
                     </div>
                 </div>
@@ -267,7 +276,7 @@ const info = computed(() =>
                                 class="flex items-center gap-2 font-sans text-[15px] font-bold text-navy-950"
                             >
                                 <FileText class="size-[18px] text-brand-600" />
-                                Maqola ma'lumotlari
+                                {{ t("Maqola ma'lumotlari") }}
                             </h2>
                             <button
                                 v-if="article.can.edit"
@@ -275,7 +284,8 @@ const info = computed(() =>
                                 class="inline-flex items-center gap-1.5 rounded-lg border border-line px-2.5 py-1.5 text-xs font-semibold text-brand-700 transition-all hover:-translate-y-px hover:border-brand-300 hover:bg-brand-50"
                                 @click="metadataOpen = true"
                             >
-                                <PenLine class="size-3.5" /> Tahrirlash
+                                <PenLine class="size-3.5" />
+                                {{ t('Tahrirlash') }}
                             </button>
                         </header>
                         <dl class="grid gap-2.5 text-[13px]">
@@ -294,7 +304,7 @@ const info = computed(() =>
                         </dl>
                         <div class="mt-4 border-t border-line pt-4">
                             <p class="mb-2 text-xs font-semibold text-navy-700">
-                                Mualliflar
+                                {{ t('Mualliflar') }}
                             </p>
                             <ul class="grid gap-1.5">
                                 <li
@@ -348,7 +358,7 @@ const info = computed(() =>
                             class="mb-4 flex items-center gap-2 font-sans text-[15px] font-bold text-navy-950"
                         >
                             <FolderOpen class="size-[18px] text-brand-600" />
-                            Hujjatlar va fayllar
+                            {{ t('Hujjatlar va fayllar') }}
                         </h2>
                         <ul class="grid gap-2">
                             <li
@@ -374,7 +384,10 @@ const info = computed(() =>
                                         >{{ file.typeLabel }} ·
                                         {{ formatFileSize(file.size)
                                         }}<template v-if="file.pageCount">
-                                            · {{ file.pageCount }} bet</template
+                                            ·
+                                            {{
+                                                tc(':count bet', file.pageCount)
+                                            }}</template
                                         ></span
                                     >
                                 </span>
@@ -384,14 +397,14 @@ const info = computed(() =>
                                     target="_blank"
                                     rel="noopener"
                                     class="rounded-md p-1.5 text-navy-500 transition-colors hover:bg-brand-50 hover:text-brand-700"
-                                    title="Ko'rish"
+                                    :title="t('Ko\'rish')"
                                 >
                                     <Eye class="size-4" />
                                 </a>
                                 <a
                                     :href="file.downloadUrl"
                                     class="rounded-md p-1.5 text-navy-500 transition-colors hover:bg-brand-50 hover:text-brand-700"
-                                    title="Yuklab olish"
+                                    :title="t('Yuklab olish')"
                                 >
                                     <Download class="size-4" />
                                 </a>
@@ -424,13 +437,16 @@ const info = computed(() =>
                             />
                             <FileUp v-else class="size-6 text-brand-500" />
                             <span class="text-[13px] text-navy-700">
-                                <b class="text-brand-700">Yakuniy PDF</b> ni
-                                tanlang yoki shu yerga tashlang
+                                <b class="text-brand-700">{{
+                                    t('Yakuniy PDF')
+                                }}</b>
+                                {{ t('ni tanlang yoki shu yerga tashlang') }}
                             </span>
-                            <span class="text-[11px] text-navy-500"
-                                >Faqat .pdf, 30 MB gacha. Muallifga korrektura
-                                uchun yuboriladi.</span
-                            >
+                            <span class="text-[11px] text-navy-500">{{
+                                t(
+                                    'Faqat .pdf, 30 MB gacha. Muallifga korrektura uchun yuboriladi.',
+                                )
+                            }}</span>
                         </button>
                         <p v-if="uploadError" class="mt-1 text-xs text-red-600">
                             {{ uploadError }}
@@ -456,7 +472,7 @@ const info = computed(() =>
                                 class="flex items-center gap-1.5 text-xs font-semibold text-orange-800"
                             >
                                 <MessageSquareWarning class="size-4" />
-                                Muallif tuzatish so'ragan ·
+                                {{ t("Muallif tuzatish so'ragan") }} ·
                                 {{
                                     formatDate(
                                         article.production.authorChangesAt,
@@ -474,7 +490,7 @@ const info = computed(() =>
                             class="mt-4 flex items-center gap-1.5 rounded-lg bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800"
                         >
                             <BadgeCheck class="size-4" />
-                            Muallif korrekturani tasdiqlagan ·
+                            {{ t('Muallif korrekturani tasdiqlagan') }} ·
                             {{
                                 formatDate(article.production.authorApprovedAt)
                             }}
@@ -494,7 +510,7 @@ const info = computed(() =>
                         :notes="article.notes"
                         :url="article.urls.notes"
                         reload="article"
-                        title="Tahririyat izohlari"
+                        :title="t('Tahririyat izohlari')"
                     />
                 </section>
             </div>
@@ -510,13 +526,13 @@ const info = computed(() =>
                         <h2
                             class="flex-1 font-sans text-[15px] font-bold text-navy-950"
                         >
-                            Maqola PDF preview
+                            {{ t('Maqola PDF preview') }}
                         </h2>
                         <template v-if="article.preview">
                             <a
                                 :href="article.preview.downloadUrl"
                                 class="rounded-md p-1.5 text-navy-500 transition-colors hover:bg-brand-50 hover:text-brand-700"
-                                title="Yuklab olish"
+                                :title="t('Yuklab olish')"
                             >
                                 <Download class="size-4" />
                             </a>
@@ -525,7 +541,7 @@ const info = computed(() =>
                                 target="_blank"
                                 rel="noopener"
                                 class="rounded-md p-1.5 text-navy-500 transition-colors hover:bg-brand-50 hover:text-brand-700"
-                                title="To'liq ekran"
+                                :title="t('To\'liq ekran')"
                             >
                                 <ExternalLink class="size-4" />
                             </a>
@@ -544,7 +560,7 @@ const info = computed(() =>
                         >
                             {{
                                 article.preview.isFinal
-                                    ? 'Yakuniy PDF'
+                                    ? t('Yakuniy PDF')
                                     : "Qo'lyozma (yakuniy PDF hali yo'q)"
                             }}
                             · {{ article.preview.name }}
@@ -560,8 +576,11 @@ const info = computed(() =>
                         class="flex h-60 flex-col items-center justify-center gap-2 px-6 text-center text-sm text-navy-500"
                     >
                         <FileText class="size-8 text-navy-300" />
-                        PDF fayl yo'q. Yakuniy PDF yuklangach shu yerda
-                        ko'rinadi.
+                        {{
+                            t(
+                                "PDF fayl yo'q. Yakuniy PDF yuklangach shu yerda ko'rinadi.",
+                            )
+                        }}
                     </div>
                 </section>
 
@@ -571,7 +590,7 @@ const info = computed(() =>
                     <h2
                         class="mb-4 font-sans text-[15px] font-bold text-navy-950"
                     >
-                        Jurnal soni
+                        {{ t('Jurnal soni') }}
                     </h2>
                     <div v-if="article.issue" class="flex gap-4">
                         <span
@@ -589,19 +608,23 @@ const info = computed(() =>
                         </span>
                         <dl class="grid flex-1 gap-1.5 text-[13px]">
                             <div class="flex justify-between gap-2">
-                                <dt class="text-navy-500">Son</dt>
+                                <dt class="text-navy-500">{{ t('Son') }}</dt>
                                 <dd class="font-semibold text-navy-900">
                                     {{ article.issue.label }}
                                 </dd>
                             </div>
                             <div class="flex justify-between gap-2">
-                                <dt class="text-navy-500">Maqolalar</dt>
+                                <dt class="text-navy-500">
+                                    {{ t('Maqolalar') }}
+                                </dt>
                                 <dd class="font-semibold text-navy-900">
                                     {{ article.issue.articlesCount }}
                                 </dd>
                             </div>
                             <div class="flex justify-between gap-2">
-                                <dt class="text-navy-500">Nashr sanasi</dt>
+                                <dt class="text-navy-500">
+                                    {{ t('Nashr sanasi') }}
+                                </dt>
                                 <dd class="font-semibold text-navy-900">
                                     {{
                                         article.issue.publishedAt
@@ -613,7 +636,7 @@ const info = computed(() =>
                                 </dd>
                             </div>
                             <div class="flex justify-between gap-2">
-                                <dt class="text-navy-500">Holat</dt>
+                                <dt class="text-navy-500">{{ t('Holat') }}</dt>
                                 <dd>
                                     <span
                                         :class="
@@ -635,14 +658,14 @@ const info = computed(() =>
                         v-else
                         class="rounded-lg bg-[#f5f8fc] p-4 text-center text-[13px] text-navy-600"
                     >
-                        Maqola hali jurnal soniga biriktirilmagan.
+                        {{ t('Maqola hali jurnal soniga biriktirilmagan.') }}
                         <button
                             v-if="article.can.edit"
                             type="button"
                             class="mt-2 block w-full rounded-lg border border-brand-200 px-3 py-2 text-xs font-semibold text-brand-700 transition-colors hover:bg-brand-50"
                             @click="metadataOpen = true"
                         >
-                            Songa biriktirish
+                            {{ t('Songa biriktirish') }}
                         </button>
                     </div>
                 </section>

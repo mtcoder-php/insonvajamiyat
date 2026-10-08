@@ -13,6 +13,7 @@ import DashCard from '@/components/admin/dashboard/DashCard.vue';
 import { timeAgo } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { DashboardNotification } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * "So'nggi bildirishnomalar" (o'ng panel).
@@ -39,7 +40,7 @@ const fallback = { icon: Bell, tint: 'bg-navy-50 text-navy-600' };
 </script>
 
 <template>
-    <DashCard title="So'nggi bildirishnomalar">
+    <DashCard :title="t('So\'nggi bildirishnomalar')">
         <ul v-if="items.length" class="-mx-2 space-y-0.5">
             <li
                 v-for="item in items"
@@ -73,7 +74,7 @@ const fallback = { icon: Bell, tint: 'bg-navy-50 text-navy-600' };
                         <span
                             v-if="!item.read"
                             class="size-1.5 shrink-0 rounded-full bg-brand-500"
-                            aria-label="O'qilmagan"
+                            :aria-label="t('O\'qilmagan')"
                         />
                     </p>
                     <p
@@ -95,7 +96,7 @@ const fallback = { icon: Bell, tint: 'bg-navy-50 text-navy-600' };
             </li>
         </ul>
         <p v-else class="py-6 text-center text-sm text-navy-500">
-            Yangi bildirishnomalar yo'q
+            {{ t("Yangi bildirishnomalar yo'q") }}
         </p>
     </DashCard>
 </template>

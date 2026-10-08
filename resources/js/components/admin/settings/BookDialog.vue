@@ -10,6 +10,7 @@ import type { SettingsBook, Translated } from '@/types';
 import CheckCard from './CheckCard.vue';
 import ImagePicker from './ImagePicker.vue';
 import TranslatableField from './TranslatableField.vue';
+import { t } from '@/lib/i18n';
 
 /** Tavsiya etilgan kitob: muqova (vertikal), nomi, muallif, yil, havola, tartib */
 const props = defineProps<{
@@ -91,10 +92,14 @@ function submit(): void {
 <template>
     <ActionDialog
         v-model:open="open"
-        :title="book ? 'Kitobni tahrirlash' : 'Yangi kitob'"
-        description="Bosh sahifaning o'ng ustunidagi «Tavsiya etilgan kitoblar» blokida ko'rinadi."
+        :title="book ? t('Kitobni tahrirlash') : t('Yangi kitob')"
+        :description="
+            t(
+                'Bosh sahifaning o\'ng ustunidagi «Tavsiya etilgan kitoblar» blokida ko\'rinadi.',
+            )
+        "
         :icon="book ? PenLine : BookPlus"
-        :confirm-text="book ? 'Saqlash' : 'Qo\'shish'"
+        :confirm-text="book ? t('Saqlash') : t('Qo\'shish')"
         :processing="form.processing"
         size="lg"
         @confirm="submit"
@@ -106,14 +111,14 @@ function submit(): void {
                 :current-url="book?.coverUrl ?? null"
                 :error="errors.cover"
                 aspect-class="aspect-[3/4]"
-                hint="Muqova · kamida 150×200"
+                :hint="t('Muqova · kamida 150×200')"
                 :prepare="{ maxSide: 1000, maxBytes: 600_000 }"
             />
 
             <div class="grid min-w-0 grid-cols-1 content-start gap-4">
                 <TranslatableField
                     v-model="form.title"
-                    label="Kitob nomi"
+                    :label="t('Kitob nomi')"
                     field="title"
                     :errors="errors"
                     required
@@ -123,7 +128,7 @@ function submit(): void {
                     class="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_7rem]"
                 >
                     <FormField
-                        label="Muallif"
+                        :label="t('Muallif')"
                         for="book-author"
                         :error="errors.author"
                         required
@@ -138,7 +143,7 @@ function submit(): void {
                         />
                     </FormField>
                     <FormField
-                        label="Yili"
+                        :label="t('Yili')"
                         for="book-year"
                         :error="errors.year"
                     >
@@ -160,10 +165,10 @@ function submit(): void {
             class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_7rem]"
         >
             <FormField
-                label="Havola"
+                :label="t('Havola')"
                 for="book-url"
                 :error="errors.url"
-                hint="Kitob sahifasi yoki PDF: https://… yoki /…"
+                :hint="t('Kitob sahifasi yoki PDF: https://… yoki /…')"
             >
                 <input
                     id="book-url"
@@ -175,7 +180,7 @@ function submit(): void {
                 />
             </FormField>
             <FormField
-                label="Tartib"
+                :label="t('Tartib')"
                 for="book-order"
                 :error="errors.sort_order"
             >
@@ -191,8 +196,10 @@ function submit(): void {
         <div class="mt-4">
             <CheckCard
                 v-model="form.is_active"
-                label="Faol"
-                hint="Bosh sahifada birinchi 3 ta faol kitob ko'rsatiladi"
+                :label="t('Faol')"
+                :hint="
+                    t('Bosh sahifada birinchi 3 ta faol kitob ko\'rsatiladi')
+                "
                 :icon="Eye"
             />
         </div>

@@ -7,6 +7,7 @@ import FormField from '@/components/admin/ui/FormField.vue';
 import { inputClass, textareaClass } from '@/lib/formStyles';
 import { cn } from '@/lib/utils';
 import type { IssueFormData } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Jurnal sonini yaratish yoki tahrirlash: yil, jild, raqam, DOI, nom, tavsif.
@@ -43,20 +44,27 @@ function submit(): void {
 <template>
     <ActionDialog
         v-model:open="open"
-        :title="isCreate ? 'Yangi jurnal soni' : 'Son ma\'lumotlari'"
+        :title="isCreate ? t('Yangi jurnal soni') : t('Son ma\'lumotlari')"
         :description="
             isCreate
-                ? 'Son qoralama sifatida yaratiladi. Keyin maqolalarni biriktirasiz, muqova va PDF yuklaysiz.'
+                ? t(
+                      'Son qoralama sifatida yaratiladi. Keyin maqolalarni biriktirasiz, muqova va PDF yuklaysiz.',
+                  )
                 : undefined
         "
         :icon="isCreate ? BookPlus : PenLine"
-        :confirm-text="isCreate ? 'Yaratish' : 'Saqlash'"
+        :confirm-text="isCreate ? t('Yaratish') : t('Saqlash')"
         :processing="form.processing"
         @confirm="submit"
     >
         <div class="grid gap-4">
             <div class="grid grid-cols-3 gap-3">
-                <FormField label="Yil" for="year" required :error="errors.year">
+                <FormField
+                    :label="t('Yil')"
+                    for="year"
+                    required
+                    :error="errors.year"
+                >
                     <input
                         id="year"
                         v-model.number="form.year"
@@ -66,7 +74,11 @@ function submit(): void {
                         :class="cn(inputClass, 'tabular-nums')"
                     />
                 </FormField>
-                <FormField label="Jild" for="volume" :error="errors.volume">
+                <FormField
+                    :label="t('Jild')"
+                    for="volume"
+                    :error="errors.volume"
+                >
                     <input
                         id="volume"
                         v-model.number="form.volume"
@@ -76,7 +88,7 @@ function submit(): void {
                     />
                 </FormField>
                 <FormField
-                    label="Son №"
+                    :label="t('Son №')"
                     for="number"
                     required
                     :error="errors.number"
@@ -93,7 +105,7 @@ function submit(): void {
             <FormField
                 label="DOI"
                 for="issue-doi"
-                hint="Masalan: 10.5281/insonvajamiyat.2026.3"
+                :hint="t('Masalan: 10.5281/insonvajamiyat.2026.3')"
                 :error="errors.doi"
             >
                 <input
@@ -104,7 +116,7 @@ function submit(): void {
                 />
             </FormField>
             <FormField
-                label="Maxsus nom (ixtiyoriy)"
+                :label="t('Maxsus nom (ixtiyoriy)')"
                 for="issue-title"
                 :error="errors.title"
             >
@@ -113,12 +125,16 @@ function submit(): void {
                     v-model="form.title"
                     type="text"
                     maxlength="255"
-                    placeholder="Masalan: Amir Temur tavalludining 690 yilligiga bag'ishlangan son"
+                    :placeholder="
+                        t(
+                            'Masalan: Amir Temur tavalludining 690 yilligiga bag\'ishlangan son',
+                        )
+                    "
                     :class="inputClass"
                 />
             </FormField>
             <FormField
-                label="Tavsif"
+                :label="t('Tavsif')"
                 for="issue-description"
                 :error="errors.description"
             >

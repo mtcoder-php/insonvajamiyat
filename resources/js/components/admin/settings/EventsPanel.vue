@@ -28,6 +28,7 @@ import type {
 import DeleteDialog from './DeleteDialog.vue';
 import EventDialog from './EventDialog.vue';
 import { useSettingsQuery } from './useSettingsQuery';
+import { t } from '@/lib/i18n';
 
 /** Tadbirlar: kelgusi / o'tgan filtri, qidiruv, sahifalash */
 const props = defineProps<{
@@ -59,9 +60,9 @@ function remove(event: SettingsEvent): void {
 }
 
 const chips = [
-    { value: '', label: 'Hammasi', count: 'all' },
-    { value: 'upcoming', label: 'Kelgusi', count: 'upcoming' },
-    { value: 'past', label: "O'tgan", count: null },
+    { value: '', label: t('Hammasi'), count: 'all' },
+    { value: 'upcoming', label: t('Kelgusi'), count: 'upcoming' },
+    { value: 'past', label: t("O'tgan"), count: null },
 ] as const;
 
 function range(event: SettingsEvent): string {
@@ -85,10 +86,10 @@ function range(event: SettingsEvent): string {
         <header class="mb-4 flex flex-wrap items-center justify-between gap-3">
             <div>
                 <h2 class="font-sans text-[15px] font-bold text-navy-950">
-                    Tadbirlar
+                    {{ t('Tadbirlar') }}
                 </h2>
                 <p class="text-xs text-navy-500">
-                    Konferensiya, seminar, forum va davra suhbatlari
+                    {{ t('Konferensiya, seminar, forum va davra suhbatlari') }}
                 </p>
             </div>
             <button
@@ -96,7 +97,7 @@ function range(event: SettingsEvent): string {
                 class="inline-flex h-9 items-center gap-2 rounded-lg bg-brand-600 px-4 text-[13px] font-semibold text-white shadow-[0_8px_18px_-10px_rgba(0,108,246,0.9)] transition-all hover:-translate-y-px hover:bg-brand-500"
                 @click="open(null)"
             >
-                <Plus class="size-4" /> Tadbir qo'shish
+                <Plus class="size-4" /> {{ t("Tadbir qo'shish") }}
             </button>
         </header>
 
@@ -140,7 +141,7 @@ function range(event: SettingsEvent): string {
                 <input
                     v-model="search"
                     type="search"
-                    placeholder="Nomi yoki joyi bo'yicha…"
+                    :placeholder="t('Nomi yoki joyi bo\'yicha…')"
                     :class="cn(inputClass, 'pl-9')"
                 />
             </label>
@@ -184,18 +185,18 @@ function range(event: SettingsEvent): string {
                         <span
                             v-if="event.isPast"
                             class="rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600"
-                            >O'tgan</span
+                            >{{ t("O'tgan") }}</span
                         >
                         <span
                             v-else
                             class="rounded-md bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700"
-                            >Kelgusi</span
+                            >{{ t('Kelgusi') }}</span
                         >
                         <span
                             v-if="!event.isPublished"
                             class="inline-flex items-center gap-1 rounded-md bg-amber-50 px-2 py-0.5 text-[11px] font-semibold text-amber-700"
                         >
-                            <EyeOff class="size-3" /> Yashirin
+                            <EyeOff class="size-3" /> {{ t('Yashirin') }}
                         </span>
                     </div>
                     <h3
@@ -225,7 +226,9 @@ function range(event: SettingsEvent): string {
                             class="inline-flex min-w-0 items-center gap-1.5 text-brand-700 hover:text-brand-600"
                         >
                             <Link2 class="size-3.5 shrink-0" />
-                            <span class="truncate">Ro'yxatdan o'tish</span>
+                            <span class="truncate">{{
+                                t("Ro'yxatdan o'tish")
+                            }}</span>
                         </a>
                     </div>
                 </div>
@@ -237,14 +240,14 @@ function range(event: SettingsEvent): string {
                         target="_blank"
                         rel="noopener"
                         class="inline-flex size-8 items-center justify-center rounded-lg text-navy-500 transition-colors hover:bg-brand-50 hover:text-brand-700"
-                        aria-label="Saytda ko'rish"
+                        :aria-label="t('Saytda ko\'rish')"
                     >
                         <ExternalLink class="size-4" />
                     </a>
                     <button
                         type="button"
                         class="inline-flex size-8 items-center justify-center rounded-lg text-navy-500 transition-colors hover:bg-brand-50 hover:text-brand-700"
-                        aria-label="Tahrirlash"
+                        :aria-label="t('Tahrirlash')"
                         @click="open(event)"
                     >
                         <PenLine class="size-4" />
@@ -252,7 +255,7 @@ function range(event: SettingsEvent): string {
                     <button
                         type="button"
                         class="inline-flex size-8 items-center justify-center rounded-lg text-navy-500 transition-colors hover:bg-red-50 hover:text-red-600"
-                        aria-label="O'chirish"
+                        :aria-label="t('O\'chirish')"
                         @click="remove(event)"
                     >
                         <Trash2 class="size-4" />
@@ -284,8 +287,12 @@ function range(event: SettingsEvent): string {
         <DeleteDialog
             v-model:open="deleteOpen"
             :url="removing?.urls.destroy ?? null"
-            title="Tadbirni o'chirish"
-            :description="`«${removing?.title ?? ''}» saytdan olib tashlanadi.`"
+            :title="t('Tadbirni o\'chirish')"
+            :description="
+                t('«:title» saytdan olib tashlanadi.', {
+                    title: removing?.title ?? '',
+                })
+            "
         />
     </section>
 </template>

@@ -20,6 +20,7 @@ import ArticleStatusPill from '@/components/cabinet/ArticleStatusPill.vue';
 import { formatDate, formatFileSize, formatTime } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { EditorialArticle, EditorialFile, LocaleCode } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * O'rta ustun: tanlangan maqola — asosiy ma'lumotlar, hujjatlar, taqrizchilar, jarayon.
@@ -31,18 +32,18 @@ const emit = defineEmits<{ invite: [] }>();
 type Tab = 'main' | 'documents' | 'reviewers' | 'messages' | 'process';
 
 const tabs: { key: Tab; label: string }[] = [
-    { key: 'main', label: "Asosiy ma'lumotlar" },
-    { key: 'documents', label: 'Hujjatlar' },
-    { key: 'reviewers', label: 'Taqrizchilar' },
-    { key: 'messages', label: 'Yozishma' },
-    { key: 'process', label: 'Jarayon' },
+    { key: 'main', label: t("Asosiy ma'lumotlar") },
+    { key: 'documents', label: t('Hujjatlar') },
+    { key: 'reviewers', label: t('Taqrizchilar') },
+    { key: 'messages', label: t('Yozishma') },
+    { key: 'process', label: t('Jarayon') },
 ];
 
 // Tab ota sahifadan boshqariladi ("Muallifga xabar yuborish" → Yozishma)
 const tab = defineModel<Tab>('tab', { default: 'main' });
 
 const languageLabels: Record<LocaleCode, string> = {
-    uz: "O'zbekcha",
+    uz: t("O'zbekcha"),
     ru: 'Русский',
     en: 'English',
 };
@@ -132,7 +133,11 @@ const fileTint = (file: EditorialFile): string =>
                     <span
                         v-if="article.reviewRound > 0"
                         class="text-xs text-navy-500"
-                        >{{ article.reviewRound }}-taqriz bosqichi</span
+                        >{{
+                            t(':number-taqriz bosqichi', {
+                                number: article.reviewRound,
+                            })
+                        }}</span
                     >
                 </div>
                 <div class="mt-3 flex items-center gap-2.5">
@@ -158,7 +163,7 @@ const fileTint = (file: EditorialFile): string =>
                 >
                     <div class="flex items-center gap-1.5">
                         <FileText class="size-3.5 text-navy-400" />
-                        <dt>Tur:</dt>
+                        <dt>{{ t('Tur:') }}</dt>
                         <dd class="font-medium text-navy-800">
                             {{ article.type }}
                         </dd>
@@ -168,14 +173,14 @@ const fileTint = (file: EditorialFile): string =>
                         class="flex items-center gap-1.5"
                     >
                         <Layers class="size-3.5 text-navy-400" />
-                        <dt>Yo'nalish:</dt>
+                        <dt>{{ t("Yo'nalish:") }}</dt>
                         <dd class="font-medium text-navy-800">
                             {{ article.subject }}
                         </dd>
                     </div>
                     <div v-if="article.issue" class="flex items-center gap-1.5">
                         <BookText class="size-3.5 text-navy-400" />
-                        <dt>Jurnal soni:</dt>
+                        <dt>{{ t('Jurnal soni:') }}</dt>
                         <dd class="font-medium text-navy-800">
                             {{ article.issue }}
                         </dd>
@@ -185,13 +190,13 @@ const fileTint = (file: EditorialFile): string =>
                         class="flex items-center gap-1.5"
                     >
                         <CalendarDays class="size-3.5 text-navy-400" />
-                        <dt>Sana:</dt>
+                        <dt>{{ t('Sana:') }}</dt>
                         <dd class="font-medium text-navy-800 tabular-nums">
                             {{ formatDate(article.submittedAt) }}
                         </dd>
                     </div>
                     <div class="flex items-center gap-1.5">
-                        <dt>To'lov:</dt>
+                        <dt>{{ t("To'lov:") }}</dt>
                         <dd class="font-medium text-navy-800">
                             {{ article.paymentStatusLabel }}
                         </dd>
@@ -207,7 +212,7 @@ const fileTint = (file: EditorialFile): string =>
                             class="flex items-center gap-2 text-[13px] font-bold text-navy-950"
                         >
                             <BookText class="size-4 text-brand-600" />
-                            Annotatsiya
+                            {{ t('Annotatsiya') }}
                         </h3>
                         <div
                             v-if="abstractLanguages.length > 1"
@@ -253,7 +258,7 @@ const fileTint = (file: EditorialFile): string =>
                         class="mb-2 flex items-center gap-2 text-[13px] font-bold text-navy-950"
                     >
                         <KeyRound class="size-4 text-brand-600" />
-                        Kalit so'zlar
+                        {{ t("Kalit so'zlar") }}
                     </h3>
                     <div class="flex flex-wrap gap-1.5">
                         <span
@@ -271,7 +276,7 @@ const fileTint = (file: EditorialFile): string =>
                         class="mb-2 flex items-center gap-2 text-[13px] font-bold text-navy-950"
                     >
                         <UsersRound class="size-4 text-brand-600" />
-                        Mualliflar
+                        {{ t('Mualliflar') }}
                     </h3>
                     <ul class="grid gap-1.5 text-[13px]">
                         <li
@@ -285,7 +290,7 @@ const fileTint = (file: EditorialFile): string =>
                             <Star
                                 v-if="author.isCorresponding"
                                 class="size-3.5 self-center fill-gold-400 text-gold-500"
-                                aria-label="Aloqa uchun mas'ul"
+                                :aria-label="t('Aloqa uchun mas\'ul')"
                             />
                             <span class="text-xs text-navy-500">
                                 {{
@@ -307,7 +312,7 @@ const fileTint = (file: EditorialFile): string =>
                         class="mb-2 flex items-center gap-2 text-[13px] font-bold text-navy-950"
                     >
                         <FileText class="size-4 text-brand-600" />
-                        Fayllar
+                        {{ t('Fayllar') }}
                     </h3>
                     <ul
                         v-if="article.files.length"
@@ -354,7 +359,9 @@ const fileTint = (file: EditorialFile): string =>
                             </a>
                         </li>
                     </ul>
-                    <p v-else class="text-[13px] text-navy-500">Fayllar yo'q</p>
+                    <p v-else class="text-[13px] text-navy-500">
+                        {{ t("Fayllar yo'q") }}
+                    </p>
                 </section>
 
                 <EditorialNotes
@@ -375,7 +382,11 @@ const fileTint = (file: EditorialFile): string =>
                         class="mb-2 flex flex-wrap items-baseline justify-between gap-2"
                     >
                         <h3 class="text-[13px] font-bold text-navy-950">
-                            {{ version.number }}-versiya · {{ version.type }}
+                            {{
+                                t(':number-versiya', { number: version.number })
+                            }}
+                            ·
+                            {{ version.type }}
                         </h3>
                         <span class="text-xs text-navy-500 tabular-nums">
                             {{ formatDate(version.createdAt) }}
@@ -407,14 +418,14 @@ const fileTint = (file: EditorialFile): string =>
                     v-if="!article.versions.length"
                     class="py-6 text-center text-sm text-navy-500"
                 >
-                    Versiyalar yo'q
+                    {{ t("Versiyalar yo'q") }}
                 </p>
                 <section
                     v-if="article.references"
                     class="rounded-lg border border-line p-4"
                 >
                     <h3 class="mb-2 text-[13px] font-bold text-navy-950">
-                        Adabiyotlar ro'yxati
+                        {{ t("Adabiyotlar ro'yxati") }}
                     </h3>
                     <p
                         class="font-mono text-xs leading-relaxed whitespace-pre-line text-navy-700"
@@ -432,17 +443,19 @@ const fileTint = (file: EditorialFile): string =>
             <!-- Yozishma -->
             <div v-show="tab === 'messages'">
                 <p class="mb-3 text-xs text-navy-500">
-                    Muallif bilan yozishma. Muallif xodim ismini emas,
-                    «Tahririyat» yozuvini ko'radi; yangi xabar unga email orqali
-                    ham yuboriladi.
+                    {{
+                        t(
+                            "Muallif bilan yozishma. Muallif xodim ismini emas, «Tahririyat» yozuvini ko'radi; yangi xabar unga email orqali ham yuboriladi.",
+                        )
+                    }}
                 </p>
                 <MessageThread
                     :messages="article.messages"
                     :send-url="
                         article.can.message ? article.urls.message : null
                     "
-                    empty-text="Muallif bilan yozishma hali boshlanmagan."
-                    placeholder="Muallifga xabar..."
+                    :empty-text="t('Muallif bilan yozishma hali boshlanmagan.')"
+                    :placeholder="t('Muallifga xabar...')"
                 />
             </div>
 
@@ -452,7 +465,7 @@ const fileTint = (file: EditorialFile): string =>
                     class="mb-3 flex items-center gap-2 text-[13px] font-bold text-navy-950"
                 >
                     <History class="size-4 text-brand-600" />
-                    Holat tarixi
+                    {{ t('Holat tarixi') }}
                 </h3>
                 <ol class="relative grid gap-4 border-l-2 border-line pl-5">
                     <li
@@ -483,7 +496,7 @@ const fileTint = (file: EditorialFile): string =>
                                 v-if="!item.visibleToAuthor"
                                 class="inline-flex items-center gap-1 rounded bg-navy-50 px-1.5 text-[10px] text-navy-500"
                             >
-                                <Lock class="size-3" /> ichki
+                                <Lock class="size-3" /> {{ t('ichki') }}
                             </span>
                         </div>
                         <p
@@ -497,7 +510,7 @@ const fileTint = (file: EditorialFile): string =>
 
                 <template v-if="article.decisions.length">
                     <h3 class="mt-6 mb-3 text-[13px] font-bold text-navy-950">
-                        Muharrir qarorlari
+                        {{ t('Muharrir qarorlari') }}
                     </h3>
                     <ul class="grid gap-2">
                         <li

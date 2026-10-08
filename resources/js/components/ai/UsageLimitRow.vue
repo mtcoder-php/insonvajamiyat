@@ -5,6 +5,7 @@ import { ref, watch } from 'vue';
 import { formatNumber } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { AiUsageRow } from '@/types';
+import { t } from '@/lib/i18n';
 
 /** Foydalanuvchining oylik sarfi va shaxsiy limiti (bo'sh — rol bo'yicha standart, 0 — cheklanmagan) */
 const props = defineProps<{ row: AiUsageRow }>();
@@ -43,7 +44,8 @@ function save(): void {
         <td class="px-4 py-2.5">
             <span class="block font-medium text-navy-900">{{ row.name }}</span>
             <span class="block text-[11px] text-navy-400"
-                >{{ row.email }} · {{ row.staff ? 'Xodim' : 'Muallif' }}</span
+                >{{ row.email }} ·
+                {{ row.staff ? t('Xodim') : t('Muallif') }}</span
             >
         </td>
         <td class="px-4 py-2.5 text-right tabular-nums">
@@ -82,15 +84,15 @@ function save(): void {
                     type="number"
                     min="0"
                     step="1000"
-                    placeholder="Standart"
+                    :placeholder="t('Standart')"
                     class="h-8 w-28 rounded-md border border-line bg-white px-2 text-right text-[12px] font-medium text-navy-900 tabular-nums outline-none placeholder:text-navy-400 focus:border-brand-400 focus:ring-2 focus:ring-brand-100"
-                    aria-label="Shaxsiy limit"
+                    :aria-label="t('Shaxsiy limit')"
                 />
                 <button
                     type="submit"
                     :disabled="saving"
                     class="inline-flex size-8 items-center justify-center rounded-md bg-brand-50 text-brand-700 transition-colors hover:bg-brand-100 disabled:opacity-60"
-                    aria-label="Limitni saqlash"
+                    :aria-label="t('Limitni saqlash')"
                 >
                     <LoaderCircle v-if="saving" class="size-4 animate-spin" />
                     <Check

@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import type { SettingsSubject } from '@/types';
 import DeleteDialog from './DeleteDialog.vue';
 import SubjectDialog from './SubjectDialog.vue';
+import { t } from '@/lib/i18n';
 
 /** Ilmiy yo'nalishlar ro'yxati (rukn/fan sohalari) */
 const props = defineProps<{ subjects: SettingsSubject[]; storeUrl: string }>();
@@ -41,11 +42,15 @@ function remove(subject: SettingsSubject): void {
         >
             <div>
                 <h2 class="font-sans text-[15px] font-bold text-navy-950">
-                    Ilmiy yo'nalishlar
+                    {{ t("Ilmiy yo'nalishlar") }}
                 </h2>
                 <p class="text-xs text-navy-500">
-                    {{ subjects.length }} ta · saytdagi filtrlar, maqola
-                    yuborish formasi va hisobotlarda ishlatiladi
+                    {{
+                        t(
+                            ':count ta · saytdagi filtrlar, maqola yuborish formasi va hisobotlarda ishlatiladi',
+                            { count: subjects.length },
+                        )
+                    }}
                 </p>
             </div>
             <button
@@ -53,7 +58,7 @@ function remove(subject: SettingsSubject): void {
                 class="inline-flex h-9 items-center gap-2 rounded-lg bg-brand-600 px-4 text-[13px] font-semibold text-white shadow-[0_8px_18px_-10px_rgba(0,108,246,0.9)] transition-all hover:-translate-y-px hover:bg-brand-500"
                 @click="create"
             >
-                <Plus class="size-4" /> Yo'nalish qo'shish
+                <Plus class="size-4" /> {{ t("Yo'nalish qo'shish") }}
             </button>
         </header>
 
@@ -65,12 +70,18 @@ function remove(subject: SettingsSubject): void {
                     class="bg-[#fafcff] text-[11px] font-semibold tracking-wide text-navy-500 uppercase"
                 >
                     <tr>
-                        <th class="px-4 py-2.5">Nomi</th>
-                        <th class="px-4 py-2.5">Shifr</th>
-                        <th class="px-4 py-2.5 text-right">Maqolalar</th>
-                        <th class="px-4 py-2.5">Holat</th>
-                        <th class="px-4 py-2.5 text-right">Tartib</th>
-                        <th class="px-4 py-2.5 text-right">Amallar</th>
+                        <th class="px-4 py-2.5">{{ t('Nomi') }}</th>
+                        <th class="px-4 py-2.5">{{ t('Shifr') }}</th>
+                        <th class="px-4 py-2.5 text-right">
+                            {{ t('Maqolalar') }}
+                        </th>
+                        <th class="px-4 py-2.5">{{ t('Holat') }}</th>
+                        <th class="px-4 py-2.5 text-right">
+                            {{ t('Tartib') }}
+                        </th>
+                        <th class="px-4 py-2.5 text-right">
+                            {{ t('Amallar') }}
+                        </th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-line">
@@ -113,7 +124,7 @@ function remove(subject: SettingsSubject): void {
                                     "
                                     :title="
                                         subject.translations[lang] ||
-                                        'Tarjima yo\'q'
+                                        t('Tarjima yo\'q')
                                     "
                                     >{{ lang }}</span
                                 >
@@ -143,7 +154,7 @@ function remove(subject: SettingsSubject): void {
                                     )
                                 "
                                 >{{
-                                    subject.isActive ? 'Faol' : 'Nofaol'
+                                    subject.isActive ? t('Faol') : t('Nofaol')
                                 }}</span
                             >
                         </td>
@@ -159,7 +170,7 @@ function remove(subject: SettingsSubject): void {
                                 <button
                                     type="button"
                                     class="inline-flex size-8 items-center justify-center rounded-lg text-navy-500 transition-colors hover:bg-brand-50 hover:text-brand-700"
-                                    aria-label="Tahrirlash"
+                                    :aria-label="t('Tahrirlash')"
                                     @click="edit(subject)"
                                 >
                                     <PenLine class="size-4" />
@@ -167,7 +178,7 @@ function remove(subject: SettingsSubject): void {
                                 <button
                                     type="button"
                                     class="inline-flex size-8 items-center justify-center rounded-lg text-navy-500 transition-colors hover:bg-red-50 hover:text-red-600"
-                                    aria-label="O'chirish"
+                                    :aria-label="t('O\'chirish')"
                                     @click="remove(subject)"
                                 >
                                     <Trash2 class="size-4" />
@@ -180,7 +191,7 @@ function remove(subject: SettingsSubject): void {
                             colspan="6"
                             class="px-4 py-10 text-center text-sm text-navy-400"
                         >
-                            Yo'nalishlar hali qo'shilmagan
+                            {{ t("Yo'nalishlar hali qo'shilmagan") }}
                         </td>
                     </tr>
                 </tbody>
@@ -196,8 +207,13 @@ function remove(subject: SettingsSubject): void {
         <DeleteDialog
             v-model:open="deleteOpen"
             :url="removing?.urls.destroy ?? null"
-            title="Yo'nalishni o'chirish"
-            :description="`«${removing?.name ?? ''}» o'chiriladi. Maqolasi bor yo'nalishni o'chirib bo'lmaydi — uni faolsizlantiring.`"
+            :title="t('Yo\'nalishni o\'chirish')"
+            :description="
+                t(
+                    '«:name» o\'chiriladi. Maqolasi bor yo\'nalishni o\'chirib bo\'lmaydi — uni faolsizlantiring.',
+                    { name: removing?.name ?? '' },
+                )
+            "
         />
     </section>
 </template>

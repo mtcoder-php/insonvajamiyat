@@ -9,6 +9,7 @@ import type { SettingsEvent, Translated } from '@/types';
 import CheckCard from './CheckCard.vue';
 import ImagePicker from './ImagePicker.vue';
 import TranslatableField from './TranslatableField.vue';
+import { t } from '@/lib/i18n';
 
 /**
  * Tadbir: nomi, joyi, vaqti (boshlanish / tugash), ro'yxatdan o'tish havolasi, rasm, tavsif.
@@ -95,10 +96,14 @@ function submit(): void {
 <template>
     <ActionDialog
         v-model:open="open"
-        :title="event ? 'Tadbirni tahrirlash' : 'Yangi tadbir'"
-        description="Saytdagi «Tadbirlar» sahifasida va bosh sahifada (kelgusi tadbirlar) ko'rinadi."
+        :title="event ? t('Tadbirni tahrirlash') : t('Yangi tadbir')"
+        :description="
+            t(
+                'Saytdagi «Tadbirlar» sahifasida va bosh sahifada (kelgusi tadbirlar) ko\'rinadi.',
+            )
+        "
         :icon="event ? PenLine : CalendarPlus"
-        :confirm-text="event ? 'Saqlash' : 'Qo\'shish'"
+        :confirm-text="event ? t('Saqlash') : t('Qo\'shish')"
         :processing="form.processing"
         size="lg"
         @confirm="submit"
@@ -106,17 +111,17 @@ function submit(): void {
         <div class="grid grid-cols-1 gap-4">
             <TranslatableField
                 v-model="form.title"
-                label="Tadbir nomi"
+                :label="t('Tadbir nomi')"
                 field="title"
                 :errors="errors"
                 required
                 :maxlength="255"
-                placeholder="Xalqaro ilmiy-amaliy konferensiya"
+                :placeholder="t('Xalqaro ilmiy-amaliy konferensiya')"
             />
 
             <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <FormField
-                    label="Boshlanishi"
+                    :label="t('Boshlanishi')"
                     for="event-start"
                     :error="errors.starts_at"
                     required
@@ -129,10 +134,10 @@ function submit(): void {
                     />
                 </FormField>
                 <FormField
-                    label="Tugashi"
+                    :label="t('Tugashi')"
                     for="event-end"
                     :error="errors.ends_at"
-                    hint="Bir kunlik tadbir uchun bo'sh qoldiring"
+                    :hint="t('Bir kunlik tadbir uchun bo\'sh qoldiring')"
                 >
                     <input
                         id="event-end"
@@ -146,18 +151,18 @@ function submit(): void {
 
             <TranslatableField
                 v-model="form.location"
-                label="O'tkaziladigan joy"
+                :label="t('O\'tkaziladigan joy')"
                 field="location"
                 :errors="errors"
                 :maxlength="255"
-                placeholder="Toshkent, O'zMU yoki Onlayn (Zoom)"
+                :placeholder="t('Toshkent, O\'zMU yoki Onlayn (Zoom)')"
             />
 
             <FormField
-                label="Ro'yxatdan o'tish havolasi"
+                :label="t('Ro\'yxatdan o\'tish havolasi')"
                 for="event-reg"
                 :error="errors.registration_url"
-                hint="https://… (Google Forms, sayt sahifasi)"
+                :hint="t('https://… (Google Forms, sayt sahifasi)')"
             >
                 <input
                     id="event-reg"
@@ -175,24 +180,28 @@ function submit(): void {
                 :current-url="event?.imageUrl ?? null"
                 :error="errors.image"
                 aspect-class="aspect-[16/6]"
-                hint="Afisha yoki rasm · kamida 600×300 · ixtiyoriy"
+                :hint="t('Afisha yoki rasm · kamida 600×300 · ixtiyoriy')"
             />
 
             <TranslatableField
                 v-model="form.description"
-                label="Tavsif"
+                :label="t('Tavsif')"
                 field="description"
                 :errors="errors"
                 multiline
                 :rows="6"
                 :maxlength="5000"
-                placeholder="Dastur, sho'balar, talablar… Xatboshilarni bo'sh qator bilan ajrating"
+                :placeholder="
+                    t(
+                        'Dastur, sho\'balar, talablar… Xatboshilarni bo\'sh qator bilan ajrating',
+                    )
+                "
             />
 
             <CheckCard
                 v-model="form.is_published"
-                label="Saytda ko'rsatish"
-                hint="Belgilanmasa — faqat admin panelda ko'rinadi"
+                :label="t('Saytda ko\'rsatish')"
+                :hint="t('Belgilanmasa — faqat admin panelda ko\'rinadi')"
                 :icon="Eye"
             />
         </div>

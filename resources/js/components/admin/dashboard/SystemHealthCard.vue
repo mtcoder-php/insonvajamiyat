@@ -11,6 +11,7 @@ import {
 import type { Component } from 'vue';
 import DashCard from '@/components/admin/dashboard/DashCard.vue';
 import type { SystemHealthItem } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * "Tizim holati": asosiy xizmatlar — ishlayapti / ishlamayapti / sozlanmagan.
@@ -29,10 +30,18 @@ const states: Record<
     SystemHealthItem['state'],
     { label: string; icon: Component; class: string }
 > = {
-    up: { label: 'Ishlamoqda', icon: CircleCheck, class: 'text-emerald-600' },
-    down: { label: 'Ishlamayapti', icon: CircleAlert, class: 'text-red-600' },
+    up: {
+        label: t('Ishlamoqda'),
+        icon: CircleCheck,
+        class: 'text-emerald-600',
+    },
+    down: {
+        label: t('Ishlamayapti'),
+        icon: CircleAlert,
+        class: 'text-red-600',
+    },
     not_configured: {
-        label: 'Sozlanmagan',
+        label: t('Sozlanmagan'),
         icon: CircleDashed,
         class: 'text-amber-600',
     },
@@ -40,7 +49,7 @@ const states: Record<
 </script>
 
 <template>
-    <DashCard title="Tizim holati">
+    <DashCard :title="t('Tizim holati')">
         <ul class="divide-y divide-line">
             <li
                 v-for="item in items"

@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 import { dashboard } from '@/routes/admin';
 import { index } from '@/routes/admin/reviews';
 import type { ReviewIndexProps, ReviewListItem, ReviewTab } from '@/types';
+import { t, tk } from '@/lib/i18n';
 
 /**
  * "Taqrizlarim" — taqrizchiga yuborilgan takliflar va taqrizlar.
@@ -17,18 +18,18 @@ const props = defineProps<ReviewIndexProps>();
 defineOptions({
     layout: {
         breadcrumbs: [
-            { title: 'Admin panel', href: dashboard() },
-            { title: 'Taqrizlarim', href: index() },
+            { title: tk('Admin panel'), href: dashboard() },
+            { title: tk('Taqrizlarim'), href: index() },
         ],
     },
 });
 
 const tabs: { key: ReviewTab; label: string }[] = [
-    { key: 'invited', label: 'Yangi takliflar' },
-    { key: 'active', label: 'Jarayonda' },
-    { key: 'completed', label: 'Yakunlangan' },
-    { key: 'closed', label: 'Rad etilgan / bekor' },
-    { key: 'all', label: 'Barchasi' },
+    { key: 'invited', label: t('Yangi takliflar') },
+    { key: 'active', label: t('Jarayonda') },
+    { key: 'completed', label: t('Yakunlangan') },
+    { key: 'closed', label: t('Rad etilgan / bekor') },
+    { key: 'all', label: t('Barchasi') },
 ];
 
 const statusTint: Record<string, string> = {
@@ -51,27 +52,32 @@ const dueText = (item: ReviewListItem): string =>
     item.daysLeft === null
         ? ''
         : item.daysLeft < 0
-          ? `${Math.abs(item.daysLeft)} kun kechikdi`
+          ? t(':daysLeft kun kechikdi', { daysLeft: Math.abs(item.daysLeft) })
           : item.daysLeft === 0
-            ? 'Bugun tugaydi'
-            : `${item.daysLeft} kun qoldi`;
+            ? t('Bugun tugaydi')
+            : t(':daysLeft kun qoldi', { daysLeft: item.daysLeft });
 </script>
 
 <template>
-    <Head title="Taqrizlarim" />
+    <Head :title="t('Taqrizlarim')" />
 
     <div class="flex flex-1 flex-col gap-5 bg-[#f5f7fb] p-4 md:p-6">
         <PageHeader
-            title="Taqrizlarim"
-            description="Sizga yuborilgan taqriz takliflari va taqrizlaringiz"
+            :title="t('Taqrizlarim')"
+            :description="
+                t('Sizga yuborilgan taqriz takliflari va taqrizlaringiz')
+            "
         />
 
         <div
             class="flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50/60 px-4 py-3 text-[13px] leading-relaxed text-emerald-900"
         >
             <Lock class="mt-0.5 size-4 shrink-0 text-emerald-600" />
-            Blind review: muallifning shaxsiy ma'lumotlari sizga, sizning
-            ismingiz esa muallifga ko'rsatilmaydi.
+            {{
+                t(
+                    "Blind review: muallifning shaxsiy ma'lumotlari sizga, sizning ismingiz esa muallifga ko'rsatilmaydi.",
+                )
+            }}
         </div>
 
         <section
@@ -127,7 +133,10 @@ const dueText = (item: ReviewListItem): string =>
                         <span class="min-w-0 flex-1">
                             <span
                                 class="font-mono text-[11px] font-semibold text-navy-400"
-                                >#{{ item.code }} · {{ item.round }}-raund</span
+                                >#{{ item.code }} ·
+                                {{
+                                    t(':number-raund', { number: item.round })
+                                }}</span
                             >
                             <span
                                 class="mt-0.5 line-clamp-2 block text-sm font-semibold text-navy-900 group-hover:text-brand-700"
@@ -194,7 +203,9 @@ const dueText = (item: ReviewListItem): string =>
                 class="flex flex-col items-center gap-2 py-16 text-center"
             >
                 <ClipboardPen class="size-8 text-navy-300" />
-                <p class="text-sm text-navy-500">Bu bo'limda taqriz yo'q</p>
+                <p class="text-sm text-navy-500">
+                    {{ t("Bu bo'limda taqriz yo'q") }}
+                </p>
             </div>
 
             <div

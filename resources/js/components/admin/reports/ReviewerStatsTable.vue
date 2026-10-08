@@ -12,6 +12,7 @@ import { computed, ref } from 'vue';
 import { formatNumber } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { ReviewerStats, ReviewerStatsRow } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * "Taqrizchilar" tabi: umumiy ko'rsatkichlar va har bir taqrizchi bo'yicha jadval
@@ -65,37 +66,37 @@ const cards = computed<
     { label: string; value: string; icon: Component; tint: string }[]
 >(() => [
     {
-        label: 'Taqrizchilar',
+        label: t('Taqrizchilar'),
         value: formatNumber(props.data.totals.reviewers),
         icon: UsersRound,
         tint: 'bg-brand-50 text-brand-600',
     },
     {
-        label: 'Takliflar',
+        label: t('Takliflar'),
         value: formatNumber(props.data.totals.invited),
         icon: Send,
         tint: 'bg-cyan-50 text-cyan-700',
     },
     {
-        label: 'Topshirilgan xulosalar',
+        label: t('Topshirilgan xulosalar'),
         value: formatNumber(props.data.totals.completed),
         icon: CheckCheck,
         tint: 'bg-emerald-50 text-emerald-600',
     },
     {
-        label: 'Jarayonda',
+        label: t('Jarayonda'),
         value: formatNumber(props.data.totals.pending),
         icon: Hourglass,
         tint: 'bg-amber-50 text-amber-600',
     },
     {
-        label: "Muddati o'tgan",
+        label: t("Muddati o'tgan"),
         value: formatNumber(props.data.totals.overdue),
         icon: AlarmClock,
         tint: 'bg-red-50 text-red-600',
     },
     {
-        label: "O'rtacha muddat",
+        label: t("O'rtacha muddat"),
         value:
             props.data.totals.avgDays === null
                 ? '—'
@@ -106,14 +107,14 @@ const cards = computed<
 ]);
 
 const columns: { key: SortKey; label: string; numeric?: boolean }[] = [
-    { key: 'name', label: 'Taqrizchi' },
-    { key: 'invited', label: 'Takliflar', numeric: true },
-    { key: 'completed', label: 'Topshirgan', numeric: true },
-    { key: 'declined', label: 'Rad etgan', numeric: true },
-    { key: 'pending', label: 'Jarayonda', numeric: true },
-    { key: 'overdue', label: "Muddati o'tgan", numeric: true },
-    { key: 'avgDays', label: "O'rt. kun", numeric: true },
-    { key: 'onTime', label: 'Muddatida', numeric: true },
+    { key: 'name', label: t('Taqrizchi') },
+    { key: 'invited', label: t('Takliflar'), numeric: true },
+    { key: 'completed', label: t('Topshirgan'), numeric: true },
+    { key: 'declined', label: t('Rad etgan'), numeric: true },
+    { key: 'pending', label: t('Jarayonda'), numeric: true },
+    { key: 'overdue', label: t("Muddati o'tgan"), numeric: true },
+    { key: 'avgDays', label: t("O'rt. kun"), numeric: true },
+    { key: 'onTime', label: t('Muddatida'), numeric: true },
 ];
 
 function initials(row: ReviewerStatsRow): string {
@@ -176,7 +177,7 @@ function onTimeClass(value: number | null): string {
                 class="flex items-center justify-between gap-3 border-b border-line px-5 py-3.5"
             >
                 <h2 class="text-[15px] font-bold text-navy-950">
-                    Taqrizchilar samaradorligi
+                    {{ t('Taqrizchilar samaradorligi') }}
                 </h2>
                 <p class="text-xs text-navy-400">
                     Takliflar va xulosalar — tanlangan davrda; "Jarayonda" —
@@ -311,7 +312,7 @@ function onTimeClass(value: number | null): string {
                 </table>
             </div>
             <p v-else class="py-10 text-center text-sm text-navy-400">
-                Taqrizchilar hali qo'shilmagan
+                {{ t("Taqrizchilar hali qo'shilmagan") }}
             </p>
         </section>
     </div>

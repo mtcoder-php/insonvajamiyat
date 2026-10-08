@@ -8,6 +8,7 @@ import UserAvatar from '@/components/users/UserAvatar.vue';
 import { inputClass } from '@/lib/formStyles';
 import { cn } from '@/lib/utils';
 import type { EditorialArticle, ReviewerOption } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Taqrizchilarni taklif qilish: ro'yxatdan tanlash (joriy yuklama bilan) va muddat.
@@ -84,10 +85,14 @@ function submit(): void {
 <template>
     <ActionDialog
         v-model:open="open"
-        title="Taqrizchilarni tayinlash"
-        description="Taqrizchilarga taklif yuboriladi. Ular taklifni qabul qilgach, maqola fayllari ochiladi. Taqrizchi va muallif bir-birini ko'rmaydi (blind review)."
+        :title="t('Taqrizchilarni tayinlash')"
+        :description="
+            t(
+                'Taqrizchilarga taklif yuboriladi. Ular taklifni qabul qilgach, maqola fayllari ochiladi. Taqrizchi va muallif bir-birini ko\'rmaydi (blind review).',
+            )
+        "
         :icon="UsersRound"
-        confirm-text="Taklif yuborish"
+        :confirm-text="t('Taklif yuborish')"
         :processing="form.processing"
         @confirm="submit"
     >
@@ -99,14 +104,14 @@ function submit(): void {
                 {{ errors.reviewer_ids }}
             </p>
             <label class="relative block">
-                <span class="sr-only">Qidirish</span>
+                <span class="sr-only">{{ t('Qidirish') }}</span>
                 <Search
                     class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-navy-400"
                 />
                 <input
                     v-model="search"
                     type="search"
-                    placeholder="Ism, tashkilot yoki yo'nalish..."
+                    :placeholder="t('Ism, tashkilot yoki yo\'nalish...')"
                     :class="cn(inputClass, 'h-9 pl-9 text-[13px]')"
                 />
             </label>
@@ -144,15 +149,23 @@ function submit(): void {
                                     class="inline-flex shrink-0 items-center gap-0.5 rounded bg-emerald-50 px-1.5 py-px text-[10px] font-semibold text-emerald-700"
                                     :title="reviewer.subjects.join(', ')"
                                 >
-                                    <Sparkles class="size-3" /> Mos yo'nalish
+                                    <Sparkles class="size-3" />
+                                    {{ t("Mos yo'nalish") }}
                                 </span>
                             </span>
                             <span
                                 class="block truncate text-[11px] text-navy-500"
                             >
-                                {{ reviewer.organization ?? '—' }} · faol:
-                                {{ reviewer.active }} · yakunlangan:
-                                {{ reviewer.completed }}
+                                {{ reviewer.organization ?? '—' }} ·
+                                {{
+                                    t(
+                                        'faol: :active · yakunlangan: :completed',
+                                        {
+                                            active: reviewer.active,
+                                            completed: reviewer.completed,
+                                        },
+                                    )
+                                }}
                             </span>
                         </span>
                         <span
@@ -177,15 +190,23 @@ function submit(): void {
                     v-if="!filtered.length"
                     class="py-6 text-center text-xs text-navy-500"
                 >
-                    Taqrizchi topilmadi. Taqrizchilarni «Taqrizchilar» bo'limida
-                    qo'shing (to'xtatilganlar bu yerda chiqmaydi).
+                    {{
+                        t(
+                            "Taqrizchi topilmadi. Taqrizchilarni «Taqrizchilar» bo'limida qo'shing (to'xtatilganlar bu yerda chiqmaydi).",
+                        )
+                    }}
                 </li>
             </ul>
             <p class="text-xs text-navy-500">
-                Tanlangan: {{ form.reviewer_ids.length }} / {{ MAX }}
+                {{
+                    t('Tanlangan: :count / :max', {
+                        count: form.reviewer_ids.length,
+                        max: MAX,
+                    })
+                }}
             </p>
             <FormField
-                label="Taqriz muddati (kun)"
+                :label="t('Taqriz muddati (kun)')"
                 for="due-days"
                 required
                 :error="errors.due_days"

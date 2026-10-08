@@ -3,6 +3,7 @@ import { computed, ref } from 'vue';
 import { niceScale, roundedBar } from '@/lib/chart';
 import { formatCompact, formatNumber } from '@/lib/format';
 import type { ChartSeries } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Ustunli grafik: bo'laklar kam bo'lsa guruhlangan, ko'p bo'lsa (kunlik) — ustma-ust (stacked).
@@ -17,7 +18,7 @@ const props = withDefaults(
         ariaLabel?: string;
         stackAfter?: number;
     }>(),
-    { height: 250, format: undefined, ariaLabel: 'Grafik', stackAfter: 12 },
+    { height: 250, format: undefined, ariaLabel: undefined, stackAfter: 12 },
 );
 
 const W = 640;
@@ -132,7 +133,7 @@ const hovered = ref<number | null>(null);
             :viewBox="`0 0 ${W} ${H}`"
             class="h-auto w-full"
             role="img"
-            :aria-label="ariaLabel"
+            :aria-label="ariaLabel ?? t('Grafik')"
             @mouseleave="hovered = null"
         >
             <g class="text-[10px]">
@@ -233,7 +234,7 @@ const hovered = ref<number | null>(null);
             <p
                 class="mt-1 flex justify-between gap-4 border-t border-line pt-1 font-semibold text-navy-900"
             >
-                <span>Jami</span>
+                <span>{{ t('Jami') }}</span>
                 <span class="tabular-nums">{{
                     fmt(totals[hovered] ?? 0)
                 }}</span>

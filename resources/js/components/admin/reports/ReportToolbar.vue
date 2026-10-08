@@ -20,6 +20,7 @@ import {
 import { inputClass } from '@/lib/formStyles';
 import { cn } from '@/lib/utils';
 import type { ReportExportLink, ReportFilters, ReportOption } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Davr (tayyor variantlar yoki ixtiyoriy sana oralig'i), fan yo'nalishi va eksport menyusi.
@@ -54,7 +55,7 @@ type Preset = { key: string; label: string; range: () => [Date, Date] };
 const presets: Preset[] = [
     {
         key: '7d',
-        label: 'Oxirgi 7 kun',
+        label: t('Oxirgi 7 kun'),
         range: () => {
             const to = new Date();
             const from = new Date(to);
@@ -65,7 +66,7 @@ const presets: Preset[] = [
     },
     {
         key: '30d',
-        label: 'Oxirgi 30 kun',
+        label: t('Oxirgi 30 kun'),
         range: () => {
             const to = new Date();
             const from = new Date(to);
@@ -76,7 +77,7 @@ const presets: Preset[] = [
     },
     {
         key: 'month',
-        label: 'Joriy oy',
+        label: t('Joriy oy'),
         range: () => {
             const to = new Date();
 
@@ -85,7 +86,7 @@ const presets: Preset[] = [
     },
     {
         key: '3m',
-        label: 'Oxirgi 3 oy',
+        label: t('Oxirgi 3 oy'),
         range: () => {
             const to = new Date();
 
@@ -94,7 +95,7 @@ const presets: Preset[] = [
     },
     {
         key: '6m',
-        label: 'Oxirgi 6 oy',
+        label: t('Oxirgi 6 oy'),
         range: () => {
             const to = new Date();
 
@@ -103,7 +104,7 @@ const presets: Preset[] = [
     },
     {
         key: '12m',
-        label: 'Oxirgi 12 oy',
+        label: t('Oxirgi 12 oy'),
         range: () => {
             const to = new Date();
 
@@ -112,7 +113,7 @@ const presets: Preset[] = [
     },
     {
         key: 'year',
-        label: 'Joriy yil',
+        label: t('Joriy yil'),
         range: () => {
             const to = new Date();
 
@@ -121,7 +122,7 @@ const presets: Preset[] = [
     },
     {
         key: 'prev-year',
-        label: "O'tgan yil",
+        label: t("O'tgan yil"),
         range: () => {
             const year = new Date().getFullYear() - 1;
 
@@ -198,8 +199,9 @@ const today = iso(new Date());
                 />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" class="w-72 p-2">
-                <DropdownMenuLabel class="text-[11px] text-navy-400 uppercase"
-                    >Tez tanlash</DropdownMenuLabel
+                <DropdownMenuLabel
+                    class="text-[11px] text-navy-400 uppercase"
+                    >{{ t('Tez tanlash') }}</DropdownMenuLabel
                 >
                 <div class="grid grid-cols-2 gap-1">
                     <DropdownMenuItem
@@ -222,8 +224,9 @@ const today = iso(new Date());
                     </DropdownMenuItem>
                 </div>
                 <DropdownMenuSeparator />
-                <DropdownMenuLabel class="text-[11px] text-navy-400 uppercase"
-                    >Ixtiyoriy oraliq</DropdownMenuLabel
+                <DropdownMenuLabel
+                    class="text-[11px] text-navy-400 uppercase"
+                    >{{ t('Ixtiyoriy oraliq') }}</DropdownMenuLabel
                 >
                 <form
                     class="grid gap-2 px-2 pb-1"
@@ -232,7 +235,7 @@ const today = iso(new Date());
                 >
                     <div class="grid grid-cols-2 gap-2">
                         <label class="text-[11px] text-navy-500">
-                            Boshlanish
+                            {{ t('Boshlanish') }}
                             <input
                                 v-model="custom.from"
                                 type="date"
@@ -243,7 +246,7 @@ const today = iso(new Date());
                             />
                         </label>
                         <label class="text-[11px] text-navy-500">
-                            Tugash
+                            {{ t('Tugash') }}
                             <input
                                 v-model="custom.to"
                                 type="date"
@@ -258,7 +261,7 @@ const today = iso(new Date());
                         type="submit"
                         class="h-9 rounded-lg bg-navy-900 text-[13px] font-semibold text-white transition-colors hover:bg-brand-700"
                     >
-                        Qo'llash
+                        {{ t("Qo'llash") }}
                     </button>
                 </form>
             </DropdownMenuContent>
@@ -266,10 +269,10 @@ const today = iso(new Date());
 
         <SelectInput
             v-model="subject"
-            aria-label="Fan yo'nalishi"
+            :aria-label="t('Fan yo\'nalishi')"
             class="w-56 text-[13px]"
         >
-            <option :value="null">Barcha yo'nalishlar</option>
+            <option :value="null">{{ t("Barcha yo'nalishlar") }}</option>
             <option v-for="s in subjects" :key="s.value" :value="s.value">
                 {{ s.label }}
             </option>
@@ -279,12 +282,13 @@ const today = iso(new Date());
             <DropdownMenuTrigger
                 class="inline-flex h-10 items-center gap-2 rounded-lg bg-brand-600 px-4 text-[13px] font-semibold text-white shadow-[0_10px_22px_-12px_rgba(0,108,246,0.9)] transition-all outline-none hover:-translate-y-px hover:bg-brand-700 focus-visible:ring-2 focus-visible:ring-brand-300"
             >
-                <Download class="size-4" /> Eksport
+                <Download class="size-4" /> {{ t('Eksport') }}
                 <ChevronDown class="size-4 opacity-80" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" class="w-60">
-                <DropdownMenuLabel class="text-[11px] text-navy-400 uppercase"
-                    >Excel (CSV)</DropdownMenuLabel
+                <DropdownMenuLabel
+                    class="text-[11px] text-navy-400 uppercase"
+                    >{{ t('Excel (CSV)') }}</DropdownMenuLabel
                 >
                 <DropdownMenuItem
                     v-for="item in exports"
@@ -305,7 +309,7 @@ const today = iso(new Date());
                         class="cursor-pointer"
                     >
                         <Printer class="size-4 text-red-600" />
-                        Umumiy hisobot (PDF)
+                        {{ t('Umumiy hisobot (PDF)') }}
                     </a>
                 </DropdownMenuItem>
             </DropdownMenuContent>

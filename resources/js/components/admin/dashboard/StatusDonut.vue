@@ -3,6 +3,7 @@ import { computed, ref } from 'vue';
 import DashCard from '@/components/admin/dashboard/DashCard.vue';
 import { formatNumber } from '@/lib/format';
 import type { StatusBreakdown, StatusGroupKey } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * "Maqolalar holati": halqa diagramma (markazda jami) va qiymatli legenda.
@@ -10,11 +11,11 @@ import type { StatusBreakdown, StatusGroupKey } from '@/types';
 const props = defineProps<{ data: StatusBreakdown }>();
 
 const meta: Record<StatusGroupKey, { label: string; color: string }> = {
-    new: { label: 'Yangi', color: '#1a82f7' },
-    reviewing: { label: "Ko'rib chiqilayotgan", color: '#f59e0b' },
-    revision: { label: 'Tuzatish talab qilingan', color: '#ef4444' },
-    accepted: { label: 'Qabul qilingan', color: '#0fa37f' },
-    published: { label: 'Nashr etilgan', color: '#8b5cf6' },
+    new: { label: t('Yangi'), color: '#1a82f7' },
+    reviewing: { label: t("Ko'rib chiqilayotgan"), color: '#f59e0b' },
+    revision: { label: t('Tuzatish talab qilingan'), color: '#ef4444' },
+    accepted: { label: t('Qabul qilingan'), color: '#0fa37f' },
+    published: { label: t('Nashr etilgan'), color: '#8b5cf6' },
 };
 
 const R = 52;
@@ -45,7 +46,7 @@ const hovered = ref<StatusGroupKey | null>(null);
 </script>
 
 <template>
-    <DashCard title="Maqolalar holati">
+    <DashCard :title="t('Maqolalar holati')">
         <div class="@container">
             <div class="flex flex-col items-center gap-5 @md:flex-row">
                 <div class="relative size-36 shrink-0">
@@ -83,7 +84,9 @@ const hovered = ref<StatusGroupKey | null>(null);
                         >
                             {{ formatNumber(data.total) }}
                         </span>
-                        <span class="text-xs text-navy-500">Jami maqola</span>
+                        <span class="text-xs text-navy-500">{{
+                            t('Jami maqola')
+                        }}</span>
                     </div>
                 </div>
 

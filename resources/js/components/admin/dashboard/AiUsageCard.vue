@@ -4,6 +4,7 @@ import { computed } from 'vue';
 import DashCard from '@/components/admin/dashboard/DashCard.vue';
 import { formatNumber } from '@/lib/format';
 import type { AiUsage } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * "AI xizmatlari ishlatilishi": joriy oydagi so'rovlar (halqa) va turlar ulushi.
@@ -39,7 +40,7 @@ const trendUp = computed(() => (props.data.trend ?? 0) >= 0);
 </script>
 
 <template>
-    <DashCard title="AI xizmatlari ishlatilishi">
+    <DashCard :title="t('AI xizmatlari ishlatilishi')">
         <div class="@container">
             <div class="flex flex-col items-center gap-5 @xs:flex-row">
                 <div class="flex shrink-0 flex-col items-center">
@@ -76,7 +77,7 @@ const trendUp = computed(() => (props.data.trend ?? 0) >= 0);
                                 {{ formatNumber(data.total) }}
                             </span>
                             <span class="mt-0.5 text-[10px] text-navy-500">
-                                so'rov (oylik)
+                                {{ t("so'rov (oylik)") }}
                             </span>
                         </div>
                     </div>
@@ -91,7 +92,7 @@ const trendUp = computed(() => (props.data.trend ?? 0) >= 0);
                         <ArrowDown v-else class="size-3.5" />
                         {{ Math.abs(data.trend) }}%
                         <span class="font-normal text-navy-400">
-                            o'tgan oyga nisbatan
+                            {{ t("o'tgan oyga nisbatan") }}
                         </span>
                     </p>
                 </div>

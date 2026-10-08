@@ -19,6 +19,7 @@ import { cn } from '@/lib/utils';
 import { dashboard } from '@/routes/admin';
 import { index } from '@/routes/admin/production';
 import type { ProductionIndexProps, ProductionTab } from '@/types';
+import { t, tk } from '@/lib/i18n';
 
 /**
  * "Nashr jarayoni" — qabul qilingan maqolalarni maketlash va nashrga tayyorlash navbati.
@@ -28,18 +29,18 @@ const props = defineProps<ProductionIndexProps>();
 defineOptions({
     layout: {
         breadcrumbs: [
-            { title: 'Admin panel', href: dashboard() },
-            { title: 'Nashr jarayoni', href: index() },
+            { title: tk('Admin panel'), href: dashboard() },
+            { title: tk('Nashr jarayoni'), href: index() },
         ],
     },
 });
 
 const tabs: { key: ProductionTab; label: string }[] = [
-    { key: 'new', label: 'Maketga olinmagan' },
-    { key: 'production', label: 'Maketlanmoqda' },
-    { key: 'approved', label: 'Nashrga tayyor' },
-    { key: 'published', label: 'Nashr etilgan' },
-    { key: 'all', label: 'Barchasi' },
+    { key: 'new', label: t('Maketga olinmagan') },
+    { key: 'production', label: t('Maketlanmoqda') },
+    { key: 'approved', label: t('Nashrga tayyor') },
+    { key: 'published', label: t('Nashr etilgan') },
+    { key: 'all', label: t('Barchasi') },
 ];
 
 const statIcon = {
@@ -71,12 +72,16 @@ const percent = (done: number, total: number): number =>
 </script>
 
 <template>
-    <Head title="Nashr jarayoni" />
+    <Head :title="t('Nashr jarayoni')" />
 
     <div class="flex flex-1 flex-col gap-5 bg-[#f5f7fb] p-4 md:p-6">
         <PageHeader
-            title="Nashr jarayoni"
-            description="Qabul qilingan maqolalarni maketlash, korrektura, nashr oldidan tekshiruv va tasdiqlash"
+            :title="t('Nashr jarayoni')"
+            :description="
+                t(
+                    'Qabul qilingan maqolalarni maketlash, korrektura, nashr oldidan tekshiruv va tasdiqlash',
+                )
+            "
         />
 
         <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -161,7 +166,7 @@ const percent = (done: number, total: number): number =>
                     <input
                         v-model="search"
                         type="search"
-                        placeholder="Sarlavha yoki DOI..."
+                        :placeholder="t('Sarlavha yoki DOI...')"
                         :class="cn(inputClass, 'h-9 pl-9 text-[13px]')"
                     />
                 </form>
@@ -208,10 +213,15 @@ const percent = (done: number, total: number): number =>
                             class="grid shrink-0 gap-1 text-xs text-navy-600 lg:w-44"
                         >
                             <span>
-                                <span class="text-navy-400">Son:</span>
+                                <span class="text-navy-400">{{
+                                    t('Son:')
+                                }}</span>
                                 {{ item.issue ?? '—' }}
                                 <template v-if="item.pages"
-                                    >· {{ item.pages }}-b.</template
+                                    >·
+                                    {{
+                                        t(':pages-b.', { pages: item.pages })
+                                    }}</template
                                 >
                             </span>
                             <span class="truncate">
@@ -225,7 +235,7 @@ const percent = (done: number, total: number): number =>
                                 <span
                                     class="mb-1 flex justify-between text-[11px] text-navy-500"
                                 >
-                                    Tekshiruv
+                                    {{ t('Tekshiruv') }}
                                     <b class="text-navy-800 tabular-nums"
                                         >{{ item.progress.done }}/{{
                                             item.progress.total
@@ -252,7 +262,11 @@ const percent = (done: number, total: number): number =>
                                 </span>
                             </template>
                             <span v-else class="text-[11px] text-navy-400">
-                                Qabul: {{ formatDate(item.acceptedAt) }}
+                                {{
+                                    t('Qabul: :date', {
+                                        date: formatDate(item.acceptedAt),
+                                    })
+                                }}
                             </span>
                         </span>
 
@@ -263,7 +277,8 @@ const percent = (done: number, total: number): number =>
                                 v-if="item.approved"
                                 class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700 ring-1 ring-emerald-200 ring-inset"
                             >
-                                <BadgeCheck class="size-3.5" /> Tasdiqlangan
+                                <BadgeCheck class="size-3.5" />
+                                {{ t('Tasdiqlangan') }}
                             </span>
                             <ArticleStatusPill
                                 v-else
@@ -282,7 +297,9 @@ const percent = (done: number, total: number): number =>
                 class="flex flex-col items-center gap-2 py-16 text-center"
             >
                 <BookCheck class="size-8 text-navy-300" />
-                <p class="text-sm text-navy-500">Bu bo'limda maqola yo'q</p>
+                <p class="text-sm text-navy-500">
+                    {{ t("Bu bo'limda maqola yo'q") }}
+                </p>
             </div>
 
             <div

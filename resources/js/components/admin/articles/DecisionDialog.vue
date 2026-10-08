@@ -7,6 +7,7 @@ import ActionDialog from '@/components/admin/ui/ActionDialog.vue';
 import FormField from '@/components/admin/ui/FormField.vue';
 import { textareaClass } from '@/lib/formStyles';
 import type { EditorialArticle, EditorialDecisionKey } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Muharrir qarori oynasi: muallifga izoh (tuzatish va rad etishda majburiy) va ichki izoh.
@@ -31,36 +32,41 @@ const meta: Record<
     }
 > = {
     request_revision: {
-        title: 'Tuzatish talab qilish',
-        description:
+        title: t('Tuzatish talab qilish'),
+        description: t(
             "Maqola muallifga tuzatish uchun qaytariladi. Izoh muallifga ko'rinadi.",
-        confirm: 'Tuzatishga qaytarish',
+        ),
+        confirm: t('Tuzatishga qaytarish'),
         icon: FilePenLine,
         tone: 'primary',
         required: true,
-        placeholder:
+        placeholder: t(
             "Masalan: annotatsiyani qisqartiring, adabiyotlar ro'yxatini GOST talablariga moslang...",
+        ),
     },
     accept: {
-        title: 'Maqolani qabul qilish',
-        description:
+        title: t('Maqolani qabul qilish'),
+        description: t(
             "Maqola nashrga qabul qilinadi va nashrga tayyorlash bosqichiga o'tadi.",
-        confirm: 'Qabul qilish',
+        ),
+        confirm: t('Qabul qilish'),
         icon: CircleCheck,
         tone: 'primary',
         required: false,
-        placeholder: "Ixtiyoriy — muallifga tabrik yoki qo'shimcha ma'lumot",
+        placeholder: t("Ixtiyoriy — muallifga tabrik yoki qo'shimcha ma'lumot"),
     },
     reject: {
-        title: 'Maqolani rad etish',
-        description:
+        title: t('Maqolani rad etish'),
+        description: t(
             "Maqola rad etiladi va jarayon yakunlanadi. Sabab muallifga ko'rinadi.",
-        confirm: 'Rad etish',
+        ),
+        confirm: t('Rad etish'),
         icon: CircleX,
         tone: 'danger',
         required: true,
-        placeholder:
+        placeholder: t(
             "Rad etish sababi (mavzu jurnal yo'nalishiga mos emas, ilmiy yangilik yo'q...)",
+        ),
     },
 };
 
@@ -110,7 +116,7 @@ function submit(): void {
                 {{ errors.decision }}
             </p>
             <FormField
-                label="Muallifga izoh"
+                :label="t('Muallifga izoh')"
                 for="decision-comment"
                 :required="current.required"
                 :error="errors.comment_to_author"
@@ -126,9 +132,9 @@ function submit(): void {
                 />
             </FormField>
             <FormField
-                label="Ichki izoh"
+                :label="t('Ichki izoh')"
                 for="decision-note"
-                hint="Faqat tahririyat ko'radi (ixtiyoriy)"
+                :hint="t('Faqat tahririyat ko\'radi (ixtiyoriy)')"
                 :error="errors.internal_note"
             >
                 <textarea

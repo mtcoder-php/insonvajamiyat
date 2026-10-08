@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import { formatNumber } from '@/lib/format';
 import type { ReportShareItem } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Gorizontal ustunlar ro'yxati (masalan, mamlakatlar bo'yicha mualliflar).
@@ -14,7 +15,7 @@ const props = withDefaults(
         color?: string;
         emptyText?: string;
     }>(),
-    { color: '#1a82f7', emptyText: "Tanlangan davrda ma'lumot yo'q" },
+    { color: '#1a82f7', emptyText: undefined },
 );
 
 const max = computed(() => Math.max(1, ...props.items.map((i) => i.value)));
@@ -28,7 +29,7 @@ const badge = (key: string): string =>
         v-if="items.length === 0"
         class="py-10 text-center text-sm text-navy-400"
     >
-        {{ emptyText }}
+        {{ emptyText ?? t("Tanlangan davrda ma'lumot yo'q") }}
     </p>
     <ul v-else class="space-y-2.5">
         <li

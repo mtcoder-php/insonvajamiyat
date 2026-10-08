@@ -6,6 +6,7 @@ import ActionDialog from '@/components/admin/ui/ActionDialog.vue';
 import FormField from '@/components/admin/ui/FormField.vue';
 import { textareaClass } from '@/lib/formStyles';
 import type { AwaitingPaymentItem } from '@/types';
+import { t } from '@/lib/i18n';
 
 /**
  * Maqolani nashr to'lovidan ozod qilish (sabab muallifga holat tarixida ko'rinadi).
@@ -36,19 +37,22 @@ function submit(): void {
 <template>
     <ActionDialog
         v-model:open="open"
-        title="To'lovdan ozod qilish"
+        :title="t('To\'lovdan ozod qilish')"
         :description="
             article
-                ? `«${article.title}» to'lovsiz tahririyat navbatiga o'tadi. Sabab muallifga ko'rinadi.`
+                ? t(
+                      '«:title» to\'lovsiz tahririyat navbatiga o\'tadi. Sabab muallifga ko\'rinadi.',
+                      { title: article.title },
+                  )
                 : undefined
         "
         :icon="HandCoins"
-        confirm-text="Ozod qilish"
+        :confirm-text="t('Ozod qilish')"
         :processing="form.processing"
         @confirm="submit"
     >
         <FormField
-            label="Sabab"
+            :label="t('Sabab')"
             for="waive-reason"
             required
             :error="form.errors.reason"
@@ -58,7 +62,9 @@ function submit(): void {
                 v-model="form.reason"
                 rows="3"
                 maxlength="500"
-                placeholder="Masalan: tahririyat taklifi bilan yozilgan maqola"
+                :placeholder="
+                    t('Masalan: tahririyat taklifi bilan yozilgan maqola')
+                "
                 :aria-invalid="!!form.errors.reason"
                 :class="textareaClass"
             />
