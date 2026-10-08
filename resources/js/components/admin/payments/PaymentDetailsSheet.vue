@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { Download, ReceiptText } from '@lucide/vue';
+import { Download, ReceiptText, Undo2 } from '@lucide/vue';
 import ProviderBadge from '@/components/admin/payments/ProviderBadge.vue';
 import PaymentStatusPill from '@/components/admin/payments/PaymentStatusPill.vue';
+import RefundStatusPill from '@/components/admin/payments/RefundStatusPill.vue';
 import {
     Sheet,
     SheetContent,
@@ -16,7 +17,9 @@ import { t } from '@/lib/i18n';
 /**
  * "To'lov tafsilotlari" — o'ngdan ochiladigan panel.
  */
-defineProps<{ payment: PaymentListItem | null }>();
+defineProps<{ payment: PaymentListItem | null; canRefund?: boolean }>();
+
+const emit = defineEmits<{ refund: [payment: PaymentListItem] }>();
 
 const open = defineModel<boolean>('open', { default: false });
 </script>
@@ -140,6 +143,73 @@ const open = defineModel<boolean>('open', { default: false });
                         </dd>
                     </div>
                 </dl>
+
+                <!-- Qaytarish (refund) -->
+                <section
+                    v-if="payment.refund"
+                    class="mx-6 mb-5 grid gap-3 rounded-xl border border-line p-4"
+                >
+                    <h3
+                        class="flex items-center gap-2 text-[13px] font-bold text-navy-950"
+                    >
+                        <Undo2 class="size-4 text-navy-500" />
+                        {{ t('Qaytarish') }}
+                    </h3>
+
+                    <ul v-if="payment.refund.history.length" class="grid gap-2">
+                        <li
+                            v-for="item in payment.refund.history"
+                            :key="item.id"
+                            class="grid gap-1 rounded-lg bg-[#f8fafd] px-3 py-2.5 text-xs"
+                        >
+                            <div
+                                class="flex items-center justify-between gap-2"
+                            >
+                                <RefundStatusPill
+                                    :status="item.status"
+                                    :label="item.statusLabel"
+                                />
+                                <span class="text-navy-500 tabular-nums">{{
+                                    formatDateTime(
+                                        item.processedAt ?? item.createdAt,
+                                    )
+                                }}</span>
+                            </div>
+                            <p class="leading-relaxed text-navy-700">
+                                {{ item.reason }}
+                            </p>
+                            <p v-if="item.error" class="text-red-600">
+                                {{ item.error }}
+                            </p>
+                            <p class="text-navy-400">
+                                {{ item.requestedBy }}
+                                <template v-if="item.reference">
+                                    · {{ item.reference }}</template
+                                >
+                            </p>
+                        </li>
+                    </ul>
+
+                    <template v-if="payment.status === 'paid'">
+                        <p
+                            v-if="payment.refund.blocked"
+                            class="rounded-lg bg-amber-50 px-3 py-2 text-xs leading-relaxed text-amber-800"
+                        >
+                            {{ payment.refund.blocked }}
+                        </p>
+                        <button
+                            v-else-if="canRefund"
+                            type="button"
+                            class="group inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-red-200 bg-white px-4 text-[13px] font-semibold text-red-700 transition-all hover:-translate-y-0.5 hover:border-red-300 hover:bg-red-50 hover:shadow-[0_10px_22px_-16px_rgba(220,38,38,0.8)]"
+                            @click="emit('refund', payment)"
+                        >
+                            <Undo2
+                                class="size-4 transition-transform duration-300 group-hover:-rotate-45"
+                            />
+                            {{ t("To'lovni qaytarish") }}
+                        </button>
+                    </template>
+                </section>
 
                 <div v-if="payment.proofUrl" class="px-6 pb-6">
                     <a

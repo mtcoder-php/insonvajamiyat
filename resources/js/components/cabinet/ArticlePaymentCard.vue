@@ -10,6 +10,7 @@ import {
     LoaderCircle,
     ShieldCheck,
     TriangleAlert,
+    Undo2,
 } from '@lucide/vue';
 import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { formatDate, formatSum, formatTime } from '@/lib/format';
@@ -24,6 +25,8 @@ import { t, tk } from '@/lib/i18n';
  *  - tasdiqlangan to'lov (chek raqami, usul, sana).
  */
 const props = defineProps<{ payment: AuthorArticlePayment }>();
+
+const refunded = computed(() => props.payment.status === 'refunded');
 
 const online = computed(() => props.payment.online);
 
@@ -371,12 +374,20 @@ async function copy(key: string, value: string): Promise<void> {
     <section
         v-else
         id="payment"
-        class="scroll-mt-24 rounded-xl border border-emerald-200 bg-emerald-50/50 p-5 shadow-[0_1px_2px_rgba(0,30,60,0.05)]"
+        :class="
+            cn(
+                'scroll-mt-24 rounded-xl border p-5 shadow-[0_1px_2px_rgba(0,30,60,0.05)]',
+                refunded
+                    ? 'border-line bg-[#f6f8fb]'
+                    : 'border-emerald-200 bg-emerald-50/50',
+            )
+        "
     >
         <h2
             class="flex items-center gap-2 font-sans text-[15px] font-bold text-navy-950"
         >
-            <BadgeCheck class="size-[18px] text-emerald-600" />
+            <Undo2 v-if="refunded" class="size-[18px] text-navy-500" />
+            <BadgeCheck v-else class="size-[18px] text-emerald-600" />
             {{ t("Nashr to'lovi") }}
         </h2>
         <dl class="mt-3 grid gap-1.5 text-[13px]">
@@ -388,7 +399,14 @@ async function copy(key: string, value: string): Promise<void> {
             </div>
             <div class="flex justify-between gap-3">
                 <dt class="text-navy-500">{{ t('Holat') }}</dt>
-                <dd class="font-medium text-emerald-700">
+                <dd
+                    :class="
+                        cn(
+                            'font-medium',
+                            refunded ? 'text-navy-700' : 'text-emerald-700',
+                        )
+                    "
+                >
                     {{ payment.statusLabel }}
                 </dd>
             </div>
@@ -409,6 +427,19 @@ async function copy(key: string, value: string): Promise<void> {
                     {{ formatTime(payment.paidAt) }}
                 </dd>
             </div>
+            <div v-if="payment.refundedAt" class="flex justify-between gap-3">
+                <dt class="text-navy-500">{{ t('Qaytarilgan sana') }}</dt>
+                <dd class="tabular-nums">
+                    {{ formatDate(payment.refundedAt) }}
+                </dd>
+            </div>
         </dl>
+        <p v-if="refunded" class="mt-3 text-xs leading-relaxed text-navy-500">
+            {{
+                t(
+                    "Mablag' to'lov qilingan karta yoki hisob raqamiga qaytariladi; bank muddatlari 1–10 ish kuni bo'lishi mumkin.",
+                )
+            }}
+        </p>
     </section>
 </template>

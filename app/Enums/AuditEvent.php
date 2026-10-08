@@ -51,6 +51,9 @@ enum AuditEvent: string
     case PaymentWaived = 'payment.waived';
     case PaymentPaidOnline = 'payment.paid_online';
     case PaymentReminded = 'payment.reminded';
+    case RefundRequested = 'payment.refund_requested';
+    case PaymentRefunded = 'payment.refunded';
+    case RefundFailed = 'payment.refund_failed';
 
     // Sayt kontenti va sozlamalar
     case ContentSaved = 'content.saved';
@@ -114,6 +117,9 @@ enum AuditEvent: string
             self::PaymentWaived => "To'lovdan ozod qilindi",
             self::PaymentPaidOnline => "Onlayn to'lov qabul qilindi",
             self::PaymentReminded => "To'lov eslatmasi yuborildi",
+            self::RefundRequested => "To'lovni qaytarish so'raldi",
+            self::PaymentRefunded => "To'lov qaytarildi",
+            self::RefundFailed => "To'lovni qaytarib bo'lmadi",
             self::ContentSaved => 'Kontent saqlandi',
             self::ContentDeleted => "Kontent o'chirildi",
             self::PriceChanged => "Maqola turi narxi o'zgartirildi",
@@ -149,7 +155,7 @@ enum AuditEvent: string
     {
         return match ($this) {
             self::LoginFailed, self::Lockout, self::UserDeleted, self::IssueDeleted, self::UserBlocked => 'danger',
-            self::PaymentConfirmed, self::PaymentWaived, self::UserPasswordChanged, self::PasswordReset,
+            self::PaymentConfirmed, self::PaymentWaived, self::RefundRequested, self::PaymentRefunded, self::RefundFailed, self::UserPasswordChanged, self::PasswordReset,
             self::ProductionApprovalRevoked, self::ReportExported, self::UserUpdated, self::ProofApprovalWaived,
             self::AiSettingsUpdated, self::AiPromptUpdated, self::AiLimitUpdated,
             self::PriceChanged, self::ContentDeleted, self::ReviewerRemoved,

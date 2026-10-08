@@ -7,6 +7,7 @@ use App\Enums\PaymentProvider;
 use App\Enums\PaymentStatus;
 use App\Models\Article;
 use App\Models\Payment;
+use App\Models\Refund;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -19,7 +20,7 @@ class PaymentsOverview
     public const PER_PAGE = 15;
 
     /** Tablar: awaiting — to'lov kutilayotgan maqolalar, qolganlari — payments jadvali */
-    public const TABS = ['awaiting', 'all', 'click', 'payme', 'manual', 'failed'];
+    public const TABS = ['awaiting', 'all', 'click', 'payme', 'manual', 'failed', 'refunds'];
 
     /** "Muvaffaqiyatsiz" tabidagi holatlar */
     private const FAILED = [PaymentStatus::Cancelled, PaymentStatus::Failed, PaymentStatus::Refunded];
@@ -96,6 +97,7 @@ class PaymentsOverview
             'payme' => (int) ($byProvider[PaymentProvider::Payme->value] ?? 0),
             'manual' => (int) ($byProvider[PaymentProvider::Manual->value] ?? 0),
             'failed' => Payment::query()->whereIn('status', $this->values(self::FAILED))->count(),
+            'refunds' => Refund::query()->count(),
         ];
     }
 
@@ -127,7 +129,7 @@ class PaymentsOverview
      */
     public function payments(string $tab, ?string $search): LengthAwarePaginator
     {
-        $query = Payment::query()->with(['user', 'article', 'confirmedBy', 'items']);
+        $query = Payment::query()->with(['user', 'article', 'confirmedBy', 'items', 'refunds.requester', 'refunds.processor']);
 
         match ($tab) {
             'click' => $query->where('provider', PaymentProvider::Click->value),
@@ -152,6 +154,36 @@ class PaymentsOverview
         }
 
         return $query->latest()->latest('id')->paginate(self::PER_PAGE)->withQueryString();
+    }
+
+    /**
+     * Qaytarishlar tarixi (TZ 4.2.8): avval ochiq so'rovlar, keyin yangilari.
+     *
+     * @return LengthAwarePaginator<int, Refund>
+     */
+    public function refunds(?string $search): LengthAwarePaginator
+    {
+        $query = Refund::query()->with(['payment.user', 'payment.article', 'requester', 'processor']);
+
+        if ($search !== null) {
+            $like = '%'.$search.'%';
+            $query->whereHas('payment', fn (Builder $payment) => $payment
+                ->where('receipt_number', 'like', $like)
+                ->orWhere('provider_transaction_id', 'like', $like)
+                ->orWhereHas('user', fn (Builder $user) => $user
+                    ->where('name', 'like', $like)
+                    ->orWhere('email', 'like', $like))
+                ->orWhereHas('article', fn (Builder $article) => $article
+                    ->where('title->uz', 'like', $like)
+                    ->orWhere('title->ru', 'like', $like)
+                    ->orWhere('title->en', 'like', $like)));
+        }
+
+        return $query
+            ->orderByRaw("case when status in ('requested', 'processing') then 0 else 1 end")
+            ->latest('id')
+            ->paginate(self::PER_PAGE)
+            ->withQueryString();
     }
 
     /**

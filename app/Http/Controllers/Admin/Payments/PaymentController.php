@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\Payments\ConfirmPaymentRequest;
 use App\Http\Requests\Admin\Payments\WaivePaymentRequest;
 use App\Http\Resources\Admin\AwaitingPaymentResource;
 use App\Http\Resources\Admin\PaymentListResource;
+use App\Http\Resources\Admin\RefundResource;
 use App\Models\Article;
 use App\Models\Payment;
 use App\Models\User;
@@ -59,11 +60,15 @@ class PaymentController extends Controller
             'awaiting' => $tab === 'awaiting'
                 ? AwaitingPaymentResource::collection($this->overview->awaiting($search))
                 : null,
-            'payments' => $tab !== 'awaiting'
+            'payments' => $tab !== 'awaiting' && $tab !== 'refunds'
                 ? PaymentListResource::collection($this->overview->payments($tab, $search))
+                : null,
+            'refunds' => $tab === 'refunds'
+                ? RefundResource::collection($this->overview->refunds($search))
                 : null,
             'can' => [
                 'confirm' => $user->can(PermissionName::PaymentsConfirmManually->value),
+                'refund' => $user->can(PermissionName::PaymentsRefund->value),
             ],
             'remindAllUrl' => route('admin.payments.remind-all'),
             'reminderDays' => PaymentReminderService::days(),

@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\Issues\IssueController;
 use App\Http\Controllers\Admin\Messages\BroadcastController;
 use App\Http\Controllers\Admin\Messages\MessageCenterController;
 use App\Http\Controllers\Admin\Payments\PaymentController;
+use App\Http\Controllers\Admin\Payments\RefundController;
 use App\Http\Controllers\Admin\People\AuthorController;
 use App\Http\Controllers\Admin\People\ReviewerController;
 use App\Http\Controllers\Admin\Production\ProductionController;
@@ -194,7 +195,7 @@ Route::prefix('reviews')->name('reviews.')->group(function () {
 });
 
 /*
-| To'lovlar (TZ 4.2.8): ro'yxat, qo'lda tasdiqlash, to'lovdan ozod qilish, eslatmalar
+| To'lovlar (TZ 4.2.8): ro'yxat, qo'lda tasdiqlash, to'lovdan ozod qilish, eslatmalar, qaytarish
 */
 Route::middleware('permission:'.AdminSection::Payments->permission()->value)
     ->prefix('payments')
@@ -210,6 +211,14 @@ Route::middleware('permission:'.AdminSection::Payments->permission()->value)
         Route::post('remind-all', [PaymentController::class, 'remindAll'])
             ->middleware('throttle:5,1')
             ->name('remind-all');
+
+        // Qaytarish (refund): Click — API, Payme — kabinet + CancelTransaction, qo'lda — bank hujjati
+        Route::middleware('permission:'.PermissionName::PaymentsRefund->value)->group(function () {
+            Route::post('{payment:uuid}/refund', [RefundController::class, 'store'])
+                ->middleware('throttle:10,1')
+                ->name('refund');
+            Route::delete('refunds/{refund}', [RefundController::class, 'cancel'])->name('refunds.cancel');
+        });
 
         Route::middleware('permission:'.PermissionName::PaymentsConfirmManually->value)->group(function () {
             Route::post('articles/{article:uuid}/confirm', [PaymentController::class, 'confirm'])->name('confirm');

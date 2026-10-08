@@ -10,6 +10,7 @@ use App\Models\PaymentItem;
 use App\Services\Payments\OnlinePaymentService;
 use App\Services\Payments\PaymentNotPayable;
 use App\Services\Payments\PaymentSettlement;
+use App\Services\Payments\RefundService;
 use App\Services\Payments\WebhookResult;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -42,7 +43,10 @@ class PaymeMerchantService
 
     private ?int $paymentId = null;
 
-    public function __construct(private readonly PaymentSettlement $settlement) {}
+    public function __construct(
+        private readonly PaymentSettlement $settlement,
+        private readonly RefundService $refunds,
+    ) {}
 
     public function handle(?string $authorization, string $raw): WebhookResult
     {
@@ -227,7 +231,18 @@ class PaymeMerchantService
             $reason = self::int($params['reason'] ?? null);
             $this->cancelTransactionRecord($payment, $reason > 0 ? $reason : null);
         } elseif ($payment->provider_state === self::STATE_PERFORMED) {
-            throw new PaymeException(PaymeException::CANNOT_CANCEL);
+            // Bajarilgan to'lovni bekor qilish (pulni qaytarish) — faqat tahririyat
+            // admin panelda qaytarish so'rovini ochgan bo'lsa (Admin → To'lovlar → Qaytarish)
+            $reason = self::int($params['reason'] ?? null);
+            $accepted = $this->refunds->completeFromPayme($payment, [
+                'provider_state' => self::STATE_CANCELLED_AFTER_PERFORM,
+                'provider_cancel_time' => self::nowMs(),
+                'cancel_reason' => $reason > 0 ? $reason : null,
+            ]);
+
+            if (! $accepted) {
+                throw new PaymeException(PaymeException::CANNOT_CANCEL);
+            }
         }
 
         return [
