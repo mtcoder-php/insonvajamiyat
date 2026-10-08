@@ -4,14 +4,19 @@ namespace App\Notifications\Auth;
 
 use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 
 /**
  * Parolni tiklash xati (o'zbekcha). Foydalanuvchi o'zi so'raganda ham,
  * administrator "Tiklash havolasini yuborish" bosganda ham shu xat ketadi.
+ * Navbat orqali yuboriladi (SMTP sekin bo'lsa ham forma kutmaydi).
  */
-class ResetPasswordNotification extends ResetPassword
+class ResetPasswordNotification extends ResetPassword implements ShouldQueue
 {
+    use Queueable;
+
     public function toMail($notifiable): MailMessage
     {
         $url = $this->resetUrl($notifiable);

@@ -106,6 +106,9 @@ sudo certbot renew --dry-run
 
 ## 5. Navbat va rejalashtiruvchi
 
+Barcha email xatlar (tasdiqlash, parolni tiklash, maqola holati, ommaviy xabarlar) **navbat orqali** yuboriladi —
+worker ishlamasa, xatlar `jobs` jadvalida kutib qoladi. Saytdagi qo'ng'iroqcha bildirishnomalari esa darhol yoziladi.
+
 ```bash
 sudo cp deploy/supervisor/insonvajamiyat-worker.conf /etc/supervisor/conf.d/
 sudo supervisorctl reread && sudo supervisorctl update
@@ -139,6 +142,7 @@ Xato bo'lsa sayt avtomatik qayta yoqiladi.
 - [ ] `https://insonvajamiyat.uz/sitemap.xml` — maqolalar ro'yxati
 - [ ] Sarlavhalar: `curl -sI https://insonvajamiyat.uz | grep -iE "strict-transport|x-frame|x-content"`
 - [ ] Admin → Tizim sozlamalari → Pochta → **Test xat yuborish**
+- [ ] `sudo supervisorctl status` — worker `RUNNING`; parolni tiklash xati kelishini tekshiring (navbat orqali ketadi)
 - [ ] Admin → Zaxira nusxa → **Hozir yaratish** (mysqldump ishlashini tekshiradi), keyin jadvalni yoqing
 - [ ] Click / Payme kabinetida URL'lar: `/payments/click/prepare`, `/payments/click/complete`, `/payments/payme`
 - [ ] Google Search Console'ga `sitemap.xml` ni qo'shing; Google Scholar uchun maqola sahifasida `citation_*` teglari bor

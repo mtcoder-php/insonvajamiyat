@@ -4,15 +4,20 @@ namespace App\Notifications\Auth;
 
 use App\Models\User;
 use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\Config;
 
 /**
  * Elektron pochtani tasdiqlash xati (o'zbekcha, jurnal uslubida).
  * Havola imzolangan va auth.verification.expire daqiqa amal qiladi.
+ * Navbat orqali yuboriladi (SMTP sekin bo'lsa ham forma kutmaydi).
  */
-class VerifyEmailNotification extends VerifyEmail
+class VerifyEmailNotification extends VerifyEmail implements ShouldQueue
 {
+    use Queueable;
+
     public function toMail($notifiable): MailMessage
     {
         $url = $this->verificationUrl($notifiable);

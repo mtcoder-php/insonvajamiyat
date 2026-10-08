@@ -48,7 +48,7 @@ class ArticleController extends Controller
         }
 
         $request->session()->put($key, now()->getTimestamp());
-        $article->increment('views_count');
+        $article->bumpCounter('views_count');
         $stats->record($article, ArticleDailyStats::VIEWS);
     }
 }
