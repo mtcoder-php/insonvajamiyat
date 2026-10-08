@@ -58,11 +58,19 @@ class ArticleCatalogController extends Controller
     {
         $text = fn (string $key): ?string => ($value = $request->string($key)->trim()->limit(100, '')->toString()) !== '' ? $value : null;
         $subjects = $request->input('subjects', []);
+        $subjects = is_array($subjects) ? array_values(array_filter(array_slice($subjects, 0, 20), 'is_string')) : [];
+        // Bitta yo'nalish havolasi: ?subject=history (bosh sahifa, "Jurnal haqida")
+        $single = $text('subject');
+
+        if ($single !== null && ! in_array($single, $subjects, true)) {
+            $subjects[] = $single;
+        }
+
         $sort = $request->string('sort')->toString();
 
         return [
             'q' => $text('q'),
-            'subjects' => is_array($subjects) ? array_values(array_filter(array_slice($subjects, 0, 20), 'is_string')) : [],
+            'subjects' => $subjects,
             'year' => $request->filled('year') ? $request->integer('year') : null,
             'issue' => $text('issue'),
             'author' => $text('author'),

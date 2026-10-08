@@ -4,17 +4,21 @@ import {
     BadgeDollarSign,
     BookOpen,
     CalendarDays,
+    FileText,
     FolderTree,
     GalleryHorizontalEnd,
     Handshake,
     Newspaper,
     Settings,
+    UsersRound,
 } from '@lucide/vue';
 import type { Component } from 'vue';
 import ArticleTypesPanel from '@/components/admin/settings/ArticleTypesPanel.vue';
 import BannersPanel from '@/components/admin/settings/BannersPanel.vue';
+import BoardPanel from '@/components/admin/settings/BoardPanel.vue';
 import BooksPanel from '@/components/admin/settings/BooksPanel.vue';
 import EventsPanel from '@/components/admin/settings/EventsPanel.vue';
+import PagesPanel from '@/components/admin/settings/PagesPanel.vue';
 import PartnersPanel from '@/components/admin/settings/PartnersPanel.vue';
 import PostsPanel from '@/components/admin/settings/PostsPanel.vue';
 import SubjectsPanel from '@/components/admin/settings/SubjectsPanel.vue';
@@ -26,7 +30,8 @@ import type { SettingsPageProps, SettingsTab } from '@/types';
 import { t, tk } from '@/lib/i18n';
 
 /**
- * Admin → Sozlamalar: ilmiy yo'nalishlar, maqola turlari va narxlar, bosh sahifa bannerlari,
+ * Admin → Sozlamalar: ilmiy yo'nalishlar, maqola turlari va narxlar, statik sahifalar,
+ * tahririyat kengashi, bosh sahifa bannerlari,
  * yangiliklar, tadbirlar, tavsiya etilgan kitoblar va hamkorlar.
  * Har bir tab o'z ma'lumotini alohida yuklaydi (?tab=…).
  */
@@ -54,6 +59,16 @@ const meta: Record<
         label: t('Maqola turlari va narxlar'),
         hint: t("Nashr to'lovi"),
         icon: BadgeDollarSign,
+    },
+    pages: {
+        label: t('Sahifalar'),
+        hint: t("Jurnal haqida, yo'riqnoma, aloqa"),
+        icon: FileText,
+    },
+    board: {
+        label: t('Tahririyat kengashi'),
+        hint: t("A'zolar va rollar"),
+        icon: UsersRound,
     },
     banners: {
         label: t('Bannerlar'),
@@ -113,7 +128,7 @@ function go(tab: SettingsTab): void {
         </PageHeader>
 
         <nav
-            class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4"
+            class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5"
             role="tablist"
         >
             <button
@@ -164,6 +179,13 @@ function go(tab: SettingsTab): void {
             v-else-if="tab === 'types' && types && urls.types"
             :types="types"
             :store-url="urls.types"
+        />
+        <PagesPanel v-else-if="tab === 'pages' && pages" :pages="pages" />
+        <BoardPanel
+            v-else-if="tab === 'board' && board && boardRoles"
+            :board="board"
+            :roles="boardRoles"
+            :store-url="urls.board"
         />
         <BannersPanel
             v-else-if="tab === 'banners' && banners"

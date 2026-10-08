@@ -5,6 +5,7 @@ use App\Http\Controllers\Notifications\NotificationController;
 use App\Http\Controllers\Web\ArticleCatalogController;
 use App\Http\Controllers\Web\ArticleController;
 use App\Http\Controllers\Web\ArticlePdfController;
+use App\Http\Controllers\Web\ContactMessageController;
 use App\Http\Controllers\Web\EventController;
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\IssueController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\Web\NewsController;
 use App\Http\Controllers\Web\NewsletterSubscriptionController;
 use App\Http\Controllers\Web\RobotsController;
 use App\Http\Controllers\Web\SitemapController;
+use App\Http\Controllers\Web\StaticPageController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,7 +29,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', HomeController::class)->name('home');
 Route::get('sitemap.xml', SitemapController::class)->name('sitemap');
 Route::get('robots.txt', RobotsController::class)->name('robots');
-Route::inertia('about', 'web/About')->name('about');
+Route::get('about', [StaticPageController::class, 'about'])->name('about');
 Route::get('articles', ArticleCatalogController::class)->name('articles.index');
 Route::get('articles/{article}', [ArticleController::class, 'show'])->name('articles.show');
 Route::get('articles/{article}/pdf', ArticlePdfController::class)
@@ -39,8 +41,11 @@ Route::get('news', [NewsController::class, 'index'])->name('news.index');
 Route::get('news/{post:slug}', [NewsController::class, 'show'])->name('news.show');
 Route::get('events', [EventController::class, 'index'])->name('events.index');
 Route::get('events/{event:slug}', [EventController::class, 'show'])->name('events.show');
-Route::inertia('guidelines', 'web/Guidelines')->name('guidelines');
-Route::inertia('contact', 'web/Contact')->name('contact');
+Route::get('guidelines', [StaticPageController::class, 'guidelines'])->name('guidelines');
+Route::get('contact', [StaticPageController::class, 'contact'])->name('contact');
+Route::post('contact', [ContactMessageController::class, 'store'])
+    ->middleware('throttle:10,1')
+    ->name('contact.send');
 
 // Sayt tili (UZ / RU / EN)
 Route::post('locale', [LocaleController::class, 'update'])

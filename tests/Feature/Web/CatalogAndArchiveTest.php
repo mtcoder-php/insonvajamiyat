@@ -76,6 +76,8 @@ class CatalogAndArchiveTest extends TestCase
         $this->assertSame([$temur->id], $ids(['q' => 'temur']));
         $this->assertSame([$temur->id], $ids(['author' => 'karimov b']));
         $this->assertSame([$temur->id], $ids(['subjects' => ['history']]));
+        // Bitta yo'nalish havolasi (bosh sahifa, "Jurnal haqida"): ?subject=history
+        $this->assertSame([$temur->id], $ids(['subject' => 'history']));
         $this->assertSame([$temur->id], $ids(['keyword' => 'temuriylar']));
         $this->assertSame([$digital->id], $ids(['year' => 2026]));
         $this->assertSame([$digital->id, $temur->id], $ids(['sort' => 'popular']));

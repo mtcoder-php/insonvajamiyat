@@ -21,7 +21,9 @@ use App\Http\Controllers\Admin\Reviews\ReviewController;
 use App\Http\Controllers\Admin\SectionController;
 use App\Http\Controllers\Admin\Settings\ArticleTypeController;
 use App\Http\Controllers\Admin\Settings\BannerController;
+use App\Http\Controllers\Admin\Settings\EditorialBoardController;
 use App\Http\Controllers\Admin\Settings\EventController;
+use App\Http\Controllers\Admin\Settings\PageController;
 use App\Http\Controllers\Admin\Settings\PartnerController;
 use App\Http\Controllers\Admin\Settings\PostController;
 use App\Http\Controllers\Admin\Settings\RecommendedBookController;
@@ -301,6 +303,14 @@ Route::middleware('permission:'.AdminSection::Settings->permission()->value)
         Route::post('partners', [PartnerController::class, 'store'])->name('partners.store');
         Route::put('partners/{partner}', [PartnerController::class, 'update'])->name('partners.update');
         Route::delete('partners/{partner}', [PartnerController::class, 'destroy'])->name('partners.destroy');
+
+        // Statik sahifalar ("Jurnal haqida", "Yo'riqnoma", "Aloqa") va tahririyat kengashi
+        Route::put('pages/{page}', [PageController::class, 'update'])->name('pages.update');
+        Route::delete('pages/{page}', [PageController::class, 'reset'])->name('pages.reset');
+
+        Route::post('board', [EditorialBoardController::class, 'store'])->name('board.store');
+        Route::put('board/{member}', [EditorialBoardController::class, 'update'])->name('board.update');
+        Route::delete('board/{member}', [EditorialBoardController::class, 'destroy'])->name('board.destroy');
     });
 
 /*
