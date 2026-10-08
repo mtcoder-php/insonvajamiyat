@@ -20,11 +20,16 @@ class FrontendAuditTest extends TestCase
         config(['journal.description' => 'Tarix va falsafa jurnali']);
 
         // Inertia gidratatsiyada server tegini o'chiradi — layout uni shu prop'dan qayta qo'yadi
-        foreach (['home', 'about', 'news.index', 'events.index', 'login'] as $route) {
+        foreach (['home', 'news.index', 'events.index', 'login'] as $route) {
             $this->get(route($route))->assertInertia(fn (Assert $page) => $page
                 ->where('seoDescription', 'Tarix va falsafa jurnali')
             );
         }
+
+        // Statik sahifalar — tahririyat yozgan qisqa tavsif
+        $this->get(route('about'))->assertInertia(fn (Assert $page) => $page
+            ->where('seoDescription', fn (string $d) => str_contains($d, 'tahririyat kengashi'))
+        );
 
         // Katalog va arxiv — o'z tavsifi (server HTML'ida ham, prop'da ham bir xil)
         $this->get(route('articles.index'))

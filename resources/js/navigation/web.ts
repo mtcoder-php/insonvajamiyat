@@ -33,7 +33,10 @@ export function footerQuickLinks(): NavItem[] {
 export function footerUsefulLinks(): NavItem[] {
     return [
         { title: t('Mualliflar uchun'), href: guidelines() },
-        { title: t('Tahririyat kengashi'), href: about() },
+        {
+            title: t('Tahririyat kengashi'),
+            href: `${about().url}#editorial-board`,
+        },
         { title: t('Arxiv'), href: issuesIndex() },
     ];
 }

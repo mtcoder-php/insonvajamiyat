@@ -28,6 +28,8 @@ class ThrottleAccountForms
         'password.update' => [10, 600, 'email'],
         'profile.update' => [10, 600, 'email'],
         'verification.send' => [6, 600, 'email'],
+        // Aloqa formasi — tahririyat pochtasiga xat (spamdan himoya)
+        'contact.send' => [3, 600, 'message'],
     ];
 
     /**

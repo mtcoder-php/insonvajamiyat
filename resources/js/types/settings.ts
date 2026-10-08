@@ -7,6 +7,8 @@ import type { SimpleMeta } from './reports';
 export type SettingsTab =
     | 'subjects'
     | 'types'
+    | 'pages'
+    | 'board'
     | 'banners'
     | 'posts'
     | 'events'
@@ -157,6 +159,9 @@ export type SettingsPageProps = {
     books: SettingsBook[] | null;
     partners: SettingsPartner[] | null;
     partnerTypes: { value: SettingsPartnerType; label: string }[] | null;
+    pages: SettingsPage[] | null;
+    board: SettingsBoardMember[] | null;
+    boardRoles: { value: SettingsBoardRole; label: string }[] | null;
     urls: {
         index: string;
         subjects: string;
@@ -166,5 +171,50 @@ export type SettingsPageProps = {
         events: string;
         books: string;
         partners: string;
+        board: string;
     };
+};
+
+/** Statik sahifa (admin) — App\\Services\\Content\\PageService::form */
+export type SettingsPageSection = { heading: Translated; body: Translated };
+
+export type SettingsPage = {
+    slug: 'about' | 'guidelines' | 'contact';
+    label: string;
+    title: Translated;
+    description: Translated;
+    sections: SettingsPageSection[];
+    /** false — standart matn ko'rsatilmoqda (hali tahrirlanmagan) */
+    isCustom: boolean;
+    updatedAt: string | null;
+    updatedBy: string | null;
+    publicUrl: string;
+    urls: { update: string; reset: string };
+};
+
+export type SettingsBoardRole =
+    | 'chief_editor'
+    | 'deputy_chief_editor'
+    | 'executive_secretary'
+    | 'member';
+
+/** Tahririyat kengashi a'zosi — App\\Services\\Content\\EditorialBoardService::admin */
+export type SettingsBoardMember = {
+    id: number;
+    name: string;
+    role: SettingsBoardRole;
+    roleLabel: string;
+    translations: {
+        full_name: Translated;
+        position: Translated;
+        organization: Translated;
+        academic_degree: Translated;
+    };
+    country: string | null;
+    email: string | null;
+    orcid: string | null;
+    photoUrl: string | null;
+    isActive: boolean;
+    sortOrder: number;
+    urls: { update: string; destroy: string };
 };

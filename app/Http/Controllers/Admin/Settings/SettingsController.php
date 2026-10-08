@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers\Admin\Settings;
 
+use App\Enums\PageSlug;
 use App\Enums\PermissionName;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\Content\EditorialBoardService;
+use App\Services\Content\PageService;
 use App\Services\Content\SettingsWorkspace;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -17,9 +20,9 @@ use Inertia\Response;
  */
 class SettingsController extends Controller
 {
-    public const TABS = ['subjects', 'types', 'banners', 'posts', 'events', 'books', 'partners'];
+    public const TABS = ['subjects', 'types', 'pages', 'board', 'banners', 'posts', 'events', 'books', 'partners'];
 
-    public function index(Request $request, SettingsWorkspace $workspace): Response
+    public function index(Request $request, SettingsWorkspace $workspace, PageService $pages, EditorialBoardService $board): Response
     {
         /** @var User $user */
         $user = $request->user();
@@ -44,6 +47,9 @@ class SettingsController extends Controller
             'books' => $tab === 'books' ? fn (): array => $workspace->books() : null,
             'partners' => $tab === 'partners' ? fn (): array => $workspace->partners() : null,
             'partnerTypes' => $tab === 'partners' ? SettingsWorkspace::partnerTypes() : null,
+            'pages' => $tab === 'pages' ? fn (): array => array_map(fn (PageSlug $slug): array => $pages->form($slug), PageSlug::cases()) : null,
+            'board' => $tab === 'board' ? fn (): array => $board->admin() : null,
+            'boardRoles' => $tab === 'board' ? EditorialBoardService::roles() : null,
             'urls' => [
                 'index' => route('admin.settings.index'),
                 'subjects' => route('admin.settings.subjects.store'),
@@ -53,6 +59,7 @@ class SettingsController extends Controller
                 'events' => route('admin.settings.events.store'),
                 'books' => route('admin.settings.books.store'),
                 'partners' => route('admin.settings.partners.store'),
+                'board' => route('admin.settings.board.store'),
             ],
         ]);
     }
