@@ -1,5 +1,7 @@
 # Serverga o'rnatish (production)
 
+> To'liq texnik hujjat (`.env` ma'lumotnomasi, tashqi xizmatlar, xavfsizlik, rollback): [`docs/03-joylashtirish.md`](../docs/03-joylashtirish.md).
+
 Bu papkada saytni Ubuntu 24.04 serverga joylash uchun tayyor fayllar bor:
 
 | Fayl                                    | Serverdagi joyi                                          | Vazifasi                                                     |

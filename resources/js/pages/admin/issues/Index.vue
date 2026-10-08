@@ -8,7 +8,7 @@ import {
     FilePlus2,
     FileText,
 } from '@lucide/vue';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import IssueFormDialog from '@/components/admin/issues/IssueFormDialog.vue';
 import PageHeader from '@/components/admin/ui/PageHeader.vue';
 import SelectInput from '@/components/admin/ui/SelectInput.vue';
@@ -35,6 +35,13 @@ defineOptions({
 });
 
 const createOpen = ref(false);
+
+// Bosh sahifadagi "Jurnal sonini yaratish" tezkor amali: ?create=1
+onMounted(() => {
+    if (new URLSearchParams(window.location.search).get('create') === '1') {
+        createOpen.value = true;
+    }
+});
 const year = ref<number | null>(props.filters.year);
 const status = ref<IssueStatusKey | null>(props.filters.status);
 

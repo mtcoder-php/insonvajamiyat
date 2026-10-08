@@ -46,7 +46,7 @@ defineOptions({
             :description="
                 hasPassword
                     ? t(
-                          'Kamida 8 belgi: katta-kichik harf, raqam va belgi aralash bo\'lgani ma\'qul',
+                          'Kamida 12 belgi: katta-kichik harf, raqam va belgi aralash bo\'lishi kerak',
                       )
                     : t(
                           'Siz Google / ORCID orqali kirasiz. Parol o\'rnatsangiz, email va parol bilan ham kira olasiz.',

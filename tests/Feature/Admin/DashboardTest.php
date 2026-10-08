@@ -66,6 +66,7 @@ class DashboardTest extends TestCase
                 ->where('statusBreakdown.total', 4)
                 ->has('dynamics.submitted', 12)
                 ->has('latestSubmissions', 4)
+                ->where('latestSubmissions.0.url', fn (string $url) => str_contains($url, '/admin/articles?'))
                 ->where('payments.total', 350000)
                 ->where('payments.click.'.(now()->startOfYear()->addDays(3)->month - 1), 150000)
                 ->has('recentPayments', 3)

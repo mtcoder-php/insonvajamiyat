@@ -46,7 +46,7 @@ const icon =
             </a>
             <Link :href="links.guidelines" :class="item">
                 <BookOpenText :class="icon" />
-                {{ t("Yo'riqnoma (PDF)") }}
+                {{ t("Mualliflar uchun yo'riqnoma") }}
             </Link>
             <Link :href="contact()" :class="item">
                 <MessageCircleQuestion :class="icon" />

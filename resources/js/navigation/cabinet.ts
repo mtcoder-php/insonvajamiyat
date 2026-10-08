@@ -59,15 +59,19 @@ export function cabinetUsefulLinks(): CabinetNavItem[] {
     const url = guidelines.url();
 
     return [
-        { title: tk("Yo'riqnoma (PDF)"), href: url, icon: BookOpenText },
         {
-            title: tk("Maqola yozish bo'yicha maslahatlar"),
-            href: `${url}#maslahatlar`,
+            title: tk("Mualliflar uchun yo'riqnoma"),
+            href: url,
+            icon: BookOpenText,
+        },
+        {
+            title: tk('Shablon va namunalar'),
+            href: `${url}#downloads`,
             icon: FilePen,
         },
         {
-            title: tk("Tez-tez so'raladigan savollar"),
-            href: `${url}#faq`,
+            title: tk('Maqola turlari va narxlar'),
+            href: `${url}#fees`,
             icon: CircleHelp,
         },
     ];

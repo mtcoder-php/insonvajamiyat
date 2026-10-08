@@ -1,16 +1,19 @@
 <script setup lang="ts">
-import { Eye, FileText, MoreHorizontal, PenLine } from '@lucide/vue';
+import { Link } from '@inertiajs/vue3';
+import { Eye, FileText } from '@lucide/vue';
 import DashCard from '@/components/admin/dashboard/DashCard.vue';
+import { usePermissions } from '@/composables/usePermissions';
 import { formatDateTime } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import type { LatestSubmission } from '@/types';
 import { t } from '@/lib/i18n';
 
 /**
- * "Yangi kelgan maqolalar" jadvali. Amal tugmalari admin maqola sahifalari
- * tayyor bo'lgach havolaga aylanadi.
+ * "Yangi kelgan maqolalar" jadvali — "Ko'rish" maqolani Maqolalar bo'limida ochadi.
  */
 defineProps<{ items: LatestSubmission[] }>();
+
+const canOpen = usePermissions().can('articles.view_any');
 
 const pill: Record<LatestSubmission['statusGroup'], string> = {
     new: 'bg-brand-50 text-brand-700 ring-brand-200',
@@ -20,12 +23,6 @@ const pill: Record<LatestSubmission['statusGroup'], string> = {
     published: 'bg-violet-50 text-violet-700 ring-violet-200',
     other: 'bg-navy-50 text-navy-600 ring-navy-200',
 };
-
-const actions = [
-    { key: 'view', label: t("Ko'rish"), icon: Eye },
-    { key: 'edit', label: t('Tahrirlash'), icon: PenLine },
-    { key: 'more', label: t('Boshqa amallar'), icon: MoreHorizontal },
-];
 </script>
 
 <template>
@@ -100,25 +97,16 @@ const actions = [
                             </span>
                         </td>
                         <td class="py-3 pr-5">
-                            <div class="flex justify-end gap-1">
-                                <button
-                                    v-for="action in actions"
-                                    :key="action.key"
-                                    type="button"
-                                    disabled
-                                    :title="
-                                        t(':label — tez orada', {
-                                            label: action.label,
-                                        })
-                                    "
-                                    :aria-label="action.label"
-                                    class="flex size-8 cursor-not-allowed items-center justify-center rounded-lg border border-line text-navy-500 transition-colors group-hover:border-brand-200 group-hover:text-brand-600"
+                            <div class="flex justify-end">
+                                <Link
+                                    v-if="item.url && canOpen"
+                                    :href="item.url"
+                                    :aria-label="t('Ko\'rish')"
+                                    :title="t('Ko\'rish')"
+                                    class="flex size-8 items-center justify-center rounded-lg border border-line text-navy-500 transition-all hover:-translate-y-px hover:border-brand-200 hover:bg-brand-50 hover:text-brand-700"
                                 >
-                                    <component
-                                        :is="action.icon"
-                                        class="size-4"
-                                    />
-                                </button>
+                                    <Eye class="size-4" />
+                                </Link>
                             </div>
                         </td>
                     </tr>
