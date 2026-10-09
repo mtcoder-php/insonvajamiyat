@@ -474,7 +474,7 @@ const fieldClass = (error?: string) =>
             <aside class="flex flex-col gap-5">
                 <SectionCard
                     :title="t('Profil rasmi')"
-                    class="xl:sticky xl:top-5"
+                    class="xl:sticky xl:top-[calc(var(--app-header-h,4rem)+1.25rem)] xl:self-start"
                 >
                     <AvatarUploader
                         v-if="user"

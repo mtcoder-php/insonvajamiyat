@@ -143,7 +143,7 @@ const recommendationLabel = computed(
 
 <template>
     <aside
-        class="rounded-xl border border-line bg-white shadow-[0_1px_2px_rgba(0,30,60,0.05)] xl:sticky xl:top-4"
+        class="rounded-xl border border-line bg-white shadow-[0_1px_2px_rgba(0,30,60,0.05)] xl:sticky xl:top-[calc(var(--app-header-h,4rem)+1rem)] xl:self-start"
     >
         <header class="border-b border-line px-5 py-4">
             <h2 class="font-sans text-base font-bold text-navy-950">
