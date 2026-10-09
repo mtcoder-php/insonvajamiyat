@@ -2,6 +2,7 @@
 
 use App\Jobs\QueueHeartbeat;
 use App\Models\AuditLog;
+use App\Models\NewsletterSubscriber;
 use App\Services\Settings\LaunchReadiness;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
@@ -13,7 +14,7 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 // Audit log: saqlash muddati (journal.audit.retention_days) o'tgan yozuvlarni tozalash
-Schedule::command('model:prune', ['--model' => [AuditLog::class]])->dailyAt('03:15');
+Schedule::command('model:prune', ['--model' => [AuditLog::class, NewsletterSubscriber::class]])->dailyAt('03:15');
 
 // Korrektura muddati: muallifga eslatma va muddat o'tganda tahririyatga xabar
 Schedule::command('app:proof-reminders')->hourlyAt(7);

@@ -83,3 +83,12 @@ export type ContactPageProps = {
     /** Sarlavha rasmi (config journal.heroes) */
     hero: string | null;
 };
+
+/** Obuna holati sahifasi (web/newsletter/Status) */
+export type NewsletterStatusProps = {
+    state: 'confirmed' | 'ask' | 'unsubscribed' | 'invalid';
+    /** Faqat 'ask' holatida — chiqish formasi uchun */
+    token: string | null;
+    /** Yashirilgan manzil: r•••r@example.com */
+    email: string | null;
+};
