@@ -2,6 +2,7 @@
 import SeoDescription from '@/components/seo/SeoDescription.vue';
 import { Toaster } from '@/components/ui/sonner';
 import { t } from '@/lib/i18n';
+import ScrollToTop from '@/components/web/ScrollToTop.vue';
 import SiteFooter from '@/components/web/SiteFooter.vue';
 import SiteHeader from '@/components/web/SiteHeader.vue';
 import SiteTopbar from '@/components/web/SiteTopbar.vue';
@@ -37,6 +38,7 @@ const { header = 'dark' } = defineProps<{
         </main>
 
         <SiteFooter />
+        <ScrollToTop />
         <Toaster />
     </div>
 </template>
