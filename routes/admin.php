@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\Issues\IssueArticleController;
 use App\Http\Controllers\Admin\Issues\IssueController;
 use App\Http\Controllers\Admin\Messages\BroadcastController;
 use App\Http\Controllers\Admin\Messages\MessageCenterController;
+use App\Http\Controllers\Admin\Newsletter\NewsletterController;
 use App\Http\Controllers\Admin\Payments\PaymentController;
 use App\Http\Controllers\Admin\Payments\RefundController;
 use App\Http\Controllers\Admin\People\AuthorController;
@@ -371,6 +372,20 @@ Route::middleware('permission:'.AdminSection::Messages->permission()->value)
         Route::post('broadcasts', [BroadcastController::class, 'store'])
             ->middleware(['permission:'.PermissionName::UsersManage->value, 'throttle:5,10'])
             ->name('broadcasts.store');
+    });
+
+/*
+| Obuna: obunachilar, xat yuborish, yangi son haqida avtomatik xat
+*/
+Route::middleware('permission:'.AdminSection::Newsletter->permission()->value)
+    ->prefix('newsletter')
+    ->name('newsletter.')
+    ->group(function () {
+        Route::get('/', [NewsletterController::class, 'index'])->name('index');
+        Route::post('campaigns', [NewsletterController::class, 'store'])->middleware('throttle:5,10')->name('campaigns.store');
+        Route::put('settings', [NewsletterController::class, 'settings'])->name('settings');
+        Route::get('subscribers/export', [NewsletterController::class, 'export'])->middleware('throttle:10,1')->name('subscribers.export');
+        Route::delete('subscribers/{subscriber}', [NewsletterController::class, 'destroy'])->name('subscribers.destroy');
     });
 
 /*

@@ -9,9 +9,14 @@ use App\Enums\RoleName;
 use App\Models\Article;
 use App\Models\IssueArticle;
 use App\Models\JournalIssue;
+use App\Models\NewsletterCampaign;
+use App\Models\NewsletterSubscriber;
 use App\Models\User;
 use App\Notifications\ArticleUpdateNotification;
+use App\Notifications\Newsletter\NewsletterCampaignNotification;
+use App\Services\Newsletter\NewsletterCampaignService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -232,5 +237,55 @@ class PublishingTest extends TestCase
 
         $this->get(route('articles.pdf', 'hali-chop-etilmagan'))->assertNotFound();
         $this->get(route('articles.show', 'hali-chop-etilmagan'))->assertNotFound();
+    }
+
+    public function test_publishing_issue_emails_confirmed_newsletter_subscribers_once(): void
+    {
+        Notification::fake();
+        $issue = $this->issue();
+        $article = $this->readyArticle($issue);
+
+        $confirmed = new NewsletterSubscriber(['email' => 'reader@example.com', 'locale' => 'ru', 'token' => str_repeat('c', 64)]);
+        $confirmed->forceFill(['confirmed_at' => now()])->save();
+        NewsletterSubscriber::query()->create(['email' => 'pending@example.com', 'locale' => 'uz', 'token' => str_repeat('d', 64)]);
+
+        $this->actingAs($this->chief)->post(route('admin.issues.publish', $issue->slug))->assertSessionHasNoErrors();
+
+        $campaign = NewsletterCampaign::sole();
+        $this->assertSame(NewsletterCampaign::ISSUE, $campaign->kind);
+        $this->assertSame($issue->id, $campaign->journal_issue_id);
+        $this->assertSame(1, $campaign->recipients_count);
+        $this->assertSame(NewsletterCampaign::SENT, $campaign->fresh()?->status);
+        $this->assertStringContainsString('№4 (2026)', $campaign->subject);
+        $this->assertStringContainsString($article->refresh()->title, $campaign->body);
+        $this->assertSame(route('issues.show', $issue->slug), $campaign->button_url);
+
+        Notification::assertSentOnDemandTimes(NewsletterCampaignNotification::class, 1);
+        Notification::assertSentOnDemand(
+            NewsletterCampaignNotification::class,
+            fn (NewsletterCampaignNotification $n, array $channels, AnonymousNotifiable $notifiable): bool => $notifiable->routes['mail'] === 'reader@example.com'
+                && $n->locale === 'ru',
+        );
+
+        // Qayta chaqirilsa (masalan, keyin maqola qo'shilib) — ikkinchi xat ketmaydi
+        $this->assertNull(app(NewsletterCampaignService::class)->announceIssue($issue->refresh(), $this->chief));
+        $this->assertSame(1, NewsletterCampaign::count());
+    }
+
+    public function test_auto_issue_newsletter_can_be_disabled(): void
+    {
+        Notification::fake();
+        app(NewsletterCampaignService::class)->setAutoIssue(false, $this->chief);
+
+        $subscriber = new NewsletterSubscriber(['email' => 'reader@example.com', 'locale' => 'uz', 'token' => str_repeat('c', 64)]);
+        $subscriber->forceFill(['confirmed_at' => now()])->save();
+
+        $issue = $this->issue();
+        $this->readyArticle($issue);
+
+        $this->actingAs($this->chief)->post(route('admin.issues.publish', $issue->slug))->assertSessionHasNoErrors();
+
+        $this->assertSame(0, NewsletterCampaign::count());
+        Notification::assertSentOnDemandTimes(NewsletterCampaignNotification::class, 0);
     }
 }

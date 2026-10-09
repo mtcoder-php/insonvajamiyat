@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Newsletter;
 
 use App\Models\NewsletterSubscriber;
 use App\Notifications\Newsletter\ConfirmSubscriptionNotification;
