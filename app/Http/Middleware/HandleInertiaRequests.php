@@ -61,12 +61,27 @@ class HandleInertiaRequests extends Middleware
             'notifications' => fn () => $user instanceof User
                 ? app(NotificationCenter::class)->summary($user)
                 : null,
-            // Admin sidebar raqamlari — faqat admin panel sahifalarida hisoblanadi
-            'adminBadges' => fn () => $user instanceof User && $request->routeIs('admin.*')
+            // Admin sidebar raqamlari — admin panel qobig'i chiqadigan sahifalarda hisoblanadi:
+            // admin/* va xodimlarning shaxsiy sozlamalari (settings/* ham o'sha sidebar bilan ochiladi).
+            // Frontend har 30 soniyada yangilab turadi (NotificationBell → usePoll).
+            'adminBadges' => fn () => $user instanceof User && $this->showsAdminSidebar($request, $user)
                 ? app(NavigationBadges::class)->for($user)
                 : null,
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
+    }
+
+    /**
+     * Sahifa admin panel sidebar'i bilan ochiladimi: admin/* yoki xodimning settings/* sahifalari
+     * (AppLayout.vue xodimga admin qobig'ini ko'rsatadi).
+     */
+    private function showsAdminSidebar(Request $request, User $user): bool
+    {
+        if ($request->routeIs('admin.*')) {
+            return true;
+        }
+
+        return $request->is('settings', 'settings/*') && $user->isStaff();
     }
 
     /**

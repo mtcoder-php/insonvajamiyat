@@ -15,6 +15,8 @@ export type NavItem = {
     permission?: string;
     /** adminBadges dagi kalit — menyu yonida raqam chiqadi */
     badge?: string;
+    /** Raqam nimani bildirishi (tooltip) */
+    badgeHint?: string;
     /** Faqat aynan shu URL'da faol (aks holda ichki sahifalarda ham faol) */
     exact?: boolean;
 };

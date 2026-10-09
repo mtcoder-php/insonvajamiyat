@@ -102,4 +102,45 @@ class NavigationTest extends TestCase
             ->get(route('home'))
             ->assertInertia(fn (Assert $page) => $page->where('adminBadges', null));
     }
+
+    public function test_staff_settings_pages_keep_sidebar_badges(): void
+    {
+        $admin = User::factory()->withRole(RoleName::SuperAdmin)->create();
+        $author = User::factory()->author()->create();
+
+        Article::factory()->count(2)->status(ArticleStatus::Submitted)->create();
+
+        foreach (['profile.edit', 'appearance.edit'] as $route) {
+            $this->actingAs($admin)
+                ->get(route($route))
+                ->assertInertia(fn (Assert $page) => $page->where('adminBadges.articles', 2));
+        }
+
+        // Muallif sozlamalari kabinet qobig'ida ochiladi — admin raqamlari kerak emas
+        $this->actingAs($author)
+            ->get(route('profile.edit'))
+            ->assertInertia(fn (Assert $page) => $page->where('adminBadges', null));
+    }
+
+    public function test_badges_refresh_via_partial_reload(): void
+    {
+        $admin = User::factory()->withRole(RoleName::SuperAdmin)->create();
+
+        Article::factory()->status(ArticleStatus::Submitted)->create();
+
+        $this->actingAs($admin)
+            ->get(route('admin.dashboard'))
+            ->assertInertia(fn (Assert $page) => $page->where('adminBadges.articles', 1));
+
+        Article::factory()->status(ArticleStatus::Resubmitted)->create();
+
+        $this->actingAs($admin)
+            ->get(route('profile.edit'))
+            ->assertInertia(fn (Assert $page) => $page
+                ->reloadOnly(['notifications', 'adminBadges'], fn (Assert $reload) => $reload
+                    ->where('adminBadges.articles', 2)
+                    ->has('notifications')
+                )
+            );
+    }
 }
