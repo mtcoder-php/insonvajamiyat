@@ -16,6 +16,7 @@ use App\Http\Controllers\Web\NewsletterSubscriptionController;
 use App\Http\Controllers\Web\RobotsController;
 use App\Http\Controllers\Web\SitemapController;
 use App\Http\Controllers\Web\StaticPageController;
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -58,10 +59,19 @@ Route::post('locale', [LocaleController::class, 'update'])
     ->middleware('throttle:20,1')
     ->name('locale.update');
 
-// Footer: yangiliklarga obuna (spamdan himoya — daqiqasiga 5 ta so'rov)
+// Footer: yangiliklarga obuna (spamdan himoya — daqiqasiga 5 ta so'rov) + double opt-in va chiqish
 Route::post('newsletter', [NewsletterSubscriptionController::class, 'store'])
     ->middleware('throttle:5,1')
     ->name('newsletter.subscribe');
+Route::middleware('throttle:30,1')->prefix('newsletter')->name('newsletter.')->group(function (): void {
+    Route::get('confirm/{token}', [NewsletterSubscriptionController::class, 'confirm'])->name('confirm');
+    Route::get('unsubscribe/{token}', [NewsletterSubscriptionController::class, 'showUnsubscribe'])->name('unsubscribe');
+    Route::post('unsubscribe/{token}', [NewsletterSubscriptionController::class, 'unsubscribe'])->name('unsubscribe.store');
+    // Pochta dasturidagi "Obunadan chiqish" (RFC 8058) — tashqi POST, CSRF tokeni bo'lmaydi
+    Route::post('unsubscribe/{token}/one-click', [NewsletterSubscriptionController::class, 'oneClick'])
+        ->withoutMiddleware(PreventRequestForgery::class)
+        ->name('unsubscribe.one-click');
+});
 
 // Fortify "home": login / 2FA / email tasdiqlashdan keyin roliga qarab yo'naltiradi
 Route::get('dashboard', DashboardRedirectController::class)
