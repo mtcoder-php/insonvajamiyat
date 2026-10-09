@@ -6,8 +6,9 @@ import { home } from '@/routes';
 import { t } from '@/lib/i18n';
 
 /**
- * Rasmli sarlavha (katalog / arxiv dizaynlari): chapda matn, o'ngda rasm va iqtibos,
- * pastda sarlavhaga chiqib turadigan qidiruv paneli (slot "search").
+ * Rasmli sarlavha (katalog, arxiv, statik sahifalar, son sahifasi): chapda matn, o'ngda rasm
+ * va iqtibos. Slotlar: "lead" — matndan chapda (masalan, son muqovasi), default — izohdan keyin
+ * (tugmalar, ma'lumotlar), "search" — sarlavhaga chiqib turadigan qidiruv paneli.
  */
 defineProps<{
     title: string;
@@ -40,7 +41,10 @@ defineProps<{
         />
 
         <div
-            class="mx-auto w-full max-w-[1700px] px-4 pt-7 pb-16 sm:px-6 lg:w-[90%] lg:px-0 lg:pt-8 lg:pb-20"
+            :class="[
+                'mx-auto w-full max-w-[1700px] px-4 pt-7 sm:px-6 lg:w-[90%] lg:px-0 lg:pt-8',
+                $slots.search ? 'pb-16 lg:pb-20' : 'pb-10 lg:pb-12',
+            ]"
         >
             <nav
                 class="flex flex-wrap items-center gap-1 text-xs text-navy-500"
@@ -63,19 +67,28 @@ defineProps<{
                 </template>
             </nav>
             <div class="flex items-end justify-between gap-8">
-                <div class="max-w-2xl">
-                    <h1
-                        class="mt-4 font-serif text-3xl leading-tight font-bold text-navy-950 sm:text-[2.6rem]"
-                    >
-                        {{ title }}
-                    </h1>
-                    <div class="mt-4 gold-rule w-20" />
-                    <p
-                        v-if="description"
-                        class="mt-4 text-[15px] leading-relaxed text-navy-700"
-                    >
-                        {{ description }}
-                    </p>
+                <div
+                    :class="[
+                        'flex min-w-0 flex-col gap-7 md:flex-row md:items-end',
+                        $slots.lead ? 'max-w-4xl' : 'max-w-2xl',
+                    ]"
+                >
+                    <slot name="lead" />
+                    <div class="min-w-0">
+                        <h1
+                            class="mt-4 font-serif text-3xl leading-tight font-bold text-navy-950 sm:text-[2.6rem]"
+                        >
+                            {{ title }}
+                        </h1>
+                        <div class="mt-4 gold-rule w-20" />
+                        <p
+                            v-if="description"
+                            class="mt-4 text-[15px] leading-relaxed text-navy-700"
+                        >
+                            {{ description }}
+                        </p>
+                        <slot />
+                    </div>
                 </div>
                 <blockquote
                     v-if="image"

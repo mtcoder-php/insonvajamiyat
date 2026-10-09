@@ -13,7 +13,7 @@ import {
 } from '@lucide/vue';
 import { computed } from 'vue';
 import SubjectIcon from '@/components/web/SubjectIcon.vue';
-import WebPageHeader from '@/components/web/WebPageHeader.vue';
+import WebHero from '@/components/web/WebHero.vue';
 import ContentSection from '@/components/web/content/ContentSection.vue';
 import { formatNumber } from '@/lib/format';
 import { t } from '@/lib/i18n';
@@ -75,9 +75,10 @@ function initials(name: string): string {
 <template>
     <Head :title="page.title" />
 
-    <WebPageHeader
+    <WebHero
         :title="page.title"
         :description="page.description"
+        :image="hero"
         :crumbs="[{ title: page.title }]"
     />
 

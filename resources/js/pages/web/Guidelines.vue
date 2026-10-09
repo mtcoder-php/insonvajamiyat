@@ -10,7 +10,7 @@ import {
     ShieldCheck,
 } from '@lucide/vue';
 import { computed } from 'vue';
-import WebPageHeader from '@/components/web/WebPageHeader.vue';
+import WebHero from '@/components/web/WebHero.vue';
 import ContentSection from '@/components/web/content/ContentSection.vue';
 import FileBadge from '@/components/web/content/FileBadge.vue';
 import { formatFileSize, formatNumber, formatSum } from '@/lib/format';
@@ -47,9 +47,10 @@ function price(value: number, currency: string): string {
 <template>
     <Head :title="page.title" />
 
-    <WebPageHeader
+    <WebHero
         :title="page.title"
         :description="page.description"
+        :image="hero"
         :crumbs="[{ title: page.title }]"
     >
         <div class="mt-6 flex flex-wrap gap-3">
@@ -74,7 +75,7 @@ function price(value: number, currency: string): string {
                 {{ t('Word shablonni yuklab olish') }}
             </a>
         </div>
-    </WebPageHeader>
+    </WebHero>
 
     <div class="bg-[#f6f8fb]">
         <div

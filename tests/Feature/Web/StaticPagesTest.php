@@ -5,6 +5,7 @@ namespace Tests\Feature\Web;
 use App\Enums\EditorialBoardRole;
 use App\Enums\RoleName;
 use App\Models\EditorialBoardMember;
+use App\Models\JournalIssue;
 use App\Models\Page;
 use App\Models\User;
 use App\Notifications\Web\ContactMessageNotification;
@@ -63,6 +64,23 @@ class StaticPagesTest extends TestCase
             ->component('web/Contact')
             ->has('page.sections')
         );
+    }
+
+    public function test_pages_and_issue_have_hero_images(): void
+    {
+        config(['journal.heroes' => [
+            'about' => 'favicon.ico', 'guidelines' => 'favicon.ico', 'contact' => 'mavjud-emas.png', 'issue' => 'favicon.ico',
+        ]]);
+
+        foreach (['about', 'guidelines'] as $route) {
+            $this->get(route($route))->assertInertia(fn (Assert $page) => $page->where('hero', asset('favicon.ico')));
+        }
+
+        // Fayl topilmasa — rasmsiz sarlavha
+        $this->get(route('contact'))->assertInertia(fn (Assert $page) => $page->where('hero', null));
+
+        $issue = JournalIssue::factory()->published()->create();
+        $this->get(route('issues.show', $issue->slug))->assertInertia(fn (Assert $page) => $page->where('hero', asset('favicon.ico')));
     }
 
     public function test_admin_edits_page_per_locale_and_resets_it(): void

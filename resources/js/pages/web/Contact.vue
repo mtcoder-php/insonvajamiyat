@@ -11,7 +11,7 @@ import {
 } from '@lucide/vue';
 import { computed } from 'vue';
 import SocialIcon from '@/components/web/SocialIcon.vue';
-import WebPageHeader from '@/components/web/WebPageHeader.vue';
+import WebHero from '@/components/web/WebHero.vue';
 import ContentSection from '@/components/web/content/ContentSection.vue';
 import { t } from '@/lib/i18n';
 import { socialLabel } from '@/lib/social';
@@ -91,9 +91,10 @@ const field =
 <template>
     <Head :title="page.title" />
 
-    <WebPageHeader
+    <WebHero
         :title="page.title"
         :description="page.description"
+        :image="hero"
         :crumbs="[{ title: page.title }]"
     />
 
