@@ -78,3 +78,6 @@ Route::middleware(['auth', 'verified'])->prefix('notifications')->name('notifica
 
 require __DIR__.'/settings.php';
 require __DIR__.'/social.php';
+
+// Topilmagan manzillar — web middleware (sessiya, til, umumiy props) bilan 404 sahifasi
+Route::fallback(fn () => abort(404));

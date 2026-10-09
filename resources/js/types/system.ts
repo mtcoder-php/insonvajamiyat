@@ -78,7 +78,17 @@ export type SystemPageProps = {
     mailForm: MailSettings;
     mailPassword: { set: boolean; source: 'database' | 'env' | 'none' };
     status: SystemStatusRow[];
+    readiness: LaunchReadinessReport | null;
     urls: { index: string; journal: string; mail: string; mailTest: string };
+};
+
+/** "Ishga tushirishga tayyorlik" — App\\Services\\Settings\\LaunchReadiness::report */
+export type LaunchReadinessCheck = SystemStatusRow & { group: string };
+
+export type LaunchReadinessReport = {
+    ready: boolean;
+    counts: Record<SystemStatusRow['state'], number>;
+    groups: { key: string; label: string; checks: LaunchReadinessCheck[] }[];
 };
 
 /* ---------- Zaxira nusxa (BackupService) ---------- */

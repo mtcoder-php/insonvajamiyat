@@ -17,7 +17,7 @@ cd "$APP_DIR"
 step() { printf '\n\033[1;34m==> %s\033[0m\n' "$1"; }
 
 step "Texnik rejim (maintenance) yoqilmoqda"
-"$PHP" artisan down --retry=30 --refresh=15 || true
+"$PHP" artisan down --retry=30 --render="errors::503" || true
 trap '"$PHP" artisan up; echo "Xato! Sayt texnik rejimdan chiqarildi."' ERR
 
 step "Kod yangilanmoqda ($BRANCH)"

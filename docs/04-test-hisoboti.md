@@ -8,7 +8,7 @@
 | Tizim  | insonvajamiyat.uz                                                                                        |
 | Sana   | 2026-yil 8-oktabr                                                                                        |
 | Asos   | Texnik topshiriq v1.0, 8 va 10-bo'limlar                                                                 |
-| Natija | **377 ta avtomatik test, 13 976 ta tekshiruv — barchasi muvaffaqiyatli (0 xato, 0 o'tkazib yuborilgan)** |
+| Natija | **387 ta avtomatik test, 14 450 ta tekshiruv — barchasi muvaffaqiyatli (0 xato, 0 o'tkazib yuborilgan)** |
 
 ---
 
@@ -58,10 +58,10 @@ Barcha tekshiruvlar bitta buyruq bilan ishga tushiriladi: `composer ci:check`. H
 
 | Ko'rsatkich               | Qiymat     |
 | ------------------------- | ---------- |
-| Test fayllari             | 68         |
-| Testlar                   | **377**    |
-| Tekshiruvlar (assertions) | **13 976** |
-| Muvaffaqiyatli            | 377 (100%) |
+| Test fayllari             | 70         |
+| Testlar                   | **387**    |
+| Tekshiruvlar (assertions) | **14 450** |
+| Muvaffaqiyatli            | 387 (100%) |
 | Xato / muvaffaqiyatsiz    | 0          |
 | O'tkazib yuborilgan       | 0          |
 | Bajarilish vaqti          | ~32 soniya |
@@ -158,6 +158,8 @@ Barcha tekshiruvlar bitta buyruq bilan ishga tushiriladi: `composer ci:check`. H
 | PerformanceTest                         | Email navbatga qo'yilishi, ro'yxatlarda so'rovlar soni o'zgarmasligi (N+1 yo'q), indekslar                                                                             |       3 |           12 |   ✔    |
 | PublicPathConflictTest                  | `public/` papkalari route'larni to'smasligi                                                                                                                            |       1 |            1 |   ✔    |
 | PhoneNumberTest, UploadLimitTest (unit) | Telefon normalizatsiyasi, yuklash chegaralari                                                                                                                          |      10 |           21 |   ✔    |
+| ErrorPagesTest                          | Brendlangan 404/403/500 sahifalari, 419 da qaytish, JSON va webhook javoblari o'zgarmasligi, statik 503 sahifasi                                                       |       6 |           63 |   ✔    |
+| LaunchReadinessTest                     | «Ishga tushirishga tayyorlik»: tizim holati tabi, `app:launch-check`, cron va worker tiriklik belgilari, production to'siqlari                                         |       4 |           35 |   ✔    |
 
 ---
 
@@ -218,7 +220,7 @@ Barcha tekshiruvlar bitta buyruq bilan ishga tushiriladi: `composer ci:check`. H
 
 ## 8. Xulosa
 
-Tizimning barcha 377 ta avtomatik testi muvaffaqiyatli o'tdi, statik tahlil va kod uslubi tekshiruvlarida xato yo'q. Texnik topshiriqning 4-bo'limidagi funksional talablar va 7-bo'limidagi nofunksional talablar avtomatik testlar bilan qoplangan. 7-bo'limda keltirilgan haqiqiy to'lov kassalari, pochta va yuklama bo'yicha sinovlar server muhitida, ishga tushirishdan oldin bajarilishi tavsiya etiladi.
+Tizimning barcha 387 ta avtomatik testi muvaffaqiyatli o'tdi, statik tahlil va kod uslubi tekshiruvlarida xato yo'q. Texnik topshiriqning 4-bo'limidagi funksional talablar va 7-bo'limidagi nofunksional talablar avtomatik testlar bilan qoplangan. 7-bo'limda keltirilgan haqiqiy to'lov kassalari, pochta va yuklama bo'yicha sinovlar server muhitida, ishga tushirishdan oldin bajarilishi tavsiya etiladi.
 
 **Testlarni qayta ishga tushirish:**
 

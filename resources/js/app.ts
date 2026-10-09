@@ -34,6 +34,9 @@ void loadLocale(initialPageLocale()).finally(() => {
                     return AuthLayout;
                 case name.startsWith('settings/'):
                     return [AppLayout, SettingsLayout];
+                // Xato sahifalari (404, 500…) — mustaqil, layout'siz
+                case name.startsWith('errors/'):
+                    return undefined;
                 default:
                     return AppLayout;
             }

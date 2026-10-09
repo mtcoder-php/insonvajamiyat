@@ -21,7 +21,7 @@ export function isLightOnlyComponent(
     isStaff = false,
 ): boolean {
     return (
-        ['web/', 'auth/', 'cabinet/'].some((prefix) =>
+        ['web/', 'auth/', 'cabinet/', 'errors/'].some((prefix) =>
             component.startsWith(prefix),
         ) ||
         (!isStaff && component.startsWith('settings/'))

@@ -7,6 +7,7 @@
     $lightOnly = str_starts_with($component, 'web/')
         || str_starts_with($component, 'auth/')
         || str_starts_with($component, 'cabinet/')
+        || str_starts_with($component, 'errors/')
         || (! $isStaff && str_starts_with($component, 'settings/'));
 
     // SEO: title, description, Open Graph, canonical, Google Scholar (citation_*), JSON-LD

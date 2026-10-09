@@ -170,12 +170,13 @@ php artisan schedule:list
 
 **Rejalashtirilgan vazifalar** (`routes/console.php`, vaqt — UTC):
 
-| Buyruq                   | Jadval                          | Vazifasi                                                                                |
-| ------------------------ | ------------------------------- | --------------------------------------------------------------------------------------- |
-| `model:prune` (AuditLog) | har kuni 03:15                  | Saqlash muddati o'tgan audit yozuvlarini tozalash                                       |
-| `app:proof-reminders`    | har soatda (:07)                | Korrektura muddati yaqinlashganda muallifga, o'tganda maketchi va bosh muharrirga xabar |
-| `app:payment-reminders`  | har kuni 05:00 (Toshkent 10:00) | To'lov kutilayotgan maqolalar mualliflariga 3, 7, 14-kun eslatmalari                    |
-| `backup:run --scheduled` | har 10 daqiqada                 | Admin paneldagi jadval bo'yicha avtomatik zaxira (vaqti kelganini o'zi tekshiradi)      |
+| Buyruq                                   | Jadval                          | Vazifasi                                                                                |
+| ---------------------------------------- | ------------------------------- | --------------------------------------------------------------------------------------- |
+| `model:prune` (AuditLog)                 | har kuni 03:15                  | Saqlash muddati o'tgan audit yozuvlarini tozalash                                       |
+| `app:proof-reminders`                    | har soatda (:07)                | Korrektura muddati yaqinlashganda muallifga, o'tganda maketchi va bosh muharrirga xabar |
+| `app:payment-reminders`                  | har kuni 05:00 (Toshkent 10:00) | To'lov kutilayotgan maqolalar mualliflariga 3, 7, 14-kun eslatmalari                    |
+| `backup:run --scheduled`                 | har 10 daqiqada                 | Admin paneldagi jadval bo'yicha avtomatik zaxira (vaqti kelganini o'zi tekshiradi)      |
+| `heartbeat:scheduler`, `heartbeat:queue` | har daqiqada / har 5 daqiqada   | Cron va navbat ishchisi tirikligini «Tizim holati»da ko'rsatish uchun                   |
 
 ---
 
@@ -302,7 +303,7 @@ cd /var/www/insonvajamiyat
 sudo -u www-data bash deploy/deploy.sh
 ```
 
-Skript tartibi: texnik rejim (`artisan down`) → `git reset --hard origin/main` → `composer install --no-dev` → `wayfinder:generate` va `npm run build` → `migrate --force` → `optimize` → `queue:restart` → sayt yoqiladi → `php8.3-fpm` reload (OPcache). Xato bo'lsa sayt texnik rejimdan avtomatik chiqariladi.
+Skript tartibi: texnik rejim (`artisan down --render="errors::503"` — Vite assetlarisiz statik sahifa) → `git reset --hard origin/main` → `composer install --no-dev` → `wayfinder:generate` va `npm run build` → `migrate --force` → `optimize` → `queue:restart` → sayt yoqiladi → `php8.3-fpm` reload (OPcache). Xato bo'lsa sayt texnik rejimdan avtomatik chiqariladi.
 
 **Relizdan oldin** (dasturchi kompyuterida yoki CI'da):
 
@@ -397,13 +398,24 @@ Tashqi monitoring (masalan UptimeRobot) uchun `/up` manzilini kuzating.
 
 ## 10. Ishga tushirishdan oldin tekshiruv ro'yxati
 
+Avtomatik tekshiruv — serverda:
+
+```bash
+php artisan app:launch-check          # xato bo'lsa 1 kodi bilan tugaydi
+php artisan app:launch-check --json   # monitoring / CI uchun
+```
+
+Xuddi shu ro'yxat admin panelda: **Tizim sozlamalari → Tizim holati → «Ishga tushirishga tayyorlik»**. U sozlamalar, migratsiyalar, cron va navbat ishchisi tirikligi (har daqiqa / har 5 daqiqada yangilanadigan belgilar), kontent, to'lov usullari, Payme rejimi, bosh administratorlarda 2FA, demo hisoblar va zaxira holatini tekshiradi.
+
+Qo'lda tekshiriladiganlar:
+
 - [ ] `.env`: `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL=https://...`
 - [ ] `https://insonvajamiyat.uz/up` → 200
 - [ ] `robots.txt` da `Sitemap:` qatori, `sitemap.xml` da maqolalar
 - [ ] `curl -sI https://insonvajamiyat.uz | grep -iE "strict-transport|x-frame|x-content"`
 - [ ] Admin → Tizim sozlamalari → Pochta → **Test xat yuborish**
 - [ ] `sudo supervisorctl status` — worker `RUNNING`; parolni tiklash xati keladi
-- [ ] `php artisan schedule:list` — 4 ta vazifa ko'rinadi
+- [ ] `php artisan schedule:list` — 6 ta vazifa ko'rinadi
 - [ ] Admin → Zaxira nusxa → **Hozir yaratish**, keyin avtomatik jadvalni yoqing
 - [ ] Click va Payme kabinetlarida URL'lar; Payme sinov kassasida barcha ssenariylar
 - [ ] Admin → Sozlamalar → **Fayllar**: maqola shabloni yuklangan
