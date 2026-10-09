@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { socialLabel } from '@/lib/social';
 import { Link, usePage } from '@inertiajs/vue3';
-import { ArrowUp, ChevronRight, Mail, MapPin, Phone } from '@lucide/vue';
+import { ChevronRight, Mail, MapPin, Phone } from '@lucide/vue';
 import { computed } from 'vue';
 import BrandLogo from '@/components/brand/BrandLogo.vue';
 import NewsletterForm from '@/components/web/NewsletterForm.vue';
@@ -75,10 +75,6 @@ const contacts = computed(
             breakAll: boolean;
         }[],
 );
-
-function scrollTop(): void {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
 
 const heading =
     'relative mb-5 pb-3 font-sans text-sm font-semibold tracking-wide text-white after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-8 after:rounded-full after:bg-gradient-to-r after:from-gold-400 after:to-gold-200 after:transition-all after:duration-500 group-hover/col:after:w-14';
@@ -252,16 +248,6 @@ const navLink =
                         class="rounded-full bg-white/[0.06] px-3 py-1 font-medium tracking-wide text-white/70 ring-1 ring-white/10"
                         >ISSN {{ journal.issn }}</span
                     >
-                    <button
-                        type="button"
-                        class="group/top inline-flex items-center gap-1.5 rounded-full bg-white/[0.06] px-3 py-1 font-medium text-white/75 ring-1 ring-white/10 transition-all duration-300 hover:-translate-y-0.5 hover:bg-gold-400 hover:text-navy-950 hover:shadow-[0_10px_24px_-10px_rgba(196,154,69,0.9)]"
-                        @click="scrollTop"
-                    >
-                        <ArrowUp
-                            class="size-3.5 transition-transform duration-300 group-hover/top:-translate-y-0.5"
-                        />
-                        {{ t('Yuqoriga') }}
-                    </button>
                 </div>
             </div>
         </div>
