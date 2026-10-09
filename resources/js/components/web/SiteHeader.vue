@@ -5,6 +5,7 @@ import BrandLogo from '@/components/brand/BrandLogo.vue';
 import SiteAccountMenu from '@/components/web/SiteAccountMenu.vue';
 import SiteMobileMenu from '@/components/web/SiteMobileMenu.vue';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
+import { siteContainer, wideContainer } from '@/lib/layout';
 import { cn } from '@/lib/utils';
 import { mainNavigation } from '@/navigation/web';
 import { home } from '@/routes';
@@ -49,8 +50,8 @@ const isActive = (item: NavItem, index: number): boolean =>
         <div
             :class="
                 cn(
-                    'mx-auto flex h-18 items-center justify-between gap-6 px-4 sm:px-6 lg:px-8',
-                    wide ? 'max-w-[100rem]' : 'max-w-7xl',
+                    'flex h-18 items-center justify-between gap-6',
+                    wide ? wideContainer : siteContainer,
                 )
             "
         >

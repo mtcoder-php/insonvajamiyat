@@ -26,7 +26,7 @@ withDefaults(
         class="space-y-2"
     >
         <div
-            class="flex overflow-hidden rounded-lg border border-white/20 bg-white/5 focus-within:border-brand-400"
+            class="flex overflow-hidden rounded-lg border border-white/20 bg-white/5 transition-all duration-300 focus-within:border-brand-400 focus-within:shadow-[0_0_0_4px_rgba(0,108,246,0.18)] hover:border-white/35"
         >
             <label :for="id" class="sr-only">{{
                 t('Elektron pochta manzilingiz')
@@ -47,7 +47,7 @@ withDefaults(
                 type="submit"
                 :disabled="processing"
                 :class="[
-                    'inline-flex shrink-0 items-center gap-2 bg-brand-600 px-4 text-sm font-semibold text-white transition-colors hover:bg-brand-500 disabled:opacity-60',
+                    'inline-flex shrink-0 items-center gap-2 bg-brand-600 px-4 text-sm font-semibold text-white transition-all duration-300 hover:bg-brand-500 hover:shadow-[inset_0_-2px_0_rgba(255,255,255,0.25)] disabled:opacity-60',
                     compact ? 'h-10' : 'h-11',
                 ]"
             >
