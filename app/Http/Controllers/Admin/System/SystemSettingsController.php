@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\System\JournalSettingsRequest;
 use App\Http\Requests\Admin\System\MailSettingsRequest;
 use App\Models\User;
+use App\Services\Settings\LaunchReadiness;
 use App\Services\Settings\SystemSettings;
 use App\Services\Settings\SystemStatus;
 use Illuminate\Http\RedirectResponse;
@@ -22,7 +23,7 @@ class SystemSettingsController extends Controller
 
     public function __construct(private readonly SystemSettings $settings) {}
 
-    public function index(Request $request, SystemStatus $status): Response
+    public function index(Request $request, SystemStatus $status, LaunchReadiness $readiness): Response
     {
         $tab = $request->string('tab')->toString();
 
@@ -30,6 +31,7 @@ class SystemSettingsController extends Controller
             'tab' => in_array($tab, self::TABS, true) ? $tab : 'journal',
             ...$this->settings->form(),
             'status' => fn (): array => $status->overview(),
+            'readiness' => $tab === 'status' ? fn (): array => $readiness->report() : null,
             'urls' => [
                 'index' => route('admin.system.index'),
                 'journal' => route('admin.system.journal'),

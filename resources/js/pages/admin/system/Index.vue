@@ -13,6 +13,7 @@ import { ref, watch } from 'vue';
 import IndexingCard from '@/components/admin/system/IndexingCard.vue';
 import JournalPanel from '@/components/admin/system/JournalPanel.vue';
 import MailPanel from '@/components/admin/system/MailPanel.vue';
+import ReadinessPanel from '@/components/admin/system/ReadinessPanel.vue';
 import StatusPanel from '@/components/admin/system/StatusPanel.vue';
 import PageHeader from '@/components/admin/ui/PageHeader.vue';
 import { cn } from '@/lib/utils';
@@ -174,6 +175,9 @@ const tabs: { key: SystemTab; label: string; hint: string; icon: Component }[] =
             :url="urls.mail"
             :test-url="urls.mailTest"
         />
-        <StatusPanel v-if="tab === 'status'" :rows="status" />
+        <template v-if="tab === 'status'">
+            <ReadinessPanel v-if="readiness" :report="readiness" />
+            <StatusPanel :rows="status" />
+        </template>
     </div>
 </template>

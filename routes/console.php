@@ -1,8 +1,11 @@
 <?php
 
+use App\Jobs\QueueHeartbeat;
 use App\Models\AuditLog;
+use App\Services\Settings\LaunchReadiness;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schedule;
 
 Artisan::command('inspire', function () {
@@ -20,3 +23,9 @@ Schedule::command('app:payment-reminders')->dailyAt('05:00');
 
 // Zaxira nusxa: admin paneldagi jadval (Admin → Zaxira nusxa) bo'yicha — vaqti kelganini o'zi tekshiradi
 Schedule::command('backup:run --scheduled')->everyTenMinutes()->withoutOverlapping();
+
+// "Tizim holati" uchun tiriklik belgilari: cron (har daqiqa) va navbat ishchisi (har 5 daqiqada)
+Schedule::call(fn () => Cache::forever(LaunchReadiness::SCHEDULER_HEARTBEAT, now()->getTimestamp()))
+    ->everyMinute()
+    ->name('heartbeat:scheduler');
+Schedule::job(new QueueHeartbeat)->everyFiveMinutes()->name('heartbeat:queue');
