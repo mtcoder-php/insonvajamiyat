@@ -42,10 +42,6 @@ return [
     // (public/ ichidagi yo'l). Fayl topilmasa — muqova avtomatik chiziladi.
     'default_issue_cover' => env('JOURNAL_DEFAULT_ISSUE_COVER', 'coverimg/cover.png'),
 
-    // Bosh sahifadagi "So'nggi son" bloki uchun muqova (songa alohida muqova
-    // yuklanmagan bo'lsa). Fayl topilmasa — default_issue_cover ishlatiladi.
-    'latest_issue_cover' => env('JOURNAL_LATEST_ISSUE_COVER', 'web/latest_issue/latest_issue.png'),
-
     // Ichki sahifalar sarlavhasi (hero) rasmlari — public/ ichidagi yo'l.
     // O'z rasmingizni qo'ying (masalan, web/heroes/catalog.jpg) va .env da ko'rsating.
     'heroes' => [

@@ -119,7 +119,6 @@ class HomePageTest extends TestCase
         JournalIssue::factory()->published()->create();
 
         // Standart muqova sifatida public/ dagi mavjud fayl ("So'nggi son" muqovasi yo'q)
-        config(['journal.latest_issue_cover' => 'mavjud-emas.png']);
         config(['journal.default_issue_cover' => 'favicon.ico']);
 
         $this->get(route('home'))
@@ -133,23 +132,31 @@ class HomePageTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page->where('latestIssue.coverUrl', null));
     }
 
-    public function test_latest_issue_block_uses_its_own_cover_when_issue_has_none()
+    public function test_latest_issue_block_shows_newest_published_issue_with_issue_page_cover()
     {
-        JournalIssue::factory()->published()->create();
+        config(['journal.default_issue_cover' => 'favicon.ico']);
 
-        config(['journal.latest_issue_cover' => 'apple-touch-icon.png', 'journal.default_issue_cover' => 'favicon.ico']);
+        JournalIssue::factory()->published()->create(['year' => 2026, 'number' => 1, 'published_at' => now()->subMonth()]);
+        $newest = JournalIssue::factory()->published()->create(['year' => 2026, 'number' => 2, 'published_at' => now()->subDay()]);
+        JournalIssue::factory()->create(['year' => 2026, 'number' => 3]); // qoralama — saytda ko'rinmaydi
 
+        // Muqova yuklanmagan — son sahifasidagi kabi jurnalning umumiy muqovasi
         $this->get(route('home'))
             ->assertInertia(fn (Assert $page) => $page
-                ->where('latestIssue.coverUrl', asset('apple-touch-icon.png'))
+                ->where('latestIssue.id', $newest->id)
+                ->where('latestIssue.number', 2)
+                ->where('latestIssue.coverUrl', asset('favicon.ico'))
             );
 
+        $this->get(route('issues.show', $newest->slug))
+            ->assertInertia(fn (Assert $page) => $page->where('issue.coverUrl', asset('favicon.ico')));
+
         // Songa o'z muqovasi yuklangan bo'lsa — o'shasi
-        JournalIssue::query()->update(['cover_image_path' => 'covers/2026-1.png']);
+        $newest->update(['cover_image_path' => 'covers/2026-2.png']);
 
         $this->get(route('home'))
             ->assertInertia(fn (Assert $page) => $page
-                ->where('latestIssue.coverUrl', fn (string $url) => str_ends_with($url, 'covers/2026-1.png'))
+                ->where('latestIssue.coverUrl', fn (string $url) => str_ends_with($url, 'covers/2026-2.png'))
             );
     }
 
