@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { PanelLeftClose, PanelLeftOpen } from '@lucide/vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import HeaderSearch from '@/components/app/HeaderSearch.vue';
 import HeaderUserMenu from '@/components/app/HeaderUserMenu.vue';
 import NotificationBell from '@/components/app/NotificationBell.vue';
@@ -13,6 +14,10 @@ import { t } from '@/lib/i18n';
  * Admin panel va muallif kabineti header'i (super admin dashboard.png):
  * fon rasmi ustida to'q ko'k panel — sidebar tugmasi, qidiruv (Ctrl+K),
  * til, bildirishnomalar, foydalanuvchi; ostida sahifa yo'li (breadcrumbs).
+ *
+ * Header yopishqoq (sticky) — uning haqiqiy balandligi `--app-header-h` CSS o'zgaruvchisiga
+ * yoziladi, sahifalardagi yopishqoq panellar (`top-[calc(var(--app-header-h)+…)]`) shu masofada to'xtaydi
+ * va header ostiga kirib ketmaydi.
  */
 withDefaults(
     defineProps<{
@@ -25,12 +30,34 @@ withDefaults(
 
 const { isMobile, state, toggleSidebar } = useSidebar();
 
+const headerEl = ref<HTMLElement | null>(null);
+let observer: ResizeObserver | null = null;
+
+function syncHeight(): void {
+    const height = headerEl.value?.offsetHeight ?? 0;
+
+    document.documentElement.style.setProperty('--app-header-h', `${height}px`);
+}
+
+onMounted(() => {
+    syncHeight();
+
+    if (headerEl.value && 'ResizeObserver' in window) {
+        observer = new ResizeObserver(syncHeight);
+        observer.observe(headerEl.value);
+    }
+});
+
+onBeforeUnmount(() => {
+    observer?.disconnect();
+});
+
 // Header fon rasmi (public/ papkasida)
 const bannerUrl = '/images/admin/banner.png';
 </script>
 
 <template>
-    <header class="sticky top-0 z-30">
+    <header ref="headerEl" class="sticky top-0 z-30">
         <div
             class="relative flex h-16 items-center gap-3 overflow-hidden bg-navy-950 px-4 md:px-6"
         >

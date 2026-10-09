@@ -94,7 +94,9 @@ const fieldClass = (error?: string) =>
     <Head :title="t('Profil sozlamalari')" />
 
     <div class="grid items-start gap-5 xl:grid-cols-[20rem_minmax(0,1fr)]">
-        <aside class="flex flex-col gap-5 xl:sticky xl:top-5">
+        <aside
+            class="flex flex-col gap-5 xl:sticky xl:top-[calc(var(--app-header-h,4rem)+1.25rem)] xl:self-start"
+        >
             <SectionCard :title="t('Profil rasmi')">
                 <AvatarUploader
                     :name="profile.name"

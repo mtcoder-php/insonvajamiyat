@@ -157,7 +157,7 @@ function page(url: string): void {
                 :counts="counts"
                 :selected="selectedUuid"
                 :loading="loading"
-                class="xl:sticky xl:top-4"
+                class="xl:sticky xl:top-[calc(var(--app-header-h,4rem)+1rem)] xl:self-start"
                 @open="open"
                 @page="page"
             />
