@@ -30,7 +30,7 @@ const locale = useLocale();
         :aria-label="t('Ilmiy yo\'nalishlar')"
     >
         <ul
-            class="mx-auto grid max-w-7xl grid-cols-2 gap-1 px-3 py-3 sm:grid-cols-3 sm:px-6 lg:flex lg:items-center lg:gap-0 lg:px-8 lg:py-4"
+            class="mx-auto grid w-full max-w-[1700px] grid-cols-2 gap-1 px-3 py-3 sm:grid-cols-3 sm:px-6 lg:flex lg:w-[90%] lg:items-center lg:gap-0 lg:px-0 lg:py-4"
         >
             <template v-for="(subject, index) in visible" :key="subject.id">
                 <li

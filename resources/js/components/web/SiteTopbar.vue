@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { siteContainer } from '@/lib/layout';
 import { socialLabel } from '@/lib/social';
 import { usePage } from '@inertiajs/vue3';
 import { Mail, MapPin, Phone } from '@lucide/vue';
@@ -29,7 +30,10 @@ const phoneHref = computed(
 <template>
     <div class="hidden bg-navy-950 text-xs text-white/80 md:block">
         <div
-            class="mx-auto flex h-9 max-w-7xl items-center justify-between gap-6 px-4 sm:px-6 lg:px-8"
+            :class="[
+                siteContainer,
+                'flex h-9 items-center justify-between gap-6',
+            ]"
         >
             <div class="flex items-center gap-6">
                 <a
