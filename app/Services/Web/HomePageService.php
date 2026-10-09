@@ -45,6 +45,8 @@ class HomePageService
             ->withCount('articles')
             ->withMax('articles as pages_total', 'issue_articles.page_to')
             ->latest('published_at')
+            ->orderByDesc('year')
+            ->orderByDesc('number')
             ->first();
 
         if ($issue === null) {
@@ -59,12 +61,8 @@ class HomePageService
             ->map(fn (Subject $subject): string => $subject->name)
             ->all();
 
+        // Muqova son sahifasidagi bilan bir xil: yuklangan muqova, bo'lmasa jurnalning umumiy muqovasi
         $card = IssueCardResource::make($issue)->resolve();
-
-        // Songa muqova yuklanmagan bo'lsa — "So'nggi son" bloki uchun maxsus muqova
-        if ($issue->cover_image_path === null) {
-            $card['coverUrl'] = MediaUrl::publicAsset(config('journal.latest_issue_cover')) ?? $card['coverUrl'];
-        }
 
         return [
             ...$card,

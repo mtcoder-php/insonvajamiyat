@@ -245,7 +245,8 @@ class CatalogService
      */
     public function latestIssue(): ?array
     {
-        $issue = JournalIssue::query()->published()->withCount('articles')->latest('published_at')->first();
+        $issue = JournalIssue::query()->published()->withCount('articles')
+            ->latest('published_at')->orderByDesc('year')->orderByDesc('number')->first();
 
         return $issue !== null ? IssueCardResource::make($issue)->resolve() : null;
     }
