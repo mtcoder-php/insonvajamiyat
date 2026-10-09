@@ -30,7 +30,7 @@ import { t } from '@/lib/i18n';
 /**
  * Header'dagi qo'ng'iroqcha (admin panel va kabinet):
  *  - o'qilmaganlar soni va so'nggi bildirishnomalar (HandleInertiaRequests → notifications);
- *  - har 30 soniyada faqat shu ma'lumot yangilanadi (usePoll, partial reload);
+ *  - har 30 soniyada shu ma'lumot va sidebar raqamlari yangilanadi (usePoll, partial reload);
  *  - yangi bildirishnoma kelsa qo'ng'iroqcha "silkinadi";
  *  - bosilganda o'qilgan bo'ladi va tegishli sahifa ochiladi.
  */
@@ -46,7 +46,8 @@ const badge = computed(() =>
     unread.value > 99 ? '99+' : String(unread.value),
 );
 
-usePoll(30_000, { only: ['notifications'] });
+// Admin sidebar raqamlari ham shu so'rov bilan yangilanadi (kabinetda server null qaytaradi)
+usePoll(30_000, { only: ['notifications', 'adminBadges'] });
 
 const ring = ref(false);
 

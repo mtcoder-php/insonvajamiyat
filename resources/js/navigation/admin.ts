@@ -62,6 +62,9 @@ export function adminNavigation(): NavGroup[] {
                     icon: ClipboardPen,
                     permission: 'reviews.submit',
                     badge: 'reviews',
+                    badgeHint: tk(
+                        'Javob kutilayotgan va jarayondagi taqrizlar',
+                    ),
                 },
                 {
                     title: tk('Maqolalar'),
@@ -69,6 +72,9 @@ export function adminNavigation(): NavGroup[] {
                     icon: FileText,
                     permission: 'articles.view_any',
                     badge: 'articles',
+                    badgeHint: tk(
+                        "Muharrir ko'rib chiqishini kutayotgan maqolalar",
+                    ),
                 },
                 {
                     title: tk('Nashr jarayoni'),
@@ -76,6 +82,9 @@ export function adminNavigation(): NavGroup[] {
                     icon: BookCheck,
                     permission: 'production.manage',
                     badge: 'production',
+                    badgeHint: tk(
+                        'Maketga olinishi kutilayotgan va maketlanayotgan maqolalar',
+                    ),
                 },
                 {
                     title: tk('Jurnallar'),
@@ -83,6 +92,9 @@ export function adminNavigation(): NavGroup[] {
                     icon: BookText,
                     permission: 'issues.manage',
                     badge: 'issues',
+                    badgeHint: tk(
+                        'Shakllantirilayotgan (chop etilmagan) sonlar',
+                    ),
                 },
                 {
                     title: tk('Mualliflar'),
@@ -90,6 +102,7 @@ export function adminNavigation(): NavGroup[] {
                     icon: UserRound,
                     permission: 'articles.view_any',
                     badge: 'authors',
+                    badgeHint: tk('Faol mualliflar'),
                 },
                 {
                     title: tk('Taqrizchilar'),
@@ -97,6 +110,7 @@ export function adminNavigation(): NavGroup[] {
                     icon: UserCheck,
                     permission: 'articles.assign_reviewer',
                     badge: 'reviewers',
+                    badgeHint: tk('Faol taqrizchilar'),
                 },
                 {
                     title: tk("To'lovlar"),
@@ -104,6 +118,9 @@ export function adminNavigation(): NavGroup[] {
                     icon: CreditCard,
                     permission: 'payments.view',
                     badge: 'payments',
+                    badgeHint: tk(
+                        "To'lov kutilayotgan maqolalar va jarayondagi to'lovlar",
+                    ),
                 },
                 {
                     title: 'AI Studio',
@@ -111,6 +128,7 @@ export function adminNavigation(): NavGroup[] {
                     icon: BrainCircuit,
                     permission: 'ai.use',
                     badge: 'ai',
+                    badgeHint: tk("Bugungi AI so'rovlar"),
                 },
                 {
                     title: tk('Xabarlar'),
@@ -118,6 +136,7 @@ export function adminNavigation(): NavGroup[] {
                     icon: Mail,
                     permission: 'articles.message_author',
                     badge: 'messages',
+                    badgeHint: tk("O'qilmagan xabarlar va bildirishnomalar"),
                 },
                 {
                     title: tk('Statistika'),

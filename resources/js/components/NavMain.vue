@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { computed, onBeforeUnmount, reactive, watch } from 'vue';
 import {
     SidebarGroup,
     SidebarGroupLabel,
@@ -17,6 +17,10 @@ import { t } from '@/lib/i18n';
  * Sidebar menyu guruhi (super admin dashboard.png):
  * faol element — ko'k gradient fonda, raqamlar — o'ngda ko'k "pill".
  * Ruxsati yo'q elementlar umuman ko'rsatilmaydi.
+ *
+ * Raqamlar jonli: server (NavigationBadges) har sahifa ochilganda va har 30 soniyada
+ * (NotificationBell'dagi usePoll) qayta hisoblaydi. Raqam o'zgarsa "sakraydi",
+ * oshsa atrofida qisqa to'lqin chiqadi; ustiga olib borilsa nimani bildirishi ko'rinadi.
  */
 const props = withDefaults(
     defineProps<{
@@ -40,6 +44,34 @@ function isActive(item: NavItem): boolean {
     return item.exact
         ? isCurrentUrl(item.href)
         : isCurrentOrParentUrl(item.href);
+}
+
+// Oxirgi yangilanishda oshgan raqamlar (to'lqin effekti uchun ~2.5 s)
+const increased = reactive(new Set<string>());
+const timers = new Map<string, ReturnType<typeof setTimeout>>();
+
+watch(
+    () => ({ ...page.props.adminBadges }),
+    (now, before) => {
+        for (const [key, value] of Object.entries(now)) {
+            if (value > (before[key] ?? 0)) {
+                increased.add(key);
+                clearTimeout(timers.get(key));
+                timers.set(
+                    key,
+                    setTimeout(() => increased.delete(key), 2500),
+                );
+            }
+        }
+    },
+);
+
+onBeforeUnmount(() => timers.forEach((timer) => clearTimeout(timer)));
+
+function badgeTitle(item: NavItem): string | undefined {
+    return item.badgeHint
+        ? `${t(item.badgeHint)}: ${page.props.adminBadges?.[item.badge ?? ''] ?? 0}`
+        : undefined;
 }
 
 function badgeOf(item: NavItem): string | null {
@@ -86,14 +118,33 @@ function badgeOf(item: NavItem): string | null {
                         </span>
                         <span
                             v-if="badgeOf(item)"
-                            :class="[
-                                'ml-auto min-w-6 rounded-full px-1.5 py-0.5 text-center text-[11px] leading-4 font-semibold tabular-nums group-data-[collapsible=icon]:hidden',
-                                isActive(item)
-                                    ? 'bg-white/20 text-white'
-                                    : 'bg-brand-600 text-white shadow-[0_2px_8px_-2px_rgba(0,108,246,0.8)]',
-                            ]"
+                            class="relative ml-auto flex group-data-[collapsible=icon]:hidden"
+                            :title="badgeTitle(item)"
                         >
-                            {{ badgeOf(item) }}
+                            <span
+                                v-if="item.badge && increased.has(item.badge)"
+                                class="absolute inset-0 animate-ping rounded-full bg-brand-500/70 motion-reduce:hidden"
+                                aria-hidden="true"
+                            />
+                            <Transition
+                                mode="out-in"
+                                enter-active-class="transition duration-300 ease-out"
+                                enter-from-class="scale-50 opacity-0"
+                                leave-active-class="transition duration-150 ease-in"
+                                leave-to-class="scale-125 opacity-0"
+                            >
+                                <span
+                                    :key="badgeOf(item) ?? ''"
+                                    :class="[
+                                        'relative min-w-6 rounded-full px-1.5 py-0.5 text-center text-[11px] leading-4 font-semibold tabular-nums transition-colors duration-200',
+                                        isActive(item)
+                                            ? 'bg-white/20 text-white'
+                                            : 'bg-brand-600 text-white shadow-[0_2px_8px_-2px_rgba(0,108,246,0.8)] group-hover/nav:bg-brand-500',
+                                    ]"
+                                >
+                                    {{ badgeOf(item) }}
+                                </span>
+                            </Transition>
                         </span>
                     </Link>
                 </SidebarMenuButton>
