@@ -21,6 +21,7 @@ enum AdminSection: string
     case Payments = 'payments';
     case Ai = 'ai';
     case Messages = 'messages';
+    case Newsletter = 'newsletter';
     case Reports = 'reports';
     case Settings = 'settings';
 
@@ -62,6 +63,7 @@ enum AdminSection: string
             self::Payments => "To'lovlar",
             self::Ai => 'AI Studio',
             self::Messages => 'Xabarlar',
+            self::Newsletter => 'Obuna',
             self::Reports => 'Statistika va hisobotlar',
             self::Settings => 'Sozlamalar',
             self::Users => 'Foydalanuvchilar',
@@ -83,6 +85,7 @@ enum AdminSection: string
             self::Payments => "Click, Payme va qo'lda tasdiqlangan to'lovlar, qaytarishlar.",
             self::Ai => 'AI xizmatlari (imlo tekshiruvi, tarjima, tahlil) sozlamalari va limitlari.',
             self::Messages => 'Mualliflar bilan yozishmalar va tizim bildirishnomalari.',
+            self::Newsletter => 'Sayt obunachilari, ularga xat yuborish va yangi son haqida avtomatik xabar.',
             self::Reports => "Maqolalar, to'lovlar va faoliyat bo'yicha hisobotlar.",
             self::Settings => "Jurnal ma'lumotlari, yo'nalishlar, maqola turlari va sayt kontenti.",
             self::Users => "Xodimlar va foydalanuvchilarni qo'shish, bloklash, rol berish.",
@@ -109,6 +112,7 @@ enum AdminSection: string
             self::Payments => ["To'lovlar ro'yxati va filtrlari", "Qo'lda tasdiqlash", 'Qaytarish (refund)', 'Narxlar va xizmatlar'],
             self::Ai => ["So'rovlar tarixi", 'Oylik token limitlari', 'Model va xizmat sozlamalari'],
             self::Messages => ['Muallif bilan yozishma', 'Ommaviy xabar yuborish', 'Bildirishnomalar tarixi'],
+            self::Newsletter => ["Obunachilar ro'yxati va CSV eksport", 'Xat yuborish (til bo\'yicha)', 'Yangi son haqida avtomatik xat'],
             self::Reports => ['Davr bo\'yicha statistika', 'Excel / PDF eksport'],
             self::Settings => ["Yo'nalishlar (CRUD)", 'Maqola turlari va narxlar', 'Bannerlar, yangiliklar, tadbirlar, kitoblar'],
             self::Users => ["Ro'yxat, qidiruv, filtr", "Xodim qo'shish va rol berish", 'Bloklash / blokdan chiqarish'],
@@ -130,7 +134,7 @@ enum AdminSection: string
             self::Ai => PermissionName::AiUse,
             self::Messages => PermissionName::ArticlesMessageAuthor,
             self::Reports => PermissionName::ReportsView,
-            self::Settings => PermissionName::ContentManage,
+            self::Settings, self::Newsletter => PermissionName::ContentManage,
             self::Users => PermissionName::UsersManage,
             self::Roles => PermissionName::RolesManage,
             self::Audit => PermissionName::AuditLogView,

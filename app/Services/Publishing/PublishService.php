@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Notifications\ArticleUpdateNotification;
 use App\Services\Articles\ArticleWorkflow;
 use App\Services\Audit\AuditLogger;
+use App\Services\Newsletter\NewsletterCampaignService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -32,6 +33,7 @@ class PublishService
     public function __construct(
         private readonly ArticleWorkflow $workflow,
         private readonly AuditLogger $audit,
+        private readonly NewsletterCampaignService $newsletter,
     ) {}
 
     /**
@@ -101,6 +103,9 @@ class PublishService
         foreach ($published as $article) {
             $this->notify($article);
         }
+
+        // Obunachilarga "Yangi son" xati (sozlama yoqiq bo'lsa; xatolik nashrni buzmaydi)
+        $this->newsletter->announceIssue($issue, $user);
 
         return $published;
     }

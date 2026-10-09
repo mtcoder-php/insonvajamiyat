@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Web\SubscribeNewsletterRequest;
-use App\Services\NewsletterService;
+use App\Services\Newsletter\NewsletterService;
 use App\Support\Seo\SeoMeta;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response as HttpResponse;

@@ -21,3 +21,4 @@ export * from './people';
 export * from './system';
 export * from './admin-messages';
 export * from './pages';
+export * from './newsletter';

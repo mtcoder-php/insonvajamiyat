@@ -11,6 +11,7 @@ import {
     FileText,
     House,
     Mail,
+    MailPlus,
     Settings,
     UserCheck,
     UserLock,
@@ -25,6 +26,7 @@ import { index as authorsIndex } from '@/routes/admin/authors';
 import { index as backupsIndex } from '@/routes/admin/backups';
 import { index as issuesIndex } from '@/routes/admin/issues';
 import { index as messagesIndex } from '@/routes/admin/messages';
+import { index as newsletterIndex } from '@/routes/admin/newsletter';
 import { index as paymentsIndex } from '@/routes/admin/payments';
 import { index as productionIndex } from '@/routes/admin/production';
 import { index as reportsIndex } from '@/routes/admin/reports';
@@ -137,6 +139,12 @@ export function adminNavigation(): NavGroup[] {
                     permission: 'articles.message_author',
                     badge: 'messages',
                     badgeHint: tk("O'qilmagan xabarlar va bildirishnomalar"),
+                },
+                {
+                    title: tk('Obuna'),
+                    href: newsletterIndex(),
+                    icon: MailPlus,
+                    permission: 'content.manage',
                 },
                 {
                     title: tk('Statistika'),

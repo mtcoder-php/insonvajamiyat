@@ -325,6 +325,23 @@ Manzil: `/admin/messages`. Ruxsat: **Muallif bilan yozishish**.
     - yuborilgan xabarni qaytarib bo'lmaydi; tarix «Yuborilganlar»da.
 - **Bildirishnomalar** — barcha bildirishnomalar va «Hammasini o'qilgan deb belgilash».
 
+### 12.1. Obuna (sayt obunachilari)
+
+Manzil: `/admin/newsletter`. Ruxsat: **Kontentni boshqarish**.
+
+Saytning pastidagi «Yangiliklardan xabardor bo'ling» formasi ikki bosqichli (double opt-in):
+manzil kiritilgach, unga tasdiqlash xati boradi; havola bosilgandagina obunachi **faol** bo'ladi.
+30 kun ichida tasdiqlanmagan manzillar avtomatik o'chiriladi. Har bir xatda «Obunadan chiqish»
+havolasi bor, pochta dasturlaridagi «Отписаться / Unsubscribe» tugmasi ham ishlaydi.
+
+- **Xat yuborish** tabi:
+    - **Yangi son haqida tayyor matn** — so'nggi chop etilgan sonlardan birini bossangiz, mavzu, matn (mundarija bilan) va «Sonni o'qish» tugmasi o'zi to'ladi; tahrirlab yuborish mumkin. ✓ belgisi — bu son haqida xat allaqachon ketgan;
+    - **Kimga**: barcha faol obunachilar yoki faqat bitta til (o'zbek / rus / ingliz — obuna bo'lgandagi sayt tili);
+    - Mavzu, Matn (xatboshilar bo'sh qator bilan), ixtiyoriy **tugma** (matn + https havola);
+    - yuborilgan xatni qaytarib bo'lmaydi; holati va soni «Yuborilganlar»da.
+- **Yangi son haqida avtomatik xat** (o'ng tomondagi kalit, standart — yoqiq): son chop etilganda barcha faol obunachilarga avtomatik xat ketadi (har bir songa bir marta).
+- **Obunachilar** tabi: email bo'yicha qidiruv, holat filtri (Faol / Tasdiq kutilmoqda / Chiqqan), **CSV yuklab olish** (Excel'da ochiladi), o'chirish. Obunadan chiqqanlarni o'chirmang — aks holda ular xatlarni qayta olishi mumkin.
+
 ---
 
 ## 13. Statistika va hisobotlar

@@ -58,6 +58,7 @@ enum AuditEvent: string
     // Sayt kontenti va sozlamalar
     case ContentSaved = 'content.saved';
     case ContentDeleted = 'content.deleted';
+    case NewsletterSent = 'content.newsletter';
     case PriceChanged = 'content.price';
 
     // AI Studio
@@ -122,6 +123,7 @@ enum AuditEvent: string
             self::RefundFailed => "To'lovni qaytarib bo'lmadi",
             self::ContentSaved => 'Kontent saqlandi',
             self::ContentDeleted => "Kontent o'chirildi",
+            self::NewsletterSent => 'Obunachilarga xat yuborildi',
             self::PriceChanged => "Maqola turi narxi o'zgartirildi",
             self::AiSettingsUpdated => "AI sozlamalari o'zgartirildi",
             self::AiPromptUpdated => "AI ko'rsatma shabloni o'zgartirildi",
@@ -158,7 +160,7 @@ enum AuditEvent: string
             self::PaymentConfirmed, self::PaymentWaived, self::RefundRequested, self::PaymentRefunded, self::RefundFailed, self::UserPasswordChanged, self::PasswordReset,
             self::ProductionApprovalRevoked, self::ReportExported, self::UserUpdated, self::ProofApprovalWaived,
             self::AiSettingsUpdated, self::AiPromptUpdated, self::AiLimitUpdated,
-            self::PriceChanged, self::ContentDeleted, self::ReviewerRemoved,
+            self::PriceChanged, self::ContentDeleted, self::ReviewerRemoved, self::NewsletterSent,
             self::RolePermissionsUpdated, self::SettingsUpdated, self::BroadcastSent,
             self::BackupDownloaded, self::BackupDeleted, self::SocialUnlinked => 'warning',
             default => 'info',
