@@ -99,6 +99,8 @@ export type IssueTocArticle = {
 
 export type IssuePageProps = {
     issue: ArchiveIssue;
+    /** Sarlavha rasmi (config journal.heroes.issue) */
+    hero: string | null;
     sections: { title: string | null; articles: IssueTocArticle[] }[];
     neighbours: {
         prev: { label: string; url: string } | null;

@@ -4,7 +4,6 @@ import {
     ArrowLeft,
     ArrowRight,
     CalendarDays,
-    ChevronRight,
     Download,
     Eye,
     FileText,
@@ -13,10 +12,10 @@ import {
     UsersRound,
 } from '@lucide/vue';
 import IssueCover from '@/components/web/IssueCover.vue';
+import WebHero from '@/components/web/WebHero.vue';
 import { formatDate, formatFileSize, formatNumber } from '@/lib/format';
 import { subjectTone } from '@/lib/subjects';
 import { cn } from '@/lib/utils';
-import { home } from '@/routes';
 import { index } from '@/routes/issues';
 import type { IssuePageProps } from '@/types';
 import { t, tc } from '@/lib/i18n';
@@ -30,123 +29,94 @@ defineProps<IssuePageProps>();
 <template>
     <Head :title="t(':label — jurnal soni', { label: issue.label })" />
 
-    <section
-        class="relative isolate overflow-hidden bg-navy-gradient text-white"
+    <WebHero
+        :title="
+            t(':year-yil, :number-son', {
+                year: issue.year,
+                number: issue.number,
+            })
+        "
+        :description="issue.title ?? undefined"
+        :image="hero"
+        :crumbs="[
+            { title: t('Jurnal sonlari'), href: index() },
+            { title: issue.label },
+        ]"
     >
-        <div
-            class="absolute inset-0 -z-10 bg-girih opacity-[0.06]"
-            aria-hidden="true"
-        />
-        <div
-            class="mx-auto flex w-full max-w-[1700px] flex-col gap-8 px-4 py-9 sm:px-6 md:flex-row md:items-end lg:w-[90%] lg:px-0 lg:py-12"
-        >
+        <template #lead>
             <IssueCover
                 :src="issue.coverUrl"
                 :number="issue.number"
                 :year="issue.year"
                 priority
-                class="w-44 shrink-0 shadow-[0_30px_60px_-30px_rgba(0,0,0,0.9)] md:w-52"
+                class="mt-5 w-40 shrink-0 shadow-[0_30px_60px_-30px_rgba(0,30,60,0.9)] transition-transform duration-500 hover:-translate-y-1 hover:rotate-[-1deg] md:w-48"
             />
-            <div class="min-w-0 flex-1">
-                <nav
-                    class="flex flex-wrap items-center gap-1 text-xs text-white/60"
-                    :aria-label="t('Non-yo\'l')"
-                >
-                    <Link :href="home()" class="hover:text-white">{{
-                        t('Bosh sahifa')
-                    }}</Link>
-                    <ChevronRight class="size-3.5" />
-                    <Link :href="index()" class="hover:text-white">{{
-                        t('Jurnal sonlari')
-                    }}</Link>
-                    <ChevronRight class="size-3.5" />
-                    <span class="text-white/85">{{ issue.label }}</span>
-                </nav>
-                <h1
-                    class="mt-3 font-serif text-3xl font-bold text-white sm:text-4xl"
-                >
-                    {{
-                        t(':year-yil, :number-son', {
-                            year: issue.year,
-                            number: issue.number,
-                        })
-                    }}
-                </h1>
-                <p v-if="issue.title" class="mt-2 text-lg text-white/85">
-                    {{ issue.title }}
-                </p>
-                <div class="mt-3 gold-rule w-20" />
-                <dl
-                    class="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/80"
-                >
-                    <div class="flex items-center gap-1.5">
-                        <CalendarDays class="size-4 text-gold-400" />
-                        <dt class="sr-only">{{ t('Chop etilgan') }}</dt>
-                        <dd>{{ formatDate(issue.publishedAt) }}</dd>
-                    </div>
-                    <div v-if="issue.volume" class="flex items-center gap-1.5">
-                        <dt class="text-white/60">{{ t('Jild:') }}</dt>
-                        <dd>{{ issue.volume }}</dd>
-                    </div>
-                    <div class="flex items-center gap-1.5">
-                        <FileText class="size-4 text-gold-400" />
-                        <dd>
-                            {{ tc(':count maqola', issue.articlesCount ?? 0) }}
-                        </dd>
-                    </div>
-                    <div class="flex items-center gap-1.5">
-                        <UsersRound class="size-4 text-gold-400" />
-                        <dd>{{ tc(':count muallif', issue.authorsCount) }}</dd>
-                    </div>
-                    <div
-                        v-if="issue.pagesTotal"
-                        class="flex items-center gap-1.5"
-                    >
-                        <ListOrdered class="size-4 text-gold-400" />
-                        <dd>{{ tc(':count bet', issue.pagesTotal) }}</dd>
-                    </div>
-                    <div v-if="issue.doi" class="flex items-center gap-1.5">
-                        <Fingerprint class="size-4 text-gold-400" />
-                        <dd>
-                            <a
-                                :href="`https://doi.org/${issue.doi}`"
-                                target="_blank"
-                                rel="noopener"
-                                class="hover:underline"
-                                >{{ issue.doi }}</a
-                            >
-                        </dd>
-                    </div>
-                </dl>
-                <div class="mt-6 flex flex-wrap gap-3">
+        </template>
+
+        <dl class="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-sm text-navy-700">
+            <div class="flex items-center gap-1.5">
+                <CalendarDays class="size-4 text-gold-500" />
+                <dt class="sr-only">{{ t('Chop etilgan') }}</dt>
+                <dd>{{ formatDate(issue.publishedAt) }}</dd>
+            </div>
+            <div v-if="issue.volume" class="flex items-center gap-1.5">
+                <dt class="text-navy-500">{{ t('Jild:') }}</dt>
+                <dd>{{ issue.volume }}</dd>
+            </div>
+            <div class="flex items-center gap-1.5">
+                <FileText class="size-4 text-gold-500" />
+                <dd>
+                    {{ tc(':count maqola', issue.articlesCount ?? 0) }}
+                </dd>
+            </div>
+            <div class="flex items-center gap-1.5">
+                <UsersRound class="size-4 text-gold-500" />
+                <dd>{{ tc(':count muallif', issue.authorsCount) }}</dd>
+            </div>
+            <div v-if="issue.pagesTotal" class="flex items-center gap-1.5">
+                <ListOrdered class="size-4 text-gold-500" />
+                <dd>{{ tc(':count bet', issue.pagesTotal) }}</dd>
+            </div>
+            <div v-if="issue.doi" class="flex items-center gap-1.5">
+                <Fingerprint class="size-4 text-gold-500" />
+                <dd>
                     <a
-                        v-if="issue.pdfUrl"
-                        :href="issue.pdfUrl"
-                        download
-                        class="inline-flex h-11 items-center gap-2 rounded-xl bg-white px-5 text-sm font-semibold text-navy-950 shadow-[0_12px_28px_-14px_rgba(0,0,0,0.8)] transition-all hover:-translate-y-px hover:bg-gold-100"
-                    >
-                        <Download class="size-4" />
-                        {{ t('Butun sonni yuklab olish') }}
-                        <span
-                            v-if="issue.pdfSize"
-                            class="font-normal text-navy-500"
-                            >({{ formatFileSize(issue.pdfSize) }})</span
-                        >
-                    </a>
-                    <a
-                        v-if="issue.tocUrl"
-                        :href="issue.tocUrl"
+                        :href="`https://doi.org/${issue.doi}`"
                         target="_blank"
                         rel="noopener"
-                        class="inline-flex h-11 items-center gap-2 rounded-xl border border-white/30 px-5 text-sm font-semibold transition-all hover:-translate-y-px hover:bg-white/10"
+                        class="text-brand-700 hover:underline"
+                        >{{ issue.doi }}</a
                     >
-                        <ListOrdered class="size-4" />
-                        {{ t('Mundarija (PDF)') }}
-                    </a>
-                </div>
+                </dd>
             </div>
+        </dl>
+        <div class="mt-6 flex flex-wrap gap-3">
+            <a
+                v-if="issue.pdfUrl"
+                :href="issue.pdfUrl"
+                download
+                class="group inline-flex h-11 items-center gap-2 rounded-xl bg-navy-950 px-5 text-sm font-semibold text-white shadow-[0_12px_28px_-14px_rgba(0,30,60,0.9)] transition-all hover:-translate-y-px hover:bg-navy-800"
+            >
+                <Download
+                    class="size-4 text-gold-300 transition-transform duration-300 group-hover:translate-y-0.5"
+                />
+                {{ t('Butun sonni yuklab olish') }}
+                <span v-if="issue.pdfSize" class="font-normal text-white/60"
+                    >({{ formatFileSize(issue.pdfSize) }})</span
+                >
+            </a>
+            <a
+                v-if="issue.tocUrl"
+                :href="issue.tocUrl"
+                target="_blank"
+                rel="noopener"
+                class="inline-flex h-11 items-center gap-2 rounded-xl bg-white px-5 text-sm font-semibold text-navy-800 ring-1 ring-line transition-all hover:-translate-y-px hover:text-brand-700 hover:ring-brand-200"
+            >
+                <ListOrdered class="size-4" />
+                {{ t('Mundarija (PDF)') }}
+            </a>
         </div>
-    </section>
+    </WebHero>
 
     <div class="bg-[#f6f8fb]">
         <div

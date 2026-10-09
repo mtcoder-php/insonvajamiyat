@@ -44,6 +44,9 @@ class IssueController extends Controller
         abort_unless($issue->status === IssueStatus::Published, 404);
         app(SeoMeta::class)->forIssue($issue);
 
-        return Inertia::render('web/issues/Show', $archive->show($issue));
+        return Inertia::render('web/issues/Show', [
+            ...$archive->show($issue),
+            'hero' => StaticPageController::hero('issue'),
+        ]);
     }
 }

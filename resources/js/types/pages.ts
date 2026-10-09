@@ -28,6 +28,8 @@ export type BoardGroup = {
 
 export type AboutPageProps = {
     page: StaticPage;
+    /** Sarlavha rasmi (config journal.heroes) */
+    hero: string | null;
     board: BoardGroup[];
     facts: { label: string; value: string }[];
     subjects: { name: string; slug: string }[];
@@ -60,6 +62,8 @@ export type PublicDocument = {
 
 export type GuidelinesPageProps = {
     page: StaticPage;
+    /** Sarlavha rasmi (config journal.heroes) */
+    hero: string | null;
     template: string | null;
     documents: PublicDocument[];
     types: {
@@ -76,4 +80,6 @@ export type GuidelinesPageProps = {
 
 export type ContactPageProps = {
     page: StaticPage;
+    /** Sarlavha rasmi (config journal.heroes) */
+    hero: string | null;
 };

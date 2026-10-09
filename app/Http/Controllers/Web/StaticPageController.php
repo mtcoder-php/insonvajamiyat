@@ -33,6 +33,7 @@ class StaticPageController extends Controller
 
         return Inertia::render('web/About', [
             'page' => $page,
+            'hero' => self::hero('about'),
             'board' => $board->public(),
             'facts' => $this->facts(),
             'subjects' => Subject::query()->active()->get()
@@ -55,6 +56,7 @@ class StaticPageController extends Controller
 
         return Inertia::render('web/Guidelines', [
             'page' => $page,
+            'hero' => self::hero('guidelines'),
             'template' => $documents->templateUrl(),
             'documents' => $documents->public(),
             'types' => ArticleType::query()->where('is_active', true)->orderBy('sort_order')->orderBy('id')->get()
@@ -76,6 +78,7 @@ class StaticPageController extends Controller
     {
         return Inertia::render('web/Contact', [
             'page' => $this->page(PageSlug::Contact),
+            'hero' => self::hero('contact'),
         ]);
     }
 
@@ -91,6 +94,12 @@ class StaticPageController extends Controller
         }
 
         return $page;
+    }
+
+    /** Sarlavha rasmi (config journal.heroes.*, public/ ichidagi fayl; topilmasa — rasmsiz) */
+    public static function hero(string $key): ?string
+    {
+        return MediaUrl::publicAsset(config('journal.heroes.'.$key));
     }
 
     /**
