@@ -409,3 +409,40 @@
     scrollbar-width: thin;
     scrollbar-color: rgb(123 155 189 / 0.5) transparent;
 }
+
+/* Hamkorlar lentasi (PartnersStrip.vue): ikki nusxa yonma-yon, -50% ga siljib cheksiz oqadi */
+@keyframes partners-marquee {
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+.partners-marquee {
+    mask-image: linear-gradient(
+        to right,
+        transparent,
+        #000 4%,
+        #000 96%,
+        transparent
+    );
+}
+
+.partners-marquee-track {
+    animation: partners-marquee linear infinite;
+}
+
+/* Sichqoncha yoki klaviatura fokusi kelganda to'xtaydi */
+.partners-marquee:hover .partners-marquee-track,
+.partners-marquee:focus-within .partners-marquee-track {
+    animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .partners-marquee {
+        mask-image: none;
+    }
+
+    .partners-marquee-track {
+        animation: none;
+    }
+}
