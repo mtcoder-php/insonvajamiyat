@@ -145,7 +145,11 @@ function submit(): void {
                     aspect-class="aspect-[3/2]"
                     fit="contain"
                     :prepare="null"
-                    :hint="t('Logo · PNG/WEBP · 2 MB gacha')"
+                    :hint="
+                        t(
+                            'Logo · PNG/WEBP · 2 MB gacha. Yuklanmasa, saytda nomdan monogramma chiqadi',
+                        )
+                    "
                 />
                 <div class="grid min-w-0 grid-cols-1 content-start gap-4">
                     <TranslatableField
@@ -183,7 +187,11 @@ function submit(): void {
                     :label="t('Sayt manzili')"
                     for="partner-url"
                     :error="errors.url"
-                    hint="https://…"
+                    :hint="
+                        t(
+                            'Kiritilsa, saytdagi karta shu manzilga havola bo\'ladi (yangi oynada ochiladi)',
+                        )
+                    "
                 >
                     <input
                         id="partner-url"

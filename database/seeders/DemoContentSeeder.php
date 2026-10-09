@@ -122,12 +122,12 @@ class DemoContentSeeder extends Seeder
         ['OpenAIRE', 'Indekslangan', 'https://www.openaire.eu'],
     ];
 
-    /** @var array<int, string> */
+    /** @var array<int, array{0: string, 1: string}> [nom, sayt] */
     private const PARTNERS = [
-        "O'zbekiston Respublikasi Oliy ta'lim, fan va innovatsiyalar vazirligi",
-        'Yangi Asr universiteti',
-        "O'zbekiston Milliy universiteti",
-        'Toshkent davlat pedagogika universiteti',
+        ["O'zbekiston Respublikasi Oliy ta'lim, fan va innovatsiyalar vazirligi", 'https://edu.uz'],
+        ['Yangi Asr universiteti', 'https://yangiasr.uz'],
+        ["O'zbekiston Milliy universiteti", 'https://nuu.uz'],
+        ['Toshkent davlat pedagogika universiteti', 'https://tdpu.uz'],
     ];
 
     /** @var array<int, array{0: string, 1: string, 2: int}> [nom, muallif, yil] */
@@ -264,7 +264,7 @@ class DemoContentSeeder extends Seeder
             DB::table('posts')->whereIn('slug', $postSlugs)->delete();
             DB::table('events')->whereIn('slug', array_map(fn (array $event): string => Str::slug($event[0]), self::EVENTS))->delete();
 
-            $partnerNames = [...array_column(self::INDEXING, 0), ...self::PARTNERS];
+            $partnerNames = [...array_column(self::INDEXING, 0), ...array_column(self::PARTNERS, 0)];
             Partner::query()->whereIn('name->uz', $partnerNames)->get()->each->delete();
             RecommendedBook::query()->whereIn('title->uz', array_column(self::BOOKS, 0))->get()->each->delete();
 
@@ -320,11 +320,11 @@ class DemoContentSeeder extends Seeder
             ]);
         }
 
-        foreach (self::PARTNERS as $i => $name) {
+        foreach (self::PARTNERS as $i => [$name, $url]) {
             Partner::factory()->create([
                 'type' => PartnerType::Partner,
                 'name' => ['uz' => $name],
-                'url' => null,
+                'url' => $url,
                 'sort_order' => $i,
             ]);
         }
