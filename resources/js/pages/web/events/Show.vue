@@ -10,6 +10,7 @@ import {
 } from '@lucide/vue';
 import { computed } from 'vue';
 import WebHero from '@/components/web/WebHero.vue';
+import { toParagraphs } from '@/lib/text';
 import { eventDateParts, formatDateLong } from '@/lib/format';
 import { index } from '@/routes/events';
 import type { EventDetail, EventItem } from '@/types';
@@ -38,12 +39,7 @@ const date = computed(() => {
     return end && end !== start ? `${start} — ${end}` : start;
 });
 
-const paragraphs = computed(() =>
-    (props.event.description ?? '')
-        .split(/\n{2,}/)
-        .map((p) => p.trim())
-        .filter(Boolean),
-);
+const paragraphs = computed(() => toParagraphs(props.event.description));
 </script>
 
 <template>
@@ -116,7 +112,11 @@ const paragraphs = computed(() =>
                     <div
                         class="max-w-3xl space-y-5 font-serif text-[17px] leading-[1.8] text-navy-800"
                     >
-                        <p v-for="(paragraph, i) in paragraphs" :key="i">
+                        <p
+                            v-for="(paragraph, i) in paragraphs"
+                            :key="i"
+                            class="whitespace-pre-line"
+                        >
                             {{ paragraph }}
                         </p>
                         <p v-if="!paragraphs.length" class="text-navy-500">

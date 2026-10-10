@@ -40,7 +40,8 @@ final class Translations
             $text = $value[$language->value] ?? null;
 
             if (is_string($text) && trim($text) !== '') {
-                $result[$language->value] = trim($text);
+                // Rasmli (multipart) formada brauzer qatorlarni \r\n ga aylantiradi — bir xil saqlaymiz
+                $result[$language->value] = trim(str_replace(["\r\n", "\r"], "\n", $text));
             }
         }
 

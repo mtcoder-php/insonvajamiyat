@@ -5,6 +5,7 @@ import { computed } from 'vue';
 import WebHero from '@/components/web/WebHero.vue';
 import { formatDate, formatDateLong } from '@/lib/format';
 import { index } from '@/routes/news';
+import { sameText, toParagraphs } from '@/lib/text';
 import type { PostDetail, PostItem } from '@/types';
 import { t } from '@/lib/i18n';
 
@@ -18,13 +19,16 @@ const props = defineProps<{
     others: PostItem[];
 }>();
 
-// Matn xatboshilarga bo'linadi (bo'sh qator bilan ajratilgan)
-const paragraphs = computed(() =>
-    (props.post.body ?? props.post.excerpt ?? '')
-        .split(/\n{2,}/)
-        .map((p) => p.trim())
-        .filter(Boolean),
+// Matn xatboshilarga bo'linadi (bo'sh qator bilan ajratilgan). Qisqa mazmun (lead) alohida
+// yirikroq ko'rsatiladi; to'liq matn u bilan boshlansa — birinchi xatboshi takrorlanmaydi.
+const lead = computed(() =>
+    props.post.body && props.post.excerpt ? props.post.excerpt : null,
 );
+const paragraphs = computed(() => {
+    const all = toParagraphs(props.post.body ?? props.post.excerpt);
+
+    return lead.value && sameText(all[0], lead.value) ? all.slice(1) : all;
+});
 </script>
 
 <template>
@@ -76,19 +80,18 @@ const paragraphs = computed(() =>
                     class="mb-8 aspect-[16/8] w-full rounded-xl object-cover shadow-md"
                 />
                 <p
-                    v-if="post.excerpt && post.body"
-                    class="font-serif text-xl leading-relaxed text-navy-800"
+                    v-if="lead"
+                    class="font-serif text-xl leading-relaxed whitespace-pre-line text-navy-800"
                 >
-                    {{ post.excerpt }}
+                    {{ lead }}
                 </p>
                 <div
                     class="mt-6 max-w-3xl space-y-5 font-serif text-[17px] leading-[1.8] text-navy-800"
                 >
                     <p
-                        v-for="(paragraph, i) in paragraphs.slice(
-                            post.excerpt && post.body ? 1 : 0,
-                        )"
+                        v-for="(paragraph, i) in paragraphs"
                         :key="i"
+                        class="whitespace-pre-line"
                     >
                         {{ paragraph }}
                     </p>
