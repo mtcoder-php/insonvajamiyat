@@ -82,12 +82,12 @@ const lead = computed(() =>
                 <!-- Server tomonda tozalangan HTML (App\Support\Html\RichText) -->
                 <div
                     v-if="post.body"
-                    class="web-prose mt-6 max-w-3xl"
+                    class="web-prose mt-6"
                     v-html="post.body"
                 />
                 <p
                     v-else-if="post.excerpt"
-                    class="mt-6 max-w-3xl font-serif text-[17px] leading-[1.8] whitespace-pre-line text-navy-800"
+                    class="mt-6 font-serif text-[17px] leading-[1.8] whitespace-pre-line text-navy-800"
                 >
                     {{ post.excerpt }}
                 </p>
