@@ -105,83 +105,90 @@ function submit(): void {
         :icon="event ? PenLine : CalendarPlus"
         :confirm-text="event ? t('Saqlash') : t('Qo\'shish')"
         :processing="form.processing"
-        size="lg"
+        size="xl"
         @confirm="submit"
     >
         <div class="grid grid-cols-1 gap-4">
-            <TranslatableField
-                v-model="form.title"
-                :label="t('Tadbir nomi')"
-                field="title"
-                :errors="errors"
-                required
-                :maxlength="255"
-                :placeholder="t('Xalqaro ilmiy-amaliy konferensiya')"
-            />
-
-            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <FormField
-                    :label="t('Boshlanishi')"
-                    for="event-start"
-                    :error="errors.starts_at"
-                    required
-                >
-                    <input
-                        id="event-start"
-                        v-model="form.starts_at"
-                        type="datetime-local"
-                        :class="inputClass"
-                    />
-                </FormField>
-                <FormField
-                    :label="t('Tugashi')"
-                    for="event-end"
-                    :error="errors.ends_at"
-                    :hint="t('Bir kunlik tadbir uchun bo\'sh qoldiring')"
-                >
-                    <input
-                        id="event-end"
-                        v-model="form.ends_at"
-                        type="datetime-local"
-                        :min="form.starts_at || undefined"
-                        :class="inputClass"
-                    />
-                </FormField>
-            </div>
-
-            <TranslatableField
-                v-model="form.location"
-                :label="t('O\'tkaziladigan joy')"
-                field="location"
-                :errors="errors"
-                :maxlength="255"
-                :placeholder="t('Toshkent, O\'zMU yoki Onlayn (Zoom)')"
-            />
-
-            <FormField
-                :label="t('Ro\'yxatdan o\'tish havolasi')"
-                for="event-reg"
-                :error="errors.registration_url"
-                :hint="t('https://… (Google Forms, sayt sahifasi)')"
+            <div
+                class="grid grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)]"
             >
-                <input
-                    id="event-reg"
-                    v-model.trim="form.registration_url"
-                    type="url"
-                    maxlength="500"
-                    :class="inputClass"
-                    placeholder="https://forms.gle/…"
+                <ImagePicker
+                    v-model:file="form.image"
+                    v-model:removed="form.remove_image"
+                    :current-url="event?.imageUrl ?? null"
+                    :error="errors.image"
+                    aspect-class="aspect-[4/3]"
+                    :hint="t('Afisha yoki rasm · kamida 600×300 · ixtiyoriy')"
                 />
-            </FormField>
+                <div class="grid content-start gap-4">
+                    <TranslatableField
+                        v-model="form.title"
+                        :label="t('Tadbir nomi')"
+                        field="title"
+                        :errors="errors"
+                        required
+                        :maxlength="255"
+                        :placeholder="t('Xalqaro ilmiy-amaliy konferensiya')"
+                    />
 
-            <ImagePicker
-                v-model:file="form.image"
-                v-model:removed="form.remove_image"
-                :current-url="event?.imageUrl ?? null"
-                :error="errors.image"
-                aspect-class="aspect-[16/6]"
-                :hint="t('Afisha yoki rasm · kamida 600×300 · ixtiyoriy')"
-            />
+                    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                        <FormField
+                            :label="t('Boshlanishi')"
+                            for="event-start"
+                            :error="errors.starts_at"
+                            required
+                        >
+                            <input
+                                id="event-start"
+                                v-model="form.starts_at"
+                                type="datetime-local"
+                                :class="inputClass"
+                            />
+                        </FormField>
+                        <FormField
+                            :label="t('Tugashi')"
+                            for="event-end"
+                            :error="errors.ends_at"
+                            :hint="
+                                t('Bir kunlik tadbir uchun bo\'sh qoldiring')
+                            "
+                        >
+                            <input
+                                id="event-end"
+                                v-model="form.ends_at"
+                                type="datetime-local"
+                                :min="form.starts_at || undefined"
+                                :class="inputClass"
+                            />
+                        </FormField>
+                    </div>
+
+                    <TranslatableField
+                        v-model="form.location"
+                        :label="t('O\'tkaziladigan joy')"
+                        field="location"
+                        :errors="errors"
+                        :maxlength="255"
+                        :placeholder="t('Toshkent, O\'zMU yoki Onlayn (Zoom)')"
+                    />
+
+                    <FormField
+                        :label="t('Ro\'yxatdan o\'tish havolasi')"
+                        for="event-reg"
+                        :error="errors.registration_url"
+                        :hint="t('https://… (Google Forms, sayt sahifasi)')"
+                    >
+                        <input
+                            id="event-reg"
+                            v-model.trim="form.registration_url"
+                            type="url"
+                            maxlength="500"
+                            :class="inputClass"
+                            placeholder="https://forms.gle/…"
+                        />
+                    </FormField>
+                </div>
+            </div>
 
             <TranslatableField
                 v-model="form.description"

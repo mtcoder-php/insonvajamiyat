@@ -118,7 +118,7 @@ function submit(): void {
         :icon="post ? PenLine : SquarePen"
         :confirm-text="post ? t('Saqlash') : t('Qo\'shish')"
         :processing="form.processing"
-        size="lg"
+        size="xl"
         @confirm="submit"
     >
         <div class="grid grid-cols-1 gap-4">
@@ -148,33 +148,40 @@ function submit(): void {
                 </button>
             </div>
 
-            <ImagePicker
-                v-model:file="form.image"
-                v-model:removed="form.remove_image"
-                :current-url="post?.imageUrl ?? null"
-                :error="errors.image"
-                aspect-class="aspect-[16/6]"
-                :hint="t('JPG, PNG, WEBP · kamida 600×300 · tavsiya 1600×800')"
-            />
-
-            <TranslatableField
-                v-model="form.title"
-                :label="t('Sarlavha')"
-                field="title"
-                :errors="errors"
-                required
-                :maxlength="255"
-            />
-            <TranslatableField
-                v-model="form.excerpt"
-                :label="t('Qisqa mazmun')"
-                field="excerpt"
-                :errors="errors"
-                multiline
-                :rows="2"
-                :maxlength="500"
-                :placeholder="t('Ro\'yxatda sarlavha ostida chiqadi')"
-            />
+            <div
+                class="grid grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)]"
+            >
+                <ImagePicker
+                    v-model:file="form.image"
+                    v-model:removed="form.remove_image"
+                    :current-url="post?.imageUrl ?? null"
+                    :error="errors.image"
+                    aspect-class="aspect-[16/9]"
+                    :hint="
+                        t('JPG, PNG, WEBP · kamida 600×300 · tavsiya 1600×800')
+                    "
+                />
+                <div class="grid content-start gap-4">
+                    <TranslatableField
+                        v-model="form.title"
+                        :label="t('Sarlavha')"
+                        field="title"
+                        :errors="errors"
+                        required
+                        :maxlength="255"
+                    />
+                    <TranslatableField
+                        v-model="form.excerpt"
+                        :label="t('Qisqa mazmun')"
+                        field="excerpt"
+                        :errors="errors"
+                        multiline
+                        :rows="3"
+                        :maxlength="500"
+                        :placeholder="t('Ro\'yxatda sarlavha ostida chiqadi')"
+                    />
+                </div>
+            </div>
             <TranslatableField
                 v-model="form.body"
                 :label="t('To\'liq matn')"
