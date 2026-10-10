@@ -30,23 +30,23 @@ const locale = useLocale();
         :aria-label="t('Ilmiy yo\'nalishlar')"
     >
         <ul
-            class="mx-auto grid w-full max-w-[1700px] grid-cols-2 gap-1 px-3 py-3 sm:grid-cols-3 sm:px-6 lg:flex lg:w-[90%] lg:items-center lg:gap-0 lg:px-0 lg:py-4"
+            class="mx-auto grid w-full max-w-[1700px] grid-cols-2 gap-1 px-3 py-3 sm:grid-cols-3 sm:px-6 lg:w-[90%] lg:grid-cols-4 lg:px-0 lg:py-4 xl:flex xl:items-center xl:gap-0"
         >
             <template v-for="(subject, index) in visible" :key="subject.id">
                 <li
                     v-if="index > 0"
-                    class="hidden h-12 w-px shrink-0 bg-[#dcdfe1] lg:block"
+                    class="hidden h-12 w-px shrink-0 bg-[#dcdfe1] xl:block"
                     aria-hidden="true"
                 />
                 <li
-                    class="strip-item flex lg:flex-1 lg:justify-center lg:px-1.5"
+                    class="strip-item flex xl:flex-1 xl:justify-center xl:px-1.5"
                     :style="{ animationDelay: `${index * 70}ms` }"
                 >
                     <Link
                         :href="
                             articlesIndex({ query: { subject: subject.slug } })
                         "
-                        class="group relative flex w-full items-center gap-3.5 rounded-xl px-3 py-3 ring-1 ring-transparent transition-all duration-300 ease-out outline-none hover:-translate-y-1 hover:bg-white hover:shadow-[0_14px_32px_-14px_rgba(0,36,66,0.35)] hover:ring-[#e6e3dc] focus-visible:bg-white focus-visible:ring-2 focus-visible:ring-brand-300 lg:w-auto lg:px-4"
+                        class="group relative flex w-full items-center gap-3.5 rounded-xl px-3 py-3 ring-1 ring-transparent transition-all duration-300 ease-out outline-none hover:-translate-y-1 hover:bg-white hover:shadow-[0_14px_32px_-14px_rgba(0,36,66,0.35)] hover:ring-[#e6e3dc] focus-visible:bg-white focus-visible:ring-2 focus-visible:ring-brand-300 xl:w-auto xl:px-4"
                     >
                         <span
                             class="relative flex size-12 shrink-0 items-center justify-center rounded-full transition-all duration-300 group-hover:bg-navy-900 group-hover:shadow-lg group-hover:shadow-navy-900/25"

@@ -200,6 +200,7 @@ Barcha tekshiruvlar bitta buyruq bilan ishga tushiriladi: `composer ci:check`. H
 - **Xavfsizlik auditi** (70-bosqich) — kirish nazorati, hisobni egallash ssenariylari, fayllarga kirish, rate limiting; topilgan kamchiliklar tuzatilib, regressiya testlari qo'shilgan.
 - **Samaradorlik auditi** (71-bosqich) — N+1 so'rovlar, indekslar, emaillarni navbatga o'tkazish.
 - **Frontend/SEO auditi** (72-bosqich) — meta teglar, gidratatsiya, kirish imkoniyatlari (a11y).
+- **Yakuniy brauzer sinovi (rollar bo'yicha avtomatik aylanib chiqish)** — Playwright skripti har bir rol (mehmon, bosh administrator, bosh muharrir, muharrir, taqrizchi, maketchi, kontent menejeri, muallif) bilan tizimga kirib, sahifadagi barcha havolalar bo'ylab ~60–100 ta sahifani ochdi va quyidagilarni yozib bordi: HTTP 4xx/5xx javoblar, xato sahifalari, JavaScript xatolari (konsol, pageerror) va gorizontal siljish (sahifa ekrandan kengayib ketishi). Sinov 390, 768, 1024 va 1440 px kengliklarda takrorlandi. Natija: 5xx va JavaScript xatolari yo'q; ruxsat yo'q bo'limlar kutilganidek 403. Topilgan va tuzatilgan kamchiliklar: muallif kabinetining telefondagi ko'rinishi (statistika kartalari ekrandan chiqib ketardi) va bosh sahifadagi yo'nalishlar qatori 1024–1279 px ekranlarda. Sonning chop etiladigan mundarijasi (A4 varaq) telefonda kengroq bo'lishi kutilgan holat.
 - **Hujjatlashtirish jarayonidagi tekshiruv** — qo'llanmalar yozilayotganda topilgan kamchiliklar tuzatildi: dashboard tezkor amallari va «Yangi kelgan maqolalar» jadvali havolalari, kabinetdagi AI kartasi, profil to'ldirilganini aniqlash, parol talabi matni, kabinetdagi foydali havolalar.
 
 ---
@@ -220,7 +221,7 @@ Barcha tekshiruvlar bitta buyruq bilan ishga tushiriladi: `composer ci:check`. H
 
 ## 8. Xulosa
 
-Tizimning barcha 387 ta avtomatik testi muvaffaqiyatli o'tdi, statik tahlil va kod uslubi tekshiruvlarida xato yo'q. Texnik topshiriqning 4-bo'limidagi funksional talablar va 7-bo'limidagi nofunksional talablar avtomatik testlar bilan qoplangan. 7-bo'limda keltirilgan haqiqiy to'lov kassalari, pochta va yuklama bo'yicha sinovlar server muhitida, ishga tushirishdan oldin bajarilishi tavsiya etiladi.
+Tizimning barcha 433 ta avtomatik testi muvaffaqiyatli o'tdi, statik tahlil va kod uslubi tekshiruvlarida xato yo'q. Texnik topshiriqning 4-bo'limidagi funksional talablar va 7-bo'limidagi nofunksional talablar avtomatik testlar bilan qoplangan. 7-bo'limda keltirilgan haqiqiy to'lov kassalari, pochta va yuklama bo'yicha sinovlar server muhitida, ishga tushirishdan oldin bajarilishi tavsiya etiladi.
 
 **Testlarni qayta ishga tushirish:**
 

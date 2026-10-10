@@ -29,7 +29,7 @@ const { items, isActive } = useCabinetNav();
         <SiteHeader variant="dark" wide />
 
         <div
-            class="mx-auto grid w-full max-w-[100rem] flex-1 gap-5 px-4 py-5 sm:px-6 lg:grid-cols-[16rem_minmax(0,1fr)] lg:px-8 lg:py-6"
+            class="mx-auto grid w-full max-w-[100rem] flex-1 grid-cols-1 gap-5 px-4 py-5 sm:px-6 lg:grid-cols-[16rem_minmax(0,1fr)] lg:px-8 lg:py-6"
         >
             <CabinetSidebar class="hidden lg:flex" />
 
