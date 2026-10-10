@@ -11,9 +11,11 @@ use App\Http\Controllers\Cabinet\ArticleSubmissionController;
 use App\Models\Article;
 use App\Models\ArticleAuthor;
 use App\Models\User;
+use App\Notifications\Auth\ResetPasswordNotification;
 use App\Services\Notifications\NotificationCenter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\TestResponse;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -139,10 +141,30 @@ class SecurityHardeningTest extends TestCase
         $this->post(route('password.email'), ['email' => 'nobody@example.com'])
             ->assertSessionHasErrors(['email' => __('Juda ko\'p urinish. :minutes daqiqadan keyin qayta urinib ko\'ring.', ['minutes' => 10])]);
 
-        // Boshqa IP — cheklanmagan
+        // Boshqa IP — cheklanmagan (va email mavjud emasligi oshkor qilinmaydi)
         $this->withServerVariables(['REMOTE_ADDR' => '10.0.0.9'])
             ->post(route('password.email'), ['email' => 'nobody@example.com'])
-            ->assertSessionHasErrors(['email' => __('passwords.user')]);
+            ->assertSessionHasNoErrors()
+            ->assertSessionHas('status', __('passwords.sent'));
+    }
+
+    public function test_password_reset_does_not_reveal_whether_email_exists(): void
+    {
+        Notification::fake();
+        $user = User::factory()->author()->create();
+
+        $known = $this->from(route('password.request'))->post(route('password.email'), ['email' => $user->email]);
+        $unknown = $this->from(route('password.request'))->post(route('password.email'), ['email' => 'ghost@example.com']);
+        // Shu foydalanuvchiga qayta (broker cheklovi) — baribir bir xil javob
+        $again = $this->from(route('password.request'))->post(route('password.email'), ['email' => $user->email]);
+
+        foreach ([$known, $unknown, $again] as $response) {
+            $response->assertRedirect(route('password.request'))
+                ->assertSessionHasNoErrors()
+                ->assertSessionHas('status', __('passwords.sent'));
+        }
+
+        Notification::assertSentToTimes($user, ResetPasswordNotification::class, 1);
     }
 
     public function test_changing_email_requires_current_password(): void
