@@ -10,6 +10,7 @@ import CheckCard from './CheckCard.vue';
 import ImagePicker from './ImagePicker.vue';
 import TranslatableField from './TranslatableField.vue';
 import { t } from '@/lib/i18n';
+import { store as contentImageStore } from '@/routes/admin/settings/content-images';
 
 /**
  * Tadbir: nomi, joyi, vaqti (boshlanish / tugash), ro'yxatdan o'tish havolasi, rasm, tavsif.
@@ -196,6 +197,7 @@ function submit(): void {
                 field="description"
                 :errors="errors"
                 rich
+                :upload-url="contentImageStore.url()"
                 :maxlength="10000"
                 :placeholder="t('Dastur, sho\'balar, talablar…')"
             />

@@ -2,6 +2,8 @@
 
 namespace App\Support\Html;
 
+use App\Services\Content\ContentImageService;
+use App\Support\MediaUrl;
 use DOMDocument;
 use DOMElement;
 use DOMNode;
@@ -10,7 +12,8 @@ use DOMNode;
  * Matn muharriri (admin → Yangiliklar / Tadbirlar) HTML'ini xavfsiz holatga keltirish.
  *
  * Faqat ruxsat etilgan teglar qoladi (sarlavha, xatboshi, ro'yxat, iqtibos, havola, qalin/kursiv …),
- * atributlardan — faqat havola manzili va matnni tekislash. Skript, iframe, forma, on* hodisalar,
+ * atributlardan — faqat havola manzili va matnni tekislash. Rasm (<img>) faqat shu saytga muharrir
+ * orqali yuklangan bo'lsa qoladi (content-images/…), begona manzildagi rasmlar olib tashlanadi. Skript, iframe, forma, on* hodisalar,
  * javascript: havolalar va boshqa hamma narsa olib tashlanadi. Saqlashda ham, saytda chiqarishda
  * ham shu tozalagichdan o'tadi. Eski (teglarsiz) matnlar xatboshilarga aylantiriladi.
  */
@@ -29,7 +32,7 @@ final class RichText
     private const DROP = [
         'script', 'style', 'iframe', 'frame', 'frameset', 'object', 'embed', 'applet', 'form', 'input',
         'button', 'textarea', 'select', 'option', 'svg', 'math', 'template', 'noscript', 'head', 'title',
-        'meta', 'link', 'base', 'video', 'audio', 'source', 'track', 'canvas', 'img', 'picture',
+        'meta', 'link', 'base', 'video', 'audio', 'source', 'track', 'canvas', 'picture',
     ];
 
     /** text-align ruxsat etilgan bloklar */
@@ -159,6 +162,25 @@ final class RichText
                 continue;
             }
 
+            if ($tag === 'img') {
+                $src = self::safeImageSrc($node->getAttribute('src'));
+
+                if ($src === null) {
+                    $parent->removeChild($node);
+
+                    continue;
+                }
+
+                $image = $document->createElement('img');
+                $image->setAttribute('src', $src);
+                $image->setAttribute('alt', mb_substr(trim($node->getAttribute('alt')), 0, 200));
+                $image->setAttribute('loading', 'lazy');
+                $image->setAttribute('decoding', 'async');
+                $parent->replaceChild($image, $node);
+
+                continue;
+            }
+
             self::cleanChildren($node, $document);
 
             if (! isset(self::ALLOWED[$tag])) {
@@ -228,6 +250,18 @@ final class RichText
         }
 
         return preg_match('~^(https?://|mailto:|tel:|/(?!/)|#)~i', $href) === 1 ? $href : null;
+    }
+
+    /**
+     * Faqat muharrir orqali shu saytga yuklangan rasm: {storage URL}/content-images/YYYY/MM/nom.ext
+     */
+    private static function safeImageSrc(string $src): ?string
+    {
+        $src = trim(html_entity_decode($src, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+        $pattern = '~^(?:'.preg_quote(rtrim(MediaUrl::from(ContentImageService::DIR) ?? '', '/'), '~').'|/storage/'.ContentImageService::DIR.')'
+            .'/\d{4}/\d{2}/[a-z0-9]{20}\.(?:webp|png|jpe?g)$~';
+
+        return preg_match($pattern, $src) === 1 ? $src : null;
     }
 
     private static function alignment(string $style): ?string

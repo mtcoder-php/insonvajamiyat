@@ -23,6 +23,9 @@ Schedule::command('app:proof-reminders')->hourlyAt(7);
 // To'lov kutilayotgan maqolalar: mualliflarga eslatma (Toshkent vaqti bilan 10:00)
 Schedule::command('app:payment-reminders')->dailyAt('05:00');
 
+// Matn muharririga yuklanib, hech qayerda ishlatilmay qolgan rasmlarni tozalash
+Schedule::command('app:prune-content-images')->dailyAt('03:40');
+
 // Zaxira nusxa: admin paneldagi jadval (Admin → Zaxira nusxa) bo'yicha — vaqti kelganini o'zi tekshiradi
 Schedule::command('backup:run --scheduled')->everyTenMinutes()->withoutOverlapping();
 

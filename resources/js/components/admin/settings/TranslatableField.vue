@@ -24,6 +24,8 @@ const props = withDefaults(
         rows?: number;
         /** Matn muharriri (HTML) — yangiliklar, tadbirlar */
         rich?: boolean;
+        /** Muharrir ichiga rasm yuklash manzili */
+        uploadUrl?: string | null;
     }>(),
     {
         errors: () => ({}),
@@ -33,6 +35,7 @@ const props = withDefaults(
         placeholder: '',
         rows: 3,
         rich: false,
+        uploadUrl: null,
     },
 );
 
@@ -103,6 +106,7 @@ function hasError(lang: string): boolean {
                 v-show="active === lang.key"
                 v-model="model[lang.key]"
                 :maxlength="maxlength"
+                :upload-url="uploadUrl"
                 :invalid="hasError(lang.key)"
                 :placeholder="
                     lang.key === 'uz'

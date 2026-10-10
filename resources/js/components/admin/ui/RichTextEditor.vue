@@ -8,10 +8,12 @@ import {
     Check,
     Heading2,
     Heading3,
+    ImagePlus,
     Italic,
     Link2,
     Link2Off,
     List,
+    LoaderCircle,
     ListOrdered,
     Minus,
     Pilcrow,
@@ -20,9 +22,11 @@ import {
     RemoveFormatting,
     Strikethrough,
     Underline,
+    TriangleAlert,
     Undo2,
     X,
 } from '@lucide/vue';
+import Image from '@tiptap/extension-image';
 import TextAlign from '@tiptap/extension-text-align';
 import { CharacterCount, Placeholder } from '@tiptap/extensions';
 import StarterKit from '@tiptap/starter-kit';
@@ -35,8 +39,9 @@ import { cn } from '@/lib/utils';
 
 /**
  * Matn muharriri (Tiptap): sarlavhalar, qalin/kursiv/tagiga chizilgan, ro'yxatlar, iqtibos,
- * havola, tekislash, ajratuvchi chiziq. v-model — HTML (bo'sh bo'lsa ''). Server tomonda
- * App\Support\Html\HtmlSanitizer ruxsat etilgan teglardan boshqasini olib tashlaydi.
+ * havola, tekislash, ajratuvchi chiziq, rasm (uploadUrl berilsa — tugma, nusxalab qo'yish yoki
+ * sudrab tashlash orqali). v-model — HTML (bo'sh bo'lsa ''). Server tomonda
+ * App\Support\Html\RichText ruxsat etilgan teglardan boshqasini olib tashlaydi.
  */
 const props = withDefaults(
     defineProps<{
@@ -46,8 +51,16 @@ const props = withDefaults(
         invalid?: boolean;
         /** Tahrirlash maydonining minimal balandligi */
         minHeight?: string;
+        /** Rasm yuklash manzili (admin.settings.content-images.store); berilmasa rasm tugmasi yo'q */
+        uploadUrl?: string | null;
     }>(),
-    { placeholder: '', maxlength: 20000, invalid: false, minHeight: '18rem' },
+    {
+        placeholder: '',
+        maxlength: 20000,
+        invalid: false,
+        minHeight: '18rem',
+        uploadUrl: null,
+    },
 );
 
 const model = defineModel<string>({ required: true });
@@ -69,11 +82,16 @@ const editor = useEditor({
         TextAlign.configure({ types: ['heading', 'paragraph'] }),
         Placeholder.configure({ placeholder: () => props.placeholder }),
         CharacterCount.configure({ limit: props.maxlength }),
+        Image.configure({ inline: false, allowBase64: false }),
     ],
     editorProps: {
         attributes: {
             class: 'article-prose max-w-none px-4 py-3 outline-none',
         },
+        // Rasmni nusxalab qo'yish yoki sudrab tashlash — serverga yuklanadi
+        handlePaste: (_view, event) => uploadFromTransfer(event.clipboardData),
+        handleDrop: (_view, event) =>
+            uploadFromTransfer((event as DragEvent).dataTransfer),
     },
     onUpdate: ({ editor: instance }) => {
         model.value = instance.isEmpty ? '' : instance.getHTML();
@@ -228,6 +246,18 @@ const groups = computed<Tool[][]>(() => [
         },
     ],
     [
+        ...(props.uploadUrl
+            ? [
+                  {
+                      key: 'image',
+                      icon: ImagePlus,
+                      label: t("Rasm qo'shish"),
+                      run: () => fileInput.value?.click(),
+                      active: () => !!editor.value?.isActive('image'),
+                      disabled: () => uploading.value,
+                  },
+              ]
+            : []),
         {
             key: 'link',
             icon: Link2,
@@ -266,6 +296,129 @@ const groups = computed<Tool[][]>(() => [
         },
     ],
 ]);
+
+// ——— Rasm yuklash (tugma, nusxalab qo'yish, sudrab tashlash)
+const fileInput = ref<HTMLInputElement | null>(null);
+const uploading = ref(false);
+const uploadError = ref<string | null>(null);
+const ACCEPTED = ['image/jpeg', 'image/png', 'image/webp'];
+
+function xsrfToken(): string {
+    const match = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]+)/);
+
+    return match ? decodeURIComponent(match[1]) : '';
+}
+
+async function upload(file: File): Promise<void> {
+    if (!props.uploadUrl) {
+        return;
+    }
+
+    if (!ACCEPTED.includes(file.type)) {
+        uploadError.value = t('Faqat JPG, PNG yoki WEBP rasm yuklash mumkin.');
+
+        return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+        uploadError.value = t('Rasm hajmi 5 MB dan oshmasligi kerak.');
+
+        return;
+    }
+
+    uploading.value = true;
+    uploadError.value = null;
+
+    try {
+        const body = new FormData();
+        body.append('image', file);
+
+        const response = await fetch(props.uploadUrl, {
+            method: 'POST',
+            body,
+            credentials: 'same-origin',
+            headers: {
+                Accept: 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-XSRF-TOKEN': xsrfToken(),
+            },
+        });
+        const json = (await response.json().catch(() => ({}))) as {
+            url?: string;
+            message?: string;
+            errors?: Record<string, string[]>;
+        };
+
+        if (!response.ok || !json.url) {
+            uploadError.value =
+                json.errors?.image?.[0] ??
+                json.message ??
+                t("Rasmni yuklab bo'lmadi. Qayta urinib ko'ring.");
+
+            return;
+        }
+
+        const alt = file.name.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ');
+        chain().setImage({ src: json.url, alt }).run();
+        openAlt();
+    } catch {
+        uploadError.value = t("Rasmni yuklab bo'lmadi. Qayta urinib ko'ring.");
+    } finally {
+        uploading.value = false;
+    }
+}
+
+function onFileChosen(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    if (file) {
+        void upload(file);
+    }
+
+    input.value = '';
+}
+
+function uploadFromTransfer(data: DataTransfer | null | undefined): boolean {
+    const file = Array.from(data?.files ?? []).find((f) =>
+        f.type.startsWith('image/'),
+    );
+
+    if (!file || !props.uploadUrl) {
+        return false;
+    }
+
+    void upload(file);
+
+    return true;
+}
+
+// Tanlangan rasm uchun tavsif (alt) — ko'zi ojizlar va qidiruv tizimlari uchun
+const altOpen = ref(false);
+const altText = ref('');
+const altInput = ref<HTMLInputElement | null>(null);
+const imageSelected = computed(() => !!editor.value?.isActive('image'));
+
+function openAlt(): void {
+    altText.value = (editor.value?.getAttributes('image').alt as string) ?? '';
+    altOpen.value = true;
+    nextTick(() => altInput.value?.select());
+}
+
+// Rasm bosilganda uning joriy tavsifi ko'rsatiladi
+watch(imageSelected, (selected) => {
+    if (selected) {
+        altText.value =
+            (editor.value?.getAttributes('image').alt as string) ?? '';
+    } else {
+        altOpen.value = false;
+    }
+});
+
+function applyAlt(): void {
+    chain().updateAttributes('image', { alt: altText.value.trim() }).run();
+    altOpen.value = false;
+}
 
 // ——— Havola kiritish paneli
 const linkOpen = ref(false);
@@ -342,6 +495,71 @@ function applyLink(): void {
                 </button>
             </template>
         </div>
+
+        <input
+            v-if="uploadUrl"
+            ref="fileInput"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            class="hidden"
+            @change="onFileChosen"
+        />
+
+        <!-- Rasm yuklanmoqda / xato -->
+        <div
+            v-if="uploading || uploadError"
+            :class="
+                cn(
+                    'flex items-center gap-2 border-b border-line px-3 py-2 text-xs font-medium',
+                    uploadError
+                        ? 'bg-red-50 text-red-700'
+                        : 'bg-brand-50/60 text-brand-700',
+                )
+            "
+            role="status"
+        >
+            <LoaderCircle v-if="uploading" class="size-3.5 animate-spin" />
+            <TriangleAlert v-else class="size-3.5" />
+            {{ uploading ? t('Rasm yuklanmoqda…') : uploadError }}
+            <button
+                v-if="uploadError"
+                type="button"
+                class="ml-auto rounded p-0.5 hover:bg-white"
+                :aria-label="t('Yopish')"
+                @click="uploadError = null"
+            >
+                <X class="size-3.5" />
+            </button>
+        </div>
+
+        <!-- Rasm tavsifi (alt) -->
+        <form
+            v-if="altOpen || imageSelected"
+            class="flex items-center gap-2 border-b border-line bg-[#fbf6ea]/70 px-3 py-2"
+            @submit.prevent="applyAlt"
+        >
+            <ImagePlus class="size-4 shrink-0 text-gold-600" />
+            <input
+                ref="altInput"
+                v-model="altText"
+                type="text"
+                maxlength="200"
+                :placeholder="
+                    t(
+                        'Rasm tavsifi (alt) — masalan, «Konferensiya ishtirokchilari»',
+                    )
+                "
+                class="h-8 min-w-0 flex-1 rounded-md border border-line bg-white px-2.5 text-sm outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-100"
+                @keydown.esc.prevent="altOpen = false"
+            />
+            <button
+                type="submit"
+                class="flex size-8 items-center justify-center rounded-md bg-brand-600 text-white transition-colors hover:bg-brand-500"
+                :aria-label="t('Saqlash')"
+            >
+                <Check class="size-4" />
+            </button>
+        </form>
 
         <!-- Havola paneli -->
         <form
