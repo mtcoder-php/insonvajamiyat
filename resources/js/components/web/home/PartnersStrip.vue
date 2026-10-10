@@ -11,7 +11,7 @@ import { t } from '@/lib/i18n';
  * nom, izoh va sayt manzili. Sayt kiritilgan bo'lsa butun karta havola (yangi oynada).
  *
  * Guruhda 4 tagacha element — oddiy to'r. Ko'proq bo'lsa — o'sha kartalar yonlama
- * cheksiz oqadigan lentada (marquee): sichqoncha yoki fokus kelganda to'xtaydi,
+ * cheksiz oqadigan lentada (marquee; 1-guruh chapga, 2-guruh o'ngga — qarama-qarshi): sichqoncha yoki fokus kelganda to'xtaydi,
  * chetlari yumshoq so'nadi; "harakatni kamaytirish" yoqilgan bo'lsa oddiy
  * gorizontal aylantiriladigan qatorga aylanadi.
  * Ro'yxat Admin → Sozlamalar → Hamkorlar bo'limida boshqariladi.
@@ -76,7 +76,7 @@ const SECONDS_PER_CARD = 5;
             </div>
 
             <div class="grid grid-cols-1 gap-9">
-                <div v-for="group in groups" :key="group.key">
+                <div v-for="(group, index) in groups" :key="group.key">
                     <h3
                         class="mb-4 inline-flex items-center gap-2 text-[13px] font-semibold text-navy-600"
                     >
@@ -94,7 +94,10 @@ const SECONDS_PER_CARD = 5;
                     <!-- Oqib turuvchi lenta (4 tadan ko'p) -->
                     <div
                         v-if="group.flowing"
-                        class="partners-marquee @container relative -my-6 overflow-hidden py-6 motion-reduce:overflow-x-auto"
+                        :class="[
+                            'partners-marquee @container relative -my-6 overflow-hidden py-6 motion-reduce:overflow-x-auto',
+                            index % 2 === 1 && 'partners-marquee-reverse',
+                        ]"
                         role="region"
                         :aria-label="group.title"
                     >

@@ -431,6 +431,11 @@
     animation: partners-marquee linear infinite;
 }
 
+/* Ikkinchi guruh teskari yo'nalishda (o'ngga) oqadi */
+.partners-marquee-reverse .partners-marquee-track {
+    animation-direction: reverse;
+}
+
 /* Sichqoncha yoki klaviatura fokusi kelganda to'xtaydi */
 .partners-marquee:hover .partners-marquee-track,
 .partners-marquee:focus-within .partners-marquee-track {
