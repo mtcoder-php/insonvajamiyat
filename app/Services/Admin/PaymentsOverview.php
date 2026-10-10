@@ -7,6 +7,7 @@ use App\Enums\PaymentProvider;
 use App\Enums\PaymentStatus;
 use App\Models\Article;
 use App\Models\Payment;
+use App\Models\PaymentLog;
 use App\Models\Refund;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -19,8 +20,11 @@ class PaymentsOverview
 {
     public const PER_PAGE = 15;
 
-    /** Tablar: awaiting — to'lov kutilayotgan maqolalar, qolganlari — payments jadvali */
-    public const TABS = ['awaiting', 'all', 'click', 'payme', 'manual', 'failed', 'refunds'];
+    /** Tablar: awaiting — to'lov kutilayotgan maqolalar, refunds — qaytarishlar, logs — Click/Payme so'rovlari jurnali, qolganlari — payments jadvali */
+    public const TABS = ['awaiting', 'all', 'click', 'payme', 'manual', 'failed', 'refunds', 'logs'];
+
+    /** Jurnal filtrlari: hammasi | xato javoblar | imzosi noto'g'ri so'rovlar */
+    public const LOG_FILTERS = ['all', 'errors', 'signature'];
 
     /** "Muvaffaqiyatsiz" tabidagi holatlar */
     private const FAILED = [PaymentStatus::Cancelled, PaymentStatus::Failed, PaymentStatus::Refunded];
@@ -98,6 +102,7 @@ class PaymentsOverview
             'manual' => (int) ($byProvider[PaymentProvider::Manual->value] ?? 0),
             'failed' => Payment::query()->whereIn('status', $this->values(self::FAILED))->count(),
             'refunds' => Refund::query()->count(),
+            'logs' => PaymentLog::query()->count(),
         ];
     }
 
@@ -184,6 +189,36 @@ class PaymentsOverview
             ->latest('id')
             ->paginate(self::PER_PAGE)
             ->withQueryString();
+    }
+
+    /**
+     * Click / Payme so'rovlari jurnali (yangilari birinchi). Qidiruv: amal nomi, IP,
+     * chek yoki tranzaksiya raqami, so'rov ichidagi identifikatorlar.
+     *
+     * @return LengthAwarePaginator<int, PaymentLog>
+     */
+    public function logs(?string $search, string $filter = 'all'): LengthAwarePaginator
+    {
+        $query = PaymentLog::query()->with('payment:id,uuid,receipt_number,provider_transaction_id');
+
+        match ($filter) {
+            'errors' => $query->whereNotNull('error_code')->where('error_code', '!=', 0),
+            'signature' => $query->where('signature_valid', false),
+            default => null,
+        };
+
+        if ($search !== null) {
+            $like = '%'.$search.'%';
+            $query->where(fn (Builder $q) => $q
+                ->where('action', 'like', $like)
+                ->orWhere('ip', 'like', $like)
+                ->orWhere('request', 'like', $like)
+                ->orWhereHas('payment', fn (Builder $payment) => $payment
+                    ->where('receipt_number', 'like', $like)
+                    ->orWhere('provider_transaction_id', 'like', $like)));
+        }
+
+        return $query->latest('created_at')->latest('id')->paginate(self::PER_PAGE * 2)->withQueryString();
     }
 
     /**
