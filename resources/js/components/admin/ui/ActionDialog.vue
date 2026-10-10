@@ -29,8 +29,8 @@ const props = withDefaults(
         processing?: boolean;
         /** Tasdiqlash tugmasini o'chirib qo'yish (masalan, hali tanlanmagan) */
         disabled?: boolean;
-        /** lg — keng forma (masalan, tarjimali maydonlar) */
-        size?: 'md' | 'lg';
+        /** lg — keng forma (tarjimali maydonlar), xl — matn muharriri bor forma */
+        size?: 'md' | 'lg' | 'xl';
     }>(),
     {
         description: undefined,
@@ -52,9 +52,11 @@ const emit = defineEmits<{ confirm: [] }>();
             :class="
                 cn(
                     'gap-0 overflow-hidden border-line bg-white p-0 text-navy-900',
-                    props.size === 'lg'
-                        ? 'max-h-[92vh] overflow-y-auto sm:max-w-2xl'
-                        : 'sm:max-w-md',
+                    props.size === 'xl'
+                        ? 'max-h-[94vh] overflow-y-auto sm:max-w-[min(68rem,calc(100vw-2rem))]'
+                        : props.size === 'lg'
+                          ? 'max-h-[92vh] overflow-y-auto sm:max-w-2xl'
+                          : 'sm:max-w-md',
                 )
             "
         >

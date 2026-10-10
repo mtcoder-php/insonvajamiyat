@@ -47,7 +47,7 @@ const props = withDefaults(
         /** Tahrirlash maydonining minimal balandligi */
         minHeight?: string;
     }>(),
-    { placeholder: '', maxlength: 20000, invalid: false, minHeight: '14rem' },
+    { placeholder: '', maxlength: 20000, invalid: false, minHeight: '18rem' },
 );
 
 const model = defineModel<string>({ required: true });
@@ -379,7 +379,7 @@ function applyLink(): void {
         <EditorContent
             :editor="editor"
             class="rich-editor overflow-y-auto"
-            :style="{ minHeight, maxHeight: '28rem' }"
+            :style="{ minHeight, maxHeight: '36rem' }"
         />
 
         <div
