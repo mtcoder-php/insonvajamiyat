@@ -188,14 +188,9 @@ function submit(): void {
                 :label="t('Tavsif')"
                 field="description"
                 :errors="errors"
-                multiline
-                :rows="6"
-                :maxlength="5000"
-                :placeholder="
-                    t(
-                        'Dastur, sho\'balar, talablar… Xatboshilarni bo\'sh qator bilan ajrating',
-                    )
-                "
+                rich
+                :maxlength="10000"
+                :placeholder="t('Dastur, sho\'balar, talablar…')"
             />
 
             <CheckCard

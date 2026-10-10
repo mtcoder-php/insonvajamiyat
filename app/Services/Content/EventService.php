@@ -7,6 +7,7 @@ use App\Models\Event;
 use App\Models\User;
 use App\Services\Audit\AuditLogger;
 use App\Support\ContentMedia;
+use App\Support\Html\RichText;
 use App\Support\Translations;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\UploadedFile;
@@ -73,7 +74,7 @@ class EventService
 
         return [
             'title' => Translations::clean($input['title'] ?? []),
-            'description' => Translations::clean($input['description'] ?? []),
+            'description' => array_filter(array_map(RichText::toHtml(...), Translations::clean($input['description'] ?? []))),
             'location' => Translations::clean($input['location'] ?? []),
             'starts_at' => is_string($starts) && $starts !== '' ? CarbonImmutable::parse($starts) : CarbonImmutable::now(),
             'ends_at' => is_string($ends) && $ends !== '' ? CarbonImmutable::parse($ends) : null,

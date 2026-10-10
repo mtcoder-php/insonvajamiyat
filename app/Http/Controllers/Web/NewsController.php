@@ -6,6 +6,7 @@ use App\Enums\PostType;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Web\PostResource;
 use App\Models\Post;
+use App\Support\Html\RichText;
 use App\Support\Seo\SeoMeta;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -56,7 +57,7 @@ class NewsController extends Controller
             'hero' => StaticPageController::hero('news'),
             'post' => [
                 ...PostResource::make($post)->resolve(),
-                'body' => $post->body,
+                'body' => RichText::withoutLead(RichText::toHtml($post->body), $post->excerpt),
             ],
             'others' => PostResource::collection($others)->resolve(),
         ]);

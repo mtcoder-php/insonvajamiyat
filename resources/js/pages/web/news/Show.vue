@@ -5,7 +5,6 @@ import { computed } from 'vue';
 import WebHero from '@/components/web/WebHero.vue';
 import { formatDate, formatDateLong } from '@/lib/format';
 import { index } from '@/routes/news';
-import { sameText, toParagraphs } from '@/lib/text';
 import type { PostDetail, PostItem } from '@/types';
 import { t } from '@/lib/i18n';
 
@@ -19,16 +18,11 @@ const props = defineProps<{
     others: PostItem[];
 }>();
 
-// Matn xatboshilarga bo'linadi (bo'sh qator bilan ajratilgan). Qisqa mazmun (lead) alohida
-// yirikroq ko'rsatiladi; to'liq matn u bilan boshlansa — birinchi xatboshi takrorlanmaydi.
+// To'liq matn — server tozalagan HTML (App\\Support\\Html\\RichText). Qisqa mazmun (lead)
+// alohida yirikroq ko'rsatiladi; to'liq matn bo'lmasa — faqat qisqa mazmun chiqadi.
 const lead = computed(() =>
     props.post.body && props.post.excerpt ? props.post.excerpt : null,
 );
-const paragraphs = computed(() => {
-    const all = toParagraphs(props.post.body ?? props.post.excerpt);
-
-    return lead.value && sameText(all[0], lead.value) ? all.slice(1) : all;
-});
 </script>
 
 <template>
@@ -85,17 +79,18 @@ const paragraphs = computed(() => {
                 >
                     {{ lead }}
                 </p>
+                <!-- Server tomonda tozalangan HTML (App\Support\Html\RichText) -->
                 <div
-                    class="mt-6 max-w-3xl space-y-5 font-serif text-[17px] leading-[1.8] text-navy-800"
+                    v-if="post.body"
+                    class="web-prose mt-6 max-w-3xl"
+                    v-html="post.body"
+                />
+                <p
+                    v-else-if="post.excerpt"
+                    class="mt-6 max-w-3xl font-serif text-[17px] leading-[1.8] whitespace-pre-line text-navy-800"
                 >
-                    <p
-                        v-for="(paragraph, i) in paragraphs"
-                        :key="i"
-                        class="whitespace-pre-line"
-                    >
-                        {{ paragraph }}
-                    </p>
-                </div>
+                    {{ post.excerpt }}
+                </p>
 
                 <Link
                     :href="index()"

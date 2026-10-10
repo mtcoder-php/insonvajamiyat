@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Check } from '@lucide/vue';
 import { computed, ref } from 'vue';
+import RichTextEditor from '@/components/admin/ui/RichTextEditor.vue';
 import { inputClass, textareaClass } from '@/lib/formStyles';
 import { cn } from '@/lib/utils';
 import type { Translated } from '@/types';
@@ -21,6 +22,8 @@ const props = withDefaults(
         placeholder?: string;
         /** Ko'p qatorli maydon balandligi (qatorlar) */
         rows?: number;
+        /** Matn muharriri (HTML) — yangiliklar, tadbirlar */
+        rich?: boolean;
     }>(),
     {
         errors: () => ({}),
@@ -29,6 +32,7 @@ const props = withDefaults(
         maxlength: 255,
         placeholder: '',
         rows: 3,
+        rich: false,
     },
 );
 
@@ -94,8 +98,21 @@ function hasError(lang: string): boolean {
             </div>
         </div>
         <template v-for="lang in langs" :key="lang.key">
+            <RichTextEditor
+                v-if="rich"
+                v-show="active === lang.key"
+                v-model="model[lang.key]"
+                :maxlength="maxlength"
+                :invalid="hasError(lang.key)"
+                :placeholder="
+                    lang.key === 'uz'
+                        ? placeholder
+                        : (placeholder ? placeholder + ' — ' : '') +
+                          t(':label (ixtiyoriy)', { label: lang.label })
+                "
+            />
             <textarea
-                v-if="multiline"
+                v-else-if="multiline"
                 v-show="active === lang.key"
                 v-model="model[lang.key]"
                 :rows="rows"

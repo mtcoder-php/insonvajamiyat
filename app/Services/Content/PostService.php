@@ -8,6 +8,7 @@ use App\Models\Post;
 use App\Models\User;
 use App\Services\Audit\AuditLogger;
 use App\Support\ContentMedia;
+use App\Support\Html\RichText;
 use App\Support\Translations;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\UploadedFile;
@@ -87,7 +88,7 @@ class PostService
             'type' => PostType::tryFrom(is_string($type) ? $type : '') ?? PostType::News,
             'title' => Translations::clean($input['title'] ?? []),
             'excerpt' => Translations::clean($input['excerpt'] ?? []),
-            'body' => Translations::clean($input['body'] ?? []),
+            'body' => array_filter(array_map(RichText::toHtml(...), Translations::clean($input['body'] ?? []))),
             'is_published' => (bool) ($input['is_published'] ?? false),
             'is_pinned' => (bool) ($input['is_pinned'] ?? false),
             'published_at' => is_string($date) && $date !== '' ? CarbonImmutable::parse($date) : null,

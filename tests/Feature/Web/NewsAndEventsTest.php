@@ -49,7 +49,7 @@ class NewsAndEventsTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->component('web/news/Show')
                 ->where('post.slug', 'yangi-son')
-                ->where('post.body', "To'liq matn")
+                ->where('post.body', '<p>To&#039;liq matn</p>')
                 ->has('others', 1)
             );
 
@@ -86,7 +86,7 @@ class NewsAndEventsTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->component('web/events/Show')
                 ->where('event.slug', 'forum')
-                ->where('event.description', 'Tavsif')
+                ->where('event.description', '<p>Tavsif</p>')
                 ->where('event.isPast', false)
             );
 
