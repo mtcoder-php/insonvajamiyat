@@ -9,7 +9,7 @@ import {
     Pin,
 } from '@lucide/vue';
 import Pagination from '@/components/admin/ui/Pagination.vue';
-import WebPageHeader from '@/components/web/WebPageHeader.vue';
+import WebHero from '@/components/web/WebHero.vue';
 import { formatDateLong } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import { index } from '@/routes/news';
@@ -20,6 +20,8 @@ import { t } from '@/lib/i18n';
  * Yangiliklar va e'lonlar ro'yxati (/news), tur bo'yicha filtr.
  */
 defineProps<{
+    /** Sarlavha fon rasmi (config journal.heroes) */
+    hero: string | null;
     posts: Paginated<PostItem>;
     type: 'news' | 'announcement' | null;
 }>();
@@ -37,7 +39,8 @@ const tabs = computed(
 <template>
     <Head :title="t('Yangiliklar')" />
 
-    <WebPageHeader
+    <WebHero
+        :image="hero"
         :title="t('Yangiliklar va e\'lonlar')"
         :description="
             t(
@@ -64,7 +67,7 @@ const tabs = computed(
                 {{ tab.label }}
             </Link>
         </nav>
-    </WebPageHeader>
+    </WebHero>
 
     <div class="bg-white">
         <div

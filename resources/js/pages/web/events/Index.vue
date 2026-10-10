@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
 import { ArrowRight, CalendarDays, Clock, History, MapPin } from '@lucide/vue';
-import WebPageHeader from '@/components/web/WebPageHeader.vue';
+import WebHero from '@/components/web/WebHero.vue';
 import { eventDateParts, formatDate } from '@/lib/format';
 import type { EventItem } from '@/types';
 import { t } from '@/lib/i18n';
@@ -10,6 +10,8 @@ import { t } from '@/lib/i18n';
  * Tadbirlar (/events): yaqinlashayotganlar va o'tgan tadbirlar.
  */
 defineProps<{
+    /** Sarlavha fon rasmi (config journal.heroes) */
+    hero: string | null;
     upcoming: EventItem[];
     past: EventItem[];
 }>();
@@ -24,7 +26,8 @@ function time(value: string): string {
 <template>
     <Head :title="t('Tadbirlar')" />
 
-    <WebPageHeader
+    <WebHero
+        :image="hero"
         :title="t('Tadbirlar')"
         :description="
             t(

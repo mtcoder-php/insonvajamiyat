@@ -2,7 +2,7 @@
 import { Head, Link } from '@inertiajs/vue3';
 import { ArrowLeft, CalendarDays, Megaphone, Newspaper } from '@lucide/vue';
 import { computed } from 'vue';
-import WebPageHeader from '@/components/web/WebPageHeader.vue';
+import WebHero from '@/components/web/WebHero.vue';
 import { formatDate, formatDateLong } from '@/lib/format';
 import { index } from '@/routes/news';
 import type { PostDetail, PostItem } from '@/types';
@@ -12,6 +12,8 @@ import { t } from '@/lib/i18n';
  * Yangilik / e'lon sahifasi: to'liq matn va boshqa xabarlar.
  */
 const props = defineProps<{
+    /** Sarlavha fon rasmi (config journal.heroes) */
+    hero: string | null;
     post: PostDetail;
     others: PostItem[];
 }>();
@@ -28,7 +30,8 @@ const paragraphs = computed(() =>
 <template>
     <Head :title="post.title" />
 
-    <WebPageHeader
+    <WebHero
+        :image="hero"
         :title="post.title"
         :crumbs="[
             { title: t('Yangiliklar'), href: index() },
@@ -59,7 +62,7 @@ const paragraphs = computed(() =>
                 {{ formatDateLong(post.publishedAt) }}
             </span>
         </div>
-    </WebPageHeader>
+    </WebHero>
 
     <div class="bg-white">
         <div

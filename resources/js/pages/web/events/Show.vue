@@ -9,7 +9,7 @@ import {
     MapPin,
 } from '@lucide/vue';
 import { computed } from 'vue';
-import WebPageHeader from '@/components/web/WebPageHeader.vue';
+import WebHero from '@/components/web/WebHero.vue';
 import { eventDateParts, formatDateLong } from '@/lib/format';
 import { index } from '@/routes/events';
 import type { EventDetail, EventItem } from '@/types';
@@ -19,6 +19,8 @@ import { t } from '@/lib/i18n';
  * Tadbir sahifasi: sana, vaqt, joy, tavsif va ro'yxatdan o'tish havolasi.
  */
 const props = defineProps<{
+    /** Sarlavha fon rasmi (config journal.heroes) */
+    hero: string | null;
     event: EventDetail;
     others: EventItem[];
 }>();
@@ -47,7 +49,8 @@ const paragraphs = computed(() =>
 <template>
     <Head :title="event.title" />
 
-    <WebPageHeader
+    <WebHero
+        :image="hero"
         :title="event.title"
         :crumbs="[
             { title: t('Tadbirlar'), href: index() },
@@ -80,7 +83,7 @@ const paragraphs = computed(() =>
                 {{ t("Tadbir o'tib ketgan") }}
             </span>
         </div>
-    </WebPageHeader>
+    </WebHero>
 
     <div class="bg-white">
         <div
