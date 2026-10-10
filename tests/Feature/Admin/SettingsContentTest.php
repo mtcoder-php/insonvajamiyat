@@ -66,7 +66,8 @@ class SettingsContentTest extends TestCase
                 'type' => 'announcement',
                 'title' => ['uz' => 'Maqolalar qabuli boshlandi', 'ru' => '', 'en' => 'Call for papers'],
                 'excerpt' => ['uz' => 'Navbatdagi son uchun'],
-                'body' => ['uz' => "Birinchi xatboshi.\n\nIkkinchi xatboshi."],
+                // Rasmli forma (multipart) — brauzer qator oxirlarini \r\n qilib yuboradi
+                'body' => ['uz' => "Birinchi xatboshi.\r\n\r\nIkkinchi xatboshi."],
                 'is_published' => true,
                 'is_pinned' => true,
                 'published_at' => '',
@@ -76,6 +77,7 @@ class SettingsContentTest extends TestCase
 
         $post = Post::query()->where('slug', 'maqolalar-qabuli-boshlandi')->firstOrFail();
         $this->assertSame(PostType::Announcement, $post->type);
+        $this->assertSame("Birinchi xatboshi.\n\nIkkinchi xatboshi.", $post->getTranslation('body', 'uz'));
         $this->assertSame($this->manager->id, $post->author_id);
         $this->assertNotNull($post->published_at);
         $this->assertNotNull($post->image_path);
