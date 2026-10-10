@@ -24,6 +24,7 @@ use App\Models\User;
 use App\Services\Payments\ManualPaymentService;
 use App\Services\Web\ArticleCoverImporter;
 use App\Services\Web\BookCoverImporter;
+use App\Support\Html\RichText;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -289,7 +290,7 @@ class DemoContentSeeder extends Seeder
                 'title' => ['uz' => $title],
                 'excerpt' => ['uz' => $excerpt],
                 'slug' => Str::slug($title),
-                'body' => ['uz' => $excerpt."\n\n".self::POST_BODY],
+                'body' => ['uz' => RichText::fromPlainText($excerpt."\n\n".self::POST_BODY)],
                 'published_at' => now()->subDays(2 + $i * 7),
             ]);
         }
@@ -301,7 +302,7 @@ class DemoContentSeeder extends Seeder
             Event::factory()->create([
                 'title' => ['uz' => $title],
                 'location' => ['uz' => $location],
-                'description' => ['uz' => self::EVENT_DESCRIPTION],
+                'description' => ['uz' => RichText::fromPlainText(self::EVENT_DESCRIPTION)],
                 'slug' => Str::slug($title),
                 'starts_at' => now()->addDays($days)->setTime(10, 0),
             ]);

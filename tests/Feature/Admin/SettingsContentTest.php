@@ -77,7 +77,7 @@ class SettingsContentTest extends TestCase
 
         $post = Post::query()->where('slug', 'maqolalar-qabuli-boshlandi')->firstOrFail();
         $this->assertSame(PostType::Announcement, $post->type);
-        $this->assertSame("Birinchi xatboshi.\n\nIkkinchi xatboshi.", $post->getTranslation('body', 'uz'));
+        $this->assertSame('<p>Birinchi xatboshi.</p><p>Ikkinchi xatboshi.</p>', $post->getTranslation('body', 'uz'));
         $this->assertSame($this->manager->id, $post->author_id);
         $this->assertNotNull($post->published_at);
         $this->assertNotNull($post->image_path);
@@ -258,5 +258,35 @@ class SettingsContentTest extends TestCase
         $this->actingAs($this->manager)->delete(route('admin.settings.partners.destroy', $partner->id))->assertSessionHasNoErrors();
         $this->assertModelMissing($partner);
         Storage::disk('public')->assertMissing($logo);
+    }
+
+    public function test_post_and_event_rich_text_is_sanitized_on_save(): void
+    {
+        $this->actingAs($this->manager)
+            ->post(route('admin.settings.posts.store'), [
+                'type' => 'news',
+                'title' => ['uz' => 'Formatlangan yangilik'],
+                'body' => ['uz' => '<h2>Reja</h2><p onclick="x()">Matn <strong>muhim</strong><script>alert(1)</script></p><p><a href="javascript:alert(1)">yomon</a> <a href="https://edu.uz">yaxshi</a></p>'],
+                'is_published' => true,
+                'is_pinned' => false,
+            ])
+            ->assertSessionHasNoErrors();
+
+        $this->assertSame(
+            '<h2>Reja</h2><p>Matn <strong>muhim</strong></p><p>yomon <a href="https://edu.uz" target="_blank" rel="noopener noreferrer nofollow">yaxshi</a></p>',
+            Post::query()->where('slug', 'formatlangan-yangilik')->firstOrFail()->getTranslation('body', 'uz'),
+        );
+
+        $this->actingAs($this->manager)
+            ->post(route('admin.settings.events.store'), [
+                'title' => ['uz' => 'Seminar'],
+                'description' => ['uz' => '<ul><li>Birinchi</li></ul><iframe src="https://evil.example"></iframe>'],
+                'location' => ['uz' => 'Toshkent'],
+                'starts_at' => now()->addWeek()->format('Y-m-d H:i'),
+                'is_published' => true,
+            ])
+            ->assertSessionHasNoErrors();
+
+        $this->assertSame('<ul><li>Birinchi</li></ul>', Event::query()->latest('id')->firstOrFail()->getTranslation('description', 'uz'));
     }
 }

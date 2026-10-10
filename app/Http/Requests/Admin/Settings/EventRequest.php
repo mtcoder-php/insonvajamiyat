@@ -19,7 +19,8 @@ class EventRequest extends FormRequest
     {
         return [
             ...Translations::rules('title', true, 255),
-            ...Translations::rules('description', false, 5000),
+            // HTML (matn muharriri): teglar bilan birga
+            ...Translations::rules('description', false, 30000),
             ...Translations::rules('location', false, 255),
             'starts_at' => ['required', 'date'],
             'ends_at' => ['nullable', 'date', 'after_or_equal:starts_at'],

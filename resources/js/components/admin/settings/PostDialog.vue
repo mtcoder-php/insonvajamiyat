@@ -180,10 +180,9 @@ function submit(): void {
                 :label="t('To\'liq matn')"
                 field="body"
                 :errors="errors"
-                multiline
-                :rows="8"
+                rich
                 :maxlength="20000"
-                :placeholder="t('Xatboshilarni bo\'sh qator bilan ajrating')"
+                :placeholder="t('Yangilik matnini yozing…')"
             />
 
             <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">

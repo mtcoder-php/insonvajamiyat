@@ -402,6 +402,68 @@
     & td {
         @apply border border-line px-3 py-2;
     }
+    & hr {
+        @apply my-6 border-line;
+    }
+    & strong {
+        @apply font-semibold;
+    }
+}
+
+/* Saytdagi yangilik / tadbir matni (matn muharriri HTML'i) */
+@utility web-prose {
+    @apply font-serif text-[17px] leading-[1.8] text-navy-800;
+
+    & > :first-child {
+        @apply mt-0;
+    }
+    & p {
+        @apply my-5;
+    }
+    & h2 {
+        @apply mt-10 mb-4 text-2xl leading-snug font-bold text-navy-950;
+    }
+    & h3 {
+        @apply mt-8 mb-3 text-xl leading-snug font-bold text-navy-950;
+    }
+    & ul {
+        @apply my-5 list-disc space-y-2 pl-7 marker:text-gold-600;
+    }
+    & ol {
+        @apply my-5 list-decimal space-y-2 pl-7 marker:font-semibold marker:text-gold-700;
+    }
+    & blockquote {
+        @apply my-7 rounded-r-xl border-l-4 border-gold-500 bg-[#fbf8f1] py-4 pr-5 pl-5 text-navy-700 italic;
+    }
+    & blockquote p {
+        @apply my-2;
+    }
+    & a {
+        @apply font-medium text-brand-700 underline decoration-brand-200 decoration-2 underline-offset-4 transition-colors hover:text-brand-600 hover:decoration-brand-500;
+    }
+    & strong {
+        @apply font-bold text-navy-950;
+    }
+    & hr {
+        @apply my-10 border-0 border-t border-[#e6e1d6];
+    }
+}
+
+/* Matn muharriri (RichTextEditor.vue, Tiptap) */
+.rich-editor .ProseMirror {
+    min-height: inherit;
+}
+
+.rich-editor .ProseMirror > :first-child {
+    margin-top: 0;
+}
+
+.rich-editor .ProseMirror p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+    color: var(--color-navy-300);
 }
 
 /* Chiroyli ingichka scrollbar (sidebar, uzun ro'yxatlar) */

@@ -8,6 +8,7 @@ use App\Models\ArticleAuthor;
 use App\Models\Event;
 use App\Models\JournalIssue;
 use App\Models\Post;
+use App\Support\Html\RichText;
 use App\Support\MediaUrl;
 use App\Support\Translations;
 use Illuminate\Support\Str;
@@ -204,12 +205,12 @@ class SeoMeta
 
     public function forPost(Post $post): static
     {
-        return $this->set($post->title, $post->excerpt ?: Str::limit((string) $post->body, 200), MediaUrl::from($post->image_path), 'article');
+        return $this->set($post->title, $post->excerpt ?: Str::limit(RichText::plain($post->body), 200), MediaUrl::from($post->image_path), 'article');
     }
 
     public function forEvent(Event $event): static
     {
-        return $this->set($event->title, Str::limit((string) $event->description, 200), MediaUrl::from($event->image_path));
+        return $this->set($event->title, Str::limit(RichText::plain($event->description), 200), MediaUrl::from($event->image_path));
     }
 
     /**

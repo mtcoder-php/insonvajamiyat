@@ -23,7 +23,8 @@ class PostRequest extends FormRequest
             'type' => ['required', Rule::enum(PostType::class)],
             ...Translations::rules('title', true, 255),
             ...Translations::rules('excerpt', false, 500),
-            ...Translations::rules('body', false, 20000),
+            // HTML (matn muharriri): teglar bilan birga
+            ...Translations::rules('body', false, 60000),
             'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120', 'dimensions:min_width=600,min_height=300'],
             'remove_image' => ['sometimes', 'boolean'],
             'is_published' => ['required', 'boolean'],
