@@ -124,7 +124,7 @@ defineProps<IssuePageProps>();
         >
             <p
                 v-if="issue.description"
-                class="max-w-4xl text-[15px] leading-relaxed text-navy-700"
+                class="text-[15px] leading-relaxed text-navy-700"
             >
                 {{ issue.description }}
             </p>
