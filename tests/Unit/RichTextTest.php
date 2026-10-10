@@ -4,7 +4,7 @@ namespace Tests\Unit;
 
 use App\Support\Html\RichText;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 class RichTextTest extends TestCase
 {

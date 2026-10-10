@@ -447,6 +447,9 @@
     & hr {
         @apply my-10 border-0 border-t border-[#e6e1d6];
     }
+    & img {
+        @apply my-8 h-auto max-w-full rounded-xl shadow-[0_18px_40px_-26px_rgba(0,30,60,0.55)];
+    }
 }
 
 /* Matn muharriri (RichTextEditor.vue, Tiptap) */
@@ -472,6 +475,24 @@
 
 .rich-editor .ProseMirror a {
     color: var(--color-brand-700);
+}
+
+.rich-editor .ProseMirror img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 1rem 0;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    transition: box-shadow 0.2s;
+}
+
+.rich-editor .ProseMirror img:hover {
+    box-shadow: 0 0 0 3px var(--color-brand-200);
+}
+
+.rich-editor .ProseMirror img.ProseMirror-selectednode {
+    box-shadow: 0 0 0 3px var(--color-brand-500);
 }
 
 .rich-editor .ProseMirror ::selection {

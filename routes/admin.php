@@ -23,6 +23,7 @@ use App\Http\Controllers\Admin\Reviews\ReviewController;
 use App\Http\Controllers\Admin\SectionController;
 use App\Http\Controllers\Admin\Settings\ArticleTypeController;
 use App\Http\Controllers\Admin\Settings\BannerController;
+use App\Http\Controllers\Admin\Settings\ContentImageController;
 use App\Http\Controllers\Admin\Settings\EditorialBoardController;
 use App\Http\Controllers\Admin\Settings\EventController;
 use App\Http\Controllers\Admin\Settings\JournalDocumentController;
@@ -292,6 +293,11 @@ Route::middleware('permission:'.AdminSection::Settings->permission()->value)
     ->name('settings.')
     ->group(function () {
         Route::get('/', [SettingsController::class, 'index'])->name('index');
+
+        // Matn muharriri ichiga rasm (yangilik / tadbir)
+        Route::post('content-images', [ContentImageController::class, 'store'])
+            ->middleware('throttle:30,1')
+            ->name('content-images.store');
 
         Route::post('subjects', [SubjectController::class, 'store'])->name('subjects.store');
         Route::put('subjects/{subject}', [SubjectController::class, 'update'])->name('subjects.update');
