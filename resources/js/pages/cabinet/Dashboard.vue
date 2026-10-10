@@ -72,7 +72,7 @@ defineOptions({
             Torroq ekranda o'ng ustun statistikadan keyin (gorizontal qator) chiqadi.
         -->
         <div
-            class="grid gap-5 2xl:grid-cols-[minmax(0,1fr)_18rem] 2xl:grid-rows-[auto_auto_auto_1fr]"
+            class="grid grid-cols-1 gap-5 2xl:grid-cols-[minmax(0,1fr)_18rem] 2xl:grid-rows-[auto_auto_auto_1fr]"
         >
             <section
                 class="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 2xl:grid-cols-5 [&>*:last-child]:col-span-2 md:[&>*:last-child]:col-span-1"
