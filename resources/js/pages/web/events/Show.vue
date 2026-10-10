@@ -109,7 +109,7 @@ const date = computed(() => {
                     <!-- Server tomonda tozalangan HTML (App\Support\Html\RichText) -->
                     <div
                         v-if="event.description"
-                        class="web-prose max-w-3xl min-w-0 flex-1"
+                        class="web-prose min-w-0 flex-1"
                         v-html="event.description"
                     />
                     <p v-else class="font-serif text-[17px] text-navy-500">
