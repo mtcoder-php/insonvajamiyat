@@ -17,6 +17,7 @@ import PaymentsChart from '@/components/admin/dashboard/PaymentsChart.vue';
 import RecentPaymentsCard from '@/components/admin/dashboard/RecentPaymentsCard.vue';
 import ConfirmPaymentDialog from '@/components/admin/payments/ConfirmPaymentDialog.vue';
 import PaymentDetailsSheet from '@/components/admin/payments/PaymentDetailsSheet.vue';
+import PaymentLogsTable from '@/components/admin/payments/PaymentLogsTable.vue';
 import PaymentStatCards from '@/components/admin/payments/PaymentStatCards.vue';
 import PaymentStatusPill from '@/components/admin/payments/PaymentStatusPill.vue';
 import ProviderBadge from '@/components/admin/payments/ProviderBadge.vue';
@@ -64,11 +65,13 @@ const tabs: { key: PaymentTab; label: string }[] = [
     { key: 'manual', label: t("Qo'lda tasdiqlangan") },
     { key: 'failed', label: t('Muvaffaqiyatsiz') },
     { key: 'refunds', label: t('Qaytarishlar') },
+    { key: 'logs', label: t("So'rovlar jurnali") },
 ];
 
 const form = reactive({
     tab: props.filters.tab,
     search: props.filters.search ?? '',
+    log: props.filters.log,
 });
 
 function apply(): void {
@@ -78,11 +81,15 @@ function apply(): void {
         query.search = form.search.trim();
     }
 
+    if (form.tab === 'logs' && form.log !== 'all') {
+        query.log = form.log;
+    }
+
     router.get(index.url(), query, {
         preserveState: true,
         preserveScroll: true,
         replace: true,
-        only: ['filters', 'awaiting', 'payments', 'refunds', 'counts'],
+        only: ['filters', 'awaiting', 'payments', 'refunds', 'logs', 'counts'],
     });
 }
 
@@ -96,6 +103,7 @@ watch(
     },
 );
 watch(() => form.tab, apply);
+watch(() => form.log, apply);
 
 // Server tabni o'zi tanlashi mumkin (standart) — sinxronlash
 watch(
@@ -104,7 +112,9 @@ watch(
 );
 
 const meta = computed(
-    () => (props.awaiting ?? props.payments ?? props.refunds)?.meta ?? null,
+    () =>
+        (props.awaiting ?? props.payments ?? props.refunds ?? props.logs)
+            ?.meta ?? null,
 );
 
 // Qaytarish (refund)
@@ -230,7 +240,7 @@ function showDetail(payment: PaymentListItem): void {
             class="overflow-hidden rounded-xl border border-line bg-white shadow-[0_1px_2px_rgba(0,30,60,0.05)]"
         >
             <div
-                class="flex flex-col gap-3 border-b border-line px-4 pt-3 2xl:flex-row 2xl:items-end 2xl:justify-between"
+                class="flex flex-col gap-3 border-b border-line px-4 pt-3 min-[1800px]:flex-row min-[1800px]:items-end min-[1800px]:justify-between"
             >
                 <div
                     class="-mb-px flex gap-1 overflow-x-auto"
@@ -271,7 +281,9 @@ function showDetail(payment: PaymentListItem): void {
                         </span>
                     </button>
                 </div>
-                <label class="relative mb-3 block 2xl:w-80">
+                <label
+                    class="relative mb-3 block min-[1800px]:w-80 md:max-w-md"
+                >
                     <span class="sr-only">{{ t('Qidirish') }}</span>
                     <Search
                         class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-navy-400"
@@ -282,9 +294,11 @@ function showDetail(payment: PaymentListItem): void {
                         :placeholder="
                             form.tab === 'awaiting'
                                 ? t('Maqola yoki muallif...')
-                                : t(
-                                      'Chek, hujjat raqami, muallif yoki maqola...',
-                                  )
+                                : form.tab === 'logs'
+                                  ? t('Amal, IP, chek yoki tranzaksiya...')
+                                  : t(
+                                        'Chek, hujjat raqami, muallif yoki maqola...',
+                                    )
                         "
                         :class="cn(inputClass, 'h-9 pr-8 pl-9 text-[13px]')"
                     />
@@ -810,6 +824,15 @@ function showDetail(payment: PaymentListItem): void {
                     </p>
                 </div>
             </div>
+
+            <!-- Click / Payme so'rovlari jurnali -->
+            <PaymentLogsTable
+                v-else-if="logs"
+                :logs="logs.data"
+                :filter="form.log"
+                :searching="form.search.trim() !== ''"
+                @filter="(value) => (form.log = value)"
+            />
 
             <div
                 v-if="meta && meta.total > 0"

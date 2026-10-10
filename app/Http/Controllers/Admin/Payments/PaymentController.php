@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\Payments\ConfirmPaymentRequest;
 use App\Http\Requests\Admin\Payments\WaivePaymentRequest;
 use App\Http\Resources\Admin\AwaitingPaymentResource;
 use App\Http\Resources\Admin\PaymentListResource;
+use App\Http\Resources\Admin\PaymentLogResource;
 use App\Http\Resources\Admin\RefundResource;
 use App\Models\Article;
 use App\Models\Payment;
@@ -46,12 +47,15 @@ class PaymentController extends Controller
             ? $requested
             : ($counts['awaiting'] > 0 ? 'awaiting' : 'all');
         $search = $request->string('search')->trim()->limit(100, '')->toString() ?: null;
+        $logFilter = in_array($request->string('log')->toString(), PaymentsOverview::LOG_FILTERS, true)
+            ? $request->string('log')->toString()
+            : 'all';
 
         /** @var User $user */
         $user = $request->user();
 
         return Inertia::render('admin/payments/Index', [
-            'filters' => ['tab' => $tab, 'search' => $search],
+            'filters' => ['tab' => $tab, 'search' => $search, 'log' => $logFilter],
             'counts' => $counts,
             'stats' => fn () => $this->overview->stats(),
             'monthly' => fn () => $dashboard->paymentsMonthly(),
@@ -60,11 +64,14 @@ class PaymentController extends Controller
             'awaiting' => $tab === 'awaiting'
                 ? AwaitingPaymentResource::collection($this->overview->awaiting($search))
                 : null,
-            'payments' => $tab !== 'awaiting' && $tab !== 'refunds'
+            'payments' => ! in_array($tab, ['awaiting', 'refunds', 'logs'], true)
                 ? PaymentListResource::collection($this->overview->payments($tab, $search))
                 : null,
             'refunds' => $tab === 'refunds'
                 ? RefundResource::collection($this->overview->refunds($search))
+                : null,
+            'logs' => $tab === 'logs'
+                ? PaymentLogResource::collection($this->overview->logs($search, $logFilter))
                 : null,
             'can' => [
                 'confirm' => $user->can(PermissionName::PaymentsConfirmManually->value),

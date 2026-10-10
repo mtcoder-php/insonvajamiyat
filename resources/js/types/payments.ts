@@ -11,7 +11,32 @@ export type PaymentTab =
     | 'payme'
     | 'manual'
     | 'failed'
-    | 'refunds';
+    | 'refunds'
+    | 'logs';
+
+export type PaymentLogFilter = 'all' | 'errors' | 'signature';
+
+/** Click / Payme so'rovlari jurnali qatori (App\\Http\\Resources\\Admin\\PaymentLogResource) */
+export type PaymentLogItem = {
+    id: number;
+    provider: PaymentProviderKey;
+    providerLabel: string;
+    action: string;
+    ok: boolean;
+    errorCode: number | null;
+    signatureValid: boolean | null;
+    httpStatus: number | null;
+    ip: string | null;
+    durationMs: number | null;
+    createdAt: string | null;
+    payment: {
+        uuid: string;
+        receipt: string;
+        transaction: string | null;
+    } | null;
+    request: Record<string, unknown>;
+    response: Record<string, unknown> | null;
+};
 
 export type PaymentProviderKey = 'click' | 'payme' | 'manual';
 
@@ -119,7 +144,7 @@ export type ProviderBreakdown = {
 };
 
 export type AdminPaymentsProps = {
-    filters: { tab: PaymentTab; search: string | null };
+    filters: { tab: PaymentTab; search: string | null; log: PaymentLogFilter };
     counts: Record<PaymentTab, number>;
     stats: PaymentStats;
     monthly: PaymentsMonthly;
@@ -128,6 +153,7 @@ export type AdminPaymentsProps = {
     awaiting: Paginated<AwaitingPaymentItem> | null;
     payments: Paginated<PaymentListItem> | null;
     refunds: Paginated<RefundItem> | null;
+    logs: Paginated<PaymentLogItem> | null;
     can: { confirm: boolean; refund: boolean };
     remindAllUrl: string;
     reminderDays: number[];

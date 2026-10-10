@@ -289,6 +289,16 @@ Ro'yxatdagi to'lovni bosing — o'ngda **«To'lov tafsilotlari»** paneli ochila
 
 Qaytarilgach: to'lov va maqolaning to'lov holati «Qaytarilgan», muallifga «Nashr to'lovi qaytarildi» xabari, yozuv audit logda. **«Qaytarishlar»** tabida butun tarix (So'raldi, Jarayonda, Qaytarildi, Xato) ko'rinadi.
 
+### 10.3. So'rovlar jurnali (Click / Payme)
+
+**«So'rovlar jurnali»** tabida Click va Payme serverlaridan kelgan har bir so'rov va tizim javobi ko'rinadi: vaqt, tizim, amal (`prepare`, `complete`, `CheckPerformTransaction`, `CreateTransaction` …), chek, natija (muvaffaqiyatli yoki xato kodi), imzo tekshiruvi, IP va javob vaqti.
+
+- Filtrlar: **Hammasi**, **Xato javoblar**, **Imzo noto'g'ri** (qizil fonli qatorlar — kalitsiz yuborilgan so'rovlar, odatda hujum yoki noto'g'ri sozlama);
+- qidiruv: amal, IP, chek yoki tranzaksiya raqami;
+- **«Ko'rish»** — so'rov va javobning to'liq JSON matni, «Nusxalash» tugmasi bilan (imzo va kalitlar `•••` bilan yashirilgan);
+- muallif «to'ladim, lekin tasdiqlanmadi» desa — shu yerda uning cheki bo'yicha qidiring: so'rov kelmagan bo'lsa muammo to'lov tizimi tomonida, xato kodi bo'lsa — Tizim sozlamalaridagi kalitlarni tekshiring;
+- jurnal 2 yil saqlanadi, eskilari avtomatik o'chiriladi.
+
 ---
 
 ## 11. AI Studio
