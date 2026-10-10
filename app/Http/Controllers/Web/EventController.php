@@ -26,6 +26,7 @@ class EventController extends Controller
             ->get();
 
         return Inertia::render('web/events/Index', [
+            'hero' => StaticPageController::hero('events'),
             'upcoming' => EventResource::collection($upcoming)->resolve(),
             'past' => EventResource::collection($past)->resolve(),
         ]);
@@ -44,6 +45,7 @@ class EventController extends Controller
             ->get();
 
         return Inertia::render('web/events/Show', [
+            'hero' => StaticPageController::hero('events'),
             'event' => [
                 ...EventResource::make($event)->resolve(),
                 'description' => $event->description,

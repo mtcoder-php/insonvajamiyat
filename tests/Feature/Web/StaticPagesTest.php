@@ -5,8 +5,10 @@ namespace Tests\Feature\Web;
 use App\Enums\EditorialBoardRole;
 use App\Enums\RoleName;
 use App\Models\EditorialBoardMember;
+use App\Models\Event;
 use App\Models\JournalIssue;
 use App\Models\Page;
+use App\Models\Post;
 use App\Models\User;
 use App\Notifications\Web\ContactMessageNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -70,6 +72,7 @@ class StaticPagesTest extends TestCase
     {
         config(['journal.heroes' => [
             'about' => 'favicon.ico', 'guidelines' => 'favicon.ico', 'contact' => 'mavjud-emas.png', 'issue' => 'favicon.ico',
+            'news' => 'favicon.ico', 'events' => 'favicon.ico',
         ]]);
 
         foreach (['about', 'guidelines'] as $route) {
@@ -81,6 +84,14 @@ class StaticPagesTest extends TestCase
 
         $issue = JournalIssue::factory()->published()->create();
         $this->get(route('issues.show', $issue->slug))->assertInertia(fn (Assert $page) => $page->where('hero', asset('favicon.ico')));
+
+        // Yangiliklar va tadbirlar: ro'yxat va to'liq sahifa
+        $post = Post::factory()->create(['is_published' => true, 'published_at' => now()->subDay()]);
+        $event = Event::factory()->create();
+
+        foreach ([route('news.index'), route('news.show', $post->slug), route('events.index'), route('events.show', $event->slug)] as $url) {
+            $this->get($url)->assertOk()->assertInertia(fn (Assert $page) => $page->where('hero', asset('favicon.ico')));
+        }
     }
 
     public function test_admin_edits_page_per_locale_and_resets_it(): void

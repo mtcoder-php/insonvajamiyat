@@ -31,6 +31,7 @@ class NewsController extends Controller
         $posts = $query->paginate(self::PER_PAGE)->withQueryString();
 
         return Inertia::render('web/news/Index', [
+            'hero' => StaticPageController::hero('news'),
             'posts' => PostResource::collection($posts),
             'type' => $type?->value,
         ]);
@@ -52,6 +53,7 @@ class NewsController extends Controller
             ->get();
 
         return Inertia::render('web/news/Show', [
+            'hero' => StaticPageController::hero('news'),
             'post' => [
                 ...PostResource::make($post)->resolve(),
                 'body' => $post->body,
