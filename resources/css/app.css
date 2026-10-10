@@ -454,6 +454,30 @@
     min-height: inherit;
 }
 
+/* Muharrir foni doim oq — qorong'i mavzuda ham matn to'q rangda qoladi
+   (article-prose va sarlavhalardagi dark:text-foreground ni bekor qiladi) */
+.rich-editor .ProseMirror,
+.rich-editor .ProseMirror :is(p, li, ul, ol, s, u, em) {
+    color: var(--color-navy-900);
+}
+
+.rich-editor .ProseMirror :is(h1, h2, h3, h4, strong) {
+    color: var(--color-navy-950);
+}
+
+.rich-editor .ProseMirror blockquote,
+.rich-editor .ProseMirror blockquote p {
+    color: var(--color-navy-700);
+}
+
+.rich-editor .ProseMirror a {
+    color: var(--color-brand-700);
+}
+
+.rich-editor .ProseMirror ::selection {
+    background: var(--color-brand-200);
+}
+
 .rich-editor .ProseMirror > :first-child {
     margin-top: 0;
 }
