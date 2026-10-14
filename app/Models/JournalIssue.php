@@ -28,6 +28,7 @@ use Spatie\Translatable\HasTranslations;
  * @property string|null $description
  * @property string|null $cover_image_path
  * @property string|null $toc_file_path
+ * @property string|null $info_file_path 2-bet: jurnal ma'lumotlari (PDF yoki rasm)
  * @property string|null $full_pdf_path
  * @property string|null $pdf_status
  * @property string|null $pdf_error

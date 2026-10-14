@@ -111,24 +111,24 @@ class PdfPagesTest extends TestCase
         // C ning PDF i hali yo'q — avtomatik hisoblanmaydi
         $this->assertSame(["{$a->id}:", "{$b->id}:", "{$c->id}:"], $this->pages($issue));
 
-        // C ning PDF i yuklandi — hammasi 1-betdan ketma-ket
+        // C ning PDF i yuklandi — hammasi 3-betdan ketma-ket (1 — muqova, 2 — jurnal ma'lumotlari)
         $this->uploadPdf($c, 10);
-        $this->assertSame(["{$a->id}:1–8", "{$b->id}:9–14", "{$c->id}:15–24"], $this->pages($issue));
+        $this->assertSame(["{$a->id}:3–10", "{$b->id}:11–16", "{$c->id}:17–26"], $this->pages($issue));
 
         // Tartib o'zgardi — qayta hisoblanadi
         $this->actingAs($this->layout)
             ->put(route('admin.issues.articles.reorder', $issue->slug), ['order' => [$c->id, $a->id, $b->id]])
             ->assertSessionHasNoErrors();
-        $this->assertSame(["{$c->id}:1–10", "{$a->id}:11–18", "{$b->id}:19–24"], $this->pages($issue));
+        $this->assertSame(["{$c->id}:3–12", "{$a->id}:13–20", "{$b->id}:21–26"], $this->pages($issue));
 
         // Yangi versiya (12 bet) — keyingilar suriladi
         $this->uploadPdf($c, 12);
-        $this->assertSame(["{$c->id}:1–12", "{$a->id}:13–20", "{$b->id}:21–26"], $this->pages($issue));
+        $this->assertSame(["{$c->id}:3–14", "{$a->id}:15–22", "{$b->id}:23–28"], $this->pages($issue));
 
         // Maqola chiqarildi — bo'shliq qolmaydi
         $this->actingAs($this->layout)
             ->delete(route('admin.issues.articles.destroy', [$issue->slug, $a->uuid]))
             ->assertSessionHasNoErrors();
-        $this->assertSame(["{$c->id}:1–12", "{$b->id}:13–18"], $this->pages($issue));
+        $this->assertSame(["{$c->id}:3–14", "{$b->id}:15–20"], $this->pages($issue));
     }
 }

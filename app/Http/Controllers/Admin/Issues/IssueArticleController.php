@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Issues;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Models\JournalIssue;
+use App\Services\Issues\IssuePdfBuilder;
 use App\Services\Issues\IssueService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -80,9 +81,10 @@ class IssueArticleController extends Controller
 
     public function paginate(Request $request, JournalIssue $issue): RedirectResponse
     {
-        $request->validate(['start_page' => ['required', 'integer', 'min:1', 'max:5000']]);
+        $request->validate(['start_page' => ['nullable', 'integer', 'min:1', 'max:5000']]);
 
-        $result = $this->issues->paginate($issue, $request->integer('start_page'));
+        // Standart: 1-bet muqova, 2-bet jurnal ma'lumotlari — maqolalar 3-betdan
+        $result = $this->issues->paginate($issue, $request->integer('start_page', IssuePdfBuilder::FIRST_ARTICLE_PAGE));
 
         if ($result['missing'] !== []) {
             throw ValidationException::withMessages([

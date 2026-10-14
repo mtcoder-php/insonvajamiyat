@@ -94,7 +94,11 @@ export type IssueDetail = {
     createdAt: string | null;
     coverUrl: string | null;
     hasOwnCover: boolean;
-    files: { pdf: IssueFileInfo | null; toc: IssueFileInfo | null };
+    files: {
+        pdf: IssueFileInfo | null;
+        toc: IssueFileInfo | null;
+        info: IssueFileInfo | null;
+    };
     pdfBuild: IssuePdfBuild;
     /** Crossref DOI deposit XML (faqat chop etilgan son) — App\\Services\\Indexing\\CrossrefDeposit */
     crossref: { count: number; total: number; url: string } | null;

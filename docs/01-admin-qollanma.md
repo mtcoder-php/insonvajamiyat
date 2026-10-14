@@ -224,12 +224,13 @@ Manzil: `/admin/issues`. Ruxsat: **Jurnal sonlarini shakllantirish**; chop etish
 ### 8.2. Son sahifasi
 
 - **Son tarkibi** — «Maqola qo'shish» (Qabul qilindi / Nashrga tayyorlanmoqda holatidagi maqolalar), sudrab yoki «Yuqoriga / Pastga» bilan tartiblash, **rukn** va sahifalar, «Sondan chiqarish».
-- **Sahifalarni avtomatik hisoblash** — birinchi maqola sahifasini kiritib «Hisoblash» bosiladi; maqolalar tartibi va PDF betlari bo'yicha raqamlanadi.
+- **Betlar avtomatik** — jurnal tuzilishi: **1-bet muqova, 2-bet jurnal ma'lumotlari, maqolalar 3-betdan**. Maqola qo'shilganda, tartib o'zgarganda yoki yangi yakuniy PDF yuklanganda betlar o'zi qayta hisoblanadi (har maqola — yakuniy PDF betlari soni bo'yicha, oraliqsiz). «Betlarni hisoblash» tugmasi shuni qo'lda bajaradi.
 - **Son fayllari**:
     - Muqova — JPG/PNG/WEBP, 5 MB gacha, kamida 300×400;
-    - To'liq son PDF va Mundarija PDF — 50 MB gacha;
+    - **2-bet: jurnal ma'lumotlari** — tahririyat maketi (PDF — faqat 1-beti olinadi) yoki rasm, 20 MB gacha. Yuklanmasa, tizim standart sahifani chizadi (jurnal nomi, son, ISSN, aloqa, tahrir hay'ati);
+    - To'liq son PDF va Mundarija PDF — 50 MB gacha (mundarija son PDF ining **oxiriga** qo'shiladi);
     - «Mundarijani chop etish» — brauzerda PDF sifatida saqlanadigan mundarija sahifasi.
-- **Son PDF ini yig'ish** — muqova + mundarija + maqolalar bitta PDF'ga, xatcho'plar va jurnal sahifa raqamlari bilan (serverda `qpdf` 11+ kerak). Fon rejimida ishlaydi.
+- **Son PDF ini yig'ish** — muqova → jurnal ma'lumotlari → maqolalar → mundarija bitta PDF'ga (serverda `qpdf` 11+ kerak, fon rejimida). Maqola betlariga tizim o'zi **bet raqami** (pastda, o'rtada) va **kolontitul** (jurnal nomi va son — kitobdagidek juft/toq betda ko'zgu) bosadi, shuning uchun maketchi yakuniy PDF ni **raqamsiz va kolontitulsiz** tayyorlaydi; yuqori va pastki chetda ~2 sm bo'sh joy qoldiring. Xatcho'plar (ruknlar → maqolalar) qo'shiladi; PDF ko'ruvchidagi bet raqami bosilgan raqam bilan bir xil. Betlar ketma-ket bo'lmasa, yig'ish tugmasi faol bo'lmaydi.
 - **Chop etishga tayyorlik** — har bir maqola bo'yicha muammolar ro'yxati (bosh muharrir tasdiqlamagan, PDF yo'q, sahifalar belgilanmagan…).
 
 ### 8.3. Chop etish

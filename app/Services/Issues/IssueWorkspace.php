@@ -157,6 +157,7 @@ class IssueWorkspace
             'files' => [
                 'pdf' => $this->file($issue->full_pdf_path),
                 'toc' => $this->file($issue->toc_file_path),
+                'info' => $this->file($issue->info_file_path),
             ],
             'pdfBuild' => $this->pdfBuild($issue, $canManage),
             // Crossref DOI deposit: chop etilgan sondagi DOI'li maqolalar
