@@ -1721,6 +1721,7 @@
     "Saytdagi «Yangiliklar» bo'limi va bosh sahifadagi blok": "The «News» section of the site and the home page block",
     "Saytdagi «Yangiliklar» bo'limida va bosh sahifada ko'rinadi.": "Shown in the «News» section and on the home page.",
     "Saytga o'tish": "Go to website",
+    "Saytga qaytish": "Back to website",
     "Saytni ochish": "Open website",
     "Saytni texnik rejimga o'tkazing: php artisan down": "Put the site into maintenance mode: php artisan down",
     "Server": "Server",

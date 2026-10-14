@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { BookOpenText, Cpu, Globe, Handshake } from '@lucide/vue';
+import { ArrowLeft, BookOpenText, Cpu, Globe, Handshake } from '@lucide/vue';
 import BrandLogo from '@/components/brand/BrandLogo.vue';
 import { home } from '@/routes';
 import { computed } from 'vue';
@@ -12,6 +12,9 @@ import { t } from '@/lib/i18n';
  *
  * Chapda — brend paneli (faqat lg va undan katta ekranlarda),
  * o'ngda — forma kartasi. `wide` — keng forma (ro'yxatdan o'tish).
+ *
+ * Forma tepasida «Saytga qaytish» tugmasi — brauzerning «orqaga» tugmasini
+ * bilmagan foydalanuvchi ham saytga bemalol qaytadi.
  *
  * title/description — sahifaning defineOptions({ layout }) qiymatlari (o'zbekcha kalit),
  * shu yerda tarjima qilinadi.
@@ -115,8 +118,22 @@ const year = new Date().getFullYear();
             class="flex items-center justify-center px-4 py-10 sm:px-6 lg:px-12"
         >
             <div :class="['w-full', wide ? 'max-w-xl' : 'max-w-md']">
-                <Link :href="home()" class="mb-8 flex justify-center lg:hidden">
+                <Link :href="home()" class="mb-6 flex justify-center lg:hidden">
                     <BrandLogo size="md" />
+                </Link>
+
+                <Link
+                    :href="home()"
+                    class="group mb-4 inline-flex items-center gap-2 rounded-full border border-line bg-white py-1.5 pr-4 pl-1.5 text-sm font-semibold text-navy-700 shadow-[0_6px_18px_-14px_rgba(0,30,60,0.6)] transition-all duration-300 hover:-translate-y-0.5 hover:border-gold-300 hover:text-navy-950 hover:shadow-[0_14px_28px_-16px_rgba(0,30,60,0.55)] focus-visible:ring-2 focus-visible:ring-gold-400 focus-visible:outline-none dark:bg-navy-900 dark:text-navy-100 dark:hover:text-white"
+                >
+                    <span
+                        class="flex size-7 items-center justify-center rounded-full bg-navy-50 text-navy-700 transition-all duration-300 group-hover:bg-gold-500 group-hover:text-navy-950 dark:bg-white/10 dark:text-navy-100"
+                    >
+                        <ArrowLeft
+                            class="size-4 transition-transform duration-300 group-hover:-translate-x-0.5"
+                        />
+                    </span>
+                    {{ t('Saytga qaytish') }}
                 </Link>
 
                 <div class="surface-card p-6 sm:p-8">
