@@ -32,6 +32,8 @@ return [
     'pdf' => [
         'qpdf' => env('QPDF_BINARY', 'qpdf'),
         'timeout' => (int) env('ISSUE_PDF_TIMEOUT', 300),
+        // Ichki sahifalar pastki chizig'i ostidagi shior (bo'sh — chiqmaydi)
+        'motto' => env('JOURNAL_PDF_MOTTO', 'Ilm – jamiyat taraqqiyotining eng muhim omili'),
     ],
 
     'plagiarism_max' => (float) env('JOURNAL_PLAGIARISM_MAX', 20),
