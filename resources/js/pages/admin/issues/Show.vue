@@ -164,19 +164,25 @@ function destroy(): void {
 const checks = computed(() => [
     {
         ok: props.issue.summary.total > 0,
-        label: `Maqolalar: ${props.issue.summary.total} ta`,
+        label: t('Maqolalar: :count ta', { count: props.issue.summary.total }),
     },
     {
         ok:
             props.issue.summary.total > 0 &&
             props.issue.summary.ready === props.issue.summary.total,
-        label: `Nashrga tayyor: ${props.issue.summary.ready}/${props.issue.summary.total}`,
+        label: t('Nashrga tayyor: :done/:total', {
+            done: props.issue.summary.ready,
+            total: props.issue.summary.total,
+        }),
     },
     {
         ok:
             props.issue.summary.total > 0 &&
             props.issue.summary.withPages === props.issue.summary.total,
-        label: `Sahifalar belgilangan: ${props.issue.summary.withPages}/${props.issue.summary.total}`,
+        label: t('Sahifalar belgilangan: :done/:total', {
+            done: props.issue.summary.withPages,
+            total: props.issue.summary.total,
+        }),
     },
     { ok: props.issue.hasOwnCover, label: t('Muqova yuklangan') },
     { ok: props.issue.files.pdf !== null, label: t("To'liq son PDF") },

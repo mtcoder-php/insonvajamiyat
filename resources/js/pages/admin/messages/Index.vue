@@ -391,7 +391,9 @@ function notificationsQuery(p = 1, unread = props.filters.unread): Query {
                     {{
                         filters.q || filters.scope !== 'all'
                             ? t('Yozishma topilmadi')
-                            : "Hali yozishmalar yo'q. Maqola sahifasidan muallifga yozing."
+                            : t(
+                                  "Hali yozishmalar yo'q. Maqola sahifasidan muallifga yozing.",
+                              )
                     }}
                 </div>
                 <div

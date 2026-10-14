@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue';
 import DashCard from '@/components/admin/dashboard/DashCard.vue';
 import { niceScale, smoothLine } from '@/lib/chart';
-import { MONTHS_SHORT, formatCompact, formatSum } from '@/lib/format';
+import { monthShort, formatCompact, formatSum } from '@/lib/format';
 import type { PaymentsMonthly } from '@/types';
 import { t } from '@/lib/i18n';
 
@@ -17,6 +17,11 @@ const series = [
     { key: 'payme', label: 'Payme', color: '#0fa37f' },
     { key: 'manual', label: t("Qo'lda"), color: '#8b5cf6' },
 ] as const;
+
+// Oy nomlari joriy tilda (til almashtirilganda qayta hisoblanadi)
+const monthNames = computed(() =>
+    Array.from({ length: 12 }, (_, i) => monthShort(i)),
+);
 
 const W = 440;
 const H = 220;
@@ -153,7 +158,7 @@ const hovered = ref<number | null>(null);
                         </text>
                     </template>
                     <text
-                        v-for="(month, i) in MONTHS_SHORT"
+                        v-for="(month, i) in monthNames"
                         :key="month"
                         :x="x(i)"
                         :y="H - 6"
@@ -225,7 +230,7 @@ const hovered = ref<number | null>(null);
                 }"
             >
                 <p class="mb-1 font-semibold text-navy-900">
-                    {{ MONTHS_SHORT[hovered] }} {{ data.year }}
+                    {{ monthNames[hovered] }} {{ data.year }}
                 </p>
                 <p
                     v-for="s in series"

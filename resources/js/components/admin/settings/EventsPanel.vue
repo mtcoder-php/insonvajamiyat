@@ -270,8 +270,8 @@ function range(event: SettingsEvent): string {
         >
             {{
                 filters.q || filters.when
-                    ? "Filtr bo'yicha tadbir topilmadi"
-                    : "Hali tadbirlar yo'q — birinchisini qo'shing"
+                    ? t("Filtr bo'yicha tadbir topilmadi")
+                    : t("Hali tadbirlar yo'q — birinchisini qo'shing")
             }}
         </p>
 

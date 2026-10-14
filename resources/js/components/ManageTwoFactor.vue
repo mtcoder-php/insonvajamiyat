@@ -64,8 +64,12 @@ onUnmounted(() => clearTwoFactorAuthData());
                 <p class="mt-0.5 text-xs leading-relaxed text-navy-600">
                     {{
                         twoFactorEnabled
-                            ? "Kirishda paroldan tashqari telefoningizdagi autentifikator ilovasi kodi so'raladi."
-                            : "Yoqilsa, kirishda telefoningizdagi autentifikator ilovasidan (Google Authenticator va h.k.) kod so'raladi."
+                            ? t(
+                                  "Kirishda paroldan tashqari telefoningizdagi autentifikator ilovasi kodi so'raladi.",
+                              )
+                            : t(
+                                  "Yoqilsa, kirishda telefoningizdagi autentifikator ilovasidan (Google Authenticator va h.k.) kod so'raladi.",
+                              )
                     }}
                 </p>
             </div>

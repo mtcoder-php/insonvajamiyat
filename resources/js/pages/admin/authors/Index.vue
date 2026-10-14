@@ -84,7 +84,11 @@ const tiles = computed(() => [
         label: t("ORCID bog'langan"),
         value: formatNumber(props.counts.orcid),
         hint: props.counts.total
-            ? `${Math.round((props.counts.orcid / props.counts.total) * 100)}% mualliflar`
+            ? t(':percent% mualliflar', {
+                  percent: Math.round(
+                      (props.counts.orcid / props.counts.total) * 100,
+                  ),
+              })
             : undefined,
         icon: UserPlus,
         tint: 'bg-emerald-50 text-emerald-600',

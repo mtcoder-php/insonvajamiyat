@@ -79,8 +79,8 @@ const dueChip = computed(() => {
     }
 
     return d < 0
-        ? `Muddat ${Math.abs(d)} kun o'tdi`
-        : `Taqriz muddati: ${d} kun qoldi`;
+        ? t("Muddat :count kun o'tdi", { count: Math.abs(d) })
+        : t('Taqriz muddati: :count kun qoldi', { count: d });
 });
 
 const statusTint: Record<string, string> = {
@@ -114,7 +114,9 @@ const history = computed(() =>
     [
         {
             at: props.review.invitedAt,
-            text: `Taqriz taklifi yuborildi (${props.review.round}-raund)`,
+            text: t('Taqriz taklifi yuborildi (:round-raund)', {
+                round: props.review.round,
+            }),
         },
         {
             at: props.review.respondedAt,
@@ -461,8 +463,11 @@ const history = computed(() =>
                                 class="flex min-h-60 flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-navy-200 p-8 text-center text-sm text-navy-600"
                             >
                                 <FileText class="size-8 text-navy-300" />
-                                PDF fayl yo'q. Qo'lyozmani "Fayllar" tabidan
-                                yuklab oling.
+                                {{
+                                    t(
+                                        'PDF fayl yo\'q. Qo\'lyozmani "Fayllar" tabidan yuklab oling.',
+                                    )
+                                }}
                             </div>
                         </div>
                     </div>

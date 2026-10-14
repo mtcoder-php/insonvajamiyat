@@ -2,12 +2,12 @@
 @php
     /** @var \App\Support\ReportPeriod $period */
     $kpiLabels = [
-        'submitted' => 'Yuborilgan maqolalar',
-        'accepted' => 'Qabul qilingan',
-        'rejected' => 'Rad etilgan',
-        'review_days' => "O'rtacha taqriz vaqti (kun)",
-        'authors' => 'Faol mualliflar',
-        'views' => "Maqola ko'rishlari",
+        'submitted' => __('Yuborilgan maqolalar'),
+        'accepted' => __('Qabul qilingan'),
+        'rejected' => __('Rad etilgan'),
+        'review_days' => __("O'rtacha taqriz vaqti (kun)"),
+        'authors' => __('Faol mualliflar'),
+        'views' => __("Maqola ko'rishlari"),
     ];
     $num = fn ($v) => $v === null ? '—' : number_format((float) $v, is_float($v) && floor($v) != $v ? 1 : 0, ',', ' ');
     $trend = fn ($t) => $t === null ? '' : (($t > 0 ? '+' : '').$t.'%');
@@ -17,7 +17,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Statistik hisobot — {{ $period->toArray()['label'] }}</title>
+    <title>{{ __('Statistik hisobot') }} — {{ $period->toArray()['label'] }}</title>
     <style>
         @page { size: A4; margin: 16mm 14mm; }
         * { box-sizing: border-box; }
@@ -68,8 +68,8 @@
 </head>
 <body>
     <div class="toolbar">
-        <button type="button" onclick="window.print()">Chop etish / PDF sifatida saqlash</button>
-        <a href="{{ $backUrl }}">Statistikaga qaytish</a>
+        <button type="button" onclick="window.print()">{{ __('Chop etish / PDF sifatida saqlash') }}</button>
+        <a href="{{ $backUrl }}">{{ __('Statistikaga qaytish') }}</a>
     </div>
 
     <main class="sheet">
@@ -80,33 +80,33 @@
             </div>
             <div class="meta">
                 @if (! empty($journal['issn'])) ISSN {{ $journal['issn'] }}<br>@endif
-                Tuzilgan: {{ $generatedAt->format('d.m.Y H:i') }}
+                {{ __('Tuzilgan: :date', ['date' => $generatedAt->format('d.m.Y H:i')]) }}
             </div>
         </header>
 
-        <h1>Statistik hisobot</h1>
+        <h1>{{ __('Statistik hisobot') }}</h1>
         <p class="lead">
-            Davr: <strong>{{ $period->toArray()['label'] }}</strong> ({{ $period->days() }} kun)
-            @if ($subject) · Yo'nalish: <strong>{{ $subject->name }}</strong> @endif
-            · Taqqoslash: oldingi {{ $period->days() }} kunga nisbatan
+            {{ __('Davr:') }} <strong>{{ $period->toArray()['label'] }}</strong> ({{ __(':count kun', ['count' => $period->days()]) }})
+            @if ($subject) · {{ __("Yo'nalish:") }} <strong>{{ $subject->name }}</strong> @endif
+            · {{ __('Taqqoslash: oldingi :count kunga nisbatan', ['count' => $period->days()]) }}
         </p>
 
-        <h2>Asosiy ko'rsatkichlar</h2>
+        <h2>{{ __("Asosiy ko'rsatkichlar") }}</h2>
         <div class="kpis">
             @foreach ($kpis as $kpi)
                 <div class="kpi">
                     <div class="label">{{ $kpiLabels[$kpi['key']] ?? $kpi['key'] }}</div>
                     <div class="value">{{ $num($kpi['value']) }}</div>
-                    <div class="trend">Oldingi davr: {{ $num($kpi['previous']) }} {{ $trend($kpi['trend']) }}</div>
+                    <div class="trend">{{ __('Oldingi davr:') }} {{ $num($kpi['previous']) }} {{ $trend($kpi['trend']) }}</div>
                 </div>
             @endforeach
         </div>
 
         <div class="cols">
             <section>
-                <h2>Fan yo'nalishlari</h2>
+                <h2>{{ __("Fan yo'nalishlari") }}</h2>
                 <table>
-                    <thead><tr><th>Yo'nalish</th><th class="n">Maqolalar</th><th class="n">Ulush</th></tr></thead>
+                    <thead><tr><th>{{ __("Yo'nalish") }}</th><th class="n">{{ __('Maqolalar') }}</th><th class="n">{{ __('Ulush') }}</th></tr></thead>
                     <tbody>
                         @forelse ($subjects['items'] as $item)
                             <tr>
@@ -115,20 +115,20 @@
                                 <td class="n">{{ $subjects['total'] > 0 ? round($item['value'] / $subjects['total'] * 100) : 0 }}%</td>
                             </tr>
                         @empty
-                            <tr><td colspan="3" class="muted">Ma'lumot yo'q</td></tr>
+                            <tr><td colspan="3" class="muted">{{ __("Ma'lumot yo'q") }}</td></tr>
                         @endforelse
                     </tbody>
                 </table>
             </section>
             <section>
-                <h2>Mamlakatlar bo'yicha mualliflar</h2>
+                <h2>{{ __("Mamlakatlar bo'yicha mualliflar") }}</h2>
                 <table>
-                    <thead><tr><th>Mamlakat</th><th class="n">Mualliflar</th></tr></thead>
+                    <thead><tr><th>{{ __('Mamlakat') }}</th><th class="n">{{ __('Mualliflar') }}</th></tr></thead>
                     <tbody>
                         @forelse ($countries['items'] as $item)
                             <tr><td>{{ $item['label'] }}</td><td class="n">{{ $num($item['value']) }}</td></tr>
                         @empty
-                            <tr><td colspan="2" class="muted">Ma'lumot yo'q</td></tr>
+                            <tr><td colspan="2" class="muted">{{ __("Ma'lumot yo'q") }}</td></tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -137,49 +137,49 @@
 
         <div class="cols">
             <section>
-                <h2>Daromadlar</h2>
+                <h2>{{ __('Daromadlar') }}</h2>
                 <table>
                     <tbody>
-                        <tr><td>Click</td><td class="n">{{ $num(array_sum($revenue['click'])) }} so'm</td></tr>
-                        <tr><td>Payme</td><td class="n">{{ $num(array_sum($revenue['payme'])) }} so'm</td></tr>
-                        <tr><td>Bank o'tkazmasi (qo'lda)</td><td class="n">{{ $num(array_sum($revenue['manual'])) }} so'm</td></tr>
-                        <tr><th>Jami ({{ $revenue['count'] }} ta to'lov)</th><th class="n">{{ $num($revenue['total']) }} so'm {{ $trend($revenue['trend']) }}</th></tr>
+                        <tr><td>Click</td><td class="n">{{ __(":amount so'm", ['amount' => $num(array_sum($revenue['click']))]) }}</td></tr>
+                        <tr><td>Payme</td><td class="n">{{ __(":amount so'm", ['amount' => $num(array_sum($revenue['payme']))]) }}</td></tr>
+                        <tr><td>{{ __("Bank o'tkazmasi (qo'lda)") }}</td><td class="n">{{ __(":amount so'm", ['amount' => $num(array_sum($revenue['manual']))]) }}</td></tr>
+                        <tr><th>{{ __("Jami (:count ta to'lov)", ['count' => $revenue['count']]) }}</th><th class="n">{{ __(":amount so'm", ['amount' => $num($revenue['total'])]) }} {{ $trend($revenue['trend']) }}</th></tr>
                     </tbody>
                 </table>
             </section>
             <section>
-                <h2>Tashkilotlar ({{ $organizations['total'] }})</h2>
+                <h2>{{ __('Tashkilotlar (:count)', ['count' => $organizations['total']]) }}</h2>
                 <table>
-                    <thead><tr><th>Tashkilot</th><th class="n">Mualliflar</th></tr></thead>
+                    <thead><tr><th>{{ __('Tashkilot') }}</th><th class="n">{{ __('Mualliflar') }}</th></tr></thead>
                     <tbody>
                         @forelse ($organizations['top'] as $org)
                             <tr><td>{{ $org['name'] }}</td><td class="n">{{ $org['authors'] }}</td></tr>
                         @empty
-                            <tr><td colspan="2" class="muted">Ma'lumot yo'q</td></tr>
+                            <tr><td colspan="2" class="muted">{{ __("Ma'lumot yo'q") }}</td></tr>
                         @endforelse
                     </tbody>
                 </table>
             </section>
         </div>
 
-        <h2>Eng faol mualliflar</h2>
+        <h2>{{ __('Eng faol mualliflar') }}</h2>
         <table>
-            <thead><tr><th>#</th><th>Muallif</th><th>Tashkilot</th><th class="n">Maqolalar</th></tr></thead>
+            <thead><tr><th>#</th><th>{{ __('Muallif') }}</th><th>{{ __('Tashkilot') }}</th><th class="n">{{ __('Maqolalar') }}</th></tr></thead>
             <tbody>
                 @forelse ($topAuthors as $i => $author)
                     <tr><td>{{ $i + 1 }}</td><td>{{ $author['name'] }}</td><td>{{ $author['organization'] ?? '—' }}</td><td class="n">{{ $author['articles'] }}</td></tr>
                 @empty
-                    <tr><td colspan="4" class="muted">Ma'lumot yo'q</td></tr>
+                    <tr><td colspan="4" class="muted">{{ __("Ma'lumot yo'q") }}</td></tr>
                 @endforelse
             </tbody>
         </table>
 
-        <h2>Taqrizchilar</h2>
+        <h2>{{ __('Taqrizchilar') }}</h2>
         <table>
             <thead>
                 <tr>
-                    <th>Taqrizchi</th><th class="n">Takliflar</th><th class="n">Topshirgan</th><th class="n">Rad etgan</th>
-                    <th class="n">Jarayonda</th><th class="n">Muddati o'tgan</th><th class="n">O'rt. kun</th><th class="n">Muddatida</th>
+                    <th>{{ __('Taqrizchi') }}</th><th class="n">{{ __('Takliflar') }}</th><th class="n">{{ __('Topshirgan') }}</th><th class="n">{{ __('Rad etgan') }}</th>
+                    <th class="n">{{ __('Jarayonda') }}</th><th class="n">{{ __("Muddati o'tgan") }}</th><th class="n">{{ __("O'rt. kun") }}</th><th class="n">{{ __('Muddatida') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -195,13 +195,13 @@
                         <td class="n">{{ $row['onTime'] === null ? '—' : $row['onTime'].'%' }}</td>
                     </tr>
                 @empty
-                    <tr><td colspan="8" class="muted">Davrda taqrizlar yo'q</td></tr>
+                    <tr><td colspan="8" class="muted">{{ __("Davrda taqrizlar yo'q") }}</td></tr>
                 @endforelse
             </tbody>
         </table>
 
         <footer>
-            <span>{{ $journal['name'] ?? 'Inson va Jamiyat' }} — tahririyat statistikasi</span>
+            <span>{{ $journal['name'] ?? 'Inson va Jamiyat' }} — {{ __('tahririyat statistikasi') }}</span>
             <span>{{ config('app.url') }}</span>
         </footer>
     </main>

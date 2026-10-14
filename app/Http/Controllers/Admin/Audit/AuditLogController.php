@@ -78,7 +78,10 @@ class AuditLogController extends Controller
             }
 
             fwrite($out, "\xEF\xBB\xBF");
-            fputcsv($out, ['Vaqt', 'Foydalanuvchi', 'Email', 'Amal', 'Obyekt', 'Izoh', 'IP manzil', 'Brauzer'], ';', '"', '');
+            fputcsv($out, array_map(
+                fn (string $header): string => (string) __($header),
+                ['Vaqt', 'Foydalanuvchi', 'Email', 'Amal', 'Obyekt', 'Izoh', 'IP manzil', 'Brauzer'],
+            ), ';', '"', '');
 
             $written = 0;
 
@@ -94,7 +97,7 @@ class AuditLogController extends Controller
                     $log->user?->email,
                     $log->event->label(),
                     $log->subject_label,
-                    $log->description,
+                    AuditLogQuery::description($log->description),
                     $log->ip_address,
                     $log->user_agent,
                 ]), ';', '"', '');

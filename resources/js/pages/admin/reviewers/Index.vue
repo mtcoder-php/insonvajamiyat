@@ -83,7 +83,7 @@ const tiles = computed(() => [
         label: t('Taqrizchilar'),
         value: formatNumber(props.counts.total),
         hint: props.counts.paused
-            ? `${props.counts.paused} ta to'xtatilgan`
+            ? t(":count ta to'xtatilgan", { count: props.counts.paused })
             : t('Barchasi faol'),
         icon: NotebookPen,
         tint: 'bg-brand-50 text-brand-600',
@@ -93,7 +93,7 @@ const tiles = computed(() => [
         key: 'available',
         label: t("Bo'sh"),
         value: formatNumber(props.counts.available),
-        hint: `${props.busyFrom} tadan kam faol taqriz`,
+        hint: t(':count tadan kam faol taqriz', { count: props.busyFrom }),
         icon: UserCheck,
         tint: 'bg-emerald-50 text-emerald-600',
         status: 'available' as const,
@@ -103,7 +103,7 @@ const tiles = computed(() => [
         label: t('Faol taqrizlar'),
         value: formatNumber(props.counts.active),
         hint: props.counts.overdue
-            ? `${props.counts.overdue} tasi muddati o'tgan`
+            ? t(":count tasi muddati o'tgan", { count: props.counts.overdue })
             : t("Muddati o'tgani yo'q"),
         icon: AlarmClock,
         tint: props.counts.overdue
@@ -115,7 +115,9 @@ const tiles = computed(() => [
         key: 'speed',
         label: t("O'rtacha muddat"),
         value:
-            props.counts.avgDays === null ? '—' : `${props.counts.avgDays} kun`,
+            props.counts.avgDays === null
+                ? '—'
+                : t(':count kun', { count: props.counts.avgDays }),
         hint: t('Taklifdan xulosagacha'),
         icon: Timer,
         tint: 'bg-violet-50 text-violet-600',
@@ -530,14 +532,18 @@ function speedTone(onTime: number | null): string {
                     {{
                         hasFilters
                             ? t('Taqrizchi topilmadi')
-                            : "Hali taqrizchilar yo'q"
+                            : t("Hali taqrizchilar yo'q")
                     }}
                 </p>
                 <p class="mt-1 text-sm text-navy-500">
                     {{
                         hasFilters
-                            ? "Qidiruv so'zini yoki filtrlarni o'zgartirib ko'ring."
-                            : "Ro'yxatdan o'tgan foydalanuvchini taqrizchi qilib qo'shing."
+                            ? t(
+                                  "Qidiruv so'zini yoki filtrlarni o'zgartirib ko'ring.",
+                              )
+                            : t(
+                                  "Ro'yxatdan o'tgan foydalanuvchini taqrizchi qilib qo'shing.",
+                              )
                     }}
                 </p>
                 <button

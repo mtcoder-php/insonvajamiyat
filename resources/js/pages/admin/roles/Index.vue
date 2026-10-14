@@ -405,7 +405,7 @@ const totalPermissions = computed(() =>
                                               ":dirtyCount ta rol o'zgartirildi — saqlang",
                                               { dirtyCount: dirtyCount },
                                           )
-                                        : "O'zgarishlar yo'q"
+                                        : t("O'zgarishlar yo'q")
                                 }}
                             </td>
                             <td

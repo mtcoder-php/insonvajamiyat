@@ -130,8 +130,8 @@ function markAll(url: string): void {
             <BellOff class="size-8 text-navy-300" />
             {{
                 onlyUnread
-                    ? "O'qilmagan bildirishnomalar yo'q"
-                    : "Hozircha bildirishnomalar yo'q"
+                    ? t("O'qilmagan bildirishnomalar yo'q")
+                    : t("Hozircha bildirishnomalar yo'q")
             }}
         </div>
 

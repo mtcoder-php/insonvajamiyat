@@ -71,11 +71,17 @@ class NotificationCenter
         /** @var array<string, mixed> $data */
         $data = (array) $notification->data;
         $string = fn (string $key): ?string => is_string($data[$key] ?? null) && $data[$key] !== '' ? $data[$key] : null;
+        $translate = function (string $text): string {
+            $line = __($text);
+
+            return is_string($line) ? $line : $text;
+        };
 
         return [
             'id' => (string) $notification->id,
             'kind' => $string('kind') ?? 'info',
-            'title' => $string('title') ?? 'Bildirishnoma',
+            // Sarlavha yozilgan paytdagi tilda saqlanadi; o'zbekcha kalit bo'lsa — joriy tilga tarjima
+            'title' => $translate($string('title') ?? 'Bildirishnoma'),
             'articleTitle' => $string('article_title'),
             'body' => $string('body') ?? $string('message'),
             'url' => self::safeUrl($data['url'] ?? null),

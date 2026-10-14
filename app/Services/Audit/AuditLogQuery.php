@@ -149,7 +149,7 @@ class AuditLogQuery
             'label' => $log->event->label(),
             'category' => $log->event->category(),
             'severity' => $log->event->severity(),
-            'description' => $log->description,
+            'description' => self::description($log->description),
             'subject' => $log->subject_type !== null ? [
                 'type' => $log->subject_type,
                 'id' => $log->subject_id,
@@ -223,5 +223,31 @@ class AuditLogQuery
         } catch (Throwable) {
             return null;
         }
+    }
+
+    /**
+     * Izoh bazada o'zbekcha saqlanadi ("Umumiy hisobot (PDF)" …) — lug'atda bo'lsa joriy tilga
+     * tarjima qilinadi, bo'lmasa (foydalanuvchi matni) o'zgarishsiz qoladi.
+     */
+    public static function description(?string $description): ?string
+    {
+        if ($description === null || $description === '') {
+            return $description;
+        }
+
+        $text = __($description);
+
+        if (is_string($text) && $text !== $description) {
+            return $text;
+        }
+
+        // "Maqolalar (CSV)" — nom va format alohida tarjima qilinadi
+        if (preg_match('/^(.+) \((CSV|PDF|XML)\)$/u', $description, $match) === 1) {
+            $name = __($match[1]);
+
+            return (is_string($name) ? $name : $match[1]).' ('.$match[2].')';
+        }
+
+        return $description;
     }
 }

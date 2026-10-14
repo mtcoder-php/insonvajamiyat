@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue';
 import DashCard from '@/components/admin/dashboard/DashCard.vue';
 import { niceScale, roundedBar, smoothLine } from '@/lib/chart';
-import { MONTHS_SHORT, formatNumber } from '@/lib/format';
+import { monthShort, formatNumber } from '@/lib/format';
 import type { MonthlyDynamics } from '@/types';
 import { t } from '@/lib/i18n';
 
@@ -17,6 +17,11 @@ const series = [
     { key: 'accepted', label: t('Qabul qilinganlar'), color: '#0fa37f' },
     { key: 'published', label: t('Nashr etilganlar'), color: '#8b5cf6' },
 ] as const;
+
+// Oy nomlari joriy tilda (til almashtirilganda qayta hisoblanadi)
+const months = computed(() =>
+    Array.from({ length: 12 }, (_, i) => monthShort(i)),
+);
 
 const W = 640;
 const H = 290;
@@ -121,7 +126,7 @@ const hovered = ref<number | null>(null);
                         </text>
                     </template>
                     <text
-                        v-for="(month, i) in MONTHS_SHORT"
+                        v-for="(month, i) in months"
                         :key="month"
                         :x="pad.left + band * i + band / 2"
                         :y="H - 8"
@@ -182,7 +187,7 @@ const hovered = ref<number | null>(null);
                 }"
             >
                 <p class="mb-1 font-semibold text-navy-900">
-                    {{ MONTHS_SHORT[hovered] }} {{ data.year }}
+                    {{ months[hovered] }} {{ data.year }}
                 </p>
                 <p
                     v-for="s in series"

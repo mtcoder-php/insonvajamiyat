@@ -55,7 +55,7 @@ class BannerRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'link_url.regex' => 'Havola http(s):// yoki / bilan boshlanishi kerak.',
+            'link_url.regex' => __('Havola http(s):// yoki / bilan boshlanishi kerak.'),
         ];
     }
 }

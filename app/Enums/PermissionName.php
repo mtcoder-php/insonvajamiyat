@@ -154,12 +154,12 @@ enum PermissionName: string
     public static function groups(): array
     {
         return [
-            'general' => 'Umumiy',
-            'editorial' => 'Tahririyat va taqriz',
-            'publishing' => 'Nashr',
-            'content' => 'Sayt kontenti',
-            'finance' => 'Moliya',
-            'system' => 'Boshqaruv va tizim',
+            'general' => __('Umumiy'),
+            'editorial' => __('Tahririyat va taqriz'),
+            'publishing' => __('Nashr'),
+            'content' => __('Sayt kontenti'),
+            'finance' => __('Moliya'),
+            'system' => __('Boshqaruv va tizim'),
         ];
     }
 

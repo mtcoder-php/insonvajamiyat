@@ -150,7 +150,7 @@ const tiles = computed(() => [
         key: 'count',
         label: t('Saqlangan arxivlar'),
         value: formatNumber(props.stats.count),
-        hint: `Jami ${formatFileSize(props.stats.totalSize)}`,
+        hint: t('Jami :size', { size: formatFileSize(props.stats.totalSize) }),
         icon: Archive,
         tint: 'bg-brand-50 text-brand-600',
     },
@@ -161,7 +161,7 @@ const tiles = computed(() => [
             ? formatDateTime(props.stats.nextRun)
             : t("O'chirilgan"),
         hint: props.settings.enabled
-            ? `Har kuni ${props.settings.time}`
+            ? t('Har kuni :time', { time: props.settings.time })
             : t('Jadval yoqilmagan'),
         icon: CalendarClock,
         tint: 'bg-violet-50 text-violet-600',
@@ -222,7 +222,9 @@ function duration(ms: number | null): string {
 /** "1 843 fayl · 3 daq" — hajm ostidagi izoh */
 function meta(item: BackupItem): string {
     return [
-        item.filesCount ? `${formatNumber(item.filesCount)} fayl` : null,
+        item.filesCount
+            ? t(':count fayl', { count: formatNumber(item.filesCount) })
+            : null,
         item.durationMs !== null ? duration(item.durationMs) : null,
     ]
         .filter(Boolean)
@@ -379,8 +381,10 @@ const restoreCommands = computed(() =>
                                                         item.fileName ??
                                                         (item.trigger ===
                                                         'schedule'
-                                                            ? "jadval bo'yicha"
-                                                            : "qo'lda")
+                                                            ? t(
+                                                                  "jadval bo'yicha",
+                                                              )
+                                                            : t("qo'lda"))
                                                     }}
                                                 </p>
                                             </div>
@@ -523,7 +527,7 @@ const restoreCommands = computed(() =>
                                 <span class="block text-xs text-navy-500">{{
                                     settingsForm.enabled
                                         ? t('Yoqilgan')
-                                        : "O'chirilgan"
+                                        : t("O'chirilgan")
                                 }}</span>
                             </span>
                             <input

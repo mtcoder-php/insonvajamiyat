@@ -49,8 +49,8 @@ const hints: Record<AiRequestTypeValue, string[]> = {
             <p class="font-sans text-base font-bold text-navy-950">
                 {{
                     ready
-                        ? "Natija shu yerda ko'rinadi"
-                        : 'AI xizmati hali sozlanmagan'
+                        ? t("Natija shu yerda ko'rinadi")
+                        : t('AI xizmati hali sozlanmagan')
                 }}
             </p>
             <p class="mt-1 max-w-sm text-xs text-navy-500">
@@ -59,7 +59,9 @@ const hints: Record<AiRequestTypeValue, string[]> = {
                         ? t(
                               'Chapdagi formaga matnni joylashtiring va boshlang.',
                           )
-                        : "API kaliti va model Sozlamalar bo'limida kiritilgach ishga tushadi."
+                        : t(
+                              "API kaliti va model Sozlamalar bo'limida kiritilgach ishga tushadi.",
+                          )
                 }}
             </p>
         </div>

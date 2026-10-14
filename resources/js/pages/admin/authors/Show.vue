@@ -93,9 +93,12 @@ const tiles = computed(() => [
         value: formatNumber(props.stats.articles),
         hint:
             props.stats.coauthored > 0
-                ? `${props.stats.submitted} o'zi · ${props.stats.coauthored} hammuallif`
+                ? t(":own o'zi · :co hammuallif", {
+                      own: props.stats.submitted,
+                      co: props.stats.coauthored,
+                  })
                 : props.stats.drafts
-                  ? `+${props.stats.drafts} qoralama`
+                  ? t('+:count qoralama', { count: props.stats.drafts })
                   : undefined,
         icon: FileText,
         tint: 'bg-brand-50 text-brand-600',
@@ -105,7 +108,12 @@ const tiles = computed(() => [
         label: t('Nashr etilgan'),
         value: formatNumber(props.stats.groups.published),
         hint: props.stats.articles
-            ? `${Math.round((props.stats.groups.published / props.stats.articles) * 100)}% maqolalar`
+            ? t(':percent% maqolalar', {
+                  percent: Math.round(
+                      (props.stats.groups.published / props.stats.articles) *
+                          100,
+                  ),
+              })
             : undefined,
         icon: BookOpenCheck,
         tint: 'bg-violet-50 text-violet-600',
@@ -114,7 +122,9 @@ const tiles = computed(() => [
         key: 'views',
         label: t("Ko'rishlar"),
         value: formatNumber(props.stats.views),
-        hint: `${formatNumber(props.stats.downloads)} yuklab olish`,
+        hint: t(':count yuklab olish', {
+            count: formatNumber(props.stats.downloads),
+        }),
         icon: Eye,
         tint: 'bg-sky-50 text-sky-600',
     },
@@ -124,7 +134,9 @@ const tiles = computed(() => [
                   key: 'paid',
                   label: t("To'langan"),
                   value: formatSum(props.stats.paid),
-                  hint: `${props.payments?.length ?? 0} ta to'lov`,
+                  hint: t(":count ta to'lov", {
+                      count: props.payments?.length ?? 0,
+                  }),
                   icon: Wallet,
                   tint: 'bg-emerald-50 text-emerald-600',
               },

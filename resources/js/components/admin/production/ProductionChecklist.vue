@@ -111,7 +111,7 @@ function toggleFormat(): void {
                 <TriangleAlert v-else class="size-8 text-amber-500" />
                 {{
                     article.ready
-                        ? "Maqola barcha talablar bo'yicha tayyor."
+                        ? t("Maqola barcha talablar bo'yicha tayyor.")
                         : t(':count ta band bajarilmagan.', {
                               count: article.checks.filter((c) => !c.ok).length,
                           })

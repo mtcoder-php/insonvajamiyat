@@ -306,10 +306,10 @@ class DashboardService
         $paymentsConfigured = app(OnlinePaymentService::class)->providers() !== [];
 
         return [
-            ['key' => 'web', 'label' => 'Web server', 'state' => 'up'],
-            ['key' => 'database', 'label' => 'Database', 'state' => $databaseUp ? 'up' : 'down'],
-            ['key' => 'payments', 'label' => "To'lov tizimlari (Click/Payme)", 'state' => $paymentsConfigured ? 'up' : 'not_configured'],
-            ['key' => 'ai', 'label' => 'AI server', 'state' => app(AiSettings::class)->ready() ? 'up' : 'not_configured'],
+            ['key' => 'web', 'label' => __('Web server'), 'state' => 'up'],
+            ['key' => 'database', 'label' => __('Database'), 'state' => $databaseUp ? 'up' : 'down'],
+            ['key' => 'payments', 'label' => __("To'lov tizimlari (Click/Payme)"), 'state' => $paymentsConfigured ? 'up' : 'not_configured'],
+            ['key' => 'ai', 'label' => __('AI server'), 'state' => app(AiSettings::class)->ready() ? 'up' : 'not_configured'],
         ];
     }
 

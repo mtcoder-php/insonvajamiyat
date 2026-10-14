@@ -153,8 +153,9 @@ class AuthorDashboardService
             ->get()
             ->map(fn (ArticleStatusHistory $history): array => [
                 'id' => 'h'.$history->id,
-                'sender' => $history->to_status === ArticleStatus::InReview ? 'Taqrizchi' : 'Tahririyat',
-                'message' => (string) $history->comment,
+                'sender' => self::hint($history->to_status === ArticleStatus::InReview ? 'Taqrizchi' : 'Tahririyat'),
+                // Tizim izohi o'zbekcha kalit bilan yozilgan bo'lsa — joriy tilga tarjima qilinadi
+                'message' => self::hint((string) $history->comment),
                 'title' => $history->article->title,
                 'url' => route('cabinet.articles.show', $history->article->uuid),
                 'createdAt' => $history->created_at->toIso8601String(),
@@ -172,7 +173,7 @@ class AuthorDashboardService
             ->get()
             ->map(fn (Message $message): array => [
                 'id' => 'm'.$message->id,
-                'sender' => 'Tahririyat',
+                'sender' => self::hint('Tahririyat'),
                 'message' => $message->body,
                 'title' => $message->article->title,
                 'url' => route('cabinet.messages.index', ['article' => $message->article->uuid]),

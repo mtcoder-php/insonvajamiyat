@@ -412,7 +412,7 @@ const accountPreview = computed(() =>
                     />
                 </FormField>
                 <FormField
-                    label="STIR (INN)"
+                    :label="t('STIR (INN)')"
                     for="j-inn"
                     :error="errors.payment_inn"
                 >

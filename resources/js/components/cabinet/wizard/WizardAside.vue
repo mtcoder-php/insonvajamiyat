@@ -149,9 +149,11 @@ function destroy(): void {
                 {{ t('Qoralama') }}
             </h2>
             <p class="text-[13px] leading-relaxed text-navy-600">
-                Ma'lumotlar har bir bosqichda saqlanadi — formani istalgan
-                vaqtda "Mening maqolalarim" bo'limidan davom ettirishingiz
-                mumkin.
+                {{
+                    t(
+                        'Ma\'lumotlar har bir bosqichda saqlanadi — formani istalgan vaqtda "Mening maqolalarim" bo\'limidan davom ettirishingiz mumkin.',
+                    )
+                }}
             </p>
             <p
                 v-if="article.updatedAt"

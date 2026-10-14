@@ -65,8 +65,8 @@
 </head>
 <body>
     <div class="toolbar">
-        <button type="button" onclick="window.print()">Chop etish / PDF sifatida saqlash</button>
-        <a href="{{ route('admin.issues.show', $issue->slug) }}">Songa qaytish</a>
+        <button type="button" onclick="window.print()">{{ __('Chop etish / PDF sifatida saqlash') }}</button>
+        <a href="{{ route('admin.issues.show', $issue->slug) }}">{{ __('Songa qaytish') }}</a>
     </div>
 
     <main class="sheet">
@@ -105,7 +105,7 @@
                 @endforeach
             </ol>
         @empty
-            <p class="empty">Songa hali maqola biriktirilmagan.</p>
+            <p class="empty">{{ __('Songa hali maqola biriktirilmagan.') }}</p>
         @endforelse
     </main>
 </body>

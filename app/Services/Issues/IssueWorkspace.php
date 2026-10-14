@@ -72,10 +72,10 @@ class IssueWorkspace
     public function stats(): array
     {
         return [
-            ['key' => 'total', 'label' => 'Jami sonlar', 'value' => JournalIssue::query()->count(), 'hint' => 'Barcha yillar'],
-            ['key' => 'draft', 'label' => 'Shakllantirilmoqda', 'value' => JournalIssue::query()->where('status', IssueStatus::Draft->value)->count(), 'hint' => 'Qoralama sonlar'],
-            ['key' => 'published', 'label' => 'Chop etilgan', 'value' => JournalIssue::query()->where('status', IssueStatus::Published->value)->count(), 'hint' => 'Saytda ko\'rinadi'],
-            ['key' => 'waiting', 'label' => 'Songa biriktirilmagan', 'value' => $this->availableQuery()->count(), 'hint' => 'Qabul qilingan maqolalar'],
+            ['key' => 'total', 'label' => __('Jami sonlar'), 'value' => JournalIssue::query()->count(), 'hint' => __('Barcha yillar')],
+            ['key' => 'draft', 'label' => __('Shakllantirilmoqda'), 'value' => JournalIssue::query()->where('status', IssueStatus::Draft->value)->count(), 'hint' => __('Qoralama sonlar')],
+            ['key' => 'published', 'label' => __('Chop etilgan'), 'value' => JournalIssue::query()->where('status', IssueStatus::Published->value)->count(), 'hint' => __('Saytda ko\'rinadi')],
+            ['key' => 'waiting', 'label' => __('Songa biriktirilmagan'), 'value' => $this->availableQuery()->count(), 'hint' => __('Qabul qilingan maqolalar')],
         ];
     }
 

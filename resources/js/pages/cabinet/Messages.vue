@@ -296,8 +296,10 @@ function markAll(): void {
                     <Inbox class="size-8 text-navy-300" />
                     {{
                         conversations.length
-                            ? 'Maqola topilmadi'
-                            : "Yuborilgan maqolalaringiz bo'lganda yozishmalar shu yerda ko'rinadi."
+                            ? t('Maqola topilmadi')
+                            : t(
+                                  "Yuborilgan maqolalaringiz bo'lganda yozishmalar shu yerda ko'rinadi.",
+                              )
                     }}
                 </div>
             </aside>
@@ -491,8 +493,8 @@ function markAll(): void {
                 <BellOff class="size-8 text-navy-300" />
                 {{
                     filters.unread
-                        ? "O'qilmagan bildirishnomalar yo'q"
-                        : "Hozircha bildirishnomalar yo'q"
+                        ? t("O'qilmagan bildirishnomalar yo'q")
+                        : t("Hozircha bildirishnomalar yo'q")
                 }}
             </div>
 

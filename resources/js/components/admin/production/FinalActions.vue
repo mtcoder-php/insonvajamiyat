@@ -135,7 +135,7 @@ const item =
                 <span>
                     <b class="block">{{
                         article.production.proof.state === 'overdue'
-                            ? "Korrektura muddati o'tdi"
+                            ? t("Korrektura muddati o'tdi")
                             : t('Muallif javobi kutilmoqda')
                     }}</b>
                     <span class="text-xs">{{

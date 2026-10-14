@@ -193,7 +193,11 @@ const otherLanguages = computed(() =>
                         "
                     >
                         {{ language.label }}:
-                        {{ article.abstract[language.code] ? 'bor' : "yo'q" }}
+                        {{
+                            article.abstract[language.code]
+                                ? t('bor')
+                                : t("yo'q")
+                        }}
                     </span>
                 </p>
             </div>

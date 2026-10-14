@@ -90,8 +90,9 @@ class InterfaceTranslationTest extends TestCase
             $files = File::allFiles($path);
 
             foreach ($files as $file) {
-                // __('...'), OAuthException::translated('...') va SeoMeta->describe('...')
-                preg_match_all('/(?:__|::translated|->describe)\(\s*([\'"])((?:\\\\.|(?!\1).)*)\1/s', (string) file_get_contents($file->getPathname()), $matches);
+                // __('...'), OAuthException::translated('...'), SeoMeta->describe('...') va
+                // servislardagi tarjima yordamchilari: self::t('...'), self::text('...'), self::hint('...')
+                preg_match_all('/(?:__|::translated|->describe|self::t|self::text|self::hint)\(\s*([\'"])((?:\\\\.|(?!\1).)*)\1/s', (string) file_get_contents($file->getPathname()), $matches);
 
                 foreach ($matches[2] as $i => $key) {
                     // Guruh kalitlari (validation.required, passwords.sent) — lang/*/*.php da

@@ -180,8 +180,12 @@ async function copy(key: string, value: string): Promise<void> {
         <p class="mt-1 text-xs leading-relaxed text-navy-600">
             {{
                 online?.providers.length
-                    ? "Onlayn to'lovdan so'ng maqola darhol tahririyat navbatiga qo'shiladi."
-                    : "To'lov tahririyat tomonidan tasdiqlangach, maqola ko'rib chiqish navbatiga qo'shiladi."
+                    ? t(
+                          "Onlayn to'lovdan so'ng maqola darhol tahririyat navbatiga qo'shiladi.",
+                      )
+                    : t(
+                          "To'lov tahririyat tomonidan tasdiqlangach, maqola ko'rib chiqish navbatiga qo'shiladi.",
+                      )
             }}
         </p>
 

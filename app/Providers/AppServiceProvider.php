@@ -9,14 +9,17 @@ use App\Services\Notifications\EditorialNotifier;
 use App\Services\Settings\SettingsStore;
 use App\Services\Settings\SystemSettings;
 use App\Support\Seo\SeoMeta;
+use App\Support\Validation\AttributeNames;
 use Carbon\CarbonImmutable;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\Validator as ValidationValidator;
 use Spatie\Translatable\Facades\Translatable;
 
 class AppServiceProvider extends ServiceProvider
@@ -42,6 +45,21 @@ class AppServiceProvider extends ServiceProvider
         SystemSettings::apply();
         $this->configureAuthorization();
         $this->configureEvents();
+        $this->configureValidation();
+    }
+
+    /**
+     * FormRequest'lardagi o'zbekcha maydon nomlari (attributes()) joriy tilga tarjima qilinadi.
+     */
+    protected function configureValidation(): void
+    {
+        Validator::resolver(fn ($translator, array $data, array $rules, array $messages, array $attributes): ValidationValidator => new ValidationValidator(
+            $translator,
+            $data,
+            $rules,
+            $messages,
+            AttributeNames::translate($attributes),
+        ));
     }
 
     /**

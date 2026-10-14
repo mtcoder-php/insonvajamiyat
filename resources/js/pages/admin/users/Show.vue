@@ -679,7 +679,7 @@ const actionButton =
                                 {{
                                     user.twoFactorEnabled
                                         ? t('Yoqilgan')
-                                        : "O'chirilgan"
+                                        : t("O'chirilgan")
                                 }}
                             </p>
                         </div>
@@ -812,7 +812,11 @@ const actionButton =
         v-model:open="resetOpen"
         :icon="Send"
         :title="t('Parolni tiklash havolasi')"
-        :description="`${user.email} manziliga parolni tiklash havolasi yuboriladi.`"
+        :description="
+            t(':email manziliga parolni tiklash havolasi yuboriladi.', {
+                email: user.email,
+            })
+        "
         :confirm-text="t('Yuborish')"
         :processing="sendingReset"
         @confirm="submitReset"
