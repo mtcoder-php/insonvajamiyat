@@ -106,7 +106,7 @@ const keySourceLabel: Record<AiSettingsData['values']['keySource'], string> = {
                     {{
                         form.enabled
                             ? t('Xizmat yoqilgan')
-                            : "Xizmat o'chirilgan"
+                            : t("Xizmat o'chirilgan")
                     }}
                 </label>
             </header>

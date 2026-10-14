@@ -103,7 +103,7 @@ function buildPdf(): void {
                     {{
                         build.status === 'queued'
                             ? t('Navbatda…')
-                            : "Yig'ilmoqda…"
+                            : t("Yig'ilmoqda…")
                     }}
                 </p>
                 <p>
@@ -144,9 +144,9 @@ function buildPdf(): void {
                 {{
                     build.auto
                         ? build.stale
-                            ? "Eskirgan — maqolalar o'zgargan"
-                            : "Avtomatik yig'ilgan"
-                        : "Qo'lda yuklangan"
+                            ? t("Eskirgan — maqolalar o'zgargan")
+                            : t("Avtomatik yig'ilgan")
+                        : t("Qo'lda yuklangan")
                 }}
             </p>
             <p class="mt-0.5 text-navy-600">

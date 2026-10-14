@@ -65,7 +65,10 @@ function upload(file: File | null | undefined): void {
     const limit = props.article.uploadLimit;
 
     if (limit > 0 && file.size > limit) {
-        uploadError.value = `Fayl hajmi (${formatLimit(file.size)}) serverdagi chegaradan (${formatLimit(limit)}) katta. php.ini da upload_max_filesize va post_max_size ni oshiring.`;
+        uploadError.value = t(
+            'Fayl hajmi (:size) serverdagi chegaradan (:limit) katta. php.ini da upload_max_filesize va post_max_size ni oshiring.',
+            { size: formatLimit(file.size), limit: formatLimit(limit) },
+        );
 
         if (fileInput.value) {
             fileInput.value.value = '';
@@ -131,7 +134,10 @@ const statusBox = computed(() => {
 
     return {
         title: t('Maketlanmoqda'),
-        text: `${a.checks.filter((c) => c.ok).length}/${a.checks.length} tekshiruv bajarilgan.`,
+        text: t(':done/:total tekshiruv bajarilgan.', {
+            done: a.checks.filter((c) => c.ok).length,
+            total: a.checks.length,
+        }),
         tone: 'brand',
     };
 });
@@ -561,7 +567,7 @@ const info = computed(() =>
                             {{
                                 article.preview.isFinal
                                     ? t('Yakuniy PDF')
-                                    : "Qo'lyozma (yakuniy PDF hali yo'q)"
+                                    : t("Qo'lyozma (yakuniy PDF hali yo'q)")
                             }}
                             · {{ article.preview.name }}
                         </p>

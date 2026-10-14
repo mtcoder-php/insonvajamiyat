@@ -53,7 +53,7 @@ class EventRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'registration_url.regex' => 'Havola http:// yoki https:// bilan boshlanishi kerak.',
+            'registration_url.regex' => __('Havola http:// yoki https:// bilan boshlanishi kerak.'),
         ];
     }
 }

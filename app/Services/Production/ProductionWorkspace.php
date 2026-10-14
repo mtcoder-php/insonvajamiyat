@@ -55,10 +55,10 @@ class ProductionWorkspace
         $inProduction = Article::query()->where('status', ArticleStatus::InProduction->value);
 
         return [
-            ['key' => 'new', 'label' => 'Maketga olinishi kutilmoqda', 'value' => $this->query('new')->count(), 'hint' => 'Qabul qilingan maqolalar'],
-            ['key' => 'layout', 'label' => 'Maketlanmoqda', 'value' => (clone $inProduction)->whereNull('chief_editor_approved_at')->count(), 'hint' => 'PDF, korrektura, tekshiruv'],
-            ['key' => 'approved', 'label' => 'Nashrga tayyor', 'value' => (clone $inProduction)->whereNotNull('chief_editor_approved_at')->count(), 'hint' => 'Bosh muharrir tasdiqlagan'],
-            ['key' => 'published', 'label' => 'Shu oy nashr etildi', 'value' => Article::query()->where('status', ArticleStatus::Published->value)->where('published_at', '>=', now()->startOfMonth())->count(), 'hint' => now()->translatedFormat('F Y')],
+            ['key' => 'new', 'label' => __('Maketga olinishi kutilmoqda'), 'value' => $this->query('new')->count(), 'hint' => __('Qabul qilingan maqolalar')],
+            ['key' => 'layout', 'label' => __('Maketlanmoqda'), 'value' => (clone $inProduction)->whereNull('chief_editor_approved_at')->count(), 'hint' => __('PDF, korrektura, tekshiruv')],
+            ['key' => 'approved', 'label' => __('Nashrga tayyor'), 'value' => (clone $inProduction)->whereNotNull('chief_editor_approved_at')->count(), 'hint' => __('Bosh muharrir tasdiqlagan')],
+            ['key' => 'published', 'label' => __('Shu oy nashr etildi'), 'value' => Article::query()->where('status', ArticleStatus::Published->value)->where('published_at', '>=', now()->startOfMonth())->count(), 'hint' => now()->translatedFormat('F Y')],
         ];
     }
 

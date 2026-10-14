@@ -74,13 +74,13 @@ class JournalSettingsRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'issn.regex' => 'ISSN 1234-5678 ko\'rinishida bo\'lishi kerak.',
-            'eissn.regex' => 'e-ISSN 1234-5678 ko\'rinishida bo\'lishi kerak.',
-            'doi_prefix.regex' => 'DOI prefiksi 10.xxxx yoki 10.xxxx/nom ko\'rinishida bo\'lishi kerak.',
-            'social_*.regex' => 'Havola http:// yoki https:// bilan boshlanishi kerak.',
-            'payment_account.regex' => 'Hisob raqami 16–34 ta raqamdan iborat bo\'lishi kerak (odatda 20 ta).',
-            'payment_mfo.regex' => 'MFO 5 ta raqam bo\'lishi kerak.',
-            'payment_inn.regex' => 'STIR 9 ta raqam bo\'lishi kerak.',
+            'issn.regex' => __('ISSN 1234-5678 ko\'rinishida bo\'lishi kerak.'),
+            'eissn.regex' => __('e-ISSN 1234-5678 ko\'rinishida bo\'lishi kerak.'),
+            'doi_prefix.regex' => __('DOI prefiksi 10.xxxx yoki 10.xxxx/nom ko\'rinishida bo\'lishi kerak.'),
+            'social_*.regex' => __('Havola http:// yoki https:// bilan boshlanishi kerak.'),
+            'payment_account.regex' => __('Hisob raqami 16–34 ta raqamdan iborat bo\'lishi kerak (odatda 20 ta).'),
+            'payment_mfo.regex' => __('MFO 5 ta raqam bo\'lishi kerak.'),
+            'payment_inn.regex' => __('STIR 9 ta raqam bo\'lishi kerak.'),
         ];
     }
 }

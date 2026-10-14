@@ -50,9 +50,11 @@ function cancel(review: EditorialReview): void {
             class="flex items-start gap-3 rounded-lg bg-[#f5f8fc] px-3 py-2.5 text-xs leading-relaxed text-navy-600"
         >
             <Lock class="mt-0.5 size-4 shrink-0 text-brand-600" />
-            Blind review: taqrizchilar ismi muallifga ko'rsatilmaydi. Muallif
-            faqat "Muallifga izoh" va baholarni ko'radi (qaror chiqqandan
-            keyin).
+            {{
+                t(
+                    'Blind review: taqrizchilar ismi muallifga ko\'rsatilmaydi. Muallif faqat "Muallifga izoh" va baholarni ko\'radi (qaror chiqqandan keyin).',
+                )
+            }}
         </div>
 
         <article

@@ -108,8 +108,8 @@ const tiles = computed(() => [
         label: t('Faol taqrizlar'),
         value: formatNumber(props.stats.active),
         hint: props.stats.overdue
-            ? `${props.stats.overdue} tasi muddati o'tgan`
-            : `Band chegarasi: ${props.busyFrom}`,
+            ? t(":count tasi muddati o'tgan", { count: props.stats.overdue })
+            : t('Band chegarasi: :count', { count: props.busyFrom }),
         icon: AlarmClock,
         tint: props.stats.overdue
             ? 'bg-red-50 text-red-600'
@@ -127,11 +127,13 @@ const tiles = computed(() => [
         key: 'speed',
         label: t("O'rtacha muddat"),
         value:
-            props.stats.avgDays === null ? '—' : `${props.stats.avgDays} kun`,
+            props.stats.avgDays === null
+                ? '—'
+                : t(':count kun', { count: props.stats.avgDays }),
         hint:
             props.stats.onTime === null
                 ? t("Hali xulosa yo'q")
-                : `${props.stats.onTime}% muddatida`,
+                : t(':percent% muddatida', { percent: props.stats.onTime }),
         icon: Timer,
         tint: 'bg-violet-50 text-violet-600',
     },
@@ -143,7 +145,9 @@ const tiles = computed(() => [
         hint:
             props.stats.acceptRate === null
                 ? undefined
-                : `Takliflarni qabul qilish: ${props.stats.acceptRate}%`,
+                : t('Takliflarni qabul qilish: :percent%', {
+                      percent: props.stats.acceptRate,
+                  }),
         icon: Star,
         tint: 'bg-gold-100 text-gold-700',
     },
@@ -259,7 +263,7 @@ const dangerButton =
                     >
                         <CirclePlay v-if="isPaused" class="size-4" />
                         <CirclePause v-else class="size-4" />
-                        {{ isPaused ? t('Faollashtirish') : "To'xtatish" }}
+                        {{ isPaused ? t('Faollashtirish') : t("To'xtatish") }}
                     </button>
                     <button
                         type="button"
@@ -509,7 +513,7 @@ const dangerButton =
                                         "
                                         >{{
                                             review.isOverdue
-                                                ? "Muddati o'tgan"
+                                                ? t("Muddati o'tgan")
                                                 : review.statusLabel
                                         }}</span
                                     >

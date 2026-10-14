@@ -166,11 +166,16 @@ TXT,
     /** Interfeys uchun: O'zbekcha, Ruscha, Inglizcha */
     public static function languageLabel(?string $code): string
     {
-        return match ($code) {
+        $label = match ($code) {
             'ru' => 'Ruscha',
             'en' => 'Inglizcha',
             default => "O'zbekcha",
         };
+
+        // Joriy interfeys tilida: "Ruscha" → "Русский" / "Russian"
+        $text = __($label);
+
+        return is_string($text) ? $text : $label;
     }
 
     private function make(string $key): PromptTemplate

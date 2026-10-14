@@ -45,7 +45,9 @@ const cards = computed<Card[]>(() => [
         tab: 'click',
         label: t("Click to'lovlar"),
         amount: props.stats.click.amount,
-        hint: `${formatNumber(props.stats.click.count)} ta to'lov`,
+        hint: t(":count ta to'lov", {
+            count: formatNumber(props.stats.click.count),
+        }),
         icon: null,
         letter: 'C',
         tint: 'bg-[#1a82f7] text-white',
@@ -57,7 +59,9 @@ const cards = computed<Card[]>(() => [
         tab: 'payme',
         label: t("Payme to'lovlar"),
         amount: props.stats.payme.amount,
-        hint: `${formatNumber(props.stats.payme.count)} ta to'lov`,
+        hint: t(":count ta to'lov", {
+            count: formatNumber(props.stats.payme.count),
+        }),
         icon: null,
         letter: 'P',
         tint: 'bg-[#0fa37f] text-white',
@@ -69,7 +73,9 @@ const cards = computed<Card[]>(() => [
         tab: 'manual',
         label: t("Qo'lda tasdiqlangan"),
         amount: props.stats.manual.amount,
-        hint: `${formatNumber(props.stats.manual.count)} ta to'lov`,
+        hint: t(":count ta to'lov", {
+            count: formatNumber(props.stats.manual.count),
+        }),
         icon: Landmark,
         tint: 'bg-violet-50 text-violet-600',
         share: props.stats.manual.share,
@@ -80,7 +86,9 @@ const cards = computed<Card[]>(() => [
         tab: 'awaiting',
         label: t("To'lov kutilmoqda"),
         amount: props.stats.awaiting.amount,
-        hint: `${formatNumber(props.stats.awaiting.count)} ta maqola`,
+        hint: t(':count ta maqola', {
+            count: formatNumber(props.stats.awaiting.count),
+        }),
         icon: Hourglass,
         tint: 'bg-amber-50 text-amber-600',
     },

@@ -50,7 +50,7 @@ class RecommendedBookRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'url.regex' => 'Havola http(s):// yoki / bilan boshlanishi kerak.',
+            'url.regex' => __('Havola http(s):// yoki / bilan boshlanishi kerak.'),
         ];
     }
 }

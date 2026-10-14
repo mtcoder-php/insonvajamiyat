@@ -87,7 +87,7 @@ class ReportController extends Controller
             'exports' => fn () => collect(ReportExporter::TYPES)
                 ->map(fn (string $label, string $type): array => [
                     'type' => $type,
-                    'label' => $label,
+                    'label' => __($label),
                     'url' => route('admin.reports.export', ['type' => $type, 'from' => $period->from->toDateString(), 'to' => $period->to->toDateString(), 'subject' => $subject?->slug]),
                 ])
                 ->values()

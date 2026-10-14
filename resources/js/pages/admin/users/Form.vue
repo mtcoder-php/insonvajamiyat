@@ -47,7 +47,9 @@ const props = defineProps<{
 
 const isEdit = computed(() => props.user !== null);
 const title = computed(() =>
-    props.user ? `${props.user.name} — tahrirlash` : t('Yangi foydalanuvchi'),
+    props.user
+        ? t(':name — tahrirlash', { name: props.user.name })
+        : t('Yangi foydalanuvchi'),
 );
 
 defineOptions({
@@ -162,7 +164,7 @@ const fieldClass = (error?: string) =>
                     <ArrowLeft
                         class="size-3.5 transition-transform group-hover:-translate-x-0.5"
                     />
-                    {{ user ? t('Profilga qaytish') : "Ro'yxatga qaytish" }}
+                    {{ user ? t('Profilga qaytish') : t("Ro'yxatga qaytish") }}
                 </Link>
             </template>
             <template #actions>
@@ -464,7 +466,7 @@ const fieldClass = (error?: string) =>
                         <Save v-else class="size-4" />
                         {{
                             isEdit
-                                ? "O'zgarishlarni saqlash"
+                                ? t("O'zgarishlarni saqlash")
                                 : t('Foydalanuvchini yaratish')
                         }}
                     </button>

@@ -83,7 +83,7 @@ function reset(): void {
                     {{
                         prompt.isActive
                             ? t('Faol')
-                            : "O'chirilgan (standart matn ishlatiladi)"
+                            : t("O'chirilgan (standart matn ishlatiladi)")
                     }}
                     <template v-if="prompt.updatedAt">
                         · {{ formatDateTime(prompt.updatedAt)

@@ -74,7 +74,7 @@ trait AiStudioActions
                 'label' => PromptLibrary::languageLabel($code),
             ], PromptLibrary::LANGUAGES),
             'checks' => array_map(
-                fn (string $key, string $label): array => ['value' => $key, 'label' => ucfirst($label)],
+                fn (string $key, string $label): array => ['value' => $key, 'label' => (string) __(ucfirst($label))],
                 array_keys(PromptLibrary::CHECKS),
                 PromptLibrary::CHECKS,
             ),

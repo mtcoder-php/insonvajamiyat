@@ -282,7 +282,7 @@ const revenueSeries = computed(() =>
                             <DonutChart
                                 :items="subjectsChart.items"
                                 :total="subjectsChart.total"
-                                center-label="Jami maqola"
+                                :center-label="t('Jami maqola')"
                             />
                         </DashCard>
                     </div>
@@ -365,7 +365,7 @@ const revenueSeries = computed(() =>
                             <DonutChart
                                 :items="organizations.items"
                                 :total="organizations.total"
-                                center-label="Tashkilot"
+                                :center-label="t('Tashkilot')"
                             />
                             <ul
                                 v-if="organizations.top.length"

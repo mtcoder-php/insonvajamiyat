@@ -53,7 +53,7 @@ class PartnerRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'url.regex' => 'Manzil http:// yoki https:// bilan boshlanishi kerak.',
+            'url.regex' => __('Manzil http:// yoki https:// bilan boshlanishi kerak.'),
         ];
     }
 }

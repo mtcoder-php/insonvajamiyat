@@ -47,6 +47,12 @@ class AnalyticsService
         'PK' => 'Pokiston', 'AF' => "Afg'oniston", 'IR' => 'Eron', 'MY' => 'Malayziya',
     ];
 
+    /** Mamlakat nomi joriy tilda (kod lug'atda bo'lmasa — kodning o'zi) */
+    public static function country(string $code): string
+    {
+        return isset(self::COUNTRIES[$code]) ? __(self::COUNTRIES[$code]) : $code;
+    }
+
     /** Tashkilot turi — nomidagi kalit so'zlar bo'yicha (o'zbek, rus, ingliz) */
     private const ORGANIZATION_TYPES = [
         'university' => ['universitet', 'university', 'университет', 'institut', 'institute', 'институт', 'akademiya', 'academy', 'академия', 'oliygoh'],
@@ -142,7 +148,7 @@ class AnalyticsService
             $subject = $names->get($id);
             $items[] = [
                 'key' => $subject['slug'] ?? 'none',
-                'label' => $subject['name'] ?? "Yo'nalishsiz",
+                'label' => $subject['name'] ?? __("Yo'nalishsiz"),
                 'value' => (int) $value,
             ];
         }
@@ -177,7 +183,7 @@ class AnalyticsService
             $code = (string) $code;
             $items[] = [
                 'key' => $code === '' ? 'none' : $code,
-                'label' => $code === '' ? "Ko'rsatilmagan" : (self::COUNTRIES[$code] ?? $code),
+                'label' => $code === '' ? __("Ko'rsatilmagan") : self::country($code),
                 'value' => $value,
             ];
         }
@@ -213,7 +219,7 @@ class AnalyticsService
             $organizations[$key]['authors']++;
         }
 
-        $labels = ['university' => 'Universitet va institutlar', 'research' => 'Ilmiy markazlar', 'college' => 'Kollej va maktablar', 'other' => 'Boshqalar'];
+        $labels = ['university' => __('Universitet va institutlar'), 'research' => __('Ilmiy markazlar'), 'college' => __('Kollej va maktablar'), 'other' => __('Boshqalar')];
         $byType = array_fill_keys(array_keys($labels), 0);
 
         foreach (array_keys($organizations) as $key) {
@@ -560,7 +566,7 @@ class AnalyticsService
         $rest = array_sum(array_column(array_slice($items, $top), 'value'));
 
         if ($rest > 0) {
-            $head[] = ['key' => 'other', 'label' => 'Boshqalar', 'value' => $rest];
+            $head[] = ['key' => 'other', 'label' => __('Boshqalar'), 'value' => $rest];
         }
 
         return ['total' => array_sum(array_column($items, 'value')), 'items' => $head];

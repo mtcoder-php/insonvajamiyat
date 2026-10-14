@@ -41,7 +41,9 @@ export async function prepareAvatar(file: File): Promise<File> {
 
     if (side < AVATAR_MIN) {
         throw new AvatarError(
-            `Rasm kamida ${AVATAR_MIN}×${AVATAR_MIN} piksel bo'lishi kerak.`,
+            t("Rasm kamida :size×:size piksel bo'lishi kerak.", {
+                size: AVATAR_MIN,
+            }),
         );
     }
 

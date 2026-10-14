@@ -32,7 +32,10 @@ async function upload(picked: File | null | undefined): Promise<void> {
 
     if (limit > 0 && file.size > limit) {
         busy.value = false;
-        error.value = `Fayl hajmi (${formatLimit(file.size)}) serverdagi chegaradan (${formatLimit(limit)}) katta. Kichikroq rasm tanlang yoki php.ini da upload_max_filesize va post_max_size ni oshiring.`;
+        error.value = t(
+            'Fayl hajmi (:size) serverdagi chegaradan (:limit) katta. Kichikroq rasm tanlang yoki php.ini da upload_max_filesize va post_max_size ni oshiring.',
+            { size: formatLimit(file.size), limit: formatLimit(limit) },
+        );
 
         return;
     }

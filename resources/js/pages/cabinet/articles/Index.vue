@@ -175,8 +175,8 @@ watch(() => form.status, apply);
                     <p class="text-sm text-navy-600">
                         {{
                             form.search || form.status
-                                ? "Filtr bo'yicha maqola topilmadi"
-                                : 'Siz hali maqola yubormagansiz'
+                                ? t("Filtr bo'yicha maqola topilmadi")
+                                : t('Siz hali maqola yubormagansiz')
                         }}
                     </p>
                 </template>

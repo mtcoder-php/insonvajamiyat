@@ -100,7 +100,12 @@ const cards = computed<
         value:
             props.data.totals.avgDays === null
                 ? '—'
-                : `${String(props.data.totals.avgDays).replace('.', ',')} kun`,
+                : t(':count kun', {
+                      count: String(props.data.totals.avgDays).replace(
+                          '.',
+                          ',',
+                      ),
+                  }),
         icon: Timer,
         tint: 'bg-violet-50 text-violet-600',
     },
@@ -180,8 +185,11 @@ function onTimeClass(value: number | null): string {
                     {{ t('Taqrizchilar samaradorligi') }}
                 </h2>
                 <p class="text-xs text-navy-400">
-                    Takliflar va xulosalar — tanlangan davrda; "Jarayonda" —
-                    hozirgi holat
+                    {{
+                        t(
+                            'Takliflar va xulosalar — tanlangan davrda; "Jarayonda" — hozirgi holat',
+                        )
+                    }}
                 </p>
             </header>
             <div v-if="rows.length" class="overflow-x-auto">

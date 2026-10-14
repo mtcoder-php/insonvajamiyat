@@ -280,8 +280,8 @@ const statuses: Record<SettingsPostStatus, { label: string; class: string }> = {
         >
             {{
                 filters.q || filters.type
-                    ? "Filtr bo'yicha xabar topilmadi"
-                    : "Hali xabarlar yo'q — birinchisini qo'shing"
+                    ? t("Filtr bo'yicha xabar topilmadi")
+                    : t("Hali xabarlar yo'q — birinchisini qo'shing")
             }}
         </p>
 

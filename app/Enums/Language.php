@@ -22,6 +22,19 @@ enum Language: string
         };
     }
 
+    /** Til nomi joriy interfeys tilida ("O'zbekcha" → "Узбекский"); label() — o'z tilidagi nomi */
+    public function localName(): string
+    {
+        $key = match ($this) {
+            self::Uz => "O'zbekcha",
+            self::Ru => 'Ruscha',
+            self::En => 'Inglizcha',
+        };
+        $text = __($key);
+
+        return is_string($text) ? $text : $key;
+    }
+
     /** AI promptlarda ishlatiladigan to'liq nom */
     public function englishName(): string
     {

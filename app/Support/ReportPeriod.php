@@ -94,7 +94,7 @@ final class ReportPeriod
         $multiYear = $this->from->year !== $this->to->year;
 
         for ($month = $this->from->startOfMonth(); $month->lessThanOrEqualTo($this->to); $month = $month->addMonthNoOverflow()) {
-            $label = self::MONTHS[$month->month - 1];
+            $label = self::monthLabel($month);
             $buckets[] = [
                 'key' => $month->format('Y-m'),
                 'label' => $multiYear ? $label.' '.$month->format('y') : $label,
@@ -166,5 +166,23 @@ final class ReportPeriod
         } catch (Throwable) {
             return null;
         }
+    }
+
+    /** Oyning qisqa nomi joriy tilda: "Sen" / "Сен" / "Sep" */
+    private static function monthLabel(CarbonImmutable $month): string
+    {
+        $locale = app()->getLocale();
+
+        if ($locale === 'uz') {
+            return self::MONTHS[$month->month - 1];
+        }
+
+        $localized = $month->locale($locale);
+
+        if (! $localized instanceof CarbonImmutable) {
+            return self::MONTHS[$month->month - 1];
+        }
+
+        return mb_convert_case(rtrim($localized->isoFormat('MMM'), '.'), MB_CASE_TITLE);
     }
 }

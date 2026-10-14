@@ -50,7 +50,8 @@ class ReportExporter
             }
 
             fwrite($out, "\xEF\xBB\xBF");
-            fputcsv($out, $headers, ';', '"', '');
+            // Ustun nomlari — o'zbekcha kalit, eksport qilgan foydalanuvchi tilida
+            fputcsv($out, array_map(fn (string $header): string => self::text($header), $headers), ';', '"', '');
 
             foreach ($rows as $row) {
                 fputcsv($out, array_map(self::cell(...), $row), ';', '"', '');
@@ -70,7 +71,7 @@ class ReportExporter
         }
 
         if (is_bool($value)) {
-            return $value ? 'Ha' : "Yo'q";
+            return self::text($value ? 'Ha' : "Yo'q");
         }
 
         if (is_int($value) || is_float($value)) {
@@ -193,11 +194,18 @@ class ReportExporter
                 $row->last_name ?? null,
                 $row->first_name ?? null,
                 $row->organization ?? null,
-                $country !== null ? (AnalyticsService::COUNTRIES[$country] ?? $country) : null,
+                $country !== null ? AnalyticsService::country($country) : null,
                 $row->email ?? null,
                 $row->orcid ?? null,
                 (int) ($row->total ?? 0),
             ];
         }
+    }
+
+    private static function text(string $key): string
+    {
+        $text = __($key);
+
+        return is_string($text) ? $text : $key;
     }
 }

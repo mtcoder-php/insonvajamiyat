@@ -52,9 +52,14 @@ const meta: Record<string, { icon: Component; text: string; tint: string }> = {
 <template>
     <div class="flex flex-col gap-5">
         <p class="text-sm text-navy-500">
-            {{ t('Hisobotlar') }}
-            <b class="text-navy-900">{{ period }}</b> davri uchun tuziladi. CSV
-            fayllar Excel'da to'g'ridan-to'g'ri ochiladi (UTF-8, ";" ajratgich).
+            {{ t('Hisobot davri:') }}
+            <b class="text-navy-900">{{ period }}</b
+            >.
+            {{
+                t(
+                    "CSV fayllar Excel'da to'g'ridan-to'g'ri ochiladi (UTF-8, \";\" ajratgich).",
+                )
+            }}
         </p>
 
         <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">

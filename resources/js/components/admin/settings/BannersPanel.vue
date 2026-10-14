@@ -114,7 +114,7 @@ function remove(banner: SettingsBanner): void {
                         <EyeOff v-else class="size-3.5" />
                         {{
                             banner.visible
-                                ? "Ko'rinmoqda"
+                                ? t("Ko'rinmoqda")
                                 : banner.isActive
                                   ? t('Muddatdan tashqari')
                                   : t('Nofaol')

@@ -75,7 +75,7 @@ class NewsletterCampaignService
         foreach (Language::cases() as $language) {
             $audiences[] = [
                 'value' => $language->value,
-                'label' => $language->label(),
+                'label' => $language->localName(),
                 'count' => (int) ($byLocale[$language->value] ?? 0),
             ];
         }
@@ -274,7 +274,7 @@ class NewsletterCampaignService
             }
 
             fwrite($out, "\xEF\xBB\xBF"); // Excel UTF-8 ni to'g'ri ochishi uchun
-            fputcsv($out, ['email', 'til', 'holat', 'obuna sanasi', 'tasdiqlangan', 'chiqqan'], escape: '');
+            fputcsv($out, array_map(fn (string $h): string => (string) __($h), ['email', 'til', 'holat', 'obuna sanasi', 'tasdiqlangan', 'chiqqan']), escape: '');
 
             $query->orderBy('id')->chunkById(500, function ($subscribers) use ($out): void {
                 foreach ($subscribers as $s) {

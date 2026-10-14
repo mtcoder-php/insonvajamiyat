@@ -90,7 +90,7 @@ const percent = computed(() =>
                     {{ t("So'rov bajarilmadi") }}
                 </p>
                 <p class="mt-1 text-[13px] leading-relaxed text-navy-600">
-                    {{ request.error ?? "Noma'lum xato." }}
+                    {{ request.error ?? t("Noma'lum xato.") }}
                 </p>
             </div>
             <button

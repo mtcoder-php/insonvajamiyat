@@ -42,7 +42,7 @@ const steps = computed<Step[]>(() => {
             hint: completed
                 ? formatDate(r.completedAt)
                 : r.dueAt
-                  ? `Muddat: ${formatDate(r.dueAt)}`
+                  ? t('Muddat: :date', { date: formatDate(r.dueAt) })
                   : '—',
             state: completed
                 ? 'done'
@@ -66,10 +66,10 @@ const dueChip = computed(() => {
     }
 
     return d < 0
-        ? `${Math.abs(d)} kun kechikdi`
+        ? t(':count kun kechikdi', { count: Math.abs(d) })
         : d === 0
           ? t('Bugun tugaydi')
-          : `${d} kun qoldi`;
+          : t(':count kun qoldi', { count: d });
 });
 </script>
 

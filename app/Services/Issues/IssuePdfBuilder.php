@@ -69,28 +69,28 @@ class IssuePdfBuilder
         return [
             [
                 'key' => 'qpdf',
-                'label' => 'Serverda qpdf o\'rnatilgan',
+                'label' => self::t('Serverda qpdf o\'rnatilgan'),
                 'ok' => $qpdf !== null && Qpdf::available(),
                 'required' => true,
                 'detail' => $qpdf !== null ? "qpdf {$qpdf}" : 'sudo apt install qpdf (11.0+)',
             ],
             [
                 'key' => 'articles',
-                'label' => 'Songa maqolalar biriktirilgan',
+                'label' => self::t('Songa maqolalar biriktirilgan'),
                 'ok' => $placements->isNotEmpty(),
                 'required' => true,
-                'detail' => $placements->count().' ta maqola',
+                'detail' => self::t(':count ta maqola', ['count' => $placements->count()]),
             ],
             [
                 'key' => 'final_pdf',
-                'label' => 'Barcha maqolalarning yakuniy PDF i bor',
+                'label' => self::t('Barcha maqolalarning yakuniy PDF i bor'),
                 'ok' => $placements->isNotEmpty() && $missingPdf->isEmpty(),
                 'required' => true,
-                'detail' => $missingPdf->isEmpty() ? null : $missingPdf->count().' ta maqolada yo\'q',
+                'detail' => $missingPdf->isEmpty() ? null : self::t(":count ta maqolada yo'q", ['count' => $missingPdf->count()]),
             ],
             [
                 'key' => 'pages',
-                'label' => 'Betlar ketma-ket hisoblangan ('.self::FIRST_ARTICLE_PAGE.'-betdan)',
+                'label' => self::t('Betlar ketma-ket hisoblangan (:page-betdan)', ['page' => self::FIRST_ARTICLE_PAGE]),
                 'ok' => $placements->isNotEmpty() && $pagesProblem === null,
                 // Chop etilgan sonda betlar qulflangan — bosilgan raqam fayldagi o'rinni oladi
                 'required' => $issue->status !== IssueStatus::Published,
@@ -98,24 +98,24 @@ class IssuePdfBuilder
             ],
             [
                 'key' => 'cover',
-                'label' => '1-bet: muqova',
+                'label' => self::t('1-bet: muqova'),
                 'ok' => $this->coverBinary($issue) !== null,
                 'required' => false,
-                'detail' => filled($issue->cover_image_path) ? 'sonning o\'z muqovasi' : 'umumiy muqova ishlatiladi',
+                'detail' => filled($issue->cover_image_path) ? self::t("sonning o'z muqovasi") : self::t('umumiy muqova ishlatiladi'),
             ],
             [
                 'key' => 'info',
-                'label' => '2-bet: jurnal ma\'lumotlari',
+                'label' => self::t('2-bet: jurnal ma\'lumotlari'),
                 'ok' => true,
                 'required' => false,
-                'detail' => $this->infoPath($issue) !== null ? 'yuklangan sahifa' : 'standart sahifa (avtomatik)',
+                'detail' => $this->infoPath($issue) !== null ? self::t('yuklangan sahifa') : self::t('standart sahifa (avtomatik)'),
             ],
             [
                 'key' => 'toc',
-                'label' => 'Mundarija (oxirida)',
+                'label' => self::t('Mundarija (oxirida)'),
                 'ok' => true,
                 'required' => false,
-                'detail' => $this->tocPath($issue) !== null ? 'yuklangan sahifa' : 'avtomatik tuziladi',
+                'detail' => $this->tocPath($issue) !== null ? self::t('yuklangan sahifa') : self::t('avtomatik tuziladi'),
             ],
         ];
     }
@@ -467,11 +467,11 @@ class IssuePdfBuilder
             $count = (int) ($placement->article->pages_count ?? 0);
 
             if ($placement->page_from === null || $count < 1) {
-                return 'hajmi yoki beti noma\'lum maqola bor';
+                return self::t("hajmi yoki beti noma'lum maqola bor");
             }
 
             if ($placement->page_from !== $expected || $placement->page_to !== $expected + $count - 1) {
-                return '«Betlarni hisoblash» tugmasini bosing';
+                return self::t('«Betlarni hisoblash» tugmasini bosing');
             }
 
             $expected += $count;
@@ -556,5 +556,15 @@ class IssuePdfBuilder
         }
 
         return preg_match('/\.(pdf|jpe?g|png|webp)$/i', $toc) === 1 ? $toc : null;
+    }
+
+    /**
+     * @param  array<string, string|int>  $replace
+     */
+    private static function t(string $key, array $replace = []): string
+    {
+        $text = __($key, $replace);
+
+        return is_string($text) ? $text : $key;
     }
 }
