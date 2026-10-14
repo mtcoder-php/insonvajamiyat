@@ -161,7 +161,7 @@ Route::middleware('permission:'.AdminSection::Issues->permission()->value)
             ->middleware('throttle:6,1')
             ->name('pdf.build');
         Route::delete('{issue}/files/{type}', [IssueController::class, 'destroyFile'])
-            ->whereIn('type', ['cover', 'pdf', 'toc'])
+            ->whereIn('type', ['cover', 'pdf', 'toc', 'info'])
             ->name('files.destroy');
 
         Route::post('{issue}/articles', [IssueArticleController::class, 'store'])->name('articles.store');

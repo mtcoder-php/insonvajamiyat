@@ -106,11 +106,18 @@ class IssueController extends Controller
         $type = (string) $validated['type'];
 
         $request->validate(
-            ['file' => $type === 'cover'
-                ? ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120', 'dimensions:min_width=300,min_height=400']
-                : ['required', 'file', 'mimes:pdf', 'max:51200']],
+            ['file' => match ($type) {
+                'cover' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120', 'dimensions:min_width=300,min_height=400'],
+                // 2-bet: maket (PDF) yoki rasm
+                'info' => ['required', 'file', 'mimes:pdf,jpg,jpeg,png,webp', 'max:20480'],
+                default => ['required', 'file', 'mimes:pdf', 'max:51200'],
+            }],
             [],
-            ['file' => $type === 'cover' ? __('Muqova') : __('PDF fayl')],
+            ['file' => match ($type) {
+                'cover' => __('Muqova'),
+                'info' => __("Jurnal ma'lumotlari sahifasi"),
+                default => __('PDF fayl'),
+            }],
         );
 
         $file = $request->file('file');

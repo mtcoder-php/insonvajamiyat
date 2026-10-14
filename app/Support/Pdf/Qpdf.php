@@ -69,6 +69,23 @@ final class Qpdf
     }
 
     /**
+     * Fayldan faqat ko'rsatilgan sahifalar (masalan "1" yoki "1-2").
+     */
+    public static function extract(string $input, string $range, string $output): void
+    {
+        self::run([self::binary(), '--empty', '--pages', $input, $range, '--', $output]);
+    }
+
+    /**
+     * Har bir sahifa ustiga $overlay ning shu tartibdagi sahifasini bosadi
+     * (bet raqami, kolontitul). Sahifalar soni bir xil bo'lishi kerak.
+     */
+    public static function overlay(string $input, string $overlay, string $output): void
+    {
+        self::run([self::binary(), $input, '--overlay', $overlay, '--', $output]);
+    }
+
+    /**
      * Sahifalar va obyektlar (JSON v2, oqim ma'lumotlarisiz).
      *
      * @return array<string, mixed>

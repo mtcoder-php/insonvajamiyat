@@ -72,7 +72,7 @@ const deleteOpen = ref(false);
 const deleting = ref(false);
 
 // Fayllar: muqova, to'liq son PDF, mundarija PDF
-type FileType = 'cover' | 'pdf' | 'toc';
+type FileType = 'cover' | 'pdf' | 'toc' | 'info';
 const uploading = ref<FileType | null>(null);
 const fileErrors = ref<Partial<Record<FileType, string>>>({});
 const inputs = ref<Partial<Record<FileType, HTMLInputElement | null>>>({});
@@ -126,10 +126,18 @@ const files = computed(() => [
         info: props.issue.files.pdf,
     },
     {
-        type: 'toc' as const,
-        title: t('Mundarija PDF'),
+        type: 'info' as const,
+        title: t("2-bet: jurnal ma'lumotlari"),
         hint: t(
-            '«Mundarijani chop etish» sahifasidan PDF sifatida saqlab yuklang.',
+            "Maket (PDF — faqat 1-beti olinadi) yoki rasm. Yuklanmasa, tizim standart sahifani o'zi chizadi.",
+        ),
+        info: props.issue.files.info,
+    },
+    {
+        type: 'toc' as const,
+        title: t('Mundarija PDF (oxirida)'),
+        hint: t(
+            "«Mundarijani chop etish» sahifasidan PDF sifatida saqlab yuklang — son PDF ining oxiriga qo'shiladi.",
         ),
         info: props.issue.files.toc,
     },
@@ -137,7 +145,7 @@ const files = computed(() => [
 
 // Sahifalarni avtomatik hisoblash
 const paginateOpen = ref(false);
-const paginateForm = useForm({ start_page: 1 });
+const paginateForm = useForm<{ start_page?: number }>({});
 
 function paginate(): void {
     paginateForm.post(props.issue.urls.paginate, {
@@ -644,7 +652,11 @@ const checks = computed(() => [
                                                 el as HTMLInputElement)
                                     "
                                     type="file"
-                                    accept="application/pdf,.pdf"
+                                    :accept="
+                                        item.type === 'info'
+                                            ? 'application/pdf,.pdf,image/jpeg,image/png,image/webp'
+                                            : 'application/pdf,.pdf'
+                                    "
                                     class="hidden"
                                     @change="upload(item.type, $event)"
                                 />
@@ -687,7 +699,7 @@ const checks = computed(() => [
         :title="t('Sahifalarni avtomatik hisoblash')"
         :description="
             t(
-                'Maqolalar joriy tartibda, har birining hajmi (betlar soni) bo\'yicha ketma-ket raqamlanadi. Hajm «Nashr jarayoni» sahifasida kiritiladi.',
+                '1-bet — muqova, 2-bet — jurnal ma\'lumotlari; maqolalar 3-betdan joriy tartibda, har birining yakuniy PDF hajmi bo\'yicha ketma-ket joylashadi. Odatda bu avtomatik bajariladi (maqola qo\'shilganda, tartib yoki PDF o\'zgarganda).',
             )
         "
         :icon="Calculator"
@@ -695,22 +707,9 @@ const checks = computed(() => [
         :processing="paginateForm.processing"
         @confirm="paginate"
     >
-        <label class="grid gap-1.5">
-            <span class="text-xs font-semibold text-navy-700">{{
-                t('Birinchi maqola sahifasi')
-            }}</span>
-            <input
-                v-model.number="paginateForm.start_page"
-                type="number"
-                min="1"
-                :class="cn(inputClass, 'w-32 tabular-nums')"
-            />
-            <span
-                v-if="paginateForm.errors.start_page"
-                class="text-xs text-red-600"
-                >{{ paginateForm.errors.start_page }}</span
-            >
-        </label>
+        <p v-if="paginateForm.errors.start_page" class="text-xs text-red-600">
+            {{ paginateForm.errors.start_page }}
+        </p>
     </ActionDialog>
 
     <ActionDialog

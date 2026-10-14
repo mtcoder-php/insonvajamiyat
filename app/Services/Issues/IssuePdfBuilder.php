@@ -4,6 +4,7 @@ namespace App\Services\Issues;
 
 use App\Enums\ArticleFileType;
 use App\Enums\AuditEvent;
+use App\Enums\IssueStatus;
 use App\Jobs\BuildIssuePdf;
 use App\Models\ArticleFile;
 use App\Models\IssueArticle;
@@ -13,6 +14,7 @@ use App\Services\Audit\AuditLogger;
 use App\Support\MediaUrl;
 use App\Support\Pdf\ImagePdf;
 use App\Support\Pdf\Qpdf;
+use App\Support\Pdf\SimplePdf;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -22,11 +24,13 @@ use RuntimeException;
 use Throwable;
 
 /**
- * To'liq son PDF ni avtomatik yig'ish: muqova → mundarija → maqolalarning yakuniy PDF lari (son tartibida).
+ * To'liq son PDF ni avtomatik yig'ish:
+ *   1-bet — muqova, 2-bet — jurnal ma'lumotlari, 3-betdan — maqolalarning yakuniy PDF lari
+ *   (son tartibida, IssueService avtomatik hisoblagan betlarda), oxirida — mundarija.
  *
- * Natijada: xatcho'plar (Muqova, Mundarija, ruknlar → maqolalar) va sahifa belgilari
- * (muqova/mundarija — i, ii…; maqolalar — jurnaldagi sahifa raqamidan) qo'shiladi,
- * shuning uchun PDF ko'ruvchida sahifa raqamlari jurnaldagidek ko'rinadi.
+ * Maqola betlariga bet raqami va kolontitul (jurnal nomi, son) bosiladi — maketchi PDF ni
+ * raqamsiz yuklaydi, tartib o'zgarsa ham raqamlar to'g'ri bo'ladi. Xatcho'plar (ruknlar →
+ * maqolalar) qo'shiladi; PDF ko'ruvchidagi bet raqami bosilgan raqam bilan bir xil.
  * Ish navbatda bajariladi (BuildIssuePdf), holat journal_issues.pdf_status da.
  */
 class IssuePdfBuilder
@@ -39,7 +43,16 @@ class IssuePdfBuilder
 
     public const FAILED = 'failed';
 
-    public function __construct(private readonly AuditLogger $audit) {}
+    /** Maqolalardan oldingi betlar: muqova + jurnal ma'lumotlari */
+    public const FRONT_PAGES = 2;
+
+    /** Birinchi maqola boshlanadigan bet */
+    public const FIRST_ARTICLE_PAGE = self::FRONT_PAGES + 1;
+
+    public function __construct(
+        private readonly AuditLogger $audit,
+        private readonly IssuePdfLayout $layout,
+    ) {}
 
     /**
      * Yig'ishdan oldingi tekshiruv. required=true bandlar bajarilmasa yig'ib bo'lmaydi.
@@ -50,7 +63,7 @@ class IssuePdfBuilder
     {
         $placements = $this->placements($issue);
         $missingPdf = $placements->filter(fn (IssueArticle $p): bool => $this->finalPdf($p) === null);
-        $missingPages = $placements->filter(fn (IssueArticle $p): bool => $p->page_from === null);
+        $pagesProblem = $this->pagesProblem($placements);
         $qpdf = Qpdf::version();
 
         return [
@@ -77,21 +90,29 @@ class IssuePdfBuilder
             ],
             [
                 'key' => 'pages',
-                'label' => 'Sahifa raqamlari belgilangan',
-                'ok' => $placements->isNotEmpty() && $missingPages->isEmpty(),
-                'required' => false,
-                'detail' => $missingPages->isEmpty() ? null : 'xatcho\'plarda sahifa raqami ketma-ket beriladi',
+                'label' => 'Betlar ketma-ket hisoblangan ('.self::FIRST_ARTICLE_PAGE.'-betdan)',
+                'ok' => $placements->isNotEmpty() && $pagesProblem === null,
+                // Chop etilgan sonda betlar qulflangan — bosilgan raqam fayldagi o'rinni oladi
+                'required' => $issue->status !== IssueStatus::Published,
+                'detail' => $pagesProblem,
             ],
             [
                 'key' => 'cover',
-                'label' => 'Muqova',
+                'label' => '1-bet: muqova',
                 'ok' => $this->coverBinary($issue) !== null,
                 'required' => false,
                 'detail' => filled($issue->cover_image_path) ? 'sonning o\'z muqovasi' : 'umumiy muqova ishlatiladi',
             ],
             [
+                'key' => 'info',
+                'label' => '2-bet: jurnal ma\'lumotlari',
+                'ok' => true,
+                'required' => false,
+                'detail' => $this->infoPath($issue) !== null ? 'yuklangan sahifa' : 'standart sahifa (avtomatik)',
+            ],
+            [
                 'key' => 'toc',
-                'label' => 'Mundarija fayli yuklangan',
+                'label' => 'Mundarija (oxirida)',
                 'ok' => $this->tocPath($issue) !== null,
                 'required' => false,
                 'detail' => $this->tocPath($issue) !== null ? null : 'mundarijasiz yig\'iladi',
@@ -195,26 +216,30 @@ class IssuePdfBuilder
             throw new RuntimeException("Serverda qpdf (11+) topilmadi. O'rnating: sudo apt install qpdf");
         }
 
-        /** @var array<int, array{file: string, title: string|null, section: string|null, pageFrom: int|null, front: bool}> $parts */
+        /** @var array<int, array{file: string, title: string|null, section: string|null, kind: string}> $parts */
         $parts = [];
 
+        // 1-bet: muqova (har doim bitta bet — topilmasa bo'sh bet, betlar hisobi buzilmasin)
         $cover = $this->coverBinary($issue);
+        $file = $workdir.'/00-cover.pdf';
+        file_put_contents($file, $cover !== null ? ImagePdf::fromImage($cover) : $this->layout->blankPage());
+        $parts[] = ['file' => $file, 'title' => 'Muqova', 'section' => null, 'kind' => 'front'];
 
-        if ($cover !== null) {
-            $file = $workdir.'/00-cover.pdf';
-            file_put_contents($file, ImagePdf::fromImage($cover));
-            $parts[] = ['file' => $file, 'title' => 'Muqova', 'section' => null, 'pageFrom' => null, 'front' => true];
+        // 2-bet: jurnal ma'lumotlari — son uchun yuklangan sahifa (faqat 1-beti) yoki standart sahifa
+        $file = $workdir.'/01-info.pdf';
+        $info = $this->infoPath($issue);
+
+        if ($info === null) {
+            file_put_contents($file, $this->layout->infoPage($issue));
+        } elseif (str_ends_with(strtolower($info), '.pdf')) {
+            Qpdf::extract(Storage::disk(MediaUrl::DISK)->path($info), '1', $file);
+        } else {
+            file_put_contents($file, ImagePdf::fromImage(Storage::disk(MediaUrl::DISK)->get($info) ?? ''));
         }
 
-        $toc = $this->tocPath($issue);
+        $parts[] = ['file' => $file, 'title' => 'Jurnal haqida', 'section' => null, 'kind' => 'front'];
 
-        if ($toc !== null) {
-            $file = $workdir.'/01-toc.pdf';
-            $contents = Storage::disk(MediaUrl::DISK)->get($toc) ?? '';
-            file_put_contents($file, str_ends_with(strtolower($toc), '.pdf') ? $contents : ImagePdf::fromImage($contents));
-            $parts[] = ['file' => $file, 'title' => 'Mundarija', 'section' => null, 'pageFrom' => null, 'front' => true];
-        }
-
+        // 3-betdan: maqolalar
         $articles = 0;
 
         foreach ($this->placements($issue) as $index => $placement) {
@@ -235,26 +260,52 @@ class IssuePdfBuilder
                 'file' => $file,
                 'title' => $placement->article->title,
                 'section' => IssueWorkspace::section($placement),
-                'pageFrom' => $placement->page_from,
-                'front' => false,
+                'kind' => 'article',
             ];
             $articles++;
+        }
+
+        // Oxirida: mundarija
+        $toc = $this->tocPath($issue);
+
+        if ($toc !== null) {
+            $file = $workdir.'/99-toc.pdf';
+            $contents = Storage::disk(MediaUrl::DISK)->get($toc) ?? '';
+            file_put_contents($file, str_ends_with(strtolower($toc), '.pdf') ? $contents : ImagePdf::fromImage($contents));
+            $parts[] = ['file' => $file, 'title' => 'Mundarija', 'section' => null, 'kind' => 'toc'];
         }
 
         $merged = $workdir.'/merged.pdf';
         Qpdf::merge(array_column($parts, 'file'), $merged);
 
-        // Har bir qismning birinchi sahifasi (birlashtirilgan fayldagi o'rni)
+        // Har bir qismning birinchi beti (birlashtirilgan fayldagi o'rni) va har bir betga nima bosiladi
         $offset = 0;
+        $modes = [];
 
         foreach ($parts as $i => $part) {
             $parts[$i]['index'] = $offset;
-            $offset += $this->pageCount($part['file']);
+            $count = $this->pageCount($part['file']);
+
+            for ($k = 0; $k < $count; $k++) {
+                $modes[$offset + $k] = match ($part['kind']) {
+                    'article' => 'full',
+                    'toc' => 'number',
+                    default => 'none',
+                };
+            }
+
+            $offset += $count;
         }
 
+        // Bet raqami va kolontitul
+        $stamped = $workdir.'/stamped.pdf';
+        $overlay = $workdir.'/overlay.pdf';
+        file_put_contents($overlay, $this->layout->overlay($issue, $this->pageSizes(Qpdf::inspect($merged)), $modes));
+        Qpdf::overlay($merged, $overlay, $stamped);
+
         $final = $workdir.'/issue.pdf';
-        $info = Qpdf::inspect($merged);
-        Qpdf::update($merged, $this->navigation($info, $parts), $final);
+        $info = Qpdf::inspect($stamped);
+        Qpdf::update($stamped, $this->navigation($info, $parts), $final);
 
         return ['file' => $final, 'pages' => $offset, 'articles' => $articles];
     }
@@ -263,7 +314,7 @@ class IssuePdfBuilder
      * Xatcho'plar (Outlines) va sahifa belgilari (PageLabels) — qpdf JSON v2 obyektlari.
      *
      * @param  array<string, mixed>  $info
-     * @param  array<int, array{file: string, title: string|null, section: string|null, pageFrom: int|null, front: bool, index?: int}>  $parts
+     * @param  array<int, array{file: string, title: string|null, section: string|null, kind: string, index?: int}>  $parts
      * @return array<string, mixed>
      */
     private function navigation(array $info, array $parts): array
@@ -317,24 +368,8 @@ class IssuePdfBuilder
             '/Count' => $count,
         ]];
 
-        // Sahifa belgilari: oldingi qismlar — rim raqamlari, maqolalar — jurnal sahifasidan
-        $nums = [];
-        $front = false;
-
-        foreach ($parts as $part) {
-            if ($part['front']) {
-                if (! $front) {
-                    $nums[] = $part['index'] ?? 0;
-                    $nums[] = ['/S' => '/r'];
-                    $front = true;
-                }
-
-                continue;
-            }
-
-            $nums[] = $part['index'] ?? 0;
-            $nums[] = $part['pageFrom'] !== null ? ['/S' => '/D', '/St' => $part['pageFrom']] : ['/S' => '/D'];
-        }
+        // Bet belgilari: bosilgan raqam bilan bir xil (1, 2, 3 … — fayldagi tartib)
+        $nums = [0, ['/S' => '/D']];
 
         $catalog['/Outlines'] = $outlines;
         $catalog['/PageMode'] = '/UseOutlines';
@@ -414,6 +449,85 @@ class IssuePdfBuilder
             ->filter(fn (ArticleFile $f): bool => $f->type === ArticleFileType::FinalPdf)
             ->sortByDesc('id')
             ->first();
+    }
+
+    /**
+     * Betlar avtomatik hisoblangandek ketma-ketmi: birinchi maqola FIRST_ARTICLE_PAGE dan,
+     * har biri yakuniy PDF hajmicha, oraliqsiz. Muammo bo'lsa — qisqa izoh.
+     *
+     * @param  Collection<int, IssueArticle>  $placements
+     */
+    private function pagesProblem(Collection $placements): ?string
+    {
+        $expected = self::FIRST_ARTICLE_PAGE;
+
+        foreach ($placements as $placement) {
+            $count = (int) ($placement->article->pages_count ?? 0);
+
+            if ($placement->page_from === null || $count < 1) {
+                return 'hajmi yoki beti noma\'lum maqola bor';
+            }
+
+            if ($placement->page_from !== $expected || $placement->page_to !== $expected + $count - 1) {
+                return '«Betlarni hisoblash» tugmasini bosing';
+            }
+
+            $expected += $count;
+        }
+
+        return null;
+    }
+
+    /**
+     * Har bir betning o'lchami (MediaBox, ota /Pages dan meros bo'lishi mumkin). Topilmasa — A4.
+     *
+     * @param  array<string, mixed>  $info
+     * @return array<int, array{0: float, 1: float}>
+     */
+    private function pageSizes(array $info): array
+    {
+        $objects = is_array($info['qpdf'][1] ?? null) ? $info['qpdf'][1] : [];
+        $pages = is_array($info['pages'] ?? null) ? $info['pages'] : [];
+        $sizes = [];
+
+        foreach (array_values($pages) as $page) {
+            $ref = is_array($page) && is_string($page['object'] ?? null) ? $page['object'] : null;
+            $box = null;
+
+            for ($depth = 0; $ref !== null && $depth < 10 && $box === null; $depth++) {
+                $value = $objects['obj:'.$ref]['value'] ?? null;
+
+                if (! is_array($value)) {
+                    break;
+                }
+
+                $candidate = $value['/MediaBox'] ?? null;
+
+                if (is_array($candidate) && count($candidate) === 4 && array_filter($candidate, 'is_numeric') === $candidate) {
+                    $box = array_map('floatval', $candidate);
+                }
+
+                $ref = is_string($value['/Parent'] ?? null) ? $value['/Parent'] : null;
+            }
+
+            $sizes[] = $box !== null
+                ? [abs($box[2] - $box[0]), abs($box[3] - $box[1])]
+                : [SimplePdf::A4_WIDTH, SimplePdf::A4_HEIGHT];
+        }
+
+        return $sizes;
+    }
+
+    /** 2-bet: son uchun yuklangan "jurnal ma'lumotlari" sahifasi (PDF yoki rasm) */
+    private function infoPath(JournalIssue $issue): ?string
+    {
+        $path = $issue->info_file_path;
+
+        if (! is_string($path) || $path === '' || ! Storage::disk(MediaUrl::DISK)->exists($path)) {
+            return null;
+        }
+
+        return preg_match('/\.(pdf|jpe?g|png|webp)$/i', $path) === 1 ? $path : null;
     }
 
     /** Muqova rasmi: sonning o'zi yoki umumiy muqova (public/) */

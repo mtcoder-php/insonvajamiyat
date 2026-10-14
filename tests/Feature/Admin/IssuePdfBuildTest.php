@@ -90,18 +90,34 @@ class IssuePdfBuildTest extends TestCase
         $issue->refresh();
         $this->assertSame('done', $issue->pdf_status, (string) $issue->pdf_error);
         $this->assertTrue($issue->pdf_auto);
-        $this->assertSame(6, $issue->pdf_pages); // muqova + 3 + 2
+        $this->assertSame(7, $issue->pdf_pages); // muqova + jurnal ma'lumotlari + 3 + 2
         Storage::disk('public')->assertExists((string) $issue->full_pdf_path);
 
+        // Betlar avtomatik: 1 — muqova, 2 — jurnal ma'lumotlari, maqolalar 3-betdan
+        $this->assertDatabaseHas('issue_articles', ['article_id' => $a->id, 'page_from' => 3, 'page_to' => 5]);
+        $this->assertDatabaseHas('issue_articles', ['article_id' => $b->id, 'page_from' => 6, 'page_to' => 7]);
+
         $file = Storage::disk('public')->path((string) $issue->full_pdf_path);
-        $this->assertSame(6, PdfPageCounter::count($file));
+        $this->assertSame(7, PdfPageCounter::count($file));
 
         $json = json_decode(Process::run([Qpdf::binary(), '--json=2', '--json-key=outlines', '--json-key=pagelabels', $file])->output(), true);
         $this->assertIsArray($json);
         $this->assertSame('Muqova', $json['outlines'][0]['title']);
+        $this->assertSame('Jurnal haqida', $json['outlines'][1]['title']);
         $this->assertSame(2, $json['outlines'][1]['destpageposfrom1']);
-        $this->assertSame(['/S' => '/D', '/St' => 1], $json['pagelabels'][1]['label']);
-        $this->assertSame(4, $json['pagelabels'][2]['label']['/St']);
+        $this->assertSame(3, $json['outlines'][2]['destpageposfrom1']);
+        // Bet belgilari bosilgan raqam bilan bir xil: 1, 2, 3 …
+        $this->assertCount(1, $json['pagelabels']);
+        $this->assertSame(['/S' => '/D', '/St' => 1], $json['pagelabels'][0]['label']);
+
+        // Maqola betlariga bet raqami va kolontitul bosilgan, muqovaga — yo'q
+        $qdf = Storage::disk('public')->path('check-qdf.pdf');
+        Process::run([Qpdf::binary(), '--qdf', '--object-streams=disable', $file, $qdf]);
+        $raw = (string) file_get_contents($qdf);
+        $this->assertStringContainsString('(INSON VA JAMIYAT) Tj', $raw);
+        $this->assertStringContainsString('(2026-yil, 7-son', $raw);
+        $this->assertStringContainsString('(7) Tj', $raw);
+        $this->assertStringNotContainsString('(1) Tj', $raw);
         $this->assertDatabaseHas('audit_logs', ['event' => 'issue.pdf_built']);
 
         // Maqola PDF i yangilansa — eskirgan
@@ -112,6 +128,53 @@ class IssuePdfBuildTest extends TestCase
         $this->actingAs($this->layout)
             ->get(route('admin.issues.show', $issue->slug))
             ->assertInertia(fn (Assert $page) => $page->where('issue.pdfBuild.stale', true));
+    }
+
+    public function test_uploaded_info_page_uses_only_first_page(): void
+    {
+        if (! Qpdf::available()) {
+            $this->markTestSkipped('qpdf (11+) o\'rnatilmagan: sudo apt install qpdf');
+        }
+
+        $article = $this->article(2);
+        $issue = $this->issue();
+
+        $this->actingAs($this->layout)
+            ->post(route('admin.issues.articles.store', $issue->slug), ['article_ids' => [$article->id]])
+            ->assertSessionHasNoErrors();
+
+        $this->actingAs($this->layout)
+            ->post(route('admin.issues.files.store', $issue->slug), ['type' => 'info', 'file' => FakePdf::upload(3, 'malumot.pdf')])
+            ->assertSessionHasNoErrors();
+        $this->assertNotNull($issue->refresh()->info_file_path);
+
+        $this->actingAs($this->layout)->post(route('admin.issues.pdf.build', $issue->slug))->assertSessionHasNoErrors();
+
+        // muqova + 1 bet (yuklangan 3 betdan faqat birinchisi) + 2
+        $this->assertSame(4, $issue->refresh()->pdf_pages, (string) $issue->pdf_error);
+        $this->assertDatabaseHas('issue_articles', ['article_id' => $article->id, 'page_from' => 3, 'page_to' => 4]);
+    }
+
+    public function test_build_requires_consecutive_pages_from_third_page(): void
+    {
+        $article = $this->article(2);
+        $issue = $this->issue();
+
+        $this->actingAs($this->layout)
+            ->post(route('admin.issues.articles.store', $issue->slug), ['article_ids' => [$article->id]]);
+
+        // Qo'lda noto'g'ri bet — yig'ib bo'lmaydi, avtomatik hisoblash tuzatadi
+        $issue->articles()->updateExistingPivot($article->id, ['page_from' => 10, 'page_to' => 11]);
+
+        $this->actingAs($this->layout)
+            ->get(route('admin.issues.show', $issue->slug))
+            ->assertInertia(fn (Assert $page) => $page->where('issue.pdfBuild.canBuild', false));
+
+        $this->actingAs($this->layout)
+            ->post(route('admin.issues.articles.paginate', $issue->slug))
+            ->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('issue_articles', ['article_id' => $article->id, 'page_from' => 3, 'page_to' => 4]);
     }
 
     public function test_build_requires_articles_with_final_pdf_and_permission(): void

@@ -41,6 +41,7 @@ class IssueService
         'cover' => 'cover_image_path',
         'pdf' => 'full_pdf_path',
         'toc' => 'toc_file_path',
+        'info' => 'info_file_path',
     ];
 
     /**
@@ -108,6 +109,7 @@ class IssueService
         $name = match ($type) {
             'cover' => 'cover',
             'pdf' => 'inson-va-jamiyat-'.$issue->slug,
+            'info' => 'jurnal-malumotlari-'.$issue->slug,
             default => 'mundarija-'.$issue->slug,
         };
 
@@ -268,7 +270,7 @@ class IssueService
     /**
      * Sondagi barcha maqolalarning hajmi (PDF dagi betlar soni) ma'lum bo'lsa — sahifalarni
      * avtomatik qayta hisoblaydi (tartib o'zgarganda, maqola qo'shilganda/chiqarilganda,
-     * yangi yakuniy PDF yuklanganda). Boshlang'ich bet — hozirgi eng kichik bet yoki 1.
+     * yangi yakuniy PDF yuklanganda). Birinchi maqola — IssuePdfBuilder::FIRST_ARTICLE_PAGE (3-bet).
      * Chop etilgan maqolasi bor sonda hech narsa o'zgarmaydi.
      *
      * @return bool sahifalar qayta hisoblandimi
@@ -290,9 +292,8 @@ class IssueService
             }
         }
 
-        $start = max(1, (int) ($placements->min('page_from') ?? 1));
-
-        return $this->paginate($issue, $start)['updated'] > 0;
+        // 1-bet muqova, 2-bet jurnal ma'lumotlari — maqolalar doim 3-betdan
+        return $this->paginate($issue, IssuePdfBuilder::FIRST_ARTICLE_PAGE)['updated'] > 0;
     }
 
     /**
