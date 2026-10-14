@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import LocaleBoundary from '@/components/app/LocaleBoundary';
 import SeoDescription from '@/components/seo/SeoDescription.vue';
 import { Toaster } from '@/components/ui/sonner';
 import { t } from '@/lib/i18n';
@@ -34,7 +35,7 @@ const { header = 'dark' } = defineProps<{
         <SiteHeader :variant="header" />
 
         <main id="main" tabindex="-1" class="flex-1 outline-none">
-            <slot />
+            <LocaleBoundary><slot /></LocaleBoundary>
         </main>
 
         <SiteFooter />

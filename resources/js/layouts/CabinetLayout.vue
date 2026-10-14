@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import LocaleBoundary from '@/components/app/LocaleBoundary';
 import { Link } from '@inertiajs/vue3';
 import CabinetSidebar from '@/components/cabinet/CabinetSidebar.vue';
 import { Toaster } from '@/components/ui/sonner';
@@ -59,7 +60,7 @@ const { items, isActive } = useCabinetNav();
             </nav>
 
             <main id="main" class="flex min-w-0 flex-col">
-                <slot />
+                <LocaleBoundary><slot /></LocaleBoundary>
             </main>
         </div>
 

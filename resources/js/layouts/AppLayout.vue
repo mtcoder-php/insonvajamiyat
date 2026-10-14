@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import LocaleBoundary from '@/components/app/LocaleBoundary';
 import { usePermissions } from '@/composables/usePermissions';
 import AppSidebarLayout from '@/layouts/app/AppSidebarLayout.vue';
 import CabinetLayout from '@/layouts/CabinetLayout.vue';
@@ -17,9 +18,9 @@ const { isStaff } = usePermissions();
 
 <template>
     <AppSidebarLayout v-if="isStaff" area="admin" :breadcrumbs="breadcrumbs">
-        <slot />
+        <LocaleBoundary><slot /></LocaleBoundary>
     </AppSidebarLayout>
     <CabinetLayout v-else :breadcrumbs="breadcrumbs">
-        <slot />
+        <LocaleBoundary><slot /></LocaleBoundary>
     </CabinetLayout>
 </template>

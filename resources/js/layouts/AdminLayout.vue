@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import LocaleBoundary from '@/components/app/LocaleBoundary';
 import AppSidebarLayout from '@/layouts/app/AppSidebarLayout.vue';
 import type { BreadcrumbItem } from '@/types';
 
@@ -13,6 +14,6 @@ const { breadcrumbs = [] } = defineProps<{
 
 <template>
     <AppSidebarLayout area="admin" :breadcrumbs="breadcrumbs">
-        <slot />
+        <LocaleBoundary><slot /></LocaleBoundary>
     </AppSidebarLayout>
 </template>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import LocaleBoundary from '@/components/app/LocaleBoundary';
 import SeoDescription from '@/components/seo/SeoDescription.vue';
 import AuthBrandLayout from '@/layouts/auth/AuthBrandLayout.vue';
 
@@ -20,6 +21,6 @@ const {
 <template>
     <SeoDescription />
     <AuthBrandLayout :title="title" :description="description" :wide="wide">
-        <slot />
+        <LocaleBoundary><slot /></LocaleBoundary>
     </AuthBrandLayout>
 </template>
