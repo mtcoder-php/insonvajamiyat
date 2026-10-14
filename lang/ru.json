@@ -1721,6 +1721,7 @@
     "Saytdagi «Yangiliklar» bo'limi va bosh sahifadagi blok": "Раздел «Новости» на сайте и блок на главной",
     "Saytdagi «Yangiliklar» bo'limida va bosh sahifada ko'rinadi.": "Отображается в разделе «Новости» и на главной странице.",
     "Saytga o'tish": "Перейти на сайт",
+    "Saytga qaytish": "Вернуться на сайт",
     "Saytni ochish": "Открыть сайт",
     "Saytni texnik rejimga o'tkazing: php artisan down": "Переведите сайт в режим обслуживания: php artisan down",
     "Server": "Сервер",
