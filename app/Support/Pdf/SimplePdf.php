@@ -16,12 +16,14 @@ final class SimplePdf
 
     public const A4_HEIGHT = 841.89;
 
-    /** Shriftlar: F1 Helvetica, F2 Helvetica-Bold, F3 Times-Italic, F4 Times-Bold */
+    /** Shriftlar: F1 Helvetica, F2 Helvetica-Bold, F3 Times-Italic, F4 Times-Bold, F5 Times-Roman, F6 Helvetica-Oblique */
     private const FONTS = [
         'F1' => 'Helvetica',
         'F2' => 'Helvetica-Bold',
         'F3' => 'Times-Italic',
         'F4' => 'Times-Bold',
+        'F5' => 'Times-Roman',
+        'F6' => 'Helvetica-Oblique',
     ];
 
     /** Helvetica belgi kengliklari (1/1000 em), ASCII 32–126 — AFM bo'yicha */
@@ -53,7 +55,7 @@ final class SimplePdf
      * @param  'left'|'center'|'right'  $align  x — chap chet, markaz yoki o'ng chet
      * @param  array{0: float, 1: float, 2: float}  $color  RGB 0..1
      */
-    public function text(int $page, float $x, float $y, string $text, float $size = 10, string $font = 'F1', string $align = 'left', array $color = [0, 0, 0]): void
+    public function text(int $page, float $x, float $y, string $text, float $size = 10, string $font = 'F1', string $align = 'left', array $color = [0, 0, 0], float $tracking = 0.0, float $wordSpacing = 0.0): void
     {
         $encoded = self::encode($text);
 
@@ -62,13 +64,62 @@ final class SimplePdf
         }
 
         if ($align !== 'left') {
-            $width = self::width($encoded, $size, $font);
+            $width = self::width($encoded, $size, $font) + $tracking * max(0, strlen($encoded) - 1);
             $x -= $align === 'center' ? $width / 2 : $width;
         }
 
         $this->pages[$page]['ops'][] = sprintf(
-            'BT %.3F %.3F %.3F rg /%s %.2F Tf %.2F %.2F Td (%s) Tj ET',
-            $color[0], $color[1], $color[2], $font, $size, $x, $y, self::escape($encoded),
+            'BT %.3F %.3F %.3F rg /%s %.2F Tf %.2F Tc %.3F Tw %.2F %.2F Td (%s) Tj ET',
+            $color[0], $color[1], $color[2], $font, $size, $tracking, $wordSpacing, $x, $y, self::escape($encoded),
+        );
+    }
+
+    /**
+     * Yumaloq burchakli to'rtburchak (to'ldirilgan va/yoki chiziqli).
+     *
+     * @param  array{0: float, 1: float, 2: float}|null  $fill
+     * @param  array{0: float, 1: float, 2: float}|null  $stroke
+     */
+    public function roundRect(int $page, float $x, float $y, float $width, float $height, float $radius, ?array $fill, ?array $stroke = null, float $lineWidth = 0.6): void
+    {
+        $r = min($radius, $width / 2, $height / 2);
+        $k = 0.5523 * $r;
+        $path = sprintf(
+            '%.2F %.2F m %.2F %.2F l %.2F %.2F %.2F %.2F %.2F %.2F c %.2F %.2F l %.2F %.2F %.2F %.2F %.2F %.2F c %.2F %.2F l %.2F %.2F %.2F %.2F %.2F %.2F c %.2F %.2F l %.2F %.2F %.2F %.2F %.2F %.2F c h',
+            $x + $r, $y,
+            $x + $width - $r, $y,
+            $x + $width - $r + $k, $y, $x + $width, $y + $r - $k, $x + $width, $y + $r,
+            $x + $width, $y + $height - $r,
+            $x + $width, $y + $height - $r + $k, $x + $width - $r + $k, $y + $height, $x + $width - $r, $y + $height,
+            $x + $r, $y + $height,
+            $x + $r - $k, $y + $height, $x, $y + $height - $r + $k, $x, $y + $height - $r,
+            $x, $y + $r,
+            $x, $y + $r - $k, $x + $r - $k, $y, $x + $r, $y,
+        );
+        $ops = '';
+
+        if ($fill !== null) {
+            $ops .= sprintf('%.3F %.3F %.3F rg ', $fill[0], $fill[1], $fill[2]);
+        }
+
+        if ($stroke !== null) {
+            $ops .= sprintf('%.3F %.3F %.3F RG %.2F w ', $stroke[0], $stroke[1], $stroke[2], $lineWidth);
+        }
+
+        $operator = $fill !== null && $stroke !== null ? 'B' : ($fill !== null ? 'f' : 'S');
+        $this->pages[$page]['ops'][] = $ops.$path.' '.$operator;
+    }
+
+    /**
+     * To'rtburchak chegarasi (faqat chiziq).
+     *
+     * @param  array{0: float, 1: float, 2: float}  $color
+     */
+    public function strokeRect(int $page, float $x, float $y, float $width, float $height, float $lineWidth, array $color): void
+    {
+        $this->pages[$page]['ops'][] = sprintf(
+            '%.3F %.3F %.3F RG %.2F w %.2F %.2F %.2F %.2F re S',
+            $color[0], $color[1], $color[2], $lineWidth, $x, $y, $width, $height,
         );
     }
 
@@ -76,18 +127,30 @@ final class SimplePdf
      * Matnni berilgan kenglikka sig'diradi (so'zlar bo'yicha qatorlarga bo'ladi).
      *
      * @param  array{0: float, 1: float, 2: float}  $color
-     * @param  'left'|'center'|'right'  $align
+     * @param  'left'|'center'|'right'|'justify'  $align
      * @return float oxirgi qatordan keyingi y
      */
     public function paragraph(int $page, float $x, float $y, float $maxWidth, string $text, float $size = 10, string $font = 'F1', float $leading = 1.4, array $color = [0, 0, 0], string $align = 'left'): float
     {
-        foreach (self::wrap($text, $maxWidth, $size, $font) as $line) {
-            $lineX = match ($align) {
-                'center' => $x + $maxWidth / 2,
-                'right' => $x + $maxWidth,
-                default => $x,
-            };
-            $this->text($page, $lineX, $y, $line, $size, $font, $align, $color);
+        $lines = self::wrap($text, $maxWidth, $size, $font);
+        $last = count($lines) - 1;
+
+        foreach ($lines as $i => $line) {
+            if ($align === 'justify') {
+                // Ikki tomonga tekislash: oxirgi qatordan boshqalarida so'z oralig'i kengaytiriladi (Tw)
+                $spaces = substr_count($line, ' ');
+                $extra = $maxWidth - self::width(self::encode($line), $size, $font);
+                $spacing = $i < $last && $spaces > 0 && $extra > 0 ? $extra / $spaces : 0.0;
+                $this->text($page, $x, $y, $line, $size, $font, 'left', $color, 0.0, $spacing);
+            } else {
+                $lineX = match ($align) {
+                    'center' => $x + $maxWidth / 2,
+                    'right' => $x + $maxWidth,
+                    default => $x,
+                };
+                $this->text($page, $lineX, $y, $line, $size, $font, $align, $color);
+            }
+
             $y -= $size * $leading;
         }
 
@@ -183,7 +246,8 @@ final class SimplePdf
 
         $factor = match ($font) {
             'F2' => 1.06,
-            'F3', 'F4' => 0.93,
+            'F3', 'F5' => 0.9,
+            'F4' => 0.95,
             default => 1.0,
         };
 

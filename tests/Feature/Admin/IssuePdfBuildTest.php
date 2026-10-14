@@ -90,7 +90,7 @@ class IssuePdfBuildTest extends TestCase
         $issue->refresh();
         $this->assertSame('done', $issue->pdf_status, (string) $issue->pdf_error);
         $this->assertTrue($issue->pdf_auto);
-        $this->assertSame(7, $issue->pdf_pages); // muqova + jurnal ma'lumotlari + 3 + 2
+        $this->assertSame(8, $issue->pdf_pages); // muqova + jurnal ma'lumotlari + 3 + 2 + mundarija (avtomatik)
         Storage::disk('public')->assertExists((string) $issue->full_pdf_path);
 
         // Betlar avtomatik: 1 — muqova, 2 — jurnal ma'lumotlari, maqolalar 3-betdan
@@ -98,7 +98,7 @@ class IssuePdfBuildTest extends TestCase
         $this->assertDatabaseHas('issue_articles', ['article_id' => $b->id, 'page_from' => 6, 'page_to' => 7]);
 
         $file = Storage::disk('public')->path((string) $issue->full_pdf_path);
-        $this->assertSame(7, PdfPageCounter::count($file));
+        $this->assertSame(8, PdfPageCounter::count($file));
 
         $json = json_decode(Process::run([Qpdf::binary(), '--json=2', '--json-key=outlines', '--json-key=pagelabels', $file])->output(), true);
         $this->assertIsArray($json);
@@ -106,17 +106,23 @@ class IssuePdfBuildTest extends TestCase
         $this->assertSame('Jurnal haqida', $json['outlines'][1]['title']);
         $this->assertSame(2, $json['outlines'][1]['destpageposfrom1']);
         $this->assertSame(3, $json['outlines'][2]['destpageposfrom1']);
+        $this->assertSame('Mundarija', $json['outlines'][array_key_last($json['outlines'])]['title']);
+        $this->assertSame(8, $json['outlines'][array_key_last($json['outlines'])]['destpageposfrom1']);
         // Bet belgilari bosilgan raqam bilan bir xil: 1, 2, 3 …
         $this->assertCount(1, $json['pagelabels']);
         $this->assertSame(['/S' => '/D', '/St' => 1], $json['pagelabels'][0]['label']);
 
-        // Maqola betlariga bet raqami va kolontitul bosilgan, muqovaga — yo'q
+        // Ichki betlarga ramka, bant (jurnal nomi + bo'lim), shior va bet raqami bosilgan, muqovaga — yo'q
         $qdf = Storage::disk('public')->path('check-qdf.pdf');
         Process::run([Qpdf::binary(), '--qdf', '--object-streams=disable', $file, $qdf]);
         $raw = (string) file_get_contents($qdf);
         $this->assertStringContainsString('(INSON VA JAMIYAT) Tj', $raw);
-        $this->assertStringContainsString('(2026-yil, 7-son', $raw);
-        $this->assertStringContainsString('(7) Tj', $raw);
+        $this->assertStringContainsString('(MAQOLA DAVOMI) Tj', $raw);
+        $this->assertStringContainsString('(MUNDARIJA) Tj', $raw);
+        $this->assertStringContainsString('jamiyat taraqqiyotining eng muhim omili) Tj', $raw);
+        $this->assertStringContainsString('(8) Tj', $raw);
+        // Avtomatik mundarijada maqola sarlavhasi va bet raqami
+        $this->assertStringContainsString('('.strtok($a->title, ' '), $raw);
         $this->assertStringNotContainsString('(1) Tj', $raw);
         $this->assertDatabaseHas('audit_logs', ['event' => 'issue.pdf_built']);
 
@@ -150,8 +156,8 @@ class IssuePdfBuildTest extends TestCase
 
         $this->actingAs($this->layout)->post(route('admin.issues.pdf.build', $issue->slug))->assertSessionHasNoErrors();
 
-        // muqova + 1 bet (yuklangan 3 betdan faqat birinchisi) + 2
-        $this->assertSame(4, $issue->refresh()->pdf_pages, (string) $issue->pdf_error);
+        // muqova + 1 bet (yuklangan 3 betdan faqat birinchisi) + 2 + mundarija
+        $this->assertSame(5, $issue->refresh()->pdf_pages, (string) $issue->pdf_error);
         $this->assertDatabaseHas('issue_articles', ['article_id' => $article->id, 'page_from' => 3, 'page_to' => 4]);
     }
 
