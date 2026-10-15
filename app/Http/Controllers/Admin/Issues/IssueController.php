@@ -10,6 +10,7 @@ use App\Models\JournalIssue;
 use App\Models\User;
 use App\Services\Audit\AuditLogger;
 use App\Services\Indexing\CrossrefDeposit;
+use App\Services\Issues\IssueCoverService;
 use App\Services\Issues\IssuePdfBuilder;
 use App\Services\Issues\IssueService;
 use App\Services\Issues\IssueWorkspace;
@@ -46,6 +47,13 @@ class IssueController extends Controller
             'years' => $this->workspace->years(),
             'next' => $this->nextNumber(),
             'storeUrl' => route('admin.issues.store'),
+            'cover' => [
+                ...app(IssueCoverService::class)->summary(),
+                'uploadUrl' => route('admin.issues.cover.store'),
+                'updateUrl' => route('admin.issues.cover.update'),
+                'deleteUrl' => route('admin.issues.cover.destroy'),
+                'previewUrl' => route('admin.issues.cover.preview'),
+            ],
         ]);
     }
 
@@ -107,7 +115,7 @@ class IssueController extends Controller
 
         $request->validate(
             ['file' => match ($type) {
-                'cover' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120', 'dimensions:min_width=300,min_height=400'],
+                'cover' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:20480', 'dimensions:min_width=300,min_height=400'],
                 // 2-bet: maket (PDF) yoki rasm
                 'info' => ['required', 'file', 'mimes:pdf,jpg,jpeg,png,webp', 'max:20480'],
                 default => ['required', 'file', 'mimes:pdf', 'max:51200'],

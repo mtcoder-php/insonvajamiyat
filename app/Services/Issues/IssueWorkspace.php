@@ -24,6 +24,8 @@ use Illuminate\Support\Facades\Storage;
  */
 class IssueWorkspace
 {
+    private string|false|null $commonCover = false;
+
     public function __construct(
         private readonly PublishService $publisher,
         private readonly IssuePdfBuilder $pdfBuilder,
@@ -34,6 +36,10 @@ class IssueWorkspace
      */
     public function list(?int $year, ?string $status): array
     {
+        // Umumiy muqova — har ro'yxatda bir marta aniqlanadi (muqovasiz sonlar uchun)
+        $this->commonCover = false;
+        $this->commonCoverUrl();
+
         return JournalIssue::query()
             ->when($year !== null, fn (Builder $q) => $q->where('year', $year))
             ->when($status !== null, fn (Builder $q) => $q->where('status', $status))
@@ -309,10 +315,19 @@ class IssueWorkspace
         ];
     }
 
+    /** Umumiy muqova manzili — ro'yxatda bir marta aniqlanadi (N+1 bo'lmasin) */
+    private function commonCoverUrl(): ?string
+    {
+        if ($this->commonCover === false) {
+            $this->commonCover = app(IssueCoverService::class)->url();
+        }
+
+        return $this->commonCover;
+    }
+
     public function coverUrl(JournalIssue $issue): ?string
     {
-        return MediaUrl::from($issue->cover_image_path)
-            ?? MediaUrl::publicAsset(config('journal.default_issue_cover'));
+        return MediaUrl::from($issue->cover_image_path) ?? $this->commonCoverUrl();
     }
 
     /** Nashrga tayyor: bosh muharrir tasdiqlagan yoki allaqachon nashr etilgan */

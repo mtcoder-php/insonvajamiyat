@@ -182,6 +182,56 @@ class IssuePdfLayout
     }
 
     /**
+     * Umumiy (tayyor) muqova rasmi butun sahifa bo'ylab + shu sonning raqami, yili va tartib raqami.
+     *
+     * @param  'bottom'|'top'  $position
+     * @param  'gold'|'white'|'navy'  $color
+     */
+    public function templateCover(JournalIssue $issue, string $image, bool $stamp = true, string $position = 'bottom', string $color = 'gold'): string
+    {
+        $pdf = new SimplePdf;
+        $page = $pdf->addPage();
+        $w = SimplePdf::A4_WIDTH;
+        $h = SimplePdf::A4_HEIGHT;
+
+        // Rasm sahifani to'liq qoplaydi (nisbat saqlanadi, ortiqchasi chetdan kesiladi)
+        [$pw, $ph] = $pdf->addImage('cover', $image);
+        $scale = max($w / $pw, $h / $ph);
+        $pdf->clip($page, sprintf('0 0 %.2F %.2F re', $w, $h));
+        $pdf->drawImage($page, 'cover', ($w - $pw * $scale) / 2, ($h - $ph * $scale) / 2, $pw * $scale, $ph * $scale);
+        $pdf->restore($page);
+
+        if (! $stamp) {
+            return $pdf->output();
+        }
+
+        $text = match ($color) {
+            'white' => [1.0, 1.0, 1.0],
+            'navy' => self::NAVY,
+            default => self::GOLD,
+        };
+        $secondary = $color === 'navy' ? self::NAVY : [1.0, 1.0, 1.0];
+        // O'qilishi uchun matn ostida yumshoq soya-polosa (to'q matnga — och, och matnga — to'q)
+        $shade = $color === 'navy' ? self::CREAM : [0.02, 0.08, 0.18];
+        $top = $position === 'top';
+        $bandH = 120.0;
+
+        for ($i = 0; $i < 20; $i++) {
+            $alpha = 0.03 * (20 - $i);
+            $y = $top ? $h - ($i + 1) * $bandH / 20 : $i * $bandH / 20;
+            $pdf->opacity($page, $alpha);
+            $pdf->rect($page, 0, $y, $w, $bandH / 20 + 0.4, $shade);
+            $pdf->restore($page);
+        }
+
+        $baseline = $top ? $h - 62 : 76;
+        $pdf->text($page, $w / 2, $baseline, '№ '.$issue->number.'   |   '.$issue->year, 22, 'F4', 'center', $text, 0.8);
+        $pdf->text($page, $w / 2, $baseline - 20, '('.$this->serial($issue).'-son)', 11, 'F5', 'center', $secondary);
+
+        return $pdf->output();
+    }
+
+    /**
      * 2-bet: "Jurnal haqida" (krem fon bilan; ramka va kolontitul overlay bilan qo'yiladi).
      */
     public function infoPage(JournalIssue $issue): string
