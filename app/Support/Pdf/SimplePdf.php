@@ -30,6 +30,12 @@ final class SimplePdf
     /** @var array<string, array<int, int>> shrift → ishlatilgan glyph → Unicode kod */
     private array $used = [];
 
+    /** @var array<string, array{width: int, height: int, object: string, mask: string|null}> rasm nomi → XObject */
+    private array $images = [];
+
+    /** @var array<string, float> ExtGState nomi → shaffoflik */
+    private array $alphas = [];
+
     /** @var array<int, array{width: float, height: float, ops: array<int, string>}> */
     private array $pages = [];
 
@@ -146,20 +152,23 @@ final class SimplePdf
      *
      * @param  array{0: float, 1: float, 2: float}  $color
      * @param  'left'|'center'|'right'|'justify'  $align
+     * @param  float  $indent  birinchi qator xat boshi (pt)
      * @return float oxirgi qatordan keyingi y
      */
-    public function paragraph(int $page, float $x, float $y, float $maxWidth, string $text, float $size = 10, string $font = 'F1', float $leading = 1.4, array $color = [0, 0, 0], string $align = 'left'): float
+    public function paragraph(int $page, float $x, float $y, float $maxWidth, string $text, float $size = 10, string $font = 'F1', float $leading = 1.4, array $color = [0, 0, 0], string $align = 'left', float $indent = 0.0): float
     {
-        $lines = self::wrap($text, $maxWidth, $size, $font);
+        $lines = self::wrap($text, $maxWidth, $size, $font, $indent);
         $last = count($lines) - 1;
 
         foreach ($lines as $i => $line) {
+            $shift = $i === 0 ? $indent : 0.0;
+
             if ($align === 'justify') {
-                // Ikki tomonga tekislash: oxirgi qatordan boshqalarida so'z oralig'i kengaytiriladi (Tw)
+                // Ikki tomonga tekislash: oxirgi qatordan boshqalarida so'z oralig'i kengaytiriladi
                 $spaces = substr_count($line, ' ');
-                $extra = $maxWidth - self::width($line, $size, $font);
+                $extra = $maxWidth - $shift - self::width($line, $size, $font);
                 $spacing = $i < $last && $spaces > 0 && $extra > 0 ? $extra / $spaces : 0.0;
-                $this->text($page, $x, $y, $line, $size, $font, 'left', $color, 0.0, $spacing);
+                $this->text($page, $x + $shift, $y, $line, $size, $font, 'left', $color, 0.0, $spacing);
             } else {
                 $lineX = match ($align) {
                     'center' => $x + $maxWidth / 2,
@@ -197,6 +206,151 @@ final class SimplePdf
         );
     }
 
+    /**
+     * Rasmni hujjatga qo'shadi (bir marta) va o'lchamini (px) qaytaradi. Shaffof PNG/WEBP
+     * (kichik rasmlar — logotip) alfa-kanal bilan (SMask), qolganlari JPEG sifatida joylanadi.
+     *
+     * @return array{0: int, 1: int}
+     */
+    public function addImage(string $key, string $binary): array
+    {
+        if (isset($this->images[$key])) {
+            return [$this->images[$key]['width'], $this->images[$key]['height']];
+        }
+
+        $source = @imagecreatefromstring($binary);
+
+        if ($source === false) {
+            throw new \RuntimeException("Image {$key} could not be read.");
+        }
+
+        $width = imagesx($source);
+        $height = imagesy($source);
+        $mask = null;
+
+        if ($width * $height <= 400_000 && imageistruecolor($source)) {
+            [$rgb, $alpha, $transparent] = self::pixels($source, $width, $height);
+
+            if ($transparent) {
+                $mask = self::stream($alpha, sprintf('/Type /XObject /Subtype /Image /Width %d /Height %d /ColorSpace /DeviceGray /BitsPerComponent 8', $width, $height));
+                $object = self::stream($rgb, sprintf('/Type /XObject /Subtype /Image /Width %d /Height %d /ColorSpace /DeviceRGB /BitsPerComponent 8 /SMask %%MASK%%', $width, $height));
+                $this->images[$key] = ['width' => $width, 'height' => $height, 'object' => $object, 'mask' => $mask];
+
+                return [$width, $height];
+            }
+        }
+
+        // Shaffof bo'lmagan (yoki katta) rasm — oq fonga, JPEG
+        $canvas = imagecreatetruecolor($width, $height);
+        imagefill($canvas, 0, 0, (int) imagecolorallocate($canvas, 255, 255, 255));
+        imagecopy($canvas, $source, 0, 0, 0, 0, $width, $height);
+        ob_start();
+        imagejpeg($canvas, null, 88);
+        $jpeg = (string) ob_get_clean();
+
+        $this->images[$key] = [
+            'width' => $width,
+            'height' => $height,
+            'object' => sprintf('<< /Type /XObject /Subtype /Image /Width %d /Height %d /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length %d >>', $width, $height, strlen($jpeg))
+                ."\nstream\n".$jpeg."\nendstream",
+            'mask' => null,
+        ];
+
+        return [$width, $height];
+    }
+
+    /** Qo'shilgan rasmni (x, y — chap-pastki burchak) berilgan o'lchamda chizadi */
+    public function drawImage(int $page, string $key, float $x, float $y, float $width, float $height): void
+    {
+        $this->pages[$page]['ops'][] = sprintf('q %.2F 0 0 %.2F %.2F %.2F cm /%s Do Q', $width, $height, $x, $y, self::imageName($key));
+    }
+
+    /**
+     * Lucide ikonkasi (24×24 chiziqli) — (x, top) chap-yuqori burchak, size — o'lchami (pt).
+     *
+     * @param  array{0: float, 1: float, 2: float}  $color
+     */
+    public function icon(int $page, string $name, float $x, float $top, float $size, array $color, float $lineWidth = 2.0): void
+    {
+        $paths = PdfIcons::PATHS[$name] ?? PdfIcons::PATHS['sparkles'];
+        $scale = $size / 24;
+        $ops = '';
+
+        foreach ($paths as $d) {
+            $ops .= SvgPath::toPdf($d, $x, $top, $scale).' S ';
+        }
+
+        $this->pages[$page]['ops'][] = sprintf('q %.3F %.3F %.3F RG %.2F w 1 J 1 j %sQ', $color[0], $color[1], $color[2], $lineWidth * $scale, $ops);
+    }
+
+    /**
+     * Ixtiyoriy yo'l (PDF operatorlari: m l c h) — to'ldirish va/yoki chiziq.
+     *
+     * @param  array{0: float, 1: float, 2: float}|null  $fill
+     * @param  array{0: float, 1: float, 2: float}|null  $stroke
+     */
+    public function path(int $page, string $ops, ?array $fill, ?array $stroke = null, float $lineWidth = 0.6): void
+    {
+        $prefix = '';
+
+        if ($fill !== null) {
+            $prefix .= sprintf('%.3F %.3F %.3F rg ', $fill[0], $fill[1], $fill[2]);
+        }
+
+        if ($stroke !== null) {
+            $prefix .= sprintf('%.3F %.3F %.3F RG %.2F w 1 j ', $stroke[0], $stroke[1], $stroke[2], $lineWidth);
+        }
+
+        $operator = $fill !== null && $stroke !== null ? 'B' : ($fill !== null ? 'f' : 'S');
+        $this->pages[$page]['ops'][] = 'q '.$prefix.$ops.' '.$operator.' Q';
+    }
+
+    /** Keyingi chizmalarni yo'l ichida kesadi — restore() gacha */
+    public function clip(int $page, string $ops): void
+    {
+        $this->pages[$page]['ops'][] = 'q '.$ops.' W n';
+    }
+
+    public function restore(int $page): void
+    {
+        $this->pages[$page]['ops'][] = 'Q';
+    }
+
+    /** Keyingi chizmalar shaffofligi (0..1) — restore() gacha */
+    public function opacity(int $page, float $alpha): void
+    {
+        $name = 'GA'.(int) round($alpha * 100);
+        $this->alphas[$name] = max(0.0, min(1.0, $alpha));
+        $this->pages[$page]['ops'][] = 'q /'.$name.' gs';
+    }
+
+    /**
+     * @return array{0: string, 1: string, 2: bool} RGB baytlari, alfa baytlari, shaffof piksel bormi
+     */
+    private static function pixels(\GdImage $image, int $width, int $height): array
+    {
+        $rgb = '';
+        $alpha = '';
+        $transparent = false;
+
+        for ($py = 0; $py < $height; $py++) {
+            for ($px = 0; $px < $width; $px++) {
+                $color = imagecolorat($image, $px, $py);
+                $a = 255 - (int) round((($color >> 24) & 0x7F) * 255 / 127);
+                $transparent = $transparent || $a < 255;
+                $rgb .= chr(($color >> 16) & 0xFF).chr(($color >> 8) & 0xFF).chr($color & 0xFF);
+                $alpha .= chr($a);
+            }
+        }
+
+        return [$rgb, $alpha, $transparent];
+    }
+
+    private static function imageName(string $key): string
+    {
+        return 'Im'.substr(md5($key), 0, 8);
+    }
+
     public function output(): string
     {
         if ($this->pages === []) {
@@ -213,6 +367,30 @@ final class SimplePdf
             $fontRefs .= '/'.$key.' '.$fontId.' 0 R ';
         }
 
+        $xobjects = '';
+
+        foreach ($this->images as $key => $image) {
+            $maskRef = '';
+
+            if ($image['mask'] !== null) {
+                $objects[$next] = $image['mask'];
+                $maskRef = $next++.' 0 R';
+            }
+
+            $objects[$next] = str_replace('%MASK%', $maskRef, $image['object']);
+            $xobjects .= '/'.self::imageName($key).' '.$next++.' 0 R ';
+        }
+
+        $states = '';
+
+        foreach ($this->alphas as $name => $alpha) {
+            $objects[$next] = sprintf('<< /Type /ExtGState /ca %.2F /CA %.2F >>', $alpha, $alpha);
+            $states .= '/'.$name.' '.$next++.' 0 R ';
+        }
+
+        $resources = '/Font << '.$fontRefs.'>>'
+            .($xobjects !== '' ? ' /XObject << '.$xobjects.'>>' : '')
+            .($states !== '' ? ' /ExtGState << '.$states.'>>' : '');
         $kids = [];
 
         foreach ($this->pages as $page) {
@@ -221,8 +399,8 @@ final class SimplePdf
 
             $pageId = $next++;
             $objects[$pageId] = sprintf(
-                '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 %.2F %.2F] /Resources << /Font << %s>> >> /Contents %d 0 R >>',
-                $page['width'], $page['height'], $fontRefs, $contentId,
+                '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 %.2F %.2F] /Resources << %s >> /Contents %d 0 R >>',
+                $page['width'], $page['height'], $resources, $contentId,
             );
             $kids[] = $pageId.' 0 R';
         }
@@ -356,7 +534,7 @@ final class SimplePdf
     /**
      * @return array<int, string> qatorlar (UTF-8)
      */
-    public static function wrap(string $text, float $maxWidth, float $size, string $font = 'F1'): array
+    public static function wrap(string $text, float $maxWidth, float $size, string $font = 'F1', float $firstIndent = 0.0): array
     {
         $lines = [];
 
@@ -369,8 +547,9 @@ final class SimplePdf
                 }
 
                 $candidate = $current === '' ? $word : $current.' '.$word;
+                $limit = $lines === [] ? $maxWidth - $firstIndent : $maxWidth;
 
-                if ($current !== '' && self::width($candidate, $size, $font) > $maxWidth) {
+                if ($current !== '' && self::width($candidate, $size, $font) > $limit) {
                     $lines[] = $current;
                     $current = $word;
                 } else {

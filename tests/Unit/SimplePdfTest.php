@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use App\Support\Pdf\DocumentPdf;
 use App\Support\Pdf\SimplePdf;
+use App\Support\Pdf\SvgPath;
 use App\Support\Pdf\TrueTypeFont;
 use Tests\TestCase;
 
@@ -55,5 +56,20 @@ class SimplePdfTest extends TestCase
 
         $this->assertGreaterThan(3, substr_count($output, '/Type /Page '));
         $this->assertStringContainsString('/Count ', $output);
+    }
+
+    public function test_svg_path_converts_lines_curves_and_compact_arcs(): void
+    {
+        // Lucide "book-open": yoy bayroqlari ajratgichsiz ("0 0022 17")
+        $ops = SvgPath::toPdf('M12 5v16M20 19A2 2 0 0022 17V5', 0, 24, 1);
+
+        $this->assertStringStartsWith('12.00 19.00 m 12.00 3.00 l 20.00 5.00 m', $ops);
+        $this->assertStringContainsString(' c ', $ops);
+        $this->assertStringEndsWith('22.00 19.00 l', $ops);
+
+        // Aylana (ikki yarim yoy) — yopiq yo'l
+        $circle = SvgPath::toPdf('M5 7a4 4 0 1 0 8 0a4 4 0 1 0 -8 0Z', 0, 24, 1);
+        $this->assertSame(4, substr_count($circle, ' c '));
+        $this->assertStringEndsWith('h', $circle);
     }
 }

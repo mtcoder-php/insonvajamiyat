@@ -86,6 +86,14 @@ final class Qpdf
     }
 
     /**
+     * Har bir sahifa ostiga (underlay — fon) va ustiga (overlay — ramka, kolontitul) bosish.
+     */
+    public static function stamp(string $input, string $underlay, string $overlay, string $output): void
+    {
+        self::run([self::binary(), $input, '--underlay', $underlay, '--', '--overlay', $overlay, '--', $output]);
+    }
+
+    /**
      * Sahifalar va obyektlar (JSON v2, oqim ma'lumotlarisiz).
      *
      * @return array<string, mixed>
