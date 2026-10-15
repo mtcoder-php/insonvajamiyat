@@ -99,9 +99,9 @@ class IssuePdfBuilder
             [
                 'key' => 'cover',
                 'label' => self::t('1-bet: muqova'),
-                'ok' => $this->coverBinary($issue) !== null,
+                'ok' => true,
                 'required' => false,
-                'detail' => filled($issue->cover_image_path) ? self::t("sonning o'z muqovasi") : self::t('umumiy muqova ishlatiladi'),
+                'detail' => $this->ownCover($issue) !== null ? self::t("sonning o'z muqovasi") : self::t('avtomatik dizayn (son raqami bilan)'),
             ],
             [
                 'key' => 'info',
@@ -216,13 +216,13 @@ class IssuePdfBuilder
             throw new RuntimeException("Serverda qpdf (11+) topilmadi. O'rnating: sudo apt install qpdf");
         }
 
-        /** @var array<int, array{file: string, title: string|null, section: string|null, kind: string, label: string|null, rest?: string|null}> $parts */
+        /** @var array<int, array{file: string, title: string|null, section: string|null, kind: string, label: string|null}> $parts */
         $parts = [];
 
-        // 1-bet: muqova (har doim bitta bet — topilmasa bo'sh bet, betlar hisobi buzilmasin)
-        $cover = $this->coverBinary($issue);
+        // 1-bet: muqova — sonning o'z (tayyor) muqovasi yoki avtomatik dizayn (umumiy rasm ark ichida)
+        $cover = $this->ownCover($issue);
         $file = $workdir.'/00-cover.pdf';
-        file_put_contents($file, $cover !== null ? ImagePdf::fromImage($cover) : $this->layout->blankPage());
+        file_put_contents($file, $cover !== null ? ImagePdf::fromImage($cover) : $this->layout->coverPage($issue, $this->coverArt()));
         $parts[] = ['file' => $file, 'title' => 'Muqova', 'section' => null, 'kind' => 'front', 'label' => null];
 
         // 2-bet: jurnal ma'lumotlari — son uchun yuklangan sahifa (faqat 1-beti) yoki standart sahifa
@@ -238,7 +238,7 @@ class IssuePdfBuilder
         }
 
         // Yuklangan sahifa o'z dizayni bilan qoladi — ramka/bant faqat standart sahifaga bosiladi
-        $parts[] = ['file' => $file, 'title' => 'Jurnal haqida', 'section' => null, 'kind' => 'front', 'label' => $info === null ? 'Jurnal haqida' : null];
+        $parts[] = ['file' => $file, 'title' => 'Jurnal haqida', 'section' => null, 'kind' => 'front', 'label' => $info === null ? IssuePdfLayout::INFO : null];
 
         // 3-betdan: maqolalar
         $articles = 0;
@@ -262,8 +262,7 @@ class IssuePdfBuilder
                 'title' => $placement->article->title,
                 'section' => IssueWorkspace::section($placement),
                 'kind' => 'article',
-                'label' => $placement->article->articleType->name ?? 'Ilmiy maqola',
-                'rest' => 'Maqola davomi',
+                'label' => IssuePdfLayout::ARTICLE,
             ];
             $articles++;
         }
@@ -279,7 +278,8 @@ class IssuePdfBuilder
             file_put_contents($file, $this->layout->tocPages($issue, app(IssueWorkspace::class)->toc($issue)));
         }
 
-        $parts[] = ['file' => $file, 'title' => 'Mundarija', 'section' => null, 'kind' => 'toc', 'label' => 'Mundarija'];
+        // Yuklangan mundarija o'z dizayni bilan qoladi
+        $parts[] = ['file' => $file, 'title' => 'Mundarija', 'section' => null, 'kind' => 'toc', 'label' => $toc === null ? IssuePdfLayout::TOC : null];
 
         $merged = $workdir.'/merged.pdf';
         Qpdf::merge(array_column($parts, 'file'), $merged);
@@ -293,17 +293,20 @@ class IssuePdfBuilder
             $count = $this->pageCount($part['file']);
 
             for ($k = 0; $k < $count; $k++) {
-                $labels[$offset + $k] = $k === 0 ? $part['label'] : ($part['rest'] ?? $part['label']);
+                $labels[$offset + $k] = $part['label'];
             }
 
             $offset += $count;
         }
 
-        // Ramka, yuqori bant (jurnal nomi + bo'lim), pastki chiziq, shior va bet raqami
+        // Ostiga krem fon; ustiga qo'sh ramka, naqshlar, kolontitul, shior va bet raqami
         $stamped = $workdir.'/stamped.pdf';
         $overlay = $workdir.'/overlay.pdf';
-        file_put_contents($overlay, $this->layout->overlay($issue, $this->pageSizes(Qpdf::inspect($merged)), $labels));
-        Qpdf::overlay($merged, $overlay, $stamped);
+        $underlay = $workdir.'/underlay.pdf';
+        $sizes = $this->pageSizes(Qpdf::inspect($merged));
+        file_put_contents($underlay, $this->layout->underlay($sizes, $labels));
+        file_put_contents($overlay, $this->layout->overlay($issue, $sizes, $labels));
+        Qpdf::stamp($merged, $underlay, $overlay, $stamped);
 
         $final = $workdir.'/issue.pdf';
         $info = Qpdf::inspect($stamped);
@@ -533,7 +536,8 @@ class IssuePdfBuilder
     }
 
     /** Muqova rasmi: sonning o'zi yoki umumiy muqova (public/) */
-    private function coverBinary(JournalIssue $issue): ?string
+    /** Son uchun yuklangan tayyor muqova (rasm) */
+    private function ownCover(JournalIssue $issue): ?string
     {
         $own = $issue->cover_image_path;
 
@@ -541,6 +545,12 @@ class IssuePdfBuilder
             return Storage::disk(MediaUrl::DISK)->get($own);
         }
 
+        return null;
+    }
+
+    /** Avtomatik muqova uchun umumiy rasm (public/ ichida) */
+    private function coverArt(): ?string
+    {
         $default = config('journal.default_issue_cover');
         $path = is_string($default) && $default !== '' ? public_path($default) : null;
 

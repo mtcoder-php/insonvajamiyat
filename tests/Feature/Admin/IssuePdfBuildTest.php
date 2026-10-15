@@ -118,15 +118,17 @@ class IssuePdfBuildTest extends TestCase
         Process::run([Qpdf::binary(), '--qdf', '--object-streams=disable', $file, $qdf]);
         $raw = (string) file_get_contents($qdf);
         // Matn Identity-H (glyph raqamlari) bilan yoziladi — kutilgan glyph ketma-ketligi qidiriladi
-        $this->assertStringContainsString('['.$this->glyphs('INSON VA JAMIYAT', 'LiberationSerif-Regular').'] TJ', $raw);
-        $this->assertStringContainsString('['.$this->glyphs('MAQOLA DAVOMI', 'LiberationSans-Regular').'] TJ', $raw);
-        $this->assertStringContainsString('['.$this->glyphs('MUNDARIJA', 'LiberationSans-Regular').'] TJ', $raw);
-        $this->assertStringContainsString('['.$this->glyphs('Ilm – jamiyat taraqqiyotining eng muhim omili', 'LiberationSans-Italic').'] TJ', $raw);
-        $this->assertStringContainsString('['.$this->glyphs('8', 'LiberationSans-Bold').'] TJ', $raw);
+        $this->assertStringContainsString('['.$this->glyphs('INSON VA JAMIYAT', 'LiberationSerif-Bold').'] TJ', $raw);
+        $this->assertStringContainsString('['.$this->glyphs('№ 7 (1) • 2026', 'LiberationSerif-Bold').'] TJ', $raw);
+        $this->assertStringContainsString('['.$this->glyphs('MUNDARIJA', 'LiberationSerif-Bold').'] TJ', $raw);
+        $this->assertStringContainsString('['.$this->glyphs('Inson – jamiyat – taraqqiyot', 'LiberationSerif-Italic').'] TJ', $raw);
+        $this->assertStringContainsString('['.$this->glyphs('Ilm – jamiyat taraqqiyotining eng muhim omili', 'LiberationSerif-Italic').'] TJ', $raw);
+        $this->assertStringContainsString('['.$this->glyphs('8', 'LiberationSerif-Bold').'] TJ', $raw);
+        $this->assertStringContainsString('['.$this->glyphs('JURNAL HAQIDA', 'LiberationSerif-Bold').'] TJ', $raw);
         // Avtomatik mundarijada maqola sarlavhasi
         $this->assertStringContainsString(substr($this->glyphs((string) strtok($a->title, ' '), 'LiberationSerif-Bold'), 0, -1), $raw);
         // Muqovaga bet raqami bosilmaydi
-        $this->assertStringNotContainsString('['.$this->glyphs('1', 'LiberationSans-Bold').'] TJ', $raw);
+        $this->assertStringNotContainsString('['.$this->glyphs('1', 'LiberationSerif-Bold').'] TJ', $raw);
         $this->assertDatabaseHas('audit_logs', ['event' => 'issue.pdf_built']);
 
         // Maqola PDF i yangilansa — eskirgan

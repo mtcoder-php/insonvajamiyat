@@ -34,6 +34,16 @@ return [
         'timeout' => (int) env('ISSUE_PDF_TIMEOUT', 300),
         // Ichki sahifalar pastki chizig'i ostidagi shior (bo'sh — chiqmaydi)
         'motto' => env('JOURNAL_PDF_MOTTO', 'Ilm – jamiyat taraqqiyotining eng muhim omili'),
+        // Muqova va ichki betlar pastidagi shior
+        'slogan' => env('JOURNAL_PDF_SLOGAN', 'Inson – jamiyat – taraqqiyot'),
+        // Nashr turi (muqova, kolontitul, "Jurnal haqida")
+        'kind' => env('JOURNAL_PDF_KIND', 'Ilmiy-nazariy va amaliy jurnal'),
+        'city' => env('JOURNAL_PDF_CITY', 'Toshkent'),
+        'languages' => env('JOURNAL_PDF_LANGUAGES', "O'zbek, rus, ingliz"),
+        // "Jurnal haqida" matni (bo'sh bo'lsa — nom va tavsifdan tuziladi)
+        'about' => env('JOURNAL_PDF_ABOUT'),
+        // Tizimdan oldin chiqqan sonlar soni — umumiy tartib raqami: "№ 4 (40)"
+        'issue_offset' => (int) env('JOURNAL_ISSUE_OFFSET', 0),
     ],
 
     'plagiarism_max' => (float) env('JOURNAL_PLAGIARISM_MAX', 20),
