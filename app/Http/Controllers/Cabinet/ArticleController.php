@@ -343,6 +343,7 @@ class ArticleController extends Controller
             'providers' => array_map(fn (PaymentProvider $provider): array => [
                 'value' => $provider->value,
                 'label' => $provider->label(),
+                'logo' => $provider->logo(),
             ], $payments->providers()),
             'processing' => $attempt !== null && $attempt->status === PaymentStatus::Processing,
             'lastAttempt' => $attempt !== null && $attempt->status !== PaymentStatus::Pending ? [
