@@ -8,6 +8,7 @@ use App\Models\Article;
 use App\Models\JournalIssue;
 use App\Models\User;
 use App\Support\Pdf\Qpdf;
+use App\Support\Pdf\TrueTypeFont;
 use App\Support\PdfPageCounter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -116,14 +117,16 @@ class IssuePdfBuildTest extends TestCase
         $qdf = Storage::disk('public')->path('check-qdf.pdf');
         Process::run([Qpdf::binary(), '--qdf', '--object-streams=disable', $file, $qdf]);
         $raw = (string) file_get_contents($qdf);
-        $this->assertStringContainsString('(INSON VA JAMIYAT) Tj', $raw);
-        $this->assertStringContainsString('(MAQOLA DAVOMI) Tj', $raw);
-        $this->assertStringContainsString('(MUNDARIJA) Tj', $raw);
-        $this->assertStringContainsString('jamiyat taraqqiyotining eng muhim omili) Tj', $raw);
-        $this->assertStringContainsString('(8) Tj', $raw);
-        // Avtomatik mundarijada maqola sarlavhasi va bet raqami
-        $this->assertStringContainsString('('.strtok($a->title, ' '), $raw);
-        $this->assertStringNotContainsString('(1) Tj', $raw);
+        // Matn Identity-H (glyph raqamlari) bilan yoziladi — kutilgan glyph ketma-ketligi qidiriladi
+        $this->assertStringContainsString('['.$this->glyphs('INSON VA JAMIYAT', 'LiberationSerif-Regular').'] TJ', $raw);
+        $this->assertStringContainsString('['.$this->glyphs('MAQOLA DAVOMI', 'LiberationSans-Regular').'] TJ', $raw);
+        $this->assertStringContainsString('['.$this->glyphs('MUNDARIJA', 'LiberationSans-Regular').'] TJ', $raw);
+        $this->assertStringContainsString('['.$this->glyphs('Ilm – jamiyat taraqqiyotining eng muhim omili', 'LiberationSans-Italic').'] TJ', $raw);
+        $this->assertStringContainsString('['.$this->glyphs('8', 'LiberationSans-Bold').'] TJ', $raw);
+        // Avtomatik mundarijada maqola sarlavhasi
+        $this->assertStringContainsString(substr($this->glyphs((string) strtok($a->title, ' '), 'LiberationSerif-Bold'), 0, -1), $raw);
+        // Muqovaga bet raqami bosilmaydi
+        $this->assertStringNotContainsString('['.$this->glyphs('1', 'LiberationSans-Bold').'] TJ', $raw);
         $this->assertDatabaseHas('audit_logs', ['event' => 'issue.pdf_built']);
 
         // Maqola PDF i yangilansa — eskirgan
@@ -211,5 +214,13 @@ class IssuePdfBuildTest extends TestCase
         $this->assertFalse($issue->pdf_auto);
         $this->assertNull($issue->pdf_status);
         $this->assertSame(4, $issue->pdf_pages);
+    }
+
+    /** Matnning PDF dagi ko'rinishi: <glyph raqamlari hex> (SimplePdf, Identity-H) */
+    private function glyphs(string $text, string $font): string
+    {
+        $ttf = TrueTypeFont::load(resource_path("fonts/liberation/{$font}.ttf"));
+
+        return '<'.implode('', array_map(fn (string $char): string => sprintf('%04X', $ttf->glyph(mb_ord($char))), mb_str_split($text))).'>';
     }
 }

@@ -3,12 +3,13 @@
 namespace App\Support\Pdf;
 
 /**
- * Kutubxonasiz oddiy PDF yozuvchi: sahifalar, matn (PDF ning standart 14 shriftidan —
- * Helvetica, Times), chiziq va to'rtburchak. Son PDF iga bet raqami / kolontitul bosish
- * (qpdf --overlay) va vaqtinchalik "jurnal ma'lumotlari" sahifasi uchun ishlatiladi.
+ * Kutubxonasiz oddiy PDF yozuvchi: sahifalar, matn, chiziq, to'rtburchak.
+ * Son PDF iga ramka / bet raqami bosish (qpdf --overlay), "Jurnal haqida" va mundarija
+ * sahifalari, AI tarjima/tekshiruv natijasini PDF qilib berish uchun ishlatiladi.
  *
- * Matn WinAnsi (Windows-1252) kodlashida: lotin yozuvi, « » “ ” ‘ ’ — ha; kirill — yo'q
- * (bunday belgilar o'xshash lotin belgisiga yoki "?" ga almashadi).
+ * Matn — Unicode (lotin, kirill, ʻ ʼ « » №): Liberation TrueType shriftlari PDF ga joylanadi
+ * (resources/fonts/liberation), faqat ishlatilgan glyph'lar bilan (subset). Kodlash — Identity-H,
+ * nusxa olish va qidiruv uchun ToUnicode jadvali qo'shiladi.
  */
 final class SimplePdf
 {
@@ -16,25 +17,18 @@ final class SimplePdf
 
     public const A4_HEIGHT = 841.89;
 
-    /** Shriftlar: F1 Helvetica, F2 Helvetica-Bold, F3 Times-Italic, F4 Times-Bold, F5 Times-Roman, F6 Helvetica-Oblique */
+    /** Shriftlar: F1 Sans, F2 Sans Bold, F3 Serif Italic, F4 Serif Bold, F5 Serif, F6 Sans Italic */
     private const FONTS = [
-        'F1' => 'Helvetica',
-        'F2' => 'Helvetica-Bold',
-        'F3' => 'Times-Italic',
-        'F4' => 'Times-Bold',
-        'F5' => 'Times-Roman',
-        'F6' => 'Helvetica-Oblique',
+        'F1' => 'LiberationSans-Regular',
+        'F2' => 'LiberationSans-Bold',
+        'F3' => 'LiberationSerif-Italic',
+        'F4' => 'LiberationSerif-Bold',
+        'F5' => 'LiberationSerif-Regular',
+        'F6' => 'LiberationSans-Italic',
     ];
 
-    /** Helvetica belgi kengliklari (1/1000 em), ASCII 32–126 — AFM bo'yicha */
-    private const HELVETICA = [
-        278, 278, 355, 556, 556, 889, 667, 191, 333, 333, 389, 584, 278, 333, 278, 278,
-        556, 556, 556, 556, 556, 556, 556, 556, 556, 556, 278, 278, 584, 584, 584, 556,
-        1015, 667, 667, 722, 722, 667, 611, 778, 722, 278, 500, 667, 556, 833, 722, 778,
-        667, 778, 722, 667, 611, 722, 667, 944, 667, 667, 611, 278, 278, 278, 469, 556,
-        333, 556, 556, 500, 556, 556, 278, 556, 556, 222, 222, 500, 222, 833, 556, 556,
-        556, 556, 333, 500, 278, 556, 500, 722, 500, 500, 500, 334, 260, 334, 584,
-    ];
+    /** @var array<string, array<int, int>> shrift → ishlatilgan glyph → Unicode kod */
+    private array $used = [];
 
     /** @var array<int, array{width: float, height: float, ops: array<int, string>}> */
     private array $pages = [];
@@ -54,23 +48,47 @@ final class SimplePdf
     /**
      * @param  'left'|'center'|'right'  $align  x — chap chet, markaz yoki o'ng chet
      * @param  array{0: float, 1: float, 2: float}  $color  RGB 0..1
+     * @param  float  $wordSpacing  bo'shliqlardan keyingi qo'shimcha masofa (ikki tomonga tekislash uchun)
      */
     public function text(int $page, float $x, float $y, string $text, float $size = 10, string $font = 'F1', string $align = 'left', array $color = [0, 0, 0], float $tracking = 0.0, float $wordSpacing = 0.0): void
     {
-        $encoded = self::encode($text);
+        $text = self::clean($text);
 
-        if ($encoded === '') {
+        if ($text === '') {
             return;
         }
 
+        $chars = mb_str_split($text);
+
         if ($align !== 'left') {
-            $width = self::width($encoded, $size, $font) + $tracking * max(0, strlen($encoded) - 1);
+            $width = self::width($text, $size, $font) + $tracking * max(0, count($chars) - 1);
             $x -= $align === 'center' ? $width / 2 : $width;
         }
 
+        $ttf = self::font($font);
+        $parts = [];
+        $run = '';
+
+        foreach ($chars as $char) {
+            $code = mb_ord($char);
+            $gid = $ttf->glyph($code);
+            $this->used[$font][$gid] ??= $code;
+            $run .= sprintf('%04X', $gid);
+
+            // Identity-H da Tw ishlamaydi — bo'shliqdan keyin TJ siljishi qo'yiladi
+            if ($char === ' ' && $wordSpacing > 0) {
+                $parts[] = '<'.$run.'> '.sprintf('%.2F', -$wordSpacing * 1000 / $size);
+                $run = '';
+            }
+        }
+
+        if ($run !== '') {
+            $parts[] = '<'.$run.'>';
+        }
+
         $this->pages[$page]['ops'][] = sprintf(
-            'BT %.3F %.3F %.3F rg /%s %.2F Tf %.2F Tc %.3F Tw %.2F %.2F Td (%s) Tj ET',
-            $color[0], $color[1], $color[2], $font, $size, $tracking, $wordSpacing, $x, $y, self::escape($encoded),
+            'BT %.3F %.3F %.3F rg /%s %.2F Tf %.2F Tc %.2F %.2F Td [%s] TJ ET',
+            $color[0], $color[1], $color[2], $font, $size, $tracking, $x, $y, implode(' ', $parts),
         );
     }
 
@@ -139,7 +157,7 @@ final class SimplePdf
             if ($align === 'justify') {
                 // Ikki tomonga tekislash: oxirgi qatordan boshqalarida so'z oralig'i kengaytiriladi (Tw)
                 $spaces = substr_count($line, ' ');
-                $extra = $maxWidth - self::width(self::encode($line), $size, $font);
+                $extra = $maxWidth - self::width($line, $size, $font);
                 $spacing = $i < $last && $spaces > 0 && $extra > 0 ? $extra / $spaces : 0.0;
                 $this->text($page, $x, $y, $line, $size, $font, 'left', $color, 0.0, $spacing);
             } else {
@@ -185,26 +203,25 @@ final class SimplePdf
             $this->addPage();
         }
 
-        $fontIds = [];
         $objects = [1 => '<< /Type /Catalog /Pages 2 0 R >>', 2 => ''];
         $next = 3;
+        $fontRefs = '';
 
-        foreach (self::FONTS as $key => $base) {
-            $fontIds[$key] = $next;
-            $objects[$next++] = '<< /Type /Font /Subtype /Type1 /BaseFont /'.$base.' /Encoding /WinAnsiEncoding >>';
+        foreach ($this->used as $key => $glyphs) {
+            $fontId = $next;
+            $next = $this->embedFont($objects, $next, $key, $glyphs);
+            $fontRefs .= '/'.$key.' '.$fontId.' 0 R ';
         }
 
-        $fontRefs = implode(' ', array_map(fn (string $k, int $id): string => '/'.$k.' '.$id.' 0 R', array_keys($fontIds), $fontIds));
         $kids = [];
 
         foreach ($this->pages as $page) {
-            $content = implode("\n", $page['ops']);
             $contentId = $next++;
-            $objects[$contentId] = '<< /Length '.strlen($content)." >>\nstream\n".$content."\nendstream";
+            $objects[$contentId] = self::stream(implode("\n", $page['ops']));
 
             $pageId = $next++;
             $objects[$pageId] = sprintf(
-                '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 %.2F %.2F] /Resources << /Font << %s >> >> /Contents %d 0 R >>',
+                '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 %.2F %.2F] /Resources << /Font << %s>> >> /Contents %d 0 R >>',
                 $page['width'], $page['height'], $fontRefs, $contentId,
             );
             $kids[] = $pageId.' 0 R';
@@ -233,25 +250,107 @@ final class SimplePdf
     }
 
     /**
-     * Kodlangan matn kengligi (pt). Times uchun Helvetica jadvali taxminan 0.93 koeffitsiyent bilan.
+     * Type0 (Identity-H) shrift: CIDFontType2 + FontDescriptor + subset FontFile2 + ToUnicode.
+     *
+     * @param  array<int, string>  $objects
+     * @param  array<int, int>  $glyphs  glyph → Unicode kod
+     * @return int keyingi bo'sh obyekt raqami
      */
-    public static function width(string $encoded, float $size, string $font = 'F1'): float
+    private function embedFont(array &$objects, int $next, string $key, array $glyphs): int
     {
-        $units = 0;
+        $ttf = self::font($key);
+        ksort($glyphs);
 
-        foreach (str_split($encoded) as $char) {
-            $code = ord($char);
-            $units += $code >= 32 && $code <= 126 ? self::HELVETICA[$code - 32] : 556;
+        $scale = 1000 / $ttf->unitsPerEm;
+        $tag = substr(strtoupper(md5($key.implode(',', array_keys($glyphs)))), 0, 6);
+        $tag = strtr($tag, '0123456789', 'GHIJKLMNOP');
+        $name = $tag.'+'.str_replace('-Regular', '', $ttf->postScriptName);
+
+        [$type0, $cid, $descriptor, $file, $unicode] = [$next, $next + 1, $next + 2, $next + 3, $next + 4];
+
+        $widths = '';
+
+        foreach (array_keys($glyphs) as $gid) {
+            $widths .= $gid.' ['.round($ttf->width($gid)).'] ';
         }
 
-        $factor = match ($font) {
-            'F2' => 1.06,
-            'F3', 'F5' => 0.9,
-            'F4' => 0.95,
-            default => 1.0,
-        };
+        $flags = 32 | (in_array($key, ['F3', 'F6'], true) ? 64 : 0) | (in_array($key, ['F3', 'F4', 'F5'], true) ? 2 : 0);
 
-        return $units * $size * $factor / 1000;
+        $objects[$type0] = sprintf('<< /Type /Font /Subtype /Type0 /BaseFont /%s /Encoding /Identity-H /DescendantFonts [%d 0 R] /ToUnicode %d 0 R >>', $name, $cid, $unicode);
+        $objects[$cid] = sprintf(
+            '<< /Type /Font /Subtype /CIDFontType2 /BaseFont /%s /CIDSystemInfo << /Registry (Adobe) /Ordering (Identity) /Supplement 0 >> /FontDescriptor %d 0 R /CIDToGIDMap /Identity /DW 1000 /W [%s] >>',
+            $name, $descriptor, trim($widths),
+        );
+        $objects[$descriptor] = sprintf(
+            '<< /Type /FontDescriptor /FontName /%s /Flags %d /FontBBox [%d %d %d %d] /ItalicAngle %.2F /Ascent %d /Descent %d /CapHeight %d /StemV 80 /FontFile2 %d 0 R >>',
+            $name, $flags,
+            $ttf->bbox[0] * $scale, $ttf->bbox[1] * $scale, $ttf->bbox[2] * $scale, $ttf->bbox[3] * $scale,
+            $ttf->italicAngle, $ttf->ascent * $scale, $ttf->descent * $scale, $ttf->capHeight * $scale, $file,
+        );
+
+        $program = $ttf->subset(array_keys($glyphs));
+        $objects[$file] = self::stream($program, '/Length1 '.strlen($program));
+        $objects[$unicode] = self::stream(self::toUnicode($glyphs));
+
+        return $next + 5;
+    }
+
+    /**
+     * @param  array<int, int>  $glyphs  glyph → Unicode kod
+     */
+    private static function toUnicode(array $glyphs): string
+    {
+        $entries = [];
+
+        foreach ($glyphs as $gid => $code) {
+            $utf16 = strtoupper(bin2hex((string) mb_convert_encoding(mb_chr($code), 'UTF-16BE', 'UTF-8')));
+            $entries[] = sprintf('<%04X> <%s>', $gid, $utf16);
+        }
+
+        $body = '';
+
+        foreach (array_chunk($entries, 100) as $chunk) {
+            $body .= count($chunk)." beginbfchar\n".implode("\n", $chunk)."\nendbfchar\n";
+        }
+
+        return "/CIDInit /ProcSet findresource begin\n12 dict begin\nbegincmap\n"
+            ."/CIDSystemInfo << /Registry (Adobe) /Ordering (UCS) /Supplement 0 >> def\n"
+            ."/CMapName /Adobe-Identity-UCS def\n/CMapType 2 def\n"
+            ."1 begincodespacerange\n<0000> <FFFF>\nendcodespacerange\n"
+            .$body
+            ."endcmap\nCMapName currentdict /CMap defineresource pop\nend\nend";
+    }
+
+    /** Siqilgan (FlateDecode) oqim obyekti */
+    private static function stream(string $data, string $extra = ''): string
+    {
+        $compressed = gzcompress($data, 6);
+
+        if ($compressed === false) {
+            return '<< /Length '.strlen($data).($extra !== '' ? ' '.$extra : '')." >>\nstream\n".$data."\nendstream";
+        }
+
+        return '<< /Length '.strlen($compressed).' /Filter /FlateDecode'.($extra !== '' ? ' '.$extra : '')." >>\nstream\n".$compressed."\nendstream";
+    }
+
+    private static function font(string $key): TrueTypeFont
+    {
+        return TrueTypeFont::load(resource_path('fonts/liberation/'.(self::FONTS[$key] ?? self::FONTS['F1']).'.ttf'));
+    }
+
+    /**
+     * Matn kengligi (pt) — shriftning haqiqiy glyph kengliklari bo'yicha.
+     */
+    public static function width(string $text, float $size, string $font = 'F1'): float
+    {
+        $ttf = self::font($font);
+        $units = 0.0;
+
+        foreach (mb_str_split(self::clean($text)) as $char) {
+            $units += $ttf->width($ttf->glyph(mb_ord($char)));
+        }
+
+        return $units * $size / 1000;
     }
 
     /**
@@ -271,7 +370,7 @@ final class SimplePdf
 
                 $candidate = $current === '' ? $word : $current.' '.$word;
 
-                if ($current !== '' && self::width(self::encode($candidate), $size, $font) > $maxWidth) {
+                if ($current !== '' && self::width($candidate, $size, $font) > $maxWidth) {
                     $lines[] = $current;
                     $current = $word;
                 } else {
@@ -286,18 +385,13 @@ final class SimplePdf
     }
 
     /**
-     * UTF-8 → Windows-1252. O'zbek lotin yozuvidagi ʻ ʼ → ‘ ’, № → No.
+     * Boshqaruv belgilari olib tashlanadi, maxsus bo'shliqlar oddiy bo'shliqqa; shriftda yo'q
+     * tipografik belgilar o'xshashiga almashtiriladi (masalan, ʻ — shriftda bor, saqlanadi).
      */
-    public static function encode(string $text): string
+    public static function clean(string $text): string
     {
-        $text = strtr($text, ['ʻ' => '‘', 'ʼ' => '’', '№' => 'No. ', "\u{00A0}" => ' ']);
-        $converted = @iconv('UTF-8', 'Windows-1252//TRANSLIT', $text);
+        $text = strtr($text, ["\u{00A0}" => ' ', "\u{202F}" => ' ', "\t" => ' ', "\r" => '', "\n" => ' ']);
 
-        return $converted === false ? (string) preg_replace('/[^\x20-\x7E]/', '?', $text) : $converted;
-    }
-
-    private static function escape(string $encoded): string
-    {
-        return strtr($encoded, ['\\' => '\\\\', '(' => '\\(', ')' => '\\)', "\r" => '', "\n" => ' ']);
+        return (string) preg_replace('/[\x{0000}-\x{001F}\x{007F}\x{200B}-\x{200D}\x{FEFF}]/u', '', $text);
     }
 }

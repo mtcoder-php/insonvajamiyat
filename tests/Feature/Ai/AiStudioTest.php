@@ -189,6 +189,14 @@ class AiStudioTest extends TestCase
             ->assertOk()
             ->assertDownload();
 
+        // PDF variant (TZ 4.1.6: PDF/Word) — Unicode shrift joylangan
+        $pdf = $this->actingAs($editor)
+            ->get(route('admin.ai.translations.download', [$translation->uuid, 'version' => 1, 'format' => 'pdf']))
+            ->assertOk()
+            ->assertDownload();
+        $this->assertSame('application/pdf', $pdf->headers->get('Content-Type'));
+        $this->assertStringEndsWith('.pdf', (string) $pdf->headers->get('Content-Disposition'));
+
         $this->actingAs($this->editor())
             ->get(route('admin.ai.translations.download', $translation->uuid))
             ->assertForbidden();

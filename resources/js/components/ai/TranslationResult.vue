@@ -5,6 +5,7 @@ import {
     Check,
     Copy,
     FileDown,
+    FileText,
     LoaderCircle,
     Save,
     TriangleAlert,
@@ -151,6 +152,13 @@ async function copy(): Promise<void> {
                 class="inline-flex h-10 items-center gap-2 rounded-lg border border-line bg-white px-4 text-sm font-semibold text-navy-800 transition-all hover:-translate-y-px hover:border-brand-300 hover:text-brand-700"
             >
                 <FileDown class="size-4" /> {{ t('Word (.docx)') }}
+            </a>
+            <a
+                v-if="current"
+                :href="current.pdfUrl"
+                class="inline-flex h-10 items-center gap-2 rounded-lg border border-line bg-white px-4 text-sm font-semibold text-navy-800 transition-all hover:-translate-y-px hover:border-red-300 hover:text-red-700"
+            >
+                <FileText class="size-4" /> PDF
             </a>
             <button
                 type="button"

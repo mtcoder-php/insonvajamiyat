@@ -6,6 +6,7 @@ use App\Models\Translation;
 use App\Models\TranslationVersion;
 use App\Models\User;
 use App\Support\DocxWriter;
+use App\Support\Pdf\DocumentPdf;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -48,7 +49,10 @@ class TranslationService
         return $version;
     }
 
-    public function download(Translation $translation, ?int $versionNumber = null): BinaryFileResponse
+    /**
+     * @param  'docx'|'pdf'  $format
+     */
+    public function download(Translation $translation, ?int $versionNumber = null, string $format = 'docx'): BinaryFileResponse
     {
         $version = $versionNumber !== null
             ? $translation->versions()->where('version', $versionNumber)->firstOrFail()
@@ -60,11 +64,17 @@ class TranslationService
             .PromptLibrary::languageLabel($translation->target_language)
             .' · v'.$version->version;
 
-        $path = DocxWriter::write($translation->title, $version->content, $subtitle);
-        $name = Str::slug(Str::ascii(Str::limit($translation->title, 60, ''))) ?: 'tarjima';
+        $name = (Str::slug(Str::ascii(Str::limit($translation->title, 60, ''))) ?: 'tarjima')
+            ."-{$translation->target_language}-v{$version->version}";
+
+        if ($format === 'pdf') {
+            return response()
+                ->download(DocumentPdf::write($translation->title, $version->content, $subtitle), $name.'.pdf', ['Content-Type' => 'application/pdf'])
+                ->deleteFileAfterSend();
+        }
 
         return response()
-            ->download($path, "{$name}-{$translation->target_language}-v{$version->version}.docx", [
+            ->download(DocxWriter::write($translation->title, $version->content, $subtitle), $name.'.docx', [
                 'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
             ])
             ->deleteFileAfterSend();

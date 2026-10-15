@@ -5,6 +5,7 @@ import {
     CheckCheck,
     Copy,
     FileDown,
+    FileText,
     LoaderCircle,
     Save,
     Undo2,
@@ -191,6 +192,13 @@ function markClass(issueId: string): string {
                     :title="t('Qabul qilingan takliflar bilan')"
                 >
                     <FileDown class="size-4" /> {{ t('Word') }}
+                </a>
+                <a
+                    :href="result.pdfUrl"
+                    class="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-line bg-white px-3.5 text-[13px] font-semibold text-navy-700 transition-all hover:-translate-y-px hover:border-red-300 hover:text-red-700"
+                    :title="t('Qabul qilingan takliflar bilan')"
+                >
+                    <FileText class="size-4" /> PDF
                 </a>
                 <button
                     v-if="request.own"
