@@ -154,12 +154,12 @@ trait AiStudioActions
     }
 
     /** Proofreader: tahrirlangan matnni Word (.docx) sifatida yuklab olish */
-    public function downloadProofread(AiRequest $aiRequest, AiStudioService $studio): BinaryFileResponse
+    public function downloadProofread(Request $request, AiRequest $aiRequest, AiStudioService $studio): BinaryFileResponse
     {
         Gate::authorize('view', $aiRequest);
         abort_unless($aiRequest->type === AiRequestType::SpellCheck && $aiRequest->status->isFinished(), 404);
 
-        return $studio->proofreadDocx($aiRequest);
+        return $studio->proofreadDownload($aiRequest, self::downloadFormat($request));
     }
 
     public function storeVersion(Request $request, Translation $translation, TranslationService $translations): RedirectResponse
@@ -183,7 +183,17 @@ trait AiStudioActions
 
         $version = $request->integer('version');
 
-        return $translations->download($translation, $version > 0 ? $version : null);
+        return $translations->download($translation, $version > 0 ? $version : null, self::downloadFormat($request));
+    }
+
+    /**
+     * ?format=pdf — PDF, aks holda Word (.docx)
+     *
+     * @return 'docx'|'pdf'
+     */
+    private static function downloadFormat(Request $request): string
+    {
+        return $request->query('format') === 'pdf' ? 'pdf' : 'docx';
     }
 
     /**

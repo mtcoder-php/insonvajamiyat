@@ -10,6 +10,7 @@ use App\Models\PromptTemplate;
 use App\Models\Translation;
 use App\Models\User;
 use App\Support\DocxWriter;
+use App\Support\Pdf\DocumentPdf;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -261,15 +262,26 @@ class AiStudioService
     }
 
     /** Tahrirlangan matn (saqlangan bo'lsa — o'sha, aks holda qabul qilingan takliflar bilan) Word sifatida */
-    public function proofreadDocx(AiRequest $request): BinaryFileResponse
+    /**
+     * Qabul qilingan takliflar bilan tahrirlangan matn (Word yoki PDF).
+     *
+     * @param  'docx'|'pdf'  $format
+     */
+    public function proofreadDownload(AiRequest $request, string $format = 'docx'): BinaryFileResponse
     {
         $text = $request->output_text ?? self::apply($request->input_text, self::issues($request));
         $title = self::title($request->input_text);
-        $path = DocxWriter::write($title, $text, self::t('Tahrirlangan matn · AI Proofreader'));
-        $name = Str::slug(Str::ascii(Str::limit($title, 60, ''))) ?: 'matn';
+        $subtitle = self::t('Tahrirlangan matn · AI Proofreader');
+        $name = (Str::slug(Str::ascii(Str::limit($title, 60, ''))) ?: 'matn').'-tahrirlangan';
+
+        if ($format === 'pdf') {
+            return response()
+                ->download(DocumentPdf::write($title, $text, $subtitle), $name.'.pdf', ['Content-Type' => 'application/pdf'])
+                ->deleteFileAfterSend();
+        }
 
         return response()
-            ->download($path, "{$name}-tahrirlangan.docx", [
+            ->download(DocxWriter::write($title, $text, $subtitle), $name.'.docx', [
                 'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
             ])
             ->deleteFileAfterSend();

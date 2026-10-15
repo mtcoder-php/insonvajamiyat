@@ -71,6 +71,7 @@ export type ProofreadResult = {
     finalText: string | null;
     saveUrl: string;
     downloadUrl: string;
+    pdfUrl: string;
 };
 
 export type TranslationVersionItem = {
@@ -80,6 +81,7 @@ export type TranslationVersionItem = {
     author: string;
     createdAt: string | null;
     downloadUrl: string;
+    pdfUrl: string;
 };
 
 export type TranslationResult = {

@@ -107,6 +107,7 @@ class AiStudioPresenter
                 'finalText' => $request->output_text,
                 'saveUrl' => route($this->routes.'.requests.proofread', $request->uuid),
                 'downloadUrl' => route($this->routes.'.requests.download', $request->uuid),
+                'pdfUrl' => route($this->routes.'.requests.download', [$request->uuid, 'format' => 'pdf']),
             ],
         ];
     }
@@ -139,6 +140,7 @@ class AiStudioPresenter
                     'author' => $v->is_ai_generated ? 'AI' : ($v->author->name ?? '—'),
                     'createdAt' => $v->created_at?->toIso8601String(),
                     'downloadUrl' => route($this->routes.'.translations.download', [$translation->uuid, 'version' => $v->version]),
+                    'pdfUrl' => route($this->routes.'.translations.download', [$translation->uuid, 'version' => $v->version, 'format' => 'pdf']),
                 ])->values()->all(),
                 'saveUrl' => route($this->routes.'.translations.versions', $translation->uuid),
             ],

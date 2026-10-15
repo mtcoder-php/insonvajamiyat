@@ -201,7 +201,7 @@ class IssuePdfLayout
 
                     if ($i === count($titleLines) - 1 && $article['pages'] !== null) {
                         // Nuqtali chiziq sarlavha oxiridan bet raqamigacha
-                        $from = $x + SimplePdf::width(SimplePdf::encode($line), 10.5, 'F4') + 6;
+                        $from = $x + SimplePdf::width($line, 10.5, 'F4') + 6;
                         $to = $x + $width - $numberCol;
 
                         if ($to - $from > 12) {
@@ -290,7 +290,7 @@ class IssuePdfLayout
      */
     private function heading(SimplePdf $pdf, int $page, float $x, float $y, string $pill, string $title): float
     {
-        $pillW = SimplePdf::width(SimplePdf::encode($pill), 7, 'F2') + 0.6 * strlen($pill) + 28;
+        $pillW = SimplePdf::width($pill, 7, 'F2') + 0.6 * mb_strlen($pill) + 28;
         $pdf->roundRect($page, $x, $y - 14, $pillW, 18, 9, self::GOLD);
         $pdf->text($page, $x + $pillW / 2, $y - 8, $pill, 7, 'F2', 'center', self::NAVY, 0.6);
 
