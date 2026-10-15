@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\Audit\AuditLogController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\Issues\IssueArticleController;
 use App\Http\Controllers\Admin\Issues\IssueController;
+use App\Http\Controllers\Admin\Issues\IssueCoverController;
 use App\Http\Controllers\Admin\Messages\BroadcastController;
 use App\Http\Controllers\Admin\Messages\MessageCenterController;
 use App\Http\Controllers\Admin\Newsletter\NewsletterController;
@@ -148,6 +149,11 @@ Route::middleware('permission:'.AdminSection::Issues->permission()->value)
     ->group(function () {
         Route::get('/', [IssueController::class, 'index'])->name('index');
         Route::post('/', [IssueController::class, 'store'])->name('store');
+        // Umumiy muqova ({issue} dan oldin)
+        Route::get('cover/preview', [IssueCoverController::class, 'preview'])->name('cover.preview');
+        Route::post('cover', [IssueCoverController::class, 'store'])->name('cover.store');
+        Route::put('cover', [IssueCoverController::class, 'update'])->name('cover.update');
+        Route::delete('cover', [IssueCoverController::class, 'destroy'])->name('cover.destroy');
         Route::get('{issue}', [IssueController::class, 'show'])->name('show');
         Route::put('{issue}', [IssueController::class, 'update'])->name('update');
         Route::delete('{issue}', [IssueController::class, 'destroy'])->name('destroy');

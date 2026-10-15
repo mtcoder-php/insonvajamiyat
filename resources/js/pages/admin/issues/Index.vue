@@ -7,8 +7,10 @@ import {
     BookPlus,
     FilePlus2,
     FileText,
+    PanelsTopLeft,
 } from '@lucide/vue';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+import CommonCoverDialog from '@/components/admin/issues/CommonCoverDialog.vue';
 import IssueFormDialog from '@/components/admin/issues/IssueFormDialog.vue';
 import PageHeader from '@/components/admin/ui/PageHeader.vue';
 import SelectInput from '@/components/admin/ui/SelectInput.vue';
@@ -35,6 +37,14 @@ defineOptions({
 });
 
 const createOpen = ref(false);
+const coverOpen = ref(false);
+
+// Muqova namunasidagi matn — eng so'nggi son (bo'lmasa — keyingisi)
+const coverSample = computed(() => {
+    const latest = props.issues[0];
+
+    return `№ ${latest?.number ?? props.next.number}  |  ${latest?.year ?? props.next.year}`;
+});
 
 // Bosh sahifadagi "Jurnal sonini yaratish" tezkor amali: ?create=1
 onMounted(() => {
@@ -84,6 +94,22 @@ const readyPercent = (ready: number, total: number): number =>
             "
         >
             <template #actions>
+                <button
+                    type="button"
+                    class="inline-flex h-10 items-center gap-2 rounded-lg border border-line bg-white px-4 text-sm font-semibold text-navy-800 shadow-sm transition-all hover:-translate-y-px hover:border-brand-300 hover:text-brand-700 hover:shadow-md"
+                    @click="coverOpen = true"
+                >
+                    <PanelsTopLeft class="size-4" />
+                    {{ t('Umumiy muqova') }}
+                    <span
+                        :class="
+                            cn(
+                                'size-2 rounded-full',
+                                cover.custom ? 'bg-emerald-500' : 'bg-navy-200',
+                            )
+                        "
+                    />
+                </button>
                 <button
                     type="button"
                     :class="primaryButtonClass"
@@ -283,6 +309,12 @@ const readyPercent = (ready: number, total: number): number =>
             </button>
         </div>
     </div>
+
+    <CommonCoverDialog
+        v-model:open="coverOpen"
+        :cover="cover"
+        :sample="coverSample"
+    />
 
     <IssueFormDialog
         v-model:open="createOpen"

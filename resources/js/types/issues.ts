@@ -47,6 +47,22 @@ export type IssueIndexProps = {
     years: number[];
     next: { year: number; number: number; volume: number | null };
     storeUrl: string;
+    cover: IssueCommonCover;
+};
+
+/** Barcha sonlar uchun umumiy muqova (admin → Jurnallar) */
+export type IssueCommonCover = {
+    url: string | null;
+    custom: boolean;
+    name: string | null;
+    size: number | null;
+    stamp: boolean;
+    position: 'bottom' | 'top';
+    color: 'gold' | 'white' | 'navy';
+    uploadUrl: string;
+    updateUrl: string;
+    deleteUrl: string;
+    previewUrl: string;
 };
 
 export type IssueFileInfo = {

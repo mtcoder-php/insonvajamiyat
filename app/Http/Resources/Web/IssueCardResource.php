@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Web;
 
 use App\Models\JournalIssue;
+use App\Services\Issues\IssueCoverService;
 use App\Support\MediaUrl;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -34,8 +35,7 @@ class IssueCardResource extends JsonResource
             'description' => $this->description,
             'doi' => $this->doi,
             // Songa muqova yuklanmagan bo'lsa — jurnalning umumiy muqovasi
-            'coverUrl' => MediaUrl::from($this->cover_image_path)
-                ?? MediaUrl::publicAsset(config('journal.default_issue_cover')),
+            'coverUrl' => MediaUrl::from($this->cover_image_path) ?? app(IssueCoverService::class)->url(),
             'pdfUrl' => MediaUrl::from($this->full_pdf_path),
             'pdfSize' => MediaUrl::size($this->full_pdf_path),
             'tocUrl' => MediaUrl::from($this->toc_file_path),

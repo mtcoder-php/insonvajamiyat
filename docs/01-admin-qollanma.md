@@ -221,12 +221,16 @@ Manzil: `/admin/issues`. Ruxsat: **Jurnal sonlarini shakllantirish**; chop etish
 
 «Yangi son» tugmasi: **Yil** (majburiy), **Jild**, **Son №** (yil ichida takrorlanmas), **DOI**, **Maxsus nom**, **Tavsif**. Son «Qoralama» holatida yaratiladi.
 
+**Umumiy muqova** («Jurnallar» sahifasi, yuqorida «Umumiy muqova» tugmasi) — barcha sonlar uchun bitta muqova rasmi (PNG/JPG/WEBP, 20 MB gacha, A4 nisbatda, tavsiya 2480 × 3508 px). Son PDF ini yig'ishda u 1-betga qo'yiladi va ustiga shu sonning raqami, yili va umumiy tartib raqami yoziladi («№ 4 | 2026», «(40-son)»). Sozlamalar: raqamni yozish (rasmda raqam uchun joy bo'lsa yoqiladi), joylashuvi (pastda / tepada), rangi (oltin / oq / to'q ko'k). «Namuna (PDF)» — eng so'nggi son bilan qanday chiqishini ko'rsatadi. Saytdagi son kartochkalarida ham shu rasm ko'rinadi. Umumiy muqova yuklanmagan bo'lsa — muqova avtomatik chiziladi (to'q ko'k fon, oltin ramka, ark ichida `JOURNAL_DEFAULT_ISSUE_COVER` rasmi). Ustuvorlik: sonning o'z muqovasi → umumiy muqova → avtomatik dizayn.
+
+> Lokal kompyuterda katta rasm yuklanmasa — `php.ini` da `upload_max_filesize = 32M` va `post_max_size = 64M` qiling (serverda `deploy/php/99-insonvajamiyat.ini` bilan allaqachon shunday).
+
 ### 8.2. Son sahifasi
 
 - **Son tarkibi** — «Maqola qo'shish» (Qabul qilindi / Nashrga tayyorlanmoqda holatidagi maqolalar), sudrab yoki «Yuqoriga / Pastga» bilan tartiblash, **rukn** va sahifalar, «Sondan chiqarish».
 - **Betlar avtomatik** — jurnal tuzilishi: **1-bet muqova, 2-bet jurnal ma'lumotlari, maqolalar 3-betdan**. Maqola qo'shilganda, tartib o'zgarganda yoki yangi yakuniy PDF yuklanganda betlar o'zi qayta hisoblanadi (har maqola — yakuniy PDF betlari soni bo'yicha, oraliqsiz). «Betlarni hisoblash» tugmasi shuni qo'lda bajaradi.
 - **Son fayllari**:
-    - Muqova — JPG/PNG/WEBP, 5 MB gacha, kamida 300×400. Yuklansa — **tayyor muqova** sifatida 1-betga to'liq qo'yiladi. Yuklanmasa, tizim muqovani **avtomatik chizadi**: to'q ko'k fon, oltin ramka va naqshlar, logotip, jurnal nomi, shior, ark ichida umumiy rasm (`JOURNAL_DEFAULT_ISSUE_COVER`), son raqami, yil, umumiy tartib raqami («(40-son)») va ISSN;
+    - Muqova — JPG/PNG/WEBP, 20 MB gacha, kamida 300×400. Faqat shu son uchun **tayyor muqova** kerak bo'lsa yuklanadi — 1-betga to'liq qo'yiladi (raqam yozilmaydi). Odatda kerak emas: «Jurnallar» sahifasidagi **«Umumiy muqova»** ishlatiladi (8.1);
     - **2-bet: jurnal ma'lumotlari** — tahririyat maketi (PDF — faqat 1-beti olinadi) yoki rasm, 20 MB gacha. Yuklanmasa, tizim standart sahifani chizadi (jurnal nomi, son, ISSN, aloqa, tahrir hay'ati);
     - To'liq son PDF va Mundarija PDF — 50 MB gacha (mundarija son PDF ining **oxiriga** qo'shiladi). Mundarija yuklanmasa, tizim uni maqolalar betlaridan **avtomatik tuzadi** (ruknlar, sarlavha, mualliflar, betlar; lotin va kirill yozuvi — shrift PDF ga joylanadi);
     - «Mundarijani chop etish» — brauzerda PDF sifatida saqlanadigan mundarija sahifasi.

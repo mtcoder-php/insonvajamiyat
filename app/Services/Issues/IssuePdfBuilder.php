@@ -52,6 +52,7 @@ class IssuePdfBuilder
     public function __construct(
         private readonly AuditLogger $audit,
         private readonly IssuePdfLayout $layout,
+        private readonly IssueCoverService $covers,
     ) {}
 
     /**
@@ -101,7 +102,11 @@ class IssuePdfBuilder
                 'label' => self::t('1-bet: muqova'),
                 'ok' => true,
                 'required' => false,
-                'detail' => $this->ownCover($issue) !== null ? self::t("sonning o'z muqovasi") : self::t('avtomatik dizayn (son raqami bilan)'),
+                'detail' => match (true) {
+                    $this->ownCover($issue) !== null => self::t("sonning o'z muqovasi"),
+                    $this->covers->path() !== null => self::t('umumiy muqova (son raqami bilan)'),
+                    default => self::t('avtomatik dizayn (son raqami bilan)'),
+                },
             ],
             [
                 'key' => 'info',
@@ -219,10 +224,9 @@ class IssuePdfBuilder
         /** @var array<int, array{file: string, title: string|null, section: string|null, kind: string, label: string|null}> $parts */
         $parts = [];
 
-        // 1-bet: muqova — sonning o'z (tayyor) muqovasi yoki avtomatik dizayn (umumiy rasm ark ichida)
-        $cover = $this->ownCover($issue);
+        // 1-bet: muqova — sonning o'zi → umumiy muqova + son raqami → avtomatik dizayn
         $file = $workdir.'/00-cover.pdf';
-        file_put_contents($file, $cover !== null ? ImagePdf::fromImage($cover) : $this->layout->coverPage($issue, $this->coverArt()));
+        file_put_contents($file, $this->coverPdf($issue));
         $parts[] = ['file' => $file, 'title' => 'Muqova', 'section' => null, 'kind' => 'front', 'label' => null];
 
         // 2-bet: jurnal ma'lumotlari — son uchun yuklangan sahifa (faqat 1-beti) yoki standart sahifa
@@ -536,6 +540,27 @@ class IssuePdfBuilder
     }
 
     /** Muqova rasmi: sonning o'zi yoki umumiy muqova (public/) */
+    /**
+     * Muqova sahifasi: son uchun yuklangan tayyor muqova → umumiy muqova (son raqami, yili yoziladi)
+     * → umumiy muqova ham yo'q bo'lsa — to'liq avtomatik dizayn.
+     */
+    public function coverPdf(JournalIssue $issue): string
+    {
+        $own = $this->ownCover($issue);
+
+        if ($own !== null) {
+            return ImagePdf::fromImage($own);
+        }
+
+        $common = $this->covers->binary();
+
+        if ($common !== null) {
+            return $this->layout->templateCover($issue, $common, $this->covers->stamp(), $this->covers->position(), $this->covers->color());
+        }
+
+        return $this->layout->coverPage($issue, $this->coverArt());
+    }
+
     /** Son uchun yuklangan tayyor muqova (rasm) */
     private function ownCover(JournalIssue $issue): ?string
     {

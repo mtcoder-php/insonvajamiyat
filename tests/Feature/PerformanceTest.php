@@ -54,6 +54,8 @@ class PerformanceTest extends TestCase
 
         $issue = JournalIssue::factory()->createOne();
         $issue->articles()->attach(Article::factory()->status(ArticleStatus::Accepted)->createOne()->id, ['position' => 1, 'page_from' => 1, 'page_to' => 9]);
+        // Birinchi chaqiruv sozlamalarni (umumiy muqova) keshga oladi — o'lchov ikkinchisidan
+        $count();
         $single = $count();
 
         foreach (range(1, 4) as $i) {
