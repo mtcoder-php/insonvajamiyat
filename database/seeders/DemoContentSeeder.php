@@ -13,12 +13,12 @@ use App\Models\Article;
 use App\Models\ArticleAuthor;
 use App\Models\ArticleStatusHistory;
 use App\Models\ArticleType;
+use App\Models\Book;
 use App\Models\Event;
 use App\Models\JournalIssue;
 use App\Models\Partner;
 use App\Models\Payment;
 use App\Models\Post;
-use App\Models\RecommendedBook;
 use App\Models\Subject;
 use App\Models\User;
 use App\Services\Payments\ManualPaymentService;
@@ -136,6 +136,12 @@ class DemoContentSeeder extends Seeder
         ["O'rta Osiyo xalqlari etnologiyasi", 'A. Karimov', 2023],
         ['Markaziy Osiyo tarixiy manbalari', 'B. Qosimov', 2022],
         ["O'zbek adabiyoti tarixi", 'D. Rahmonov', 2021],
+        ['Etnografik tadqiqot metodologiyasi', 'N. Xolmirzayev', 2020],
+        ['Ijtimoiy antropologiyaga kirish', 'S. Safarova', 2024],
+        ["Falsafa tarixi: Sharq va G'arb", 'M. Saidov', 2019],
+        ['Arxeologiya asoslari', 'R. Yusupov', 2022],
+        ["Madaniyatshunoslik: o'quv qo'llanma", 'Z. Abdullayeva', 2023],
+        ['Temuriylar davri manbashunosligi', 'J. Ergashev', 2018],
     ];
 
     private const POST_BODY = "Tahririyat ushbu yangilik yuzasidan barcha mualliflar, taqrizchilar va o'quvchilarni xabardor qiladi. Batafsil ma'lumot uchun jurnal tahririyatiga elektron pochta yoki telefon orqali murojaat qilishingiz mumkin.\n\n«Inson va Jamiyat» ilmiy jurnali ijtimoiy-gumanitar fanlar sohasidagi tadqiqotlarni keng jamoatchilikka yetkazish va ilmiy hamkorlikni rivojlantirishga xizmat qiladi.";
@@ -267,7 +273,7 @@ class DemoContentSeeder extends Seeder
 
             $partnerNames = [...array_column(self::INDEXING, 0), ...array_column(self::PARTNERS, 0)];
             Partner::query()->whereIn('name->uz', $partnerNames)->get()->each->delete();
-            RecommendedBook::query()->whereIn('title->uz', array_column(self::BOOKS, 0))->get()->each->delete();
+            Book::query()->whereIn('title->uz', array_column(self::BOOKS, 0))->get()->each->delete();
 
             DB::table('notifications')->where('type', 'App\\Notifications\\DemoNotification')->delete();
         });
@@ -333,11 +339,16 @@ class DemoContentSeeder extends Seeder
 
     private function seedBooks(): void
     {
+        $subjects = Subject::query()->whereNull('parent_id')->orderBy('sort_order')->pluck('id')->all();
+
         foreach (self::BOOKS as $i => [$title, $author, $year]) {
-            RecommendedBook::factory()->create([
+            Book::factory()->create([
                 'title' => ['uz' => $title],
+                'description' => ['uz' => "«{$title}» — ijtimoiy-gumanitar fanlar bo'yicha tadqiqotchilar, magistrantlar va talabalar uchun tavsiya etiladigan ilmiy nashr. Kitobda mavzuning nazariy asoslari, manbalar tahlili va amaliy misollar yoritilgan."],
                 'author' => $author,
                 'year' => $year,
+                'subject_id' => $subjects !== [] ? $subjects[$i % count($subjects)] : null,
+                'is_featured' => $i < 3,
                 'sort_order' => $i,
             ]);
         }

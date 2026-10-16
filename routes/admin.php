@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\Issues\IssueArticleController;
 use App\Http\Controllers\Admin\Issues\IssueController;
 use App\Http\Controllers\Admin\Issues\IssueCoverController;
+use App\Http\Controllers\Admin\Library\LibraryController;
 use App\Http\Controllers\Admin\Messages\BroadcastController;
 use App\Http\Controllers\Admin\Messages\MessageCenterController;
 use App\Http\Controllers\Admin\Newsletter\NewsletterController;
@@ -31,7 +32,6 @@ use App\Http\Controllers\Admin\Settings\JournalDocumentController;
 use App\Http\Controllers\Admin\Settings\PageController;
 use App\Http\Controllers\Admin\Settings\PartnerController;
 use App\Http\Controllers\Admin\Settings\PostController;
-use App\Http\Controllers\Admin\Settings\RecommendedBookController;
 use App\Http\Controllers\Admin\Settings\SettingsController;
 use App\Http\Controllers\Admin\Settings\SubjectController;
 use App\Http\Controllers\Admin\System\BackupController;
@@ -327,10 +327,6 @@ Route::middleware('permission:'.AdminSection::Settings->permission()->value)
         Route::put('events/{event}', [EventController::class, 'update'])->name('events.update');
         Route::delete('events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
 
-        Route::post('books', [RecommendedBookController::class, 'store'])->name('books.store');
-        Route::put('books/{book}', [RecommendedBookController::class, 'update'])->name('books.update');
-        Route::delete('books/{book}', [RecommendedBookController::class, 'destroy'])->name('books.destroy');
-
         Route::post('partners', [PartnerController::class, 'store'])->name('partners.store');
         Route::put('partners/{partner}', [PartnerController::class, 'update'])->name('partners.update');
         Route::delete('partners/{partner}', [PartnerController::class, 'destroy'])->name('partners.destroy');
@@ -384,6 +380,21 @@ Route::middleware('permission:'.AdminSection::Messages->permission()->value)
         Route::post('broadcasts', [BroadcastController::class, 'store'])
             ->middleware(['permission:'.PermissionName::UsersManage->value, 'throttle:5,10'])
             ->name('broadcasts.store');
+    });
+
+/*
+| Kutubxona: kitoblar (muqova, PDF, havola), "Tavsiya etilgan" — bosh sahifada
+*/
+Route::middleware('permission:'.AdminSection::Library->permission()->value)
+    ->prefix('library')
+    ->name('library.')
+    ->group(function () {
+        Route::get('/', [LibraryController::class, 'index'])->name('index');
+        Route::post('/', [LibraryController::class, 'store'])->name('store');
+        Route::put('{book}', [LibraryController::class, 'update'])->name('update');
+        Route::patch('{book}/toggle', [LibraryController::class, 'toggle'])->name('toggle');
+        Route::delete('{book}', [LibraryController::class, 'destroy'])->name('destroy');
+        Route::get('{book}/file', [LibraryController::class, 'file'])->name('file');
     });
 
 /*

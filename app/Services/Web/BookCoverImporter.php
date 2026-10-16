@@ -2,12 +2,12 @@
 
 namespace App\Services\Web;
 
-use App\Models\RecommendedBook;
+use App\Models\Book;
 use App\Support\TitleImageFiles;
 use Illuminate\Support\Str;
 
 /**
- * "Tavsiya etilgan kitoblar" muqovalarini public/web/books/ papkasidan biriktiradi
+ * Kutubxona kitoblari muqovalarini public/web/books/ papkasidan biriktiradi
  * (fayl nomi = kitob nomi, masalan "O'rta Osiyo xalqlari etnologiyasi.png").
  * Rasm storage/app/public/books/covers/{id}-{slug}.{ext} ga nusxalanadi.
  */
@@ -24,7 +24,7 @@ class BookCoverImporter
         $attached = 0;
         $missing = [];
 
-        $books = RecommendedBook::query()
+        $books = Book::query()
             ->when(! $force, fn ($query) => $query->whereNull('cover_image_path'))
             ->get();
 

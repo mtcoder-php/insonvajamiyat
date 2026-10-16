@@ -6,10 +6,10 @@ use App\Enums\ArticleStatus;
 use App\Models\Article;
 use App\Models\ArticleAuthor;
 use App\Models\Banner;
+use App\Models\Book;
 use App\Models\Event;
 use App\Models\JournalIssue;
 use App\Models\Post;
-use App\Models\RecommendedBook;
 use App\Models\Subject;
 use Database\Seeders\DemoContentSeeder;
 use Database\Seeders\SubjectSeeder;
@@ -89,8 +89,9 @@ class HomePageTest extends TestCase
         Event::factory()->create();
         Event::factory()->past()->create();
 
-        RecommendedBook::factory()->create(['title' => ['uz' => 'Faol kitob'], 'year' => 2023]);
-        RecommendedBook::factory()->inactive()->create();
+        Book::factory()->featured()->create(['title' => ['uz' => 'Faol kitob'], 'year' => 2023]);
+        Book::factory()->featured()->inactive()->create();
+        Book::factory()->create(); // tavsiya etilmagan — faqat kutubxonada
 
         $this->get(route('home'))
             ->assertInertia(fn (Assert $page) => $page

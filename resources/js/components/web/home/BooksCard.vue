@@ -1,25 +1,29 @@
 <script setup lang="ts">
+import { Link } from '@inertiajs/vue3';
 import { BookOpen } from '@lucide/vue';
 import HomeCard from '@/components/web/home/HomeCard.vue';
-import type { RecommendedBook } from '@/types';
+import { index as libraryIndex } from '@/routes/library';
+import type { LibraryBook } from '@/types';
 import { t } from '@/lib/i18n';
 
 /**
- * "Tavsiya etilgan kitoblar" (home.png): muqova, nom, muallif, yil.
- * Muqova: books.cover_image_path (php artisan app:import-book-covers — public/web/books/<nom>.png).
+ * "Tavsiya etilgan kitoblar" (home.png): kutubxonadagi tavsiya etilgan kitoblar —
+ * muqova, nom, muallif, yil; bosilganda kitob sahifasi, "Barchasi" — kutubxona.
  */
-defineProps<{ books: RecommendedBook[] }>();
+defineProps<{ books: LibraryBook[] }>();
 </script>
 
 <template>
-    <HomeCard v-if="books.length" :title="t('Tavsiya etilgan kitoblar')">
+    <HomeCard
+        v-if="books.length"
+        :title="t('Tavsiya etilgan kitoblar')"
+        :href="libraryIndex()"
+        :link-text="t('Kutubxona')"
+    >
         <ul class="-mx-2 divide-y divide-[#e8e4db]">
             <li v-for="book in books" :key="book.id">
-                <component
-                    :is="book.url ? 'a' : 'div'"
-                    :href="book.url ?? undefined"
-                    :target="book.url ? '_blank' : undefined"
-                    :rel="book.url ? 'noopener noreferrer' : undefined"
+                <Link
+                    :href="book.pageUrl"
                     class="group flex gap-4 rounded-lg px-2 py-3.5 transition-colors hover:bg-white"
                 >
                     <span
@@ -50,7 +54,7 @@ defineProps<{ books: RecommendedBook[] }>();
                             {{ book.year }}
                         </span>
                     </span>
-                </component>
+                </Link>
             </li>
         </ul>
     </HomeCard>

@@ -22,3 +22,4 @@ export * from './system';
 export * from './admin-messages';
 export * from './pages';
 export * from './newsletter';
+export * from './library';

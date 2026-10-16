@@ -384,12 +384,23 @@ Manzil: `/admin/settings`. Ruxsat: **Sayt kontentini boshqarish**. Barcha matnla
 | **Bannerlar**                 | Bosh sahifa slayderi: rasm (kamida 1200×400), havola, faol, ko'rsatish muddati. Faol banner bo'lmasa standart slaydlar chiqadi.                                                                                                                                                                                            |
 | **Yangiliklar va e'lonlar**   | Tur, rasm, matn (matn muharriri), chop etish va qadash; kelajakdagi sana — rejalashtirilgan nashr.                                                                                                                                                                                                                         |
 | **Tadbirlar**                 | Boshlanish/tugash vaqti, ro'yxatdan o'tish havolasi, rasm, tavsif (matn muharriri).                                                                                                                                                                                                                                        |
-| **Tavsiya etilgan kitoblar**  | Bosh sahifaning o'ng ustuni: muallif, yil, havola, muqova.                                                                                                                                                                                                                                                                 |
 | **Hamkorlar**                 | Hamkor tashkilotlar va indekslash bazalari logolari.                                                                                                                                                                                                                                                                       |
 
 **Matn muharriri** (yangilik matni va tadbir tavsifi): sarlavha (H2, H3), qalin, kursiv, tagiga/ustidan chizilgan, belgili va raqamli ro'yxat, iqtibos, ajratuvchi chiziq, matnni tekislash, havola (zanjir belgili tugma → manzilni kiriting → tasdiqlang), formatlashni tozalash, bekor qilish/qaytarish. Word yoki saytdan nusxalangan matn ham joylanadi — saqlashda faqat shu formatlar qoladi, boshqa narsalar (skript, rang, shrift) xavfsizlik uchun olib tashlanadi.
 
 **Matn ichiga rasm:** asboblar panelidagi rasm tugmasini bosing yoki rasmni muharrirga sudrab tashlang / nusxalab qo'ying (JPG, PNG, WEBP, 5 MB gacha). Rasm serverda 1600 px kenglikkacha kichraytiriladi va metama'lumotlardan (EXIF, GPS) tozalanadi. Yuklangach yuqorida **rasm tavsifi (alt)** maydoni chiqadi — rasmda nima borligini qisqa yozing (ko'zi ojizlar va Google uchun); rasmni bossangiz, tavsifni keyin ham o'zgartirish mumkin. Boshqa saytlardagi rasmlar matnga qo'shilmaydi — faqat shu yerdan yuklanganlari. Yuklanib, saqlanmay qolgan rasmlar bir kundan keyin avtomatik o'chiriladi. Ro'yxatdagi kartochka rasmi esa yuqoridagi «Rasm tanlang» maydonidan qo'yiladi.
+
+### 14.1. Kutubxona
+
+Manzil: `/admin/library` (chap menyuda **Kutubxona**). Ruxsat: **Sayt kontentini boshqarish**. Avvalgi «Sozlamalar → Tavsiya etilgan kitoblar» tabi shu bo'limga ko'chirildi — mavjud kitoblar saqlanib qoladi va «Tavsiya etilgan» deb belgilanadi.
+
+- **Yangi kitob**: muqova (vertikal, kamida 150×200, 5 MB gacha), nomi va annotatsiyasi (uz/ru/en), muallif, nashriyot, yil, betlar soni, ISBN (10 yoki 13 raqam), til, **ilmiy yo'nalish**, **PDF fayl** (100 MB gacha) va/yoki **tashqi havola**, tartib raqami.
+- **Tavsiya etilgan** (yulduzcha): belgilangan faol kitoblardan birinchi uchtasi bosh sahifadagi «Tavsiya etilgan kitoblar» blokida chiqadi (tartib raqami bo'yicha). Ro'yxatda yulduzchani bosib tez yoqish/o'chirish mumkin.
+- **Faol** (ko'z belgisi): o'chirilsa kitob saytdan yashiriladi (sahifasi va PDF havolasi 404 qaytaradi), lekin o'chirilmaydi.
+- **Filtrlar**: nom, muallif yoki ISBN bo'yicha qidiruv; Barchasi / Tavsiya etilgan / Faol / Yashirin / PDF bor; yo'nalish.
+- **Statistika**: kitoblar soni, tavsiya etilganlar, PDF fayllar, ko'rishlar va yuklab olishlar (har bir kitob qatorida ham ko'rinadi).
+- PDF fayllar ommaviy papkada emas, himoyalangan joyda saqlanadi va faqat sayt orqali beriladi: «Onlayn o'qish» (brauzerda ochiladi) va «PDF yuklab olish» (yuklab olishlar hisoblanadi). Yangi PDF yuklansa eskisi o'chiriladi; kitob o'chirilsa muqova va PDF ham o'chadi.
+- Saytda: `/library` — qidiruv, yo'nalishlar, til va saralash (tavsiya etilganlar avval, yangi nashrlar, ommabop, nomi bo'yicha); `/library/<kitob>` — kitob sahifasi (annotatsiya, ma'lumotlar, o'qish/yuklab olish, shu yo'nalishdagi boshqa kitoblar). Kutubxona sayt menyusida va sitemap'da bor.
 
 ---
 

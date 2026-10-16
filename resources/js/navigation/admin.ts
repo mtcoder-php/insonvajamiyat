@@ -11,6 +11,7 @@ import {
     FileText,
     House,
     Mail,
+    LibraryBig,
     MailPlus,
     Settings,
     UserCheck,
@@ -26,6 +27,7 @@ import { index as authorsIndex } from '@/routes/admin/authors';
 import { index as backupsIndex } from '@/routes/admin/backups';
 import { index as issuesIndex } from '@/routes/admin/issues';
 import { index as messagesIndex } from '@/routes/admin/messages';
+import { index as libraryIndex } from '@/routes/admin/library';
 import { index as newsletterIndex } from '@/routes/admin/newsletter';
 import { index as paymentsIndex } from '@/routes/admin/payments';
 import { index as productionIndex } from '@/routes/admin/production';
@@ -139,6 +141,12 @@ export function adminNavigation(): NavGroup[] {
                     permission: 'articles.message_author',
                     badge: 'messages',
                     badgeHint: tk("O'qilmagan xabarlar va bildirishnomalar"),
+                },
+                {
+                    title: tk('Kutubxona'),
+                    href: libraryIndex(),
+                    icon: LibraryBig,
+                    permission: 'content.manage',
                 },
                 {
                     title: tk('Obuna'),
