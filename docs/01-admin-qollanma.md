@@ -400,7 +400,7 @@ Manzil: `/admin/library` (chap menyuda **Kutubxona**). Ruxsat: **Sayt kontentini
 - **Filtrlar**: nom, muallif yoki ISBN bo'yicha qidiruv; Barchasi / Tavsiya etilgan / Faol / Yashirin / PDF bor; yo'nalish.
 - **Statistika**: kitoblar soni, tavsiya etilganlar, PDF fayllar, ko'rishlar va yuklab olishlar (har bir kitob qatorida ham ko'rinadi).
 - PDF fayllar ommaviy papkada emas, himoyalangan joyda saqlanadi va faqat sayt orqali beriladi: «Onlayn o'qish» (brauzerda ochiladi) va «PDF yuklab olish» (yuklab olishlar hisoblanadi). Yangi PDF yuklansa eskisi o'chiriladi; kitob o'chirilsa muqova va PDF ham o'chadi.
-- Saytda: `/library` — qidiruv, yo'nalishlar, til va saralash (tavsiya etilganlar avval, yangi nashrlar, ommabop, nomi bo'yicha); `/library/<kitob>` — kitob sahifasi (annotatsiya, ma'lumotlar, o'qish/yuklab olish, shu yo'nalishdagi boshqa kitoblar). Kutubxona sayt menyusida va sitemap'da bor.
+- Saytda: `/library` — qidiruv, yo'nalishlar, til va saralash (tavsiya etilganlar avval, yangi nashrlar, ommabop, nomi bo'yicha); `/library/<kitob>` — kitob sahifasi (annotatsiya, ma'lumotlar, o'qish/yuklab olish, shu yo'nalishdagi boshqa kitoblar). Kutubxonaga bosh sahifadagi «Tavsiya etilgan kitoblar» blokidagi «Kutubxona» havolasi va footerdagi «Foydali havolalar» orqali o'tiladi (asosiy menyuda yo'q); sitemap'da bor.
 
 ---
 

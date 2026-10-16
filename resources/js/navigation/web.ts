@@ -16,7 +16,6 @@ export function mainNavigation(): NavItem[] {
         { title: t('Jurnal haqida'), href: about() },
         { title: t('Maqolalar'), href: articlesIndex() },
         { title: t('Jurnal sonlari'), href: issuesIndex() },
-        { title: t('Kutubxona'), href: libraryIndex() },
         { title: t("Yo'riqnoma"), href: guidelines() },
         { title: t('Aloqa'), href: contact() },
     ];
