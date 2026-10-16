@@ -30,7 +30,7 @@ const refunded = computed(() => props.payment.status === 'refunded');
 
 const online = computed(() => props.payment.online);
 
-/** Tizim ranglari — tugmani tanib olish uchun (logotip ishlatilmaydi) */
+/** Tizim ranglari — hover soyasi; logotip fayli bo'lmasa rangli belgi ham shu */
 const brand: Record<string, { ring: string; dot: string; hint: string }> = {
     click: {
         ring: 'hover:border-[#00a0e3] hover:shadow-[0_14px_30px_-16px_rgba(0,160,227,0.75)]',
@@ -274,7 +274,28 @@ async function copy(key: string, value: string): Promise<void> {
                 "
                 @click="pay(provider.value)"
             >
+                <!-- Rasmiy logotip (public/images/payments) yoki rangli belgi -->
                 <span
+                    v-if="provider.logo"
+                    class="relative flex h-10 w-[4.5rem] shrink-0 items-center justify-center overflow-hidden rounded-lg border border-line bg-white px-1.5 shadow-sm transition-all duration-200 group-hover:scale-105 group-hover:border-transparent group-hover:shadow-md"
+                >
+                    <img
+                        :src="provider.logo"
+                        :alt="provider.label"
+                        class="max-h-6 w-full object-contain"
+                        loading="lazy"
+                    />
+                    <span
+                        v-if="starting === provider.value"
+                        class="absolute inset-0 flex items-center justify-center bg-white/80"
+                    >
+                        <LoaderCircle
+                            class="size-4 animate-spin text-navy-700"
+                        />
+                    </span>
+                </span>
+                <span
+                    v-else
                     :class="
                         cn(
                             'flex size-9 shrink-0 items-center justify-center rounded-lg text-white shadow-sm transition-transform duration-200 group-hover:scale-105',

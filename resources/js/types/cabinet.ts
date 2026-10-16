@@ -162,7 +162,12 @@ export type AuthorArticlePayment = {
 /** Click / Payme orqali to'lash (faqat sozlangan tizimlar) */
 export type AuthorOnlinePayment = {
     payUrl: string;
-    providers: { value: 'click' | 'payme'; label: string }[];
+    providers: {
+        value: 'click' | 'payme';
+        label: string;
+        /** Rasmiy logotip (public/images/payments) — bo'lmasa null */
+        logo: string | null;
+    }[];
     /** To'lov tizimida tranzaksiya ochilgan, tasdiq kutilmoqda */
     processing: boolean;
     lastAttempt: {
