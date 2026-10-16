@@ -65,6 +65,7 @@ return [
         'contact' => env('JOURNAL_HERO_CONTACT', 'sliders/slide3.png'),
         'news' => env('JOURNAL_HERO_NEWS', 'sliders/slide2.png'),
         'events' => env('JOURNAL_HERO_EVENTS', 'sliders/slide1.png'),
+        'library' => env('JOURNAL_HERO_LIBRARY', 'sliders/slide3.png'),
     ],
 
     // Muallif kabineti: "Maqola shablonini yuklab olish" (public/ ichidagi yo'l).

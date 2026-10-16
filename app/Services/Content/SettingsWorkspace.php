@@ -9,7 +9,6 @@ use App\Models\Banner;
 use App\Models\Event;
 use App\Models\Partner;
 use App\Models\Post;
-use App\Models\RecommendedBook;
 use App\Models\Subject;
 use App\Support\MediaUrl;
 use App\Support\Translations;
@@ -256,33 +255,6 @@ class SettingsWorkspace
                 'upcoming' => Event::query()->upcoming()->count(),
             ],
         ];
-    }
-
-    /**
-     * @return array<int, array<string, mixed>>
-     */
-    public function books(): array
-    {
-        return RecommendedBook::query()
-            ->orderBy('sort_order')
-            ->orderByDesc('id')
-            ->get()
-            ->map(fn (RecommendedBook $b): array => [
-                'id' => $b->id,
-                'title' => $b->getTranslation('title', 'uz', false) ?: $b->title,
-                'translations' => ['title' => Translations::form($b->getTranslations('title'))],
-                'author' => $b->author,
-                'year' => $b->year,
-                'url' => $b->url,
-                'coverUrl' => MediaUrl::from($b->cover_image_path),
-                'isActive' => $b->is_active,
-                'sortOrder' => $b->sort_order,
-                'urls' => [
-                    'update' => route('admin.settings.books.update', $b->id),
-                    'destroy' => route('admin.settings.books.destroy', $b->id),
-                ],
-            ])
-            ->all();
     }
 
     /**

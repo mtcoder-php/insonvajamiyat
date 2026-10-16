@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Article;
+use App\Models\Book;
 use App\Models\Event;
 use App\Models\JournalIssue;
 use App\Models\Post;
@@ -47,6 +48,7 @@ class SitemapController extends Controller
         $add(route('issues.index'), null, 'weekly', '0.8');
         $add(route('news.index'), null, 'daily', '0.6');
         $add(route('events.index'), null, 'weekly', '0.5');
+        $add(route('library.index'), null, 'weekly', '0.5');
         $add(route('about'), null, 'monthly', '0.5');
         $add(route('guidelines'), null, 'monthly', '0.6');
         $add(route('contact'), null, 'yearly', '0.3');
@@ -69,6 +71,10 @@ class SitemapController extends Controller
         Event::query()->published()->orderByDesc('starts_at')
             ->get(['id', 'slug', 'starts_at', 'updated_at'])
             ->each(fn (Event $event) => $add(route('events.show', $event->slug), $event->updated_at, 'monthly', '0.4'));
+
+        Book::query()->where('is_active', true)
+            ->get(['id', 'slug', 'updated_at'])
+            ->each(fn (Book $book) => $add(route('library.show', $book->slug), $book->updated_at, 'monthly', '0.4'));
 
         return view('seo.sitemap', ['urls' => $urls])->render();
     }

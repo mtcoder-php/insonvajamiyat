@@ -2,7 +2,6 @@
 import { Head, router } from '@inertiajs/vue3';
 import {
     BadgeDollarSign,
-    BookOpen,
     CalendarDays,
     FileText,
     FolderDown,
@@ -18,7 +17,6 @@ import ArticleTypesPanel from '@/components/admin/settings/ArticleTypesPanel.vue
 import BannersPanel from '@/components/admin/settings/BannersPanel.vue';
 import BoardPanel from '@/components/admin/settings/BoardPanel.vue';
 import DocumentsPanel from '@/components/admin/settings/DocumentsPanel.vue';
-import BooksPanel from '@/components/admin/settings/BooksPanel.vue';
 import EventsPanel from '@/components/admin/settings/EventsPanel.vue';
 import PagesPanel from '@/components/admin/settings/PagesPanel.vue';
 import PartnersPanel from '@/components/admin/settings/PartnersPanel.vue';
@@ -91,11 +89,6 @@ const meta: Record<
         label: t('Tadbirlar'),
         hint: t('Konferensiya, seminar'),
         icon: CalendarDays,
-    },
-    books: {
-        label: t('Tavsiya etilgan kitoblar'),
-        hint: t("Bosh sahifa o'ng ustuni"),
-        icon: BookOpen,
     },
     partners: {
         label: t('Hamkorlar'),
@@ -224,11 +217,6 @@ function go(tab: SettingsTab): void {
             :filters="filters"
             :store-url="urls.events"
             :index-url="urls.index"
-        />
-        <BooksPanel
-            v-else-if="tab === 'books' && books"
-            :books="books"
-            :store-url="urls.books"
         />
         <PartnersPanel
             v-else-if="tab === 'partners' && partners && partnerTypes"

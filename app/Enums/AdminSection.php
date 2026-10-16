@@ -21,6 +21,7 @@ enum AdminSection: string
     case Payments = 'payments';
     case Ai = 'ai';
     case Messages = 'messages';
+    case Library = 'library';
     case Newsletter = 'newsletter';
     case Reports = 'reports';
     case Settings = 'settings';
@@ -63,6 +64,7 @@ enum AdminSection: string
             self::Payments => "To'lovlar",
             self::Ai => 'AI Studio',
             self::Messages => 'Xabarlar',
+            self::Library => 'Kutubxona',
             self::Newsletter => 'Obuna',
             self::Reports => 'Statistika va hisobotlar',
             self::Settings => 'Sozlamalar',
@@ -85,6 +87,7 @@ enum AdminSection: string
             self::Payments => "Click, Payme va qo'lda tasdiqlangan to'lovlar, qaytarishlar.",
             self::Ai => 'AI xizmatlari (imlo tekshiruvi, tarjima, tahlil) sozlamalari va limitlari.',
             self::Messages => 'Mualliflar bilan yozishmalar va tizim bildirishnomalari.',
+            self::Library => "Kitoblar: muqova, PDF, havola; tavsiya etilganlari bosh sahifada ko'rinadi.",
             self::Newsletter => 'Sayt obunachilari, ularga xat yuborish va yangi son haqida avtomatik xabar.',
             self::Reports => "Maqolalar, to'lovlar va faoliyat bo'yicha hisobotlar.",
             self::Settings => "Jurnal ma'lumotlari, yo'nalishlar, maqola turlari va sayt kontenti.",
@@ -112,6 +115,7 @@ enum AdminSection: string
             self::Payments => ["To'lovlar ro'yxati va filtrlari", "Qo'lda tasdiqlash", 'Qaytarish (refund)', 'Narxlar va xizmatlar'],
             self::Ai => ["So'rovlar tarixi", 'Oylik token limitlari', 'Model va xizmat sozlamalari'],
             self::Messages => ['Muallif bilan yozishma', 'Ommaviy xabar yuborish', 'Bildirishnomalar tarixi'],
+            self::Library => ["Kitob qo'shish va tahrirlash", 'PDF va havola', 'Tavsiya etilgan kitoblar'],
             self::Newsletter => ["Obunachilar ro'yxati va CSV eksport", 'Xat yuborish (til bo\'yicha)', 'Yangi son haqida avtomatik xat'],
             self::Reports => ['Davr bo\'yicha statistika', 'Excel / PDF eksport'],
             self::Settings => ["Yo'nalishlar (CRUD)", 'Maqola turlari va narxlar', 'Bannerlar, yangiliklar, tadbirlar, kitoblar'],
@@ -134,7 +138,7 @@ enum AdminSection: string
             self::Ai => PermissionName::AiUse,
             self::Messages => PermissionName::ArticlesMessageAuthor,
             self::Reports => PermissionName::ReportsView,
-            self::Settings, self::Newsletter => PermissionName::ContentManage,
+            self::Settings, self::Newsletter, self::Library => PermissionName::ContentManage,
             self::Users => PermissionName::UsersManage,
             self::Roles => PermissionName::RolesManage,
             self::Audit => PermissionName::AuditLogView,

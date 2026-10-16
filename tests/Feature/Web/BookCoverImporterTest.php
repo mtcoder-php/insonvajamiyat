@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Web;
 
-use App\Models\RecommendedBook;
+use App\Models\Book;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -41,8 +41,8 @@ class BookCoverImporterTest extends TestCase
     {
         File::put($this->publicDir.'/web/books/Oʻrta Osiyo xalqlari etnologiyasi.png', $this->pngContents(60, 90));
 
-        $book = RecommendedBook::factory()->create(['title' => ['uz' => "O'rta Osiyo xalqlari etnologiyasi"]]);
-        $other = RecommendedBook::factory()->create(['title' => ['uz' => "O'zbek adabiyoti tarixi"]]);
+        $book = Book::factory()->featured()->create(['title' => ['uz' => "O'rta Osiyo xalqlari etnologiyasi"]]);
+        $other = Book::factory()->featured()->create(['title' => ['uz' => "O'zbek adabiyoti tarixi"]]);
 
         $this->artisan('app:import-book-covers')
             ->expectsOutputToContain('Biriktirildi: 1 ta kitob')
@@ -64,7 +64,7 @@ class BookCoverImporterTest extends TestCase
     public function test_existing_cover_is_kept_unless_forced(): void
     {
         File::put($this->publicDir.'/web/books/Tarix.png', $this->pngContents(60, 90));
-        $book = RecommendedBook::factory()->create([
+        $book = Book::factory()->featured()->create([
             'title' => ['uz' => 'Tarix'],
             'cover_image_path' => 'books/covers/eski.png',
         ]);

@@ -1,6 +1,7 @@
 import { about, contact, guidelines, home } from '@/routes';
 import { index as articlesIndex } from '@/routes/articles';
 import { index as issuesIndex } from '@/routes/issues';
+import { index as libraryIndex } from '@/routes/library';
 import { t } from '@/lib/i18n';
 import type { NavItem } from '@/types';
 
@@ -15,6 +16,7 @@ export function mainNavigation(): NavItem[] {
         { title: t('Jurnal haqida'), href: about() },
         { title: t('Maqolalar'), href: articlesIndex() },
         { title: t('Jurnal sonlari'), href: issuesIndex() },
+        { title: t('Kutubxona'), href: libraryIndex() },
         { title: t("Yo'riqnoma"), href: guidelines() },
         { title: t('Aloqa'), href: contact() },
     ];
@@ -38,5 +40,6 @@ export function footerUsefulLinks(): NavItem[] {
             href: `${about().url}#editorial-board`,
         },
         { title: t('Arxiv'), href: issuesIndex() },
+        { title: t('Kutubxona'), href: libraryIndex() },
     ];
 }

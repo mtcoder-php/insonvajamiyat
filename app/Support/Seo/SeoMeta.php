@@ -5,6 +5,7 @@ namespace App\Support\Seo;
 use App\Enums\ArticleFileType;
 use App\Models\Article;
 use App\Models\ArticleAuthor;
+use App\Models\Book;
 use App\Models\Event;
 use App\Models\JournalIssue;
 use App\Models\Post;
@@ -33,6 +34,7 @@ class SeoMeta
         'web/issues/Index' => 'Jurnal sonlari arxivi',
         'web/news/Index' => "Yangiliklar va e'lonlar",
         'web/events/Index' => 'Tadbirlar',
+        'web/library/Index' => 'Kutubxona',
     ];
 
     private ?string $title = null;
@@ -206,6 +208,13 @@ class SeoMeta
     public function forPost(Post $post): static
     {
         return $this->set($post->title, $post->excerpt ?: Str::limit(RichText::plain($post->body), 200), MediaUrl::from($post->image_path), 'article');
+    }
+
+    public function forBook(Book $book): static
+    {
+        $description = Str::limit(trim((string) $book->description), 200) ?: $book->author.($book->year ? ', '.$book->year : '');
+
+        return $this->set($book->title.' — '.$book->author, $description, MediaUrl::from($book->cover_image_path), 'book');
     }
 
     public function forEvent(Event $event): static

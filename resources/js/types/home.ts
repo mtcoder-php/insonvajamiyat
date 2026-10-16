@@ -78,13 +78,20 @@ export type EventDetail = EventItem & {
 };
 
 /** Bosh sahifa slayderi (banner yoki config'dagi standart slayd) */
-/** Tavsiya etilgan kitob (RecommendedBookResource) */
-export type RecommendedBook = {
+/** Kutubxona kitobi kartochkasi (BookResource) — bosh sahifa va /library */
+export type LibraryBook = {
     id: number;
+    slug: string;
     title: string;
     author: string;
     year: number | null;
+    pages: number | null;
+    language: 'uz' | 'ru' | 'en';
     coverUrl: string | null;
+    subject: { name: string; slug: string } | null;
+    hasFile: boolean;
+    isFeatured: boolean;
+    pageUrl: string;
     url: string | null;
 };
 
@@ -104,7 +111,7 @@ export type HomePageProps = {
     subjects: SubjectSummary[];
     news: PostItem[];
     events: EventItem[];
-    books: RecommendedBook[];
+    books: LibraryBook[];
     partners: PartnerItem[];
 };
 

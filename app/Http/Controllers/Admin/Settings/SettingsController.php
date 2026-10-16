@@ -15,13 +15,13 @@ use Inertia\Inertia;
 use Inertia\Response;
 
 /**
- * Admin → Sozlamalar: ?tab=subjects|types|pages|board|documents|banners|posts|events|books|partners.
+ * Admin → Sozlamalar: ?tab=subjects|types|pages|board|documents|banners|posts|events|partners.
  * "Maqola turlari va narxlar" — qo'shimcha prices.manage ruxsati bilan.
  * Yangiliklar va tadbirlar sahifalangan (?page, ?q, ?type, ?when).
  */
 class SettingsController extends Controller
 {
-    public const TABS = ['subjects', 'types', 'pages', 'board', 'documents', 'banners', 'posts', 'events', 'books', 'partners'];
+    public const TABS = ['subjects', 'types', 'pages', 'board', 'documents', 'banners', 'posts', 'events', 'partners'];
 
     public function index(Request $request, SettingsWorkspace $workspace, PageService $pages, EditorialBoardService $board, JournalDocumentService $documents): Response
     {
@@ -45,7 +45,6 @@ class SettingsController extends Controller
             'banners' => $tab === 'banners' ? fn (): array => $workspace->banners() : null,
             'posts' => $tab === 'posts' ? fn (): array => $workspace->posts($filters, $page) : null,
             'events' => $tab === 'events' ? fn (): array => $workspace->events($filters, $page) : null,
-            'books' => $tab === 'books' ? fn (): array => $workspace->books() : null,
             'partners' => $tab === 'partners' ? fn (): array => $workspace->partners() : null,
             'partnerTypes' => $tab === 'partners' ? SettingsWorkspace::partnerTypes() : null,
             'pages' => $tab === 'pages' ? fn (): array => array_map(fn (PageSlug $slug): array => $pages->form($slug), PageSlug::cases()) : null,
@@ -64,7 +63,6 @@ class SettingsController extends Controller
                 'banners' => route('admin.settings.banners.store'),
                 'posts' => route('admin.settings.posts.store'),
                 'events' => route('admin.settings.events.store'),
-                'books' => route('admin.settings.books.store'),
                 'partners' => route('admin.settings.partners.store'),
                 'board' => route('admin.settings.board.store'),
                 'documents' => route('admin.settings.documents.store'),

@@ -13,7 +13,6 @@ export type SettingsTab =
     | 'banners'
     | 'posts'
     | 'events'
-    | 'books'
     | 'partners';
 
 /** Tarjima qilinadigan maydon: o'zbekcha majburiy, rus/ingliz ixtiyoriy */
@@ -109,19 +108,6 @@ export type SettingsEvent = {
     urls: { update: string; destroy: string };
 };
 
-export type SettingsBook = {
-    id: number;
-    title: string;
-    translations: { title: Translated };
-    author: string;
-    year: number | null;
-    url: string | null;
-    coverUrl: string | null;
-    isActive: boolean;
-    sortOrder: number;
-    urls: { update: string; destroy: string };
-};
-
 export type SettingsPartnerType = 'partner' | 'indexing';
 
 export type SettingsPartner = {
@@ -157,7 +143,6 @@ export type SettingsPageProps = {
         SettingsEvent,
         { all: number; upcoming: number }
     > | null;
-    books: SettingsBook[] | null;
     partners: SettingsPartner[] | null;
     partnerTypes: { value: SettingsPartnerType; label: string }[] | null;
     pages: SettingsPage[] | null;
@@ -173,7 +158,6 @@ export type SettingsPageProps = {
         banners: string;
         posts: string;
         events: string;
-        books: string;
         partners: string;
         board: string;
         documents: string;

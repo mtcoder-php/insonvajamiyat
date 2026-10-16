@@ -5,18 +5,18 @@ namespace App\Services\Web;
 use App\Enums\PostType;
 use App\Http\Resources\Web\ArticleCardResource;
 use App\Http\Resources\Web\BannerResource;
+use App\Http\Resources\Web\BookResource;
 use App\Http\Resources\Web\EventResource;
 use App\Http\Resources\Web\IssueCardResource;
 use App\Http\Resources\Web\PostResource;
-use App\Http\Resources\Web\RecommendedBookResource;
 use App\Http\Resources\Web\SubjectResource;
 use App\Models\Article;
 use App\Models\Banner;
+use App\Models\Book;
 use App\Models\Event;
 use App\Models\JournalIssue;
 use App\Models\Partner;
 use App\Models\Post;
-use App\Models\RecommendedBook;
 use App\Models\Subject;
 use App\Support\MediaUrl;
 use App\Support\Translations;
@@ -112,15 +112,15 @@ class HomePageService
     }
 
     /**
-     * "Tavsiya etilgan kitoblar" (o'ng ustun).
+     * "Tavsiya etilgan kitoblar" (o'ng ustun) — kutubxonadagi tavsiya etilgan faol kitoblar.
      *
      * @return array<int, array<string, mixed>>
      */
     public function recommendedBooks(int $limit = 3): array
     {
-        $books = RecommendedBook::query()->active()->limit($limit)->get();
+        $books = Book::query()->active()->featured()->limit($limit)->get();
 
-        return RecommendedBookResource::collection($books)->resolve();
+        return BookResource::collection($books)->resolve();
     }
 
     /**

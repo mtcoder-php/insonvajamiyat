@@ -10,6 +10,7 @@ use App\Http\Controllers\Web\EventController;
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\IssueController;
 use App\Http\Controllers\Web\JournalDocumentController;
+use App\Http\Controllers\Web\LibraryController;
 use App\Http\Controllers\Web\LocaleController;
 use App\Http\Controllers\Web\NewsController;
 use App\Http\Controllers\Web\NewsletterSubscriptionController;
@@ -39,6 +40,10 @@ Route::get('articles/{article}/pdf', ArticlePdfController::class)
     ->name('articles.pdf');
 Route::get('issues', [IssueController::class, 'index'])->name('issues.index');
 Route::get('issues/{issue}', [IssueController::class, 'show'])->name('issues.show');
+Route::get('library', [LibraryController::class, 'index'])->name('library.index');
+Route::get('library/{book}', [LibraryController::class, 'show'])->name('library.show');
+Route::get('library/{book}/read', [LibraryController::class, 'read'])->middleware('throttle:60,1')->name('library.read');
+Route::get('library/{book}/download', [LibraryController::class, 'download'])->middleware('throttle:30,1')->name('library.download');
 Route::get('news', [NewsController::class, 'index'])->name('news.index');
 Route::get('news/{post:slug}', [NewsController::class, 'show'])->name('news.show');
 Route::get('events', [EventController::class, 'index'])->name('events.index');

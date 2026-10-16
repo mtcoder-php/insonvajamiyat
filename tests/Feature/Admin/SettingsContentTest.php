@@ -7,7 +7,6 @@ use App\Enums\RoleName;
 use App\Models\Event;
 use App\Models\Partner;
 use App\Models\Post;
-use App\Models\RecommendedBook;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -16,7 +15,7 @@ use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 /**
- * Admin → Sozlamalar (2-qism): yangiliklar, tadbirlar, tavsiya etilgan kitoblar, hamkorlar.
+ * Admin → Sozlamalar (2-qism): yangiliklar, tadbirlar, hamkorlar.
  */
 class SettingsContentTest extends TestCase
 {
@@ -38,7 +37,7 @@ class SettingsContentTest extends TestCase
             ->get(route('admin.settings.index', ['tab' => 'partners']))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
-                ->where('tabs', ['subjects', 'pages', 'board', 'documents', 'banners', 'posts', 'events', 'books', 'partners'])
+                ->where('tabs', ['subjects', 'pages', 'board', 'documents', 'banners', 'posts', 'events', 'partners'])
                 ->where('tab', 'partners')
                 ->has('partners', 0)
                 ->has('partnerTypes', 2)
@@ -173,48 +172,6 @@ class SettingsContentTest extends TestCase
 
         $this->actingAs($this->manager)->delete(route('admin.settings.events.destroy', $event->id))->assertSessionHasNoErrors();
         $this->assertSoftDeleted($event);
-    }
-
-    public function test_book_cover_is_replaced_and_removed_with_book(): void
-    {
-        $this->actingAs($this->manager)
-            ->post(route('admin.settings.books.store'), [
-                'title' => ['uz' => 'Ilmiy tadqiqot metodologiyasi'],
-                'author' => 'A. Karimov',
-                'year' => 2023,
-                'url' => 'https://example.uz/book',
-                'is_active' => true,
-                'sort_order' => 1,
-                'cover' => UploadedFile::fake()->image('book.jpg', 400, 560),
-            ])
-            ->assertSessionHasNoErrors();
-
-        $book = RecommendedBook::query()->firstOrFail();
-        $first = (string) $book->cover_image_path;
-        Storage::disk('public')->assertExists($first);
-
-        $this->actingAs($this->manager)
-            ->post(route('admin.settings.books.update', $book->id), [
-                '_method' => 'put',
-                'title' => ['uz' => 'Ilmiy tadqiqot metodologiyasi'],
-                'author' => 'A. Karimov',
-                'year' => 2024,
-                'is_active' => true,
-                'sort_order' => 1,
-                'cover' => UploadedFile::fake()->image('book2.png', 400, 560),
-            ])
-            ->assertSessionHasNoErrors();
-
-        $book->refresh();
-        $this->assertSame(2024, $book->year);
-        $this->assertNull($book->url);
-        Storage::disk('public')->assertMissing($first);
-
-        $this->get(route('home'))->assertInertia(fn (Assert $page) => $page->has('books', 1));
-
-        $this->actingAs($this->manager)->delete(route('admin.settings.books.destroy', $book->id))->assertSessionHasNoErrors();
-        $this->assertModelMissing($book);
-        Storage::disk('public')->assertMissing((string) $book->cover_image_path);
     }
 
     public function test_partners_are_managed_and_shown_on_home_page(): void
